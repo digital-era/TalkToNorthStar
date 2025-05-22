@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF--8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>对话北极星</title>
     <!-- 引入 Google Font "Poppins" -->
@@ -71,6 +71,8 @@
             display: flex;
             border-bottom: 2px solid #007bff;
             margin-bottom: 20px;
+            /* Allow wrapping for mobile */
+            flex-wrap: wrap; 
         }
 
         .tab-button {
@@ -82,6 +84,8 @@
             margin-right: 5px;
             border-bottom: 2px solid transparent;
             transition: all 0.3s ease;
+            /* For wrapping */
+            margin-bottom: 5px; 
         }
 
         .tab-button:hover {
@@ -106,13 +110,14 @@
             color: #007bff;
             margin-top: 0;
             margin-bottom: 15px;
+            font-size: 1.5em; /* Consistent h2 size */
         }
 
 
         .leader-scroll-container {
             position: relative;
             margin-bottom: 20px;
-            padding: 0 40px;
+            padding: 0 40px; /* Space for desktop scroll buttons */
         }
 
         .leader-grid {
@@ -139,8 +144,8 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            flex: 0 0 300px;
-            min-height: 280px;
+            flex: 0 0 300px; /* Desktop card width */
+            min-height: 280px; /* Desktop card height */
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -187,8 +192,8 @@
             background-color: rgba(255, 255, 255, 0.8);
             border: 1px solid #ccc;
             border-radius: 50%;
-            width: 35px;
-            height: 35px;
+            width: 35px; /* Desktop button size */
+            height: 35px; /* Desktop button size */
             font-size: 20px;
             font-weight: bold;
             cursor: pointer;
@@ -196,7 +201,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background-color 0.3s, box-shadow 0.3s;
+            transition: background-color 0.3s, box-shadow 0.3s, width 0.3s, height 0.3s;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .scroll-button:hover {
@@ -221,20 +226,25 @@
             gap: 15px;
             margin-bottom: 20px;
             align-items: center;
-            flex-wrap: wrap;
+            flex-wrap: wrap; /* Allow wrapping by default, good for responsiveness */
+        }
+        .api-config > div { /* Target direct children for better control on mobile */
+            display: flex; /* For label and input alignment */
+            align-items: center;
+            flex-grow: 1; /* Allow items to grow */
+            flex-basis: 280px; /* Minimum base width before wrapping */
         }
         .api-config label {
             font-weight: bold;
             margin-right: 5px;
+            white-space: nowrap; /* Prevent label from breaking lines easily */
         }
         .api-config input[type="text"], .api-config select {
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            flex-grow: 1;
-        }
-         .api-config input[type="text"] {
-            min-width: 200px;
+            flex-grow: 1; /* Input takes remaining space in its div */
+            min-width: 150px; /* Prevent input from becoming too small */
         }
 
 
@@ -247,10 +257,12 @@
         .interaction-area h2 {
             color: #007bff;
             margin-top: 0;
+            font-size: 1.5em; /* Consistent h2 size */
         }
         
         .interaction-area textarea {
-            width: calc(100% - 22px);
+            width: calc(100% - 22px); /* Padding compensation */
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
             min-height: 80px;
             padding: 10px;
             border-radius: 4px;
@@ -263,6 +275,7 @@
             display: flex;
             gap: 10px;
             margin-bottom: 15px;
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
         }
 
         .interaction-area button {
@@ -274,6 +287,8 @@
             cursor: pointer;
             font-size: 0.95em;
             transition: background-color 0.3s ease;
+            flex-grow: 1; /* Allow buttons to grow and share space */
+            flex-basis: 150px; /* Minimum width before wrapping/shrinking */
         }
         .interaction-area button:hover {
             background-color: #0056b3;
@@ -329,6 +344,150 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* --- RESPONSIVE STYLES --- */
+        @media (max-width: 768px) {
+            body {
+                line-height: 1.5;
+            }
+            h1 {
+                font-size: 1.8em;
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+            .container {
+                width: 95%;
+                padding: 15px;
+                margin-top: 10px;
+            }
+            .tabs {
+                justify-content: flex-start; /* Align wrapped tabs to start */
+            }
+            .tab-button {
+                padding: 8px 12px;
+                font-size: 14px;
+                margin-right: 3px;
+            }
+             .tab-content h2, .interaction-area h2 {
+                font-size: 1.3em;
+            }
+
+            .leader-scroll-container {
+                padding: 0 35px; /* Reduced padding for smaller scroll buttons */
+            }
+            .leader-card {
+                flex: 0 0 240px; /* Smaller cards on tablet */
+                min-height: 250px; /* Adjust height */
+                padding: 12px;
+            }
+            .leader-card h3 {
+                font-size: 1em;
+            }
+            .leader-card p {
+                font-size: 0.8em;
+            }
+            .leader-card .remarks {
+                font-size: 0.75em;
+            }
+            .scroll-button {
+                width: 30px;
+                height: 30px;
+                font-size: 18px;
+            }
+            .scroll-button.left {
+                left: 2px; /* Adjust position with new padding */
+            }
+            .scroll-button.right {
+                right: 2px; /* Adjust position with new padding */
+            }
+
+            .api-config {
+                flex-direction: column; /* Stack items vertically */
+                align-items: stretch; /* Make items take full width */
+                gap: 12px;
+            }
+            .api-config > div {
+                flex-direction: column; /* Stack label and input */
+                align-items: flex-start;
+                flex-basis: auto; /* Reset basis */
+                width: 100%;
+            }
+            .api-config label {
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+            .api-config input[type="text"], .api-config select {
+                width: 100%;
+                box-sizing: border-box; /* Ensure padding doesn't overflow */
+                min-width: 0; /* Reset min-width from desktop */
+            }
+
+            .interaction-buttons {
+                flex-direction: column; /* Stack buttons */
+                gap: 8px;
+            }
+            .interaction-area button {
+                width: 100%; /* Make buttons full width */
+                font-size: 0.9em;
+                flex-grow: 0; /* Prevent growing when stacked */
+                flex-basis: auto; /* Reset basis */
+            }
+            .interaction-area textarea {
+                font-size: 0.9em;
+                min-height: 70px;
+            }
+            .response-display pre {
+                font-size: 0.85em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5em;
+                letter-spacing: 0.2px;
+            }
+            .container {
+                padding: 10px;
+            }
+             .tab-content h2, .interaction-area h2 {
+                font-size: 1.2em;
+                margin-bottom: 10px;
+            }
+            .tab-button {
+                font-size: 13px;
+                padding: 7px 10px;
+            }
+
+            .leader-scroll-container {
+                padding: 0 30px; /* Even less padding, buttons closer */
+            }
+            .leader-grid{
+                gap: 15px;
+            }
+            .leader-card {
+                flex: 0 0 75vw; /* One card mostly visible, part of next */
+                min-height: auto; /* Allow height to adjust */
+            }
+            .scroll-button {
+                width: 28px;
+                height: 28px;
+                font-size: 16px;
+            }
+            .scroll-button.left {
+                left: 1px;
+            }
+            .scroll-button.right {
+                right: 1px;
+            }
+            #selected-leader-info {
+                font-size: 0.9em;
+                padding: 8px;
+            }
+            .interaction-area textarea {
+                font-size: 0.85em;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -496,7 +655,8 @@
             if (currentSelectedLeader && currentSelectedLeaderCategory !== tabName) {
                 clearSelection();
             }
-            updateAllScrollButtonStates();
+            // Crucial: Update scroll buttons when tab changes, as new grid might be shown/hidden
+            updateAllScrollButtonStates(); 
         }
 
         function populateLeaders() {
@@ -519,6 +679,7 @@
                     grid.appendChild(card);
                 });
                 grid.addEventListener('scroll', () => updateScrollButtonStates(grid));
+                // Initial check after populating
                 updateScrollButtonStates(grid); 
             }
         }
@@ -563,7 +724,7 @@
                 const tabButtons = document.getElementsByClassName("tab-button");
                 for(let btn of tabButtons) {
                     if(btn.onclick.toString().includes(category)){
-                        btn.click();
+                        btn.click(); // This will also trigger updateAllScrollButtonStates via openTab
                         break;
                     }
                 }
@@ -573,8 +734,16 @@
         function scrollGrid(buttonElement, direction) {
             const scrollContainer = buttonElement.closest('.leader-scroll-container');
             const grid = scrollContainer.querySelector('.leader-grid');
-            const cardWidth = grid.querySelector('.leader-card')?.offsetWidth || 300; 
-            const scrollAmount = (cardWidth + 20) * 2; 
+            const firstCard = grid.querySelector('.leader-card');
+            
+            // On mobile, card width can be viewport-dependent, so we get it dynamically.
+            // If no card, default to a reasonable scroll amount.
+            let cardWidth = 250; // Default scroll amount
+            if (firstCard) {
+                 cardWidth = firstCard.offsetWidth;
+            }
+            
+            const scrollAmount = (cardWidth + parseInt(getComputedStyle(grid).gap || '20px')) * 1.5; // Scroll 1.5 cards
 
             grid.scrollBy({
                 left: scrollAmount * direction,
@@ -583,7 +752,17 @@
         }
 
         function updateScrollButtonStates(gridElement) {
-            if (!gridElement) return;
+            if (!gridElement || !gridElement.closest('.tab-content.active')) { // Only update for active tab's grid
+                 const scrollContainerInactive = gridElement.closest('.leader-scroll-container');
+                 if(scrollContainerInactive) {
+                    const leftBtnInactive = scrollContainerInactive.querySelector('.scroll-button.left');
+                    const rightBtnInactive = scrollContainerInactive.querySelector('.scroll-button.right');
+                    if(leftBtnInactive) leftBtnInactive.style.display = 'none';
+                    if(rightBtnInactive) rightBtnInactive.style.display = 'none';
+                 }
+                return;
+            }
+            
             const scrollContainer = gridElement.closest('.leader-scroll-container');
             if (!scrollContainer) return;
 
@@ -592,26 +771,32 @@
 
             if (!leftButton || !rightButton) return;
 
+            // Ensure buttons are visible before checking scroll properties
+            // as display:none elements have no width/scrollWidth
+            leftButton.style.display = 'flex';
+            rightButton.style.display = 'flex';
+
             const scrollLeft = gridElement.scrollLeft;
             const scrollWidth = gridElement.scrollWidth;
             const clientWidth = gridElement.clientWidth;
 
-            leftButton.disabled = scrollLeft <= 0;
-            rightButton.disabled = scrollLeft >= (scrollWidth - clientWidth -1);
-            
-             if (scrollWidth <= clientWidth) {
+            // If content is not wide enough to scroll, hide buttons
+            if (scrollWidth <= clientWidth + 1) { // +1 for potential subpixel issues
                 leftButton.style.display = 'none';
                 rightButton.style.display = 'none';
             } else {
-                leftButton.style.display = 'flex';
-                rightButton.style.display = 'flex';
+                leftButton.disabled = scrollLeft <= 0;
+                rightButton.disabled = scrollLeft >= (scrollWidth - clientWidth - 1); // -1 for robustness
             }
         }
         
         function updateAllScrollButtonStates() {
-            document.querySelectorAll('.leader-grid').forEach(grid => {
-                updateScrollButtonStates(grid);
-            });
+            // Use a timeout to ensure layout has been updated after tab switch or resize
+            setTimeout(() => {
+                document.querySelectorAll('.leader-grid').forEach(grid => {
+                    updateScrollButtonStates(grid);
+                });
+            }, 50); // A small delay can help
         }
         
         function generateBasePrompt() {
@@ -769,8 +954,13 @@ ${currentSelectedLeader.name} 的核心信息:
         document.addEventListener('DOMContentLoaded', () => {
             populateLeaders(); 
             openTab(null, 'aiQuantum'); 
-            document.querySelector('.tab-button').classList.add('active'); 
-            setTimeout(updateAllScrollButtonStates, 100);
+            // Ensure the first tab button gets 'active' class if no event is passed
+            const firstTabButton = document.querySelector('.tab-button');
+            if (firstTabButton && !firstTabButton.classList.contains('active')) {
+                 firstTabButton.classList.add('active');
+            }
+            // Initial call after DOM is ready and content populated
+            updateAllScrollButtonStates(); 
             window.addEventListener('resize', updateAllScrollButtonStates); 
         });
     </script>
