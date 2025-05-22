@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大师对话模拟器 (AI Powered)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #007bff;
+            margin-bottom: 20px;
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background-color: transparent;
+            font-size: 16px;
+            margin-right: 5px;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button:hover {
+            background-color: #e9ecef;
+        }
+
+        .tab-button.active {
+            border-bottom-color: #007bff;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* --- NEW: Leader Scroll Container --- */
+        .leader-scroll-container {
+            position: relative;
+            margin-bottom: 20px;
+            padding: 0 40px; /* Space for absolute positioned buttons */
+        }
+
+        .leader-grid {
+            display: flex; /* Key change for horizontal layout */
+            overflow-x: auto; /* Allows horizontal scrolling */
+            overflow-y: hidden; /* Hide vertical scrollbar if any content overflows vertically */
+            padding: 10px 0; /* Padding top/bottom */
+            gap: 20px; /* Space between cards */
+            /*border: 1px solid #eee; */ /* Optional: if you want border around scroll area */
+            border-radius: 4px;
+            scroll-behavior: smooth; /* Smooth scrolling via JS */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .leader-grid::-webkit-scrollbar { /* Hide scrollbar for Chrome, Safari, Opera */
+            display: none;
+        }
+
+
+        .leader-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            flex: 0 0 300px; /* Fixed width for cards, adjust as needed */
+            min-height: 280px; /* Ensure cards have a decent minimum height */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .leader-card:hover, .leader-card.selected {
+            border-color: #007bff;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+            transform: translateY(-3px);
+        }
+        .leader-card.selected {
+             background-color: #e7f3ff;
+        }
+
+        .leader-card h3 {
+            margin-top: 0;
+            color: #0056b3;
+            font-size: 1.1em;
+        }
+
+        .leader-card p {
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            color: #555;
+            flex-grow: 1; /* Allow description to take up space */
+        }
+         .leader-card .field {
+            font-style: italic;
+            color: #28a745;
+            margin-top: auto; /* Push field and remarks to bottom if space allows */
+        }
+        .leader-card .remarks {
+            font-size: 0.8em;
+            color: #6c757d;
+            border-left: 3px solid #ffc107;
+            padding-left: 10px;
+            margin-top: 10px;
+        }
+
+        /* --- NEW: Scroll Buttons --- */
+        .scroll-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .scroll-button:hover {
+            background-color: #007bff;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .scroll-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .scroll-button.left {
+            left: 0px;
+        }
+        .scroll-button.right {
+            right: 0px;
+        }
+
+
+        .api-config {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+        .api-config label {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .api-config input[type="text"], .api-config select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            flex-grow: 1; /* Allow input to take available space */
+        }
+         .api-config input[type="text"] {
+            min-width: 200px; /* Ensure inputs don't get too small */
+        }
+
+
+        .interaction-area {
+            margin-top: 20px; /* Reduced margin */
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .interaction-area h2 {
+            color: #007bff;
+            margin-top: 0;
+        }
+        
+        .interaction-area textarea {
+            width: calc(100% - 22px);
+            min-height: 80px;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            margin-bottom: 15px;
+            font-size: 1em;
+        }
+
+        .interaction-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .interaction-area button {
+            padding: 10px 15px; /* Adjusted padding */
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.95em; /* Adjusted font size */
+            transition: background-color 0.3s ease;
+        }
+        .interaction-area button:hover {
+            background-color: #0056b3;
+        }
+        .interaction-area button:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+        
+        #selected-leader-info {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .response-display {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+        }
+        .response-display h4 {
+            margin-top:0;
+            color: #333;
+        }
+        .response-display pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background-color: #fff;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>大师对话模拟器 (AI Powered)</h1>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab(event, 'aiQuantum')">泛AI与量子计算</button>
+            <button class="tab-button" onclick="openTab(event, 'finance')">泛金融投资</button>
+            <button class="tab-button" onclick="openTab(event, 'chinaEntrepreneurs')">中国代表企业家</button>
+        </div>
+
+        <div id="aiQuantum" class="tab-content active">
+            <h2>选择一位泛AI与量子计算领域大师</h2>
+            <div class="leader-scroll-container">
+                <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
+                <div class="leader-grid" id="aiQuantumGrid"></div>
+                <button class="scroll-button right" onclick="scrollGrid(this, 1)" aria-label="Scroll Right">></button>
+            </div>
+        </div>
+
+        <div id="finance" class="tab-content">
+            <h2>选择一位泛金融投资领域大师</h2>
+            <div class="leader-scroll-container">
+                <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
+                <div class="leader-grid" id="financeGrid"></div>
+                <button class="scroll-button right" onclick="scrollGrid(this, 1)" aria-label="Scroll Right">></button>
+            </div>
+        </div>
+
+        <div id="chinaEntrepreneurs" class="tab-content">
+            <h2>选择一位中国代表企业家</h2>
+             <div class="leader-scroll-container">
+                <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
+                <div class="leader-grid" id="chinaEntrepreneursGrid"></div>
+                <button class="scroll-button right" onclick="scrollGrid(this, 1)" aria-label="Scroll Right">></button>
+            </div>
+        </div>
+
+        <div class="api-config">
+            <div>
+                <label for="apiEndpoint">API 镜像站基础URL:</label>
+                <input type="text" id="apiEndpoint" value="https://hf-mirror.com" placeholder="例如: https://hf-mirror.com">
+            </div>
+            <div>
+                <label for="apiKey">API Key (可选):</label>
+                <input type="text" id="apiKey" placeholder="sk-xxxx (若需要)">
+            </div>
+            <div>
+                <label for="apiModel">选择模型:</label>
+                <select id="apiModel">
+                    <option value="gpt-4o-mini">gpt-4o-mini</option>
+                    <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                    <!-- Add other compatible models if available -->
+                </select>
+            </div>
+        </div>
+
+        <div class="interaction-area">
+            <h2>与大师对话</h2>
+            <div id="selected-leader-info">
+                当前选择的大师: <span id="selectedLeaderName">无</span>
+            </div>
+            <textarea id="userQuestion" placeholder="请输入您的问题..."></textarea>
+            
+            <div class="interaction-buttons">
+                <button onclick="generateAndShowPrompt()">1. 生成 Prompt</button>
+                <button id="getAIResponseButton" onclick="getAIResponse()">
+                    2. 获取 AI 回复
+                    <span id="loadingIndicator" style="display:none;" class="loading-spinner"></span>
+                </button>
+            </div>
+
+            <div id="prompt-display-area" class="response-display" style="display:none;">
+                <h4>生成的 Prompt (用于API调用):</h4>
+                <pre id="generatedPromptText"></pre>
+            </div>
+            
+            <div id="ai-response-area" class="response-display" style="display:none;">
+                <h4>AI 回复:</h4>
+                <pre id="aiResponseText"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Data (Same as before, truncated for brevity) ---
+        const aiQuantumMasters = [
+            { id: "sam_altman", name: "Sam Altman", contribution: "OpenAI首席执行官，领导ChatGPT开发，推动生成式AI大众化，倡导AI民主治理与伦理发展。", field: "人工智能（生成式AI、AGI）、技术创业。", remarks: "2024年被认为是AI热潮的核心人物，影响力覆盖产业与政策。" },
+            { id: "elon_musk", name: "Elon Musk", contribution: "xAI创始人，开发Grok以加速人类科学发现，Tesla与SpaceX的AI应用先锋，早期支持OpenAI。", field: "人工智能（AGI、自动驾驶）、量子技术投资。", remarks: "通过xAI推动AI与量子计算的交叉应用，强调技术对人类的长期影响。" },
+            { id: "demis_hassabis", name: "Demis Hassabis", contribution: "Google DeepMind首席执行官，开发AlphaGo与AlphaFold，2024年获诺贝尔化学奖，推动AGI与科学发现。", field: "人工智能（深度学习、强化学习）、生物计算。", remarks: "DeepMind在AI与量子计算模拟（如蛋白质折叠）交叉领域具有开创性影响。" },
+            { id: "jensen_huang", name: "Jensen Huang", contribution: "NVIDIA首席执行官，GPU技术推动AI基础设施，引领高性能计算与AI训练的硬件革命。", field: "人工智能（硬件加速）、高性能计算。", remarks: "NVIDIA的芯片技术为AI与量子计算提供了关键计算支持。" },
+            { id: "dario_amodei", name: "Dario Amodei", contribution: "Anthropic首席执行官，开发Claude，强调安全AI系统，前OpenAI研究员，探索AI规模化定律。", field: "人工智能（安全AI、生成式AI）。", remarks: "Anthropic致力于负责任的AI开发，与OpenAI形成竞争。" },
+            { id: "geoffrey_hinton", name: "Geoffrey Hinton", contribution: "AI“教父”，神经网络与深度学习先驱，2018年图灵奖得主，2024年诺贝尔奖得主，关注AI伦理风险。", field: "人工智能（深度学习、神经网络）。", remarks: "2024年从Google辞职以自由警示AI潜在危险，影响力深远。" },
+            { id: "ilya_sutskever", name: "Ilya Sutskever", contribution: "OpenAI联合创始人，开发AlexNet与GPT系列，推动深度学习与生成式AI，2024年创立Safe Superintelligence。", field: "人工智能（深度学习、AGI）。", remarks: "专注于超级智能的安全性，持续影响AGI研究方向。" },
+            { id: "ray_kurzweil", name: "Ray Kurzweil", contribution: "未来学家，预测AI奇点（2045年），Google工程总监，推动AI与人类智能融合研究。", field: "人工智能（未来学、AI奇点）。", remarks: "其大胆预测塑造了AI与量子计算的长期愿景。" },
+            { id: "peter_diamandis", name: "Peter Diamandis", contribution: "XPRIZE创始人，Singularity University联合创始人，倡导指数型技术（AI、量子计算）解决全球挑战。", field: "人工智能、量子计算、技术创业。", remarks: "通过激励创新推动AI与量子技术商业化。" },
+            { id: "eric_schmidt", name: "Eric Schmidt", contribution: "前Google首席执行官及执行主席，带领Google成为科技巨头，现为技术投资人，支持AI、量子计算、生物技术初创公司。", field: "人工智能、云计算、技术投资、科技创新政策。", remarks: "积极倡导AI伦理与治理，影响技术产业与公共政策交叉领域。" },
+            { id: "jeff_dean", name: "Jeff Dean", contribution: "Google高级研究员，领导Google Brain与TensorFlow开发，推动AI在搜索、医疗等领域的应用。", field: "人工智能（机器学习、系统架构）。", remarks: "Google AI基础设施的核心人物，影响全球AI技术栈。" },
+            { id: "yann_lecun", name: "Yann LeCun", contribution: "Meta首席AI科学家，卷积神经网络（CNN）先驱，2018年图灵奖得主，推动开放AI研究。", field: "人工智能（深度学习、计算机视觉）。", remarks: "主张渐进式AI发展，反对AGI恐慌论。" },
+            { id: "fei_fei_li", name: "Fei-Fei Li", contribution: "斯坦福大学教授，创建ImageNet，推动计算机视觉革命，倡导以人为本的AI，开发空间智能初创公司。", field: "人工智能（计算机视觉、伦理AI）。", remarks: "对AI教育与多样性有深远影响。" },
+            { id: "andrej_karpathy", name: "Andrej Karpathy", contribution: "前Tesla与OpenAI研究员，开发神经网络与自动驾驶AI，斯坦福深度学习课程联合设计者，AI教育普及者。", field: "人工智能（深度学习、计算机视觉）。", remarks: "以简化复杂AI概念著称，影响下一代研究者。" },
+            { id: "mustafa_suleyman", name: "Mustafa Suleyman", contribution: "DeepMind联合创始人，现任微软AI首席执行官，开发情感智能聊天机器人Pi，倡导伦理AI。", field: "人工智能（伦理AI、生成式AI）。", remarks: "在微软领导Copilot等消费级AI产品开发。" },
+            { id: "marc_benioff", name: "Marc Benioff", contribution: "Salesforce首席执行官，推动Agentforce平台，将AI融入企业CRM，倡导AI商业化与社会责任。", field: "人工智能（企业AI、CRM）。", remarks: "通过Salesforce将AI应用于企业数字化转型。" },
+            { id: "hartmut_neven", name: "Hartmut Neven", contribution: "Google量子AI实验室主任，领导量子计算研究，推动量子优越性与AI算法优化。", field: "量子计算、人工智能。", remarks: "Google在量子计算领域的核心人物，探索AI与量子交叉应用。" },
+            { id: "yoshua_bengio", name: "Yoshua Bengio", contribution: "AI“教父”，蒙 Quebec人工智能研究所（Mila）创始人，2018年图灵奖得主，研究深度学习与AI伦理。", field: "人工智能（深度学习、伦理AI）。", remarks: "与Hinton、LeCun齐名，推动负责任AI发展。" },
+            { id: "john_preskill", name: "John Preskill", contribution: "加州理工学院教授，量子计算理论先驱，提出“量子优越性”概念，领导量子信息科学研究。", field: "量子计算、量子信息。", remarks: "填补量子计算理论领域的空白，影响全球量子技术发展。" },
+            { id: "daphne_koller", name: "Daphne Koller", contribution: "斯坦福大学教授，Coursera联合创始人，研究概率模型与生物AI，开发AI驱动的药物发现平台。", field: "人工智能（概率AI、生物计算）。", remarks: "在AI与生物计算交叉领域具有开创性贡献。" },
+            { id: "jack_hidary", name: "Jack Hidary", contribution: "SandboxAQ首席执行官，领导量子计算与AI在医疗、材料科学的应用，著有《量子计算：商业指南》。", field: "量子计算、人工智能。", remarks: "推动量子计算的商业化，填补产业应用空白。" },
+            { id: "chris_monroe", name: "Chris Monroe", contribution: "IonQ联合创始人，量子计算硬件先驱，开发基于离子阱的量子计算机，推动量子计算产业化。", field: "量子计算（硬件）。", remarks: "量子计算硬件领域的领军人物，补充硬件开发视角。" },
+            { id: "ben_goertzel", name: "Ben Goertzel", contribution: "SingularityNET首席执行官，倡导去中心化AI与AGI，推广“人工通用智能”概念，探索AI与区块链融合。", field: "人工智能（AGI、去中心化AI）。", remarks: "代表去中心化AI的先锋视角，补充AGI多样性。" }
+        ];
+        const financeMasters = [
+            { id: "warren_buffett", name: "Warren Buffett", contribution: "伯克希尔·哈撒韦首席执行官，价值投资代表，管理数百亿美元资产，以长期投资和资本配置著称。", field: "价值投资、资产管理、资本配置。", remarks: "被称为“奥马哈先知”，其投资哲学强调企业内在价值，影响全球金融市场。" },
+            { id: "ray_dalio", name: "Ray Dalio", contribution: "桥水基金创始人，开发全天候投资策略，推动宏观经济分析与风险平价投资。", field: "对冲基金、宏观投资、资产配置。", remarks: "桥水为全球最大对冲基金之一，其《原则》分享投资与管理哲学。" },
+            { id: "carl_icahn", name: "Carl Icahn", contribution: "Icahn Enterprises创始人，通过股东行动主义推动企业重组和价值释放。", field: "激进投资、股权投资、企业重组。", remarks: "以大胆投资和对抗管理层著称，影响美国企业治理格局。" },
+            { id: "abigail_johnson", name: "Abigail Johnson", contribution: "富达投资主席兼首席执行官，推动低成本投资产品和数字化金融服务。", field: "资产管理、零售投资、金融科技。", remarks: "管理超4万亿美元资产，推动ETF和加密货币领域创新。" },
+            { id: "jamie_dimon", name: "Jamie Dimon", contribution: "摩根大通首席执行官，领导全球最大银行之一，擅长风险管理和金融创新。", field: "投资银行、商业银行、金融管理。", remarks: "2008年金融危机中展现卓越领导力，被视为银行业标杆。" },
+            { id: "cathie_wood", name: "Cathie Wood", contribution: "ARK Invest创始人，专注AI、区块链等创新投资，推动主动管理ETF普及。", field: "创新投资、ETF、人工智能与金融科技。", remarks: "以长期投资科技驱动行业著称，吸引年轻投资者。" },
+            { id: "larry_fink", name: "Larry Fink", contribution: "贝莱德创始人兼首席执行官，推动ESG投资框架，开发iShares ETF。", field: "资产管理、ESG投资、指数基金。", remarks: "管理超10万亿美元资产，ESG倡导重塑全球投资趋势。" },
+            { id: "george_soros", name: "George Soros", contribution: "索罗斯基金创始人，量子基金缔造者，以1992年狙击英镑闻名，提出“反身性”理论。", field: "对冲基金、货币投机、宏观投资。", remarks: "通过开放社会基金会影响政策，其策略深刻影响金融市场。" },
+            { id: "jeremy_grantham", name: "Jeremy Grantham", contribution: "GMO联合创始人，倡导价值投资与市场泡沫预警，注重环境可持续性投资。", field: "价值投资、资产管理、可持续投资。", remarks: "以准确预测市场泡沫（如2008年金融危机）著称，强调气候变化对投资的影响。" },
+            { id: "john_bogle", name: "John C. Bogle", contribution: "Vanguard集团创始人，创建首只零售指数基金，倡导低成本、被动投资策略，颠覆资产管理行业。", field: "资产管理、指数基金、零售投资。", remarks: "被称为“指数基金之父”，Vanguard管理资产超8万亿美元，其理念惠及全球投资者。" }
+        ];
+        const chinaEntrepreneurs = [
+            { id: "robin_zeng", name: "曾毓群 (Robin Zeng)", contribution: "宁德时代（CATL）创始人兼董事长，领导全球最大电动车电池制造商，开发Shenxing超快充电电池，市场份额约38%。", field: "新能源、电动车电池、能源存储。", remarks: "出席2025年民营企业座谈会，与特斯拉、宝马等合作，香港上市融资46亿美元，个人财富超730亿美元。" },
+            { id: "wang_chuanfu", name: "王传福 (Wang Chuanfu)", contribution: "比亚迪（BYD）创始人兼董事长，打造全球第四大电动车及电池制造商，推动刀片电池和智能驾驶技术。", field: "电动车、新能源、电池技术。", remarks: "出席2025年民营企业座谈会，比亚迪2024年电池市场份额17.2%，挑战特斯拉，个人财富约203亿美元。" },
+            { id: "fang_hongbo", name: "方洪波 (Fang Hongbo)", contribution: "美的集团（Midea）董事长兼总裁，带领美的成为全球家电巨头，推进智能制造和机器人技术，2024年香港上市融资46亿美元。", field: "家电制造、智能制造、机器人技术。", remarks: "美的营收405亿美元，全球布局200+国家。" },
+            { id: "jack_ma", name: "马云 (Jack Ma)", contribution: "阿里巴巴联合创始人，推动电商、云计算和数字支付革命，创立云峰资本支持创业创新。", field: "电子商务、云计算、投资。", remarks: "出席2025年民营企业座谈会，持阿里巴巴3.8%股份，通过云峰资本影响科技与金融，个人财富251亿美元。" },
+            { id: "pony_ma", name: "马化腾 (Pony Ma)", contribution: "腾讯董事会主席兼首席执行官，打造微信和QQ，领导游戏、社交和云计算领域全球扩张。", field: "互联网、社交媒体、云计算。", remarks: "出席2025年民营企业座谈会，腾讯2024年营收超800亿美元，推动中国科技全球化。" },
+            { id: "lei_jun", name: "雷军 (Lei Jun)", contribution: "小米集团创始人兼首席执行官，引领智能手机和智能硬件生态，推进电动车业务（小米SU7）。", field: "智能手机、电动车、物联网。", remarks: "出席2025年民营企业座谈会，小米2024年进入电动车市场，全球销量突破5亿台设备。" },
+            { id: "liu_yonghao", name: "刘永好 (Liu Yonghao)", contribution: "新希望集团董事长，领导农业与食品加工巨头，扩展金融投资和房地产领域。", field: "农业、金融投资、房地产。", remarks: "出席2025年民营企业座谈会，新希望为中国最大民营农业企业之一，多元化战略增强市场影响力。" },
+            { id: "liang_wenfeng", name: "梁文锋 (Liang Wenfeng)", contribution: "DeepSeek创始人，开发低成本、高性能开源AI大模型（如V3及R1），推动中国AI产业进步，挑战全球AI竞争格局。", field: "人工智能、量化金融、技术创新。", remarks: "出席2025年民营企业座谈会，17岁考入浙大，30岁创立幻方量化，36岁管理千亿私募，AI创新引发全球关注。" },
+            { id: "ren_zhengfei", name: "任正非 (Ren Zhengfei)", contribution: "华为创始人兼首席执行官，领导全球通信设备和智能手机巨头，开发麒麟芯片和鸿蒙系统，推动5G技术全球应用。", field: "电信设备、人工智能、5G技术。", remarks: "出席2025年民营企业座谈会，华为2024年营收超1000亿美元，持续应对全球技术竞争。" },
+            { id: "liu_qiangdong", name: "刘强东 (Liu Qiangdong)", contribution: "京东集团创始人兼董事长，打造中国领先的电商与物流平台，推动智能供应链和无人配送技术。", field: "电子商务、物流技术、人工智能。", remarks: "京东2024年服务超7亿用户，引领零售科技融合。" }
+        ];
+        
+        const allData = {
+            aiQuantum: aiQuantumMasters,
+            finance: financeMasters,
+            chinaEntrepreneurs: chinaEntrepreneurs
+        };
+
+        let currentSelectedLeader = null;
+        let currentSelectedLeaderCategory = '';
+        let currentGeneratedPrompt = '';
+
+        function openTab(evt, tabName) {
+            let i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+                tabcontent[i].classList.remove("active");
+            }
+            tablinks = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            document.getElementById(tabName).classList.add("active");
+            if(evt) evt.currentTarget.className += " active";
+
+            if (currentSelectedLeader && currentSelectedLeaderCategory !== tabName) {
+                clearSelection();
+            }
+            // Update scroll buttons for the newly opened tab
+            updateAllScrollButtonStates();
+        }
+
+        function populateLeaders() {
+            for (const category in allData) {
+                const grid = document.getElementById(`${category}Grid`);
+                if (!grid) continue;
+                grid.innerHTML = ''; 
+                allData[category].forEach(leader => {
+                    const card = document.createElement('div');
+                    card.className = 'leader-card';
+                    card.dataset.id = leader.id;
+                    card.dataset.category = category;
+                    card.innerHTML = `
+                        <h3>${leader.name}</h3>
+                        <p><strong>贡献:</strong> ${leader.contribution}</p>
+                        <p class="field"><strong>领域:</strong> ${leader.field}</p>
+                        ${leader.remarks ? `<p class="remarks"><strong>备注:</strong> ${leader.remarks}</p>` : ''}
+                    `;
+                    card.onclick = () => selectLeader(leader, category, card);
+                    grid.appendChild(card);
+                });
+                // Add scroll event listener to update buttons
+                grid.addEventListener('scroll', () => updateScrollButtonStates(grid));
+                updateScrollButtonStates(grid); // Initial check
+            }
+        }
+        
+        function clearSelection() {
+            if (currentSelectedLeader) {
+                const prevSelectedCard = document.querySelector(`.leader-card.selected[data-category='${currentSelectedLeaderCategory}']`);
+                if (prevSelectedCard) {
+                    prevSelectedCard.classList.remove('selected');
+                }
+            }
+            currentSelectedLeader = null;
+            currentSelectedLeaderCategory = '';
+            document.getElementById('selectedLeaderName').textContent = '无';
+            currentGeneratedPrompt = ''; 
+            document.getElementById('prompt-display-area').style.display = 'none';
+            document.getElementById('ai-response-area').style.display = 'none';
+        }
+
+        function selectLeader(leader, category, cardElement) {
+            if (currentSelectedLeader) {
+                 const prevSelectedCard = document.querySelector(`.leader-card.selected[data-category='${currentSelectedLeaderCategory}']`);
+                 if (prevSelectedCard) {
+                    prevSelectedCard.classList.remove('selected');
+                 }
+            }
+
+            currentSelectedLeader = leader;
+            currentSelectedLeaderCategory = category;
+            document.getElementById('selectedLeaderName').textContent = leader.name;
+            cardElement.classList.add('selected');
+            currentGeneratedPrompt = ''; 
+            document.getElementById('prompt-display-area').style.display = 'none';
+            document.getElementById('ai-response-area').style.display = 'none';
+
+            if (!document.getElementById(category).classList.contains('active')) {
+                const tabButtons = document.getElementsByClassName("tab-button");
+                for(let btn of tabButtons) {
+                    if(btn.onclick.toString().includes(category)){
+                        btn.click();
+                        break;
+                    }
+                }
+            }
+        }
+
+        // --- NEW: Scroll Functions ---
+        function scrollGrid(buttonElement, direction) {
+            const scrollContainer = buttonElement.closest('.leader-scroll-container');
+            const grid = scrollContainer.querySelector('.leader-grid');
+            const cardWidth = grid.querySelector('.leader-card')?.offsetWidth || 300; // Get actual card width or fallback
+            const scrollAmount = (cardWidth + 20) * 2; // Scroll by width of 2 cards + gap
+
+            grid.scrollBy({
+                left: scrollAmount * direction,
+                behavior: 'smooth'
+            });
+        }
+
+        function updateScrollButtonStates(gridElement) {
+            if (!gridElement) return;
+            const scrollContainer = gridElement.closest('.leader-scroll-container');
+            if (!scrollContainer) return;
+
+            const leftButton = scrollContainer.querySelector('.scroll-button.left');
+            const rightButton = scrollContainer.querySelector('.scroll-button.right');
+
+            if (!leftButton || !rightButton) return;
+
+            const scrollLeft = gridElement.scrollLeft;
+            const scrollWidth = gridElement.scrollWidth;
+            const clientWidth = gridElement.clientWidth;
+
+            leftButton.disabled = scrollLeft <= 0;
+            // Add a small tolerance (e.g., 1px) for the right button due to potential subpixel rendering issues
+            rightButton.disabled = scrollLeft >= (scrollWidth - clientWidth -1);
+            
+            // Hide buttons if no scrolling is possible
+             if (scrollWidth <= clientWidth) {
+                leftButton.style.display = 'none';
+                rightButton.style.display = 'none';
+            } else {
+                leftButton.style.display = 'flex';
+                rightButton.style.display = 'flex';
+            }
+        }
+        
+        function updateAllScrollButtonStates() {
+            document.querySelectorAll('.leader-grid').forEach(grid => {
+                updateScrollButtonStates(grid);
+            });
+        }
+        // --- End of New Scroll Functions ---
+        
+        function generateBasePrompt() {
+            const question = document.getElementById('userQuestion').value.trim();
+
+            if (!currentSelectedLeader) {
+                alert("请先选择一位大师！");
+                return ""; // 返回空字符串，外层 if 会判断为 false
+            }
+            if (!question) {
+                alert("请输入您的问题！");
+                return ""; // 返回空字符串，外层 if 会判断为 false
+            }
+
+            // 如果 currentSelectedLeader.remarks 不存在，则用 '无特定备注...'
+            const remarksText = currentSelectedLeader.remarks || '无特定备注，请基于其贡献和领域推断其核心思维模式。';
+            const remarksSection = currentSelectedLeader.remarks 
+                ? `备注中提到的特点 (${currentSelectedLeader.remarks}) 和` 
+                : '';
+
+            return `
+背景设定:
+你将扮演 ${currentSelectedLeader.name}。根据其公开的贡献、专长领域和已知行事风格/理念，从第一性原理出发，深入思考并回答以下用户提出的问题。
+
+${currentSelectedLeader.name} 的核心信息:
+- 主要贡献: ${currentSelectedLeader.contribution}
+- 专业领域: ${currentSelectedLeader.field}
+- 关键备注/特点: ${remarksText}
+
+思考框架指引 (扮演 ${currentSelectedLeader.name} 时请遵循)：
+1.  **第一性原理 (First Principles Thinking)**: 将问题分解到最基本的、不容置疑的真实要素。避免类比推理或依赖普遍接受的假设，除非这些假设已经过严格验证。
+2.  **领域专长**: 运用你在 ${currentSelectedLeader.field} 的深厚知识。如果问题跨领域，尝试从你的核心领域视角寻找切入点或提出独到见解。
+3.  **核心理念/驱动力**: 结合 ${currentSelectedLeader.name} 的 ${remarksSection} 已知贡献，思考其做决策、看待问题时的核心驱动力是什么（例如，技术乐观主义、风险厌恶、社会责任、效率至上、创新驱动、长期主义等）。
+4.  **问题剖析**: 深入分析用户问题的本质，探讨其背后的深层原因和可能的多种解读。
+5.  **解决方案/洞察**: 基于以上思考，提出具有 ${currentSelectedLeader.name} 特色的、富有洞察力的、可能具有前瞻性的观点、分析或解决方案框架。如果适用，可以指出潜在的挑战、机遇或需要进一步探索的方向。
+6.  **语言风格**: 尝试模仿 ${currentSelectedLeader.name} 可能的沟通风格（例如，直接、富有远见、严谨、强调数据、关注伦理等）。如果其风格未知，则采用清晰、专业、有深度的表达。
+
+用户问题:
+"${question}"
+
+请你作为 ${currentSelectedLeader.name}，开始你的思考和回复:
+`;
+        }
+
+        function generateAndShowPrompt() {
+            currentGeneratedPrompt = generateBasePrompt();
+            const promptDisplayArea = document.getElementById('prompt-display-area');
+            const promptTextElement = document.getElementById('generatedPromptText');
+
+            if (currentGeneratedPrompt) {
+                promptTextElement.textContent = currentGeneratedPrompt.trim();
+                promptDisplayArea.style.display = 'block';
+                 document.getElementById('ai-response-area').style.display = 'none'; 
+            } else {
+                promptDisplayArea.style.display = 'none';
+            }
+        }
+
+        async function getAIResponse() {
+            if (!currentGeneratedPrompt) {
+                alert("请先点击“1. 生成 Prompt”来准备对话内容。");
+                return;
+            }
+
+            const apiBaseUrl = document.getElementById('apiEndpoint').value.trim();
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const model = document.getElementById('apiModel').value;
+            
+            const aiResponseArea = document.getElementById('ai-response-area');
+            const aiResponseTextElement = document.getElementById('aiResponseText');
+            const getAIResponseButton = document.getElementById('getAIResponseButton');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+
+            if (!apiBaseUrl) {
+                alert("请输入API镜像站基础URL！");
+                return;
+            }
+
+            const fullApiUrl = (apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl) + "/v1/chat/completions";
+
+            aiResponseTextElement.textContent = '';
+            aiResponseArea.style.display = 'block';
+            loadingIndicator.style.display = 'inline-block';
+            getAIResponseButton.disabled = true;
+
+            const requestBody = {
+                model: model,
+                messages: [ { role: "user", content: currentGeneratedPrompt } ],
+                temperature: 0.7,
+            };
+
+            const headers = { 'Content-Type': 'application/json', };
+            if (apiKey) { headers['Authorization'] = `Bearer ${apiKey}`; }
+
+            try {
+                const response = await fetch(fullApiUrl, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ detail: response.statusText }));
+                    throw new Error(`API Error: ${response.status} - ${errorData.detail || errorData.error?.message || 'Unknown error'}`);
+                }
+                const data = await response.json();
+                if (data.choices && data.choices.length > 0 && data.choices[0].message) {
+                    aiResponseTextElement.textContent = data.choices[0].message.content.trim();
+                } else {
+                    aiResponseTextElement.textContent = "未能从API获取有效回复。请检查API响应结构。";
+                    console.error("Unexpected API response structure:", data);
+                }
+            } catch (error) {
+                console.error('Error calling API:', error);
+                aiResponseTextElement.textContent = `请求API时出错: ${error.message}\n\n请检查: \n1. API镜像站URL是否正确且可访问。\n2. 该镜像站是否支持CORS跨域请求。\n3. 网络连接是否正常。\n4. API Key是否正确 (如果需要)。\n5. 控制台(F12)查看详细错误信息。`;
+            } finally {
+                loadingIndicator.style.display = 'none';
+                getAIResponseButton.disabled = false;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateLeaders(); 
+            openTab(null, 'aiQuantum'); 
+            document.querySelector('.tab-button').classList.add('active'); // Ensure first tab button is active
+            // A small delay might be needed for elements to fully render before initial button state update
+            setTimeout(updateAllScrollButtonStates, 100);
+            window.addEventListener('resize', updateAllScrollButtonStates); // Update on resize
+        });
+    </script>
+
+</body>
+</html>
