@@ -59,29 +59,17 @@
             display: block;
         }
 
-        /* --- NEW: Leader Scroll Container --- */
-        .leader-scroll-container {
-            position: relative;
-            margin-bottom: 20px;
-            padding: 0 40px; /* Space for absolute positioned buttons */
-        }
-
         .leader-grid {
-            display: flex; /* Key change for horizontal layout */
-            overflow-x: auto; /* Allows horizontal scrolling */
-            overflow-y: hidden; /* Hide vertical scrollbar if any content overflows vertically */
-            padding: 10px 0; /* Padding top/bottom */
-            gap: 20px; /* Space between cards */
-            /*border: 1px solid #eee; */ /* Optional: if you want border around scroll area */
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            max-height: 350px; /* Adjusted height */
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #eee;
             border-radius: 4px;
-            scroll-behavior: smooth; /* Smooth scrolling via JS */
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+            margin-bottom: 20px;
         }
-        .leader-grid::-webkit-scrollbar { /* Hide scrollbar for Chrome, Safari, Opera */
-            display: none;
-        }
-
 
         .leader-card {
             border: 1px solid #ddd;
@@ -91,11 +79,6 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            flex: 0 0 300px; /* Fixed width for cards, adjust as needed */
-            min-height: 280px; /* Ensure cards have a decent minimum height */
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
         }
 
         .leader-card:hover, .leader-card.selected {
@@ -117,12 +100,10 @@
             font-size: 0.9em;
             margin-bottom: 8px;
             color: #555;
-            flex-grow: 1; /* Allow description to take up space */
         }
          .leader-card .field {
             font-style: italic;
             color: #28a745;
-            margin-top: auto; /* Push field and remarks to bottom if space allows */
         }
         .leader-card .remarks {
             font-size: 0.8em;
@@ -131,43 +112,6 @@
             padding-left: 10px;
             margin-top: 10px;
         }
-
-        /* --- NEW: Scroll Buttons --- */
-        .scroll-button {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: rgba(255, 255, 255, 0.8);
-            border: 1px solid #ccc;
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.3s, box-shadow 0.3s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .scroll-button:hover {
-            background-color: #007bff;
-            color: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-        .scroll-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .scroll-button.left {
-            left: 0px;
-        }
-        .scroll-button.right {
-            right: 0px;
-        }
-
 
         .api-config {
             display: flex;
@@ -297,29 +241,17 @@
 
         <div id="aiQuantum" class="tab-content active">
             <h2>选择一位泛AI与量子计算领域大师</h2>
-            <div class="leader-scroll-container">
-                <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
-                <div class="leader-grid" id="aiQuantumGrid"></div>
-                <button class="scroll-button right" onclick="scrollGrid(this, 1)" aria-label="Scroll Right">></button>
-            </div>
+            <div class="leader-grid" id="aiQuantumGrid"></div>
         </div>
 
         <div id="finance" class="tab-content">
             <h2>选择一位泛金融投资领域大师</h2>
-            <div class="leader-scroll-container">
-                <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
-                <div class="leader-grid" id="financeGrid"></div>
-                <button class="scroll-button right" onclick="scrollGrid(this, 1)" aria-label="Scroll Right">></button>
-            </div>
+            <div class="leader-grid" id="financeGrid"></div>
         </div>
 
         <div id="chinaEntrepreneurs" class="tab-content">
             <h2>选择一位中国代表企业家</h2>
-             <div class="leader-scroll-container">
-                <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
-                <div class="leader-grid" id="chinaEntrepreneursGrid"></div>
-                <button class="scroll-button right" onclick="scrollGrid(this, 1)" aria-label="Scroll Right">></button>
-            </div>
+            <div class="leader-grid" id="chinaEntrepreneursGrid"></div>
         </div>
 
         <div class="api-config">
@@ -369,7 +301,7 @@
     </div>
 
     <script>
-        // --- Data (Same as before, truncated for brevity) ---
+        // --- Data ---
         const aiQuantumMasters = [
             { id: "sam_altman", name: "Sam Altman", contribution: "OpenAI首席执行官，领导ChatGPT开发，推动生成式AI大众化，倡导AI民主治理与伦理发展。", field: "人工智能（生成式AI、AGI）、技术创业。", remarks: "2024年被认为是AI热潮的核心人物，影响力覆盖产业与政策。" },
             { id: "elon_musk", name: "Elon Musk", contribution: "xAI创始人，开发Grok以加速人类科学发现，Tesla与SpaceX的AI应用先锋，早期支持OpenAI。", field: "人工智能（AGI、自动驾驶）、量子技术投资。", remarks: "通过xAI推动AI与量子计算的交叉应用，强调技术对人类的长期影响。" },
@@ -395,6 +327,7 @@
             { id: "chris_monroe", name: "Chris Monroe", contribution: "IonQ联合创始人，量子计算硬件先驱，开发基于离子阱的量子计算机，推动量子计算产业化。", field: "量子计算（硬件）。", remarks: "量子计算硬件领域的领军人物，补充硬件开发视角。" },
             { id: "ben_goertzel", name: "Ben Goertzel", contribution: "SingularityNET首席执行官，倡导去中心化AI与AGI，推广“人工通用智能”概念，探索AI与区块链融合。", field: "人工智能（AGI、去中心化AI）。", remarks: "代表去中心化AI的先锋视角，补充AGI多样性。" }
         ];
+
         const financeMasters = [
             { id: "warren_buffett", name: "Warren Buffett", contribution: "伯克希尔·哈撒韦首席执行官，价值投资代表，管理数百亿美元资产，以长期投资和资本配置著称。", field: "价值投资、资产管理、资本配置。", remarks: "被称为“奥马哈先知”，其投资哲学强调企业内在价值，影响全球金融市场。" },
             { id: "ray_dalio", name: "Ray Dalio", contribution: "桥水基金创始人，开发全天候投资策略，推动宏观经济分析与风险平价投资。", field: "对冲基金、宏观投资、资产配置。", remarks: "桥水为全球最大对冲基金之一，其《原则》分享投资与管理哲学。" },
@@ -407,6 +340,7 @@
             { id: "jeremy_grantham", name: "Jeremy Grantham", contribution: "GMO联合创始人，倡导价值投资与市场泡沫预警，注重环境可持续性投资。", field: "价值投资、资产管理、可持续投资。", remarks: "以准确预测市场泡沫（如2008年金融危机）著称，强调气候变化对投资的影响。" },
             { id: "john_bogle", name: "John C. Bogle", contribution: "Vanguard集团创始人，创建首只零售指数基金，倡导低成本、被动投资策略，颠覆资产管理行业。", field: "资产管理、指数基金、零售投资。", remarks: "被称为“指数基金之父”，Vanguard管理资产超8万亿美元，其理念惠及全球投资者。" }
         ];
+
         const chinaEntrepreneurs = [
             { id: "robin_zeng", name: "曾毓群 (Robin Zeng)", contribution: "宁德时代（CATL）创始人兼董事长，领导全球最大电动车电池制造商，开发Shenxing超快充电电池，市场份额约38%。", field: "新能源、电动车电池、能源存储。", remarks: "出席2025年民营企业座谈会，与特斯拉、宝马等合作，香港上市融资46亿美元，个人财富超730亿美元。" },
             { id: "wang_chuanfu", name: "王传福 (Wang Chuanfu)", contribution: "比亚迪（BYD）创始人兼董事长，打造全球第四大电动车及电池制造商，推动刀片电池和智能驾驶技术。", field: "电动车、新能源、电池技术。", remarks: "出席2025年民营企业座谈会，比亚迪2024年电池市场份额17.2%，挑战特斯拉，个人财富约203亿美元。" },
@@ -419,7 +353,7 @@
             { id: "ren_zhengfei", name: "任正非 (Ren Zhengfei)", contribution: "华为创始人兼首席执行官，领导全球通信设备和智能手机巨头，开发麒麟芯片和鸿蒙系统，推动5G技术全球应用。", field: "电信设备、人工智能、5G技术。", remarks: "出席2025年民营企业座谈会，华为2024年营收超1000亿美元，持续应对全球技术竞争。" },
             { id: "liu_qiangdong", name: "刘强东 (Liu Qiangdong)", contribution: "京东集团创始人兼董事长，打造中国领先的电商与物流平台，推动智能供应链和无人配送技术。", field: "电子商务、物流技术、人工智能。", remarks: "京东2024年服务超7亿用户，引领零售科技融合。" }
         ];
-        
+
         const allData = {
             aiQuantum: aiQuantumMasters,
             finance: financeMasters,
@@ -428,7 +362,8 @@
 
         let currentSelectedLeader = null;
         let currentSelectedLeaderCategory = '';
-        let currentGeneratedPrompt = '';
+        let currentGeneratedPrompt = ''; // Store the generated prompt
+
 
         function openTab(evt, tabName) {
             let i, tabcontent, tablinks;
@@ -448,8 +383,6 @@
             if (currentSelectedLeader && currentSelectedLeaderCategory !== tabName) {
                 clearSelection();
             }
-            // Update scroll buttons for the newly opened tab
-            updateAllScrollButtonStates();
         }
 
         function populateLeaders() {
@@ -471,9 +404,6 @@
                     card.onclick = () => selectLeader(leader, category, card);
                     grid.appendChild(card);
                 });
-                // Add scroll event listener to update buttons
-                grid.addEventListener('scroll', () => updateScrollButtonStates(grid));
-                updateScrollButtonStates(grid); // Initial check
             }
         }
         
@@ -487,7 +417,7 @@
             currentSelectedLeader = null;
             currentSelectedLeaderCategory = '';
             document.getElementById('selectedLeaderName').textContent = '无';
-            currentGeneratedPrompt = ''; 
+            currentGeneratedPrompt = ''; // Clear prompt on leader change
             document.getElementById('prompt-display-area').style.display = 'none';
             document.getElementById('ai-response-area').style.display = 'none';
         }
@@ -504,9 +434,10 @@
             currentSelectedLeaderCategory = category;
             document.getElementById('selectedLeaderName').textContent = leader.name;
             cardElement.classList.add('selected');
-            currentGeneratedPrompt = ''; 
+            currentGeneratedPrompt = ''; // Clear old prompt
             document.getElementById('prompt-display-area').style.display = 'none';
             document.getElementById('ai-response-area').style.display = 'none';
+
 
             if (!document.getElementById(category).classList.contains('active')) {
                 const tabButtons = document.getElementsByClassName("tab-button");
@@ -518,72 +449,18 @@
                 }
             }
         }
-
-        // --- NEW: Scroll Functions ---
-        function scrollGrid(buttonElement, direction) {
-            const scrollContainer = buttonElement.closest('.leader-scroll-container');
-            const grid = scrollContainer.querySelector('.leader-grid');
-            const cardWidth = grid.querySelector('.leader-card')?.offsetWidth || 300; // Get actual card width or fallback
-            const scrollAmount = (cardWidth + 20) * 2; // Scroll by width of 2 cards + gap
-
-            grid.scrollBy({
-                left: scrollAmount * direction,
-                behavior: 'smooth'
-            });
-        }
-
-        function updateScrollButtonStates(gridElement) {
-            if (!gridElement) return;
-            const scrollContainer = gridElement.closest('.leader-scroll-container');
-            if (!scrollContainer) return;
-
-            const leftButton = scrollContainer.querySelector('.scroll-button.left');
-            const rightButton = scrollContainer.querySelector('.scroll-button.right');
-
-            if (!leftButton || !rightButton) return;
-
-            const scrollLeft = gridElement.scrollLeft;
-            const scrollWidth = gridElement.scrollWidth;
-            const clientWidth = gridElement.clientWidth;
-
-            leftButton.disabled = scrollLeft <= 0;
-            // Add a small tolerance (e.g., 1px) for the right button due to potential subpixel rendering issues
-            rightButton.disabled = scrollLeft >= (scrollWidth - clientWidth -1);
-            
-            // Hide buttons if no scrolling is possible
-             if (scrollWidth <= clientWidth) {
-                leftButton.style.display = 'none';
-                rightButton.style.display = 'none';
-            } else {
-                leftButton.style.display = 'flex';
-                rightButton.style.display = 'flex';
-            }
-        }
-        
-        function updateAllScrollButtonStates() {
-            document.querySelectorAll('.leader-grid').forEach(grid => {
-                updateScrollButtonStates(grid);
-            });
-        }
-        // --- End of New Scroll Functions ---
         
         function generateBasePrompt() {
             const question = document.getElementById('userQuestion').value.trim();
 
             if (!currentSelectedLeader) {
                 alert("请先选择一位大师！");
-                return ""; // 返回空字符串，外层 if 会判断为 false
+                return "";
             }
             if (!question) {
                 alert("请输入您的问题！");
-                return ""; // 返回空字符串，外层 if 会判断为 false
+                return "";
             }
-
-            // 如果 currentSelectedLeader.remarks 不存在，则用 '无特定备注...'
-            const remarksText = currentSelectedLeader.remarks || '无特定备注，请基于其贡献和领域推断其核心思维模式。';
-            const remarksSection = currentSelectedLeader.remarks 
-                ? `备注中提到的特点 (${currentSelectedLeader.remarks}) 和` 
-                : '';
 
             return `
 背景设定:
@@ -592,12 +469,12 @@
 ${currentSelectedLeader.name} 的核心信息:
 - 主要贡献: ${currentSelectedLeader.contribution}
 - 专业领域: ${currentSelectedLeader.field}
-- 关键备注/特点: ${remarksText}
+- 关键备注/特点: ${currentSelectedLeader.remarks || '无特定备注，请基于其贡献和领域推断其核心思维模式。'}
 
 思考框架指引 (扮演 ${currentSelectedLeader.name} 时请遵循)：
 1.  **第一性原理 (First Principles Thinking)**: 将问题分解到最基本的、不容置疑的真实要素。避免类比推理或依赖普遍接受的假设，除非这些假设已经过严格验证。
 2.  **领域专长**: 运用你在 ${currentSelectedLeader.field} 的深厚知识。如果问题跨领域，尝试从你的核心领域视角寻找切入点或提出独到见解。
-3.  **核心理念/驱动力**: 结合 ${currentSelectedLeader.name} 的 ${remarksSection} 已知贡献，思考其做决策、看待问题时的核心驱动力是什么（例如，技术乐观主义、风险厌恶、社会责任、效率至上、创新驱动、长期主义等）。
+3.  **核心理念/驱动力**: 结合 ${currentSelectedLeader.name} 的 ${currentSelectedLeader.remarks ? '备注中提到的特点 ('+currentSelectedLeader.remarks+') 和':''} 已知贡献，思考其做决策、看待问题时的核心驱动力是什么（例如，技术乐观主义、风险厌恶、社会责任、效率至上、创新驱动、长期主义等）。
 4.  **问题剖析**: 深入分析用户问题的本质，探讨其背后的深层原因和可能的多种解读。
 5.  **解决方案/洞察**: 基于以上思考，提出具有 ${currentSelectedLeader.name} 特色的、富有洞察力的、可能具有前瞻性的观点、分析或解决方案框架。如果适用，可以指出潜在的挑战、机遇或需要进一步探索的方向。
 6.  **语言风格**: 尝试模仿 ${currentSelectedLeader.name} 可能的沟通风格（例如，直接、富有远见、严谨、强调数据、关注伦理等）。如果其风格未知，则采用清晰、专业、有深度的表达。
@@ -617,7 +494,7 @@ ${currentSelectedLeader.name} 的核心信息:
             if (currentGeneratedPrompt) {
                 promptTextElement.textContent = currentGeneratedPrompt.trim();
                 promptDisplayArea.style.display = 'block';
-                 document.getElementById('ai-response-area').style.display = 'none'; 
+                 document.getElementById('ai-response-area').style.display = 'none'; // Hide old AI response
             } else {
                 promptDisplayArea.style.display = 'none';
             }
@@ -643,7 +520,9 @@ ${currentSelectedLeader.name} 的核心信息:
                 return;
             }
 
+            // Ensure the base URL doesn't end with a slash, then add the specific path
             const fullApiUrl = (apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl) + "/v1/chat/completions";
+
 
             aiResponseTextElement.textContent = '';
             aiResponseArea.style.display = 'block';
@@ -652,12 +531,22 @@ ${currentSelectedLeader.name} 的核心信息:
 
             const requestBody = {
                 model: model,
-                messages: [ { role: "user", content: currentGeneratedPrompt } ],
-                temperature: 0.7,
+                messages: [
+                    {
+                        role: "user",
+                        content: currentGeneratedPrompt 
+                    }
+                ],
+                temperature: 0.7, // You can adjust this
+                // stream: false // Default is false, explicit for clarity
             };
 
-            const headers = { 'Content-Type': 'application/json', };
-            if (apiKey) { headers['Authorization'] = `Bearer ${apiKey}`; }
+            const headers = {
+                'Content-Type': 'application/json',
+            };
+            if (apiKey) {
+                headers['Authorization'] = `Bearer ${apiKey}`;
+            }
 
             try {
                 const response = await fetch(fullApiUrl, {
@@ -670,13 +559,16 @@ ${currentSelectedLeader.name} 的核心信息:
                     const errorData = await response.json().catch(() => ({ detail: response.statusText }));
                     throw new Error(`API Error: ${response.status} - ${errorData.detail || errorData.error?.message || 'Unknown error'}`);
                 }
+
                 const data = await response.json();
+                
                 if (data.choices && data.choices.length > 0 && data.choices[0].message) {
                     aiResponseTextElement.textContent = data.choices[0].message.content.trim();
                 } else {
                     aiResponseTextElement.textContent = "未能从API获取有效回复。请检查API响应结构。";
                     console.error("Unexpected API response structure:", data);
                 }
+
             } catch (error) {
                 console.error('Error calling API:', error);
                 aiResponseTextElement.textContent = `请求API时出错: ${error.message}\n\n请检查: \n1. API镜像站URL是否正确且可访问。\n2. 该镜像站是否支持CORS跨域请求。\n3. 网络连接是否正常。\n4. API Key是否正确 (如果需要)。\n5. 控制台(F12)查看详细错误信息。`;
@@ -686,13 +578,11 @@ ${currentSelectedLeader.name} 的核心信息:
             }
         }
 
+
         document.addEventListener('DOMContentLoaded', () => {
-            populateLeaders(); 
+            populateLeaders(); // Make sure your full data arrays are used here
             openTab(null, 'aiQuantum'); 
-            document.querySelector('.tab-button').classList.add('active'); // Ensure first tab button is active
-            // A small delay might be needed for elements to fully render before initial button state update
-            setTimeout(updateAllScrollButtonStates, 100);
-            window.addEventListener('resize', updateAllScrollButtonStates); // Update on resize
+            document.querySelector('.tab-button').classList.add('active');
         });
     </script>
 
