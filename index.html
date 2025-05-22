@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF--8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>对话北极星</title>
     <!-- 引入 Google Font "Poppins" -->
@@ -28,6 +28,7 @@
             font-size: 2.4em;
             font-weight: 600;
             letter-spacing: 0.5px;
+            line-height: 1.3; /* Added for better spacing between lines in H1 */
 
             /* ColorWave Animation */
             background: linear-gradient(
@@ -443,9 +444,18 @@
 
         @media (max-width: 480px) {
             h1 {
-                font-size: 1.5em;
+                font-size: 1.5em; /* Adjusted h1 font size for mobile */
                 letter-spacing: 0.2px;
+                 /* line-height: 1.2;  Adjust if second line font size is smaller */
             }
+            /* Optional: if you want the second line of H1 to be smaller */
+            /*
+            h1 br + span { 
+                font-size: 0.7em; 
+                display: block; 
+                margin-top: 2px;
+            }
+            */
             .container {
                 padding: 10px;
             }
@@ -493,7 +503,7 @@
 <body>
 
     <div class="container">
-        <h1>对话北极星 (让AI点亮你心中永恒的导航)</h1>
+        <h1>对话北极星<br>"让AI点亮你心中永恒的导航"</h1>
 
         <div class="tabs">
             <button class="tab-button active" onclick="openTab(event, 'aiQuantum')">泛AI与量子计算</button>
