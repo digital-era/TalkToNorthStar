@@ -3,16 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>对话北极星 (让AI点亮你心中永恒的导航)</title>
+    <title>对话北极星</title>
+    <!-- 引入 Google Font "Poppins" -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* 保留基础字体 */
             margin: 0;
             padding: 0;
             background-color: #f0f2f5;
             color: #333;
             line-height: 1.6;
         }
+
+        /* --- MODIFIED H1 with colorWave Animation --- */
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            font-size: 2.4em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+
+            /* ColorWave Animation */
+            background: linear-gradient(
+                90deg,
+                #007CF0, /* Bright Blue */
+                #00DFD8, /* Bright Cyan */
+                #7928CA, /* Bright Violet */
+                #FF0080, /* Bright Pink */
+                #F97316, /* Bright Orange */
+                #007CF0  /* Bright Blue - repeat first color for smooth loop */
+            );
+            background-size: 200% auto; /* Gradient is twice as wide as the text */
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: colorWave 7s linear infinite;
+            -webkit-animation: colorWave 7s linear infinite; /* For older Safari */
+        }
+
+        @keyframes colorWave {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 200% 50%; /* Shift by twice the text width to loop the 200% wide gradient */
+            }
+        }
+        /* --- END H1 MODIFICATION --- */
 
         .container {
             width: 90%;
@@ -59,26 +102,31 @@
             display: block;
         }
 
-        /* --- NEW: Leader Scroll Container --- */
+        .tab-content h2 {
+            color: #007bff;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+
         .leader-scroll-container {
             position: relative;
             margin-bottom: 20px;
-            padding: 0 40px; /* Space for absolute positioned buttons */
+            padding: 0 40px;
         }
 
         .leader-grid {
-            display: flex; /* Key change for horizontal layout */
-            overflow-x: auto; /* Allows horizontal scrolling */
-            overflow-y: hidden; /* Hide vertical scrollbar if any content overflows vertically */
-            padding: 10px 0; /* Padding top/bottom */
-            gap: 20px; /* Space between cards */
-            /*border: 1px solid #eee; */ /* Optional: if you want border around scroll area */
+            display: flex;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 10px 0;
+            gap: 20px;
             border-radius: 4px;
-            scroll-behavior: smooth; /* Smooth scrolling via JS */
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+            scroll-behavior: smooth;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
-        .leader-grid::-webkit-scrollbar { /* Hide scrollbar for Chrome, Safari, Opera */
+        .leader-grid::-webkit-scrollbar {
             display: none;
         }
 
@@ -91,8 +139,8 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            flex: 0 0 300px; /* Fixed width for cards, adjust as needed */
-            min-height: 280px; /* Ensure cards have a decent minimum height */
+            flex: 0 0 300px;
+            min-height: 280px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -117,12 +165,12 @@
             font-size: 0.9em;
             margin-bottom: 8px;
             color: #555;
-            flex-grow: 1; /* Allow description to take up space */
+            flex-grow: 1;
         }
          .leader-card .field {
             font-style: italic;
             color: #28a745;
-            margin-top: auto; /* Push field and remarks to bottom if space allows */
+            margin-top: auto;
         }
         .leader-card .remarks {
             font-size: 0.8em;
@@ -132,7 +180,6 @@
             margin-top: 10px;
         }
 
-        /* --- NEW: Scroll Buttons --- */
         .scroll-button {
             position: absolute;
             top: 50%;
@@ -174,7 +221,7 @@
             gap: 15px;
             margin-bottom: 20px;
             align-items: center;
-            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            flex-wrap: wrap;
         }
         .api-config label {
             font-weight: bold;
@@ -184,15 +231,15 @@
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            flex-grow: 1; /* Allow input to take available space */
+            flex-grow: 1;
         }
          .api-config input[type="text"] {
-            min-width: 200px; /* Ensure inputs don't get too small */
+            min-width: 200px;
         }
 
 
         .interaction-area {
-            margin-top: 20px; /* Reduced margin */
+            margin-top: 20px;
             padding-top: 20px;
             border-top: 1px solid #eee;
         }
@@ -219,13 +266,13 @@
         }
 
         .interaction-area button {
-            padding: 10px 15px; /* Adjusted padding */
+            padding: 10px 15px;
             background-color: #007bff;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 0.95em; /* Adjusted font size */
+            font-size: 0.95em;
             transition: background-color 0.3s ease;
         }
         .interaction-area button:hover {
@@ -287,7 +334,7 @@
 <body>
 
     <div class="container">
-        <h1>对话北极星 (AI Powered)</h1>
+        <h1>对话北极星 (让AI点亮你心中永恒的导航)</h1>
 
         <div class="tabs">
             <button class="tab-button active" onclick="openTab(event, 'aiQuantum')">泛AI与量子计算</button>
@@ -314,7 +361,7 @@
         </div>
 
         <div id="chinaEntrepreneurs" class="tab-content">
-            <h2>选择一位中国代表企业家北极星</h2>
+            <h2>选择一位中国代表企业北极星</h2>
              <div class="leader-scroll-container">
                 <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
                 <div class="leader-grid" id="chinaEntrepreneursGrid"></div>
@@ -354,6 +401,7 @@
                     2. 获取 AI 回复
                     <span id="loadingIndicator" style="display:none;" class="loading-spinner"></span>
                 </button>
+                <button id="copyToClipboardButton" onclick="copyContentToClipboard()">3. 拷贝到粘贴板</button>
             </div>
 
             <div id="prompt-display-area" class="response-display" style="display:none;">
@@ -428,7 +476,7 @@
 
         let currentSelectedLeader = null;
         let currentSelectedLeaderCategory = '';
-        let currentGeneratedPrompt = '';
+        let currentGeneratedPrompt = ''; 
 
         function openTab(evt, tabName) {
             let i, tabcontent, tablinks;
@@ -448,7 +496,6 @@
             if (currentSelectedLeader && currentSelectedLeaderCategory !== tabName) {
                 clearSelection();
             }
-            // Update scroll buttons for the newly opened tab
             updateAllScrollButtonStates();
         }
 
@@ -471,9 +518,8 @@
                     card.onclick = () => selectLeader(leader, category, card);
                     grid.appendChild(card);
                 });
-                // Add scroll event listener to update buttons
                 grid.addEventListener('scroll', () => updateScrollButtonStates(grid));
-                updateScrollButtonStates(grid); // Initial check
+                updateScrollButtonStates(grid); 
             }
         }
         
@@ -490,6 +536,8 @@
             currentGeneratedPrompt = ''; 
             document.getElementById('prompt-display-area').style.display = 'none';
             document.getElementById('ai-response-area').style.display = 'none';
+            document.getElementById('generatedPromptText').textContent = '';
+            document.getElementById('aiResponseText').textContent = '';
         }
 
         function selectLeader(leader, category, cardElement) {
@@ -507,6 +555,9 @@
             currentGeneratedPrompt = ''; 
             document.getElementById('prompt-display-area').style.display = 'none';
             document.getElementById('ai-response-area').style.display = 'none';
+            document.getElementById('generatedPromptText').textContent = '';
+            document.getElementById('aiResponseText').textContent = '';
+
 
             if (!document.getElementById(category).classList.contains('active')) {
                 const tabButtons = document.getElementsByClassName("tab-button");
@@ -519,12 +570,11 @@
             }
         }
 
-        // --- NEW: Scroll Functions ---
         function scrollGrid(buttonElement, direction) {
             const scrollContainer = buttonElement.closest('.leader-scroll-container');
             const grid = scrollContainer.querySelector('.leader-grid');
-            const cardWidth = grid.querySelector('.leader-card')?.offsetWidth || 300; // Get actual card width or fallback
-            const scrollAmount = (cardWidth + 20) * 2; // Scroll by width of 2 cards + gap
+            const cardWidth = grid.querySelector('.leader-card')?.offsetWidth || 300; 
+            const scrollAmount = (cardWidth + 20) * 2; 
 
             grid.scrollBy({
                 left: scrollAmount * direction,
@@ -547,10 +597,8 @@
             const clientWidth = gridElement.clientWidth;
 
             leftButton.disabled = scrollLeft <= 0;
-            // Add a small tolerance (e.g., 1px) for the right button due to potential subpixel rendering issues
             rightButton.disabled = scrollLeft >= (scrollWidth - clientWidth -1);
             
-            // Hide buttons if no scrolling is possible
              if (scrollWidth <= clientWidth) {
                 leftButton.style.display = 'none';
                 rightButton.style.display = 'none';
@@ -565,21 +613,19 @@
                 updateScrollButtonStates(grid);
             });
         }
-        // --- End of New Scroll Functions ---
         
         function generateBasePrompt() {
             const question = document.getElementById('userQuestion').value.trim();
 
             if (!currentSelectedLeader) {
                 alert("请先选择一位北极星！");
-                return ""; // 返回空字符串，外层 if 会判断为 false
+                return ""; 
             }
             if (!question) {
                 alert("请输入您的问题！");
-                return ""; // 返回空字符串，外层 if 会判断为 false
+                return ""; 
             }
 
-            // 如果 currentSelectedLeader.remarks 不存在，则用 '无特定备注...'
             const remarksText = currentSelectedLeader.remarks || '无特定备注，请基于其贡献和领域推断其核心思维模式。';
             const remarksSection = currentSelectedLeader.remarks 
                 ? `备注中提到的特点 (${currentSelectedLeader.remarks}) 和` 
@@ -610,21 +656,23 @@ ${currentSelectedLeader.name} 的核心信息:
         }
 
         function generateAndShowPrompt() {
-            currentGeneratedPrompt = generateBasePrompt();
+            currentGeneratedPrompt = generateBasePrompt(); 
             const promptDisplayArea = document.getElementById('prompt-display-area');
             const promptTextElement = document.getElementById('generatedPromptText');
 
             if (currentGeneratedPrompt) {
                 promptTextElement.textContent = currentGeneratedPrompt.trim();
                 promptDisplayArea.style.display = 'block';
-                 document.getElementById('ai-response-area').style.display = 'none'; 
+                document.getElementById('ai-response-area').style.display = 'none'; 
+                document.getElementById('aiResponseText').textContent = ''; 
             } else {
                 promptDisplayArea.style.display = 'none';
+                promptTextElement.textContent = '';
             }
         }
 
         async function getAIResponse() {
-            if (!currentGeneratedPrompt) {
+            if (!currentGeneratedPrompt) { 
                 alert("请先点击“1. 生成 Prompt”来准备对话内容。");
                 return;
             }
@@ -645,14 +693,14 @@ ${currentSelectedLeader.name} 的核心信息:
 
             const fullApiUrl = (apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl) + "/v1/chat/completions";
 
-            aiResponseTextElement.textContent = '';
+            aiResponseTextElement.textContent = ''; 
             aiResponseArea.style.display = 'block';
             loadingIndicator.style.display = 'inline-block';
             getAIResponseButton.disabled = true;
 
             const requestBody = {
                 model: model,
-                messages: [ { role: "user", content: currentGeneratedPrompt } ],
+                messages: [ { role: "user", content: currentGeneratedPrompt } ], 
                 temperature: 0.7,
             };
 
@@ -686,13 +734,44 @@ ${currentSelectedLeader.name} 的核心信息:
             }
         }
 
+        async function copyContentToClipboard() {
+            const aiResponseArea = document.getElementById('ai-response-area');
+            const aiResponseTextElement = document.getElementById('aiResponseText');
+            const promptDisplayArea = document.getElementById('prompt-display-area');
+            const generatedPromptTextElement = document.getElementById('generatedPromptText');
+            
+            let textToCopy = '';
+            let contentType = ''; 
+
+            if (aiResponseArea.style.display !== 'none' && aiResponseTextElement.textContent.trim()) {
+                textToCopy = aiResponseTextElement.textContent.trim();
+                contentType = 'AI 回复';
+            } 
+            else if (promptDisplayArea.style.display !== 'none' && generatedPromptTextElement.textContent.trim()) {
+                textToCopy = generatedPromptTextElement.textContent.trim();
+                contentType = 'Prompt';
+            }
+
+            if (textToCopy) {
+                try {
+                    await navigator.clipboard.writeText(textToCopy);
+                    alert(`${contentType}已拷贝到粘贴板！`);
+                } catch (err) {
+                    console.error('拷贝失败: ', err);
+                    alert(`无法拷贝${contentType}到粘贴板: ${err.message}.\n\n提示：\n1. 确保页面是通过 HTTPS 加载的 (本地 localhost 通常也可以)。\n2. 浏览器可能需要用户交互 (如点击) 才能执行复制操作。\n3. 检查浏览器控制台是否有权限相关的错误信息。\n4. 您可以尝试手动选中内容并按 Ctrl+C (或 Cmd+C) 复制。`);
+                }
+            } else {
+                alert("没有可拷贝的内容。请先生成Prompt或获取AI回复。");
+            }
+        }
+
+
         document.addEventListener('DOMContentLoaded', () => {
             populateLeaders(); 
             openTab(null, 'aiQuantum'); 
-            document.querySelector('.tab-button').classList.add('active'); // Ensure first tab button is active
-            // A small delay might be needed for elements to fully render before initial button state update
+            document.querySelector('.tab-button').classList.add('active'); 
             setTimeout(updateAllScrollButtonStates, 100);
-            window.addEventListener('resize', updateAllScrollButtonStates); // Update on resize
+            window.addEventListener('resize', updateAllScrollButtonStates); 
         });
     </script>
 
