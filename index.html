@@ -4,335 +4,419 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>对话北极星</title>
-    <!-- 引入 Google Font "Poppins" -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+
 
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* 保留基础字体 */
-            margin: 0;
-            padding: 0;
-            background-color: #f0f2f5;
-            color: #333;
-            line-height: 1.6;
+        :root {
+            --bg-primary: #1a1a2e; /* Deep space blue/purple */
+            --bg-secondary: #2c2c3e; /* Slightly lighter for containers */
+            --bg-tertiary: #252535; /* For inputs, code blocks */
+            --bg-hover: #3a3a52;
+            --text-primary: #e0e0e0; /* Light grey for primary text */
+            --text-secondary: #b0b0c0; /* Muted grey for secondary text */
+            --text-tertiary: #8a8a9e; /* Even more muted */
+            --accent-primary: #3c82f6; /* A vibrant blue for main actions */
+            --accent-secondary: #88aaff; /* Lighter blue for highlights, active states */
+            --border-color: #4a4a6a; /* Subtle border */
+            --border-active: var(--accent-secondary);
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --card-shadow: 0 6px 12px -2px var(--shadow-color), 0 4px 8px -4px var(--shadow-color);
+            --card-hover-shadow: 0 10px 20px -3px var(--shadow-color), 0 6px 12px -5px var(--shadow-color);
+            --input-shadow-focus: 0 0 0 3px rgba(60, 130, 246, 0.3);
         }
 
-        /* --- MODIFIED H1 with colorWave Animation --- */
-        h1 {
-            font-family: 'Poppins', sans-serif;
-            text-align: center;
-            margin-top: 30px;
-            margin-bottom: 30px;
-            font-size: 2.4em;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            line-height: 1.3; /* Added for better spacing between lines in H1 */
+        body {
+            font-family: 'Noto Sans SC', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.65; /* Slightly more spacious */
+            transition: background-color 0.3s, color 0.3s;
+        }
 
-            /* ColorWave Animation */
+        h1 {
+            font-family: 'Poppins', 'Noto Sans SC', sans-serif;
+            text-align: center;
+            margin-top: 40px; /* Increased top margin */
+            margin-bottom: 40px; /* Increased bottom margin */
+            font-size: 2.8em; /* Slightly larger */
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            line-height: 1.35;
             background: linear-gradient(
                 90deg,
-                #007CF0, /* Bright Blue */
-                #00DFD8, /* Bright Cyan */
-                #7928CA, /* Bright Violet */
-                #FF0080, /* Bright Pink */
-                #F97316, /* Bright Orange */
-                #007CF0  /* Bright Blue - repeat first color for smooth loop */
+                #00A9FF, /* Bright Blue */
+                #A0E9FF, /* Lighter Cyan */
+                #CD82FF, /* Lavender */
+                #FF7FDD, /* Pinkish */
+                #FFBF86, /* Peach */
+                #00A9FF
             );
-            background-size: 200% auto; /* Gradient is twice as wide as the text */
-            color: transparent;
+            background-size: 250% auto;
+            color: transparent; /* Essential for background-clip to work */
             -webkit-background-clip: text;
             background-clip: text;
-            animation: colorWave 7s linear infinite;
-            -webkit-animation: colorWave 7s linear infinite; /* For older Safari */
+            animation: colorWave 8s linear infinite;
+            -webkit-animation: colorWave 8s linear infinite;
         }
 
         @keyframes colorWave {
-            0% {
-                background-position: 0% 50%;
-            }
-            100% {
-                background-position: 200% 50%; /* Shift by twice the text width to loop the 200% wide gradient */
-            }
+            0% { background-position: 0% 50%; }
+            100% { background-position: 250% 50%; }
         }
-        /* --- END H1 MODIFICATION --- */
 
         .container {
             width: 90%;
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+            max-width: 1300px; /* Slightly wider max-width */
+            margin: 30px auto;
+            padding: 25px 30px; /* Increased padding */
+            background-color: var(--bg-secondary);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25); /* Softer, more diffused shadow */
+            border-radius: 12px; /* More rounded corners */
+            border: 1px solid var(--border-color);
         }
 
         .tabs {
             display: flex;
-            border-bottom: 2px solid #007bff;
-            margin-bottom: 20px;
-            /* Allow wrapping for mobile */
-            flex-wrap: wrap; 
+            border-bottom: 1px solid var(--border-color); /* Thinner, more subtle border */
+            margin-bottom: 25px;
+            flex-wrap: wrap;
         }
 
         .tab-button {
-            padding: 10px 20px;
+            padding: 12px 24px; /* More padding */
             cursor: pointer;
             border: none;
             background-color: transparent;
             font-size: 16px;
-            margin-right: 5px;
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s ease;
-            /* For wrapping */
-            margin-bottom: 5px; 
+            font-weight: 500; /* Medium weight */
+            color: var(--text-secondary);
+            margin-right: 8px;
+            border-bottom: 3px solid transparent; /* Thicker active indicator */
+            transition: all 0.25s ease-out;
+            margin-bottom: -1px; /* To make bottom border align with container's border-bottom */
+            position: relative; /* For pseudo-element underline */
+        }
+        .tab-button::after { /* Subtle underline effect */
+            content: '';
+            position: absolute;
+            bottom: -1px; /* Align with the tab container's border */
+            left: 0;
+            width: 0;
+            height: 3px;
+            background-color: var(--accent-secondary);
+            transition: width 0.3s ease-out;
         }
 
         .tab-button:hover {
-            background-color: #e9ecef;
+            color: var(--text-primary);
+            /* background-color: var(--bg-hover); Optional: subtle hover background */
+        }
+        .tab-button:hover::after {
+            width: 100%;
         }
 
         .tab-button.active {
-            border-bottom-color: #007bff;
-            font-weight: bold;
-            color: #007bff;
+            color: var(--accent-secondary);
+            font-weight: 700; /* Bolder active tab */
+            border-bottom-color: var(--accent-secondary); /* Keep this for immediate visual cue */
+        }
+        .tab-button.active::after {
+            width: 100%; /* Ensure active tab shows full underline */
         }
 
-        .tab-content {
-            display: none;
-        }
 
-        .tab-content.active {
-            display: block;
-        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
-        .tab-content h2 {
-            color: #007bff;
+        .tab-content h2, .interaction-area h2 {
+            color: var(--accent-secondary);
             margin-top: 0;
-            margin-bottom: 15px;
-            font-size: 1.5em; /* Consistent h2 size */
+            margin-bottom: 20px;
+            font-size: 1.6em;
+            font-weight: 500;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
         }
-
 
         .leader-scroll-container {
             position: relative;
-            margin-bottom: 20px;
-            padding: 0 40px; /* Space for desktop scroll buttons */
+            margin-bottom: 25px;
+            padding: 0 50px; /* More space for larger buttons */
         }
 
         .leader-grid {
             display: flex;
             overflow-x: auto;
             overflow-y: hidden;
-            padding: 10px 0;
-            gap: 20px;
-            border-radius: 4px;
+            padding: 15px 5px; /* More vertical padding for cards */
+            gap: 25px; /* Increased gap */
+            border-radius: 8px;
             scroll-behavior: smooth;
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        .leader-grid::-webkit-scrollbar {
-            display: none;
-        }
-
+        .leader-grid::-webkit-scrollbar { display: none; }
 
         .leader-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            background-color: #f9f9f9;
+            border: 1px solid var(--border-color);
+            border-radius: 10px; /* More rounded */
+            padding: 20px;
+            background-color: var(--bg-tertiary); /* Darker card background */
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            flex: 0 0 300px; /* Desktop card width */
-            min-height: 280px; /* Desktop card height */
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smoother transition */
+            box-shadow: var(--card-shadow);
+            flex: 0 0 320px; /* Slightly wider cards */
+            min-height: 300px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
 
         .leader-card:hover, .leader-card.selected {
-            border-color: #007bff;
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
-            transform: translateY(-3px);
+            border-color: var(--border-active);
+            box-shadow: var(--card-hover-shadow);
+            transform: translateY(-5px) scale(1.02); /* Lift and scale effect */
         }
         .leader-card.selected {
-             background-color: #e7f3ff;
+             background-color: #404058; /* Distinct selected background */
+             border-left: 5px solid var(--accent-primary); /* Accent bar for selected */
+             padding-left: 15px;
         }
 
         .leader-card h3 {
             margin-top: 0;
-            color: #0056b3;
-            font-size: 1.1em;
+            color: var(--accent-secondary);
+            font-size: 1.25em; /* Larger heading */
+            font-weight: 500;
         }
 
         .leader-card p {
-            font-size: 0.9em;
-            margin-bottom: 8px;
-            color: #555;
+            font-size: 0.95em;
+            margin-bottom: 10px;
+            color: var(--text-secondary);
             flex-grow: 1;
         }
          .leader-card .field {
             font-style: italic;
-            color: #28a745;
+            color: #68d391; /* A nice green for fields */
             margin-top: auto;
+            font-size: 0.9em;
         }
         .leader-card .remarks {
-            font-size: 0.8em;
-            color: #6c757d;
-            border-left: 3px solid #ffc107;
+            font-size: 0.85em;
+            color: var(--text-tertiary);
+            border-left: 3px solid #f6e05e; /* Yellow for remarks */
             padding-left: 10px;
-            margin-top: 10px;
+            margin-top: 12px;
+            background-color: rgba(246, 224, 94, 0.05); /* Very subtle highlight */
         }
 
         .scroll-button {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background-color: rgba(255, 255, 255, 0.8);
-            border: 1px solid #ccc;
+            background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent */
+            border: 1px solid var(--border-color);
             border-radius: 50%;
-            width: 35px; /* Desktop button size */
-            height: 35px; /* Desktop button size */
-            font-size: 20px;
+            width: 45px; /* Larger buttons */
+            height: 45px;
+            font-size: 24px;
+            color: var(--text-primary);
             font-weight: bold;
             cursor: pointer;
             z-index: 10;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background-color 0.3s, box-shadow 0.3s, width 0.3s, height 0.3s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
         }
         .scroll-button:hover {
-            background-color: #007bff;
+            background-color: var(--accent-primary);
             color: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 10px rgba(60, 130, 246, 0.4);
+            transform: translateY(-50%) scale(1.1);
         }
         .scroll-button:disabled {
-            opacity: 0.5;
+            opacity: 0.4;
             cursor: not-allowed;
+            transform: translateY(-50%) scale(1);
+            background-color: rgba(74, 74, 106, 0.5); /* Muted disabled bg */
         }
-        .scroll-button.left {
-            left: 0px;
-        }
-        .scroll-button.right {
-            right: 0px;
-        }
-
+        .scroll-button.left { left: 0px; }
+        .scroll-button.right { right: 0px; }
 
         .api-config {
             display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 20px; /* Increased gap */
+            margin-bottom: 25px;
             align-items: center;
-            flex-wrap: wrap; /* Allow wrapping by default, good for responsiveness */
+            flex-wrap: wrap;
+            padding: 20px;
+            background-color: var(--bg-tertiary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
         }
-        .api-config > div { /* Target direct children for better control on mobile */
-            display: flex; /* For label and input alignment */
+        .api-config > div {
+            display: flex;
             align-items: center;
-            flex-grow: 1; /* Allow items to grow */
-            flex-basis: 280px; /* Minimum base width before wrapping */
+            flex-grow: 1;
+            flex-basis: 300px; /* Increased base width */
         }
         .api-config label {
-            font-weight: bold;
-            margin-right: 5px;
-            white-space: nowrap; /* Prevent label from breaking lines easily */
+            font-weight: 500; /* Medium weight */
+            margin-right: 10px;
+            color: var(--text-secondary);
+            white-space: nowrap;
         }
         .api-config input[type="text"], .api-config select {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            flex-grow: 1; /* Input takes remaining space in its div */
-            min-width: 150px; /* Prevent input from becoming too small */
+            padding: 10px 12px; /* More padding */
+            border: 1px solid var(--border-color);
+            border-radius: 6px; /* Slightly more rounded */
+            flex-grow: 1;
+            min-width: 180px;
+            background-color: var(--bg-primary); /* Darker input background */
+            color: var(--text-primary);
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
-
+        .api-config input[type="text"]:focus, .api-config select:focus {
+            outline: none;
+            border-color: var(--border-active);
+            box-shadow: var(--input-shadow-focus);
+        }
 
         .interaction-area {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-        }
-
-        .interaction-area h2 {
-            color: #007bff;
-            margin-top: 0;
-            font-size: 1.5em; /* Consistent h2 size */
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-color);
         }
         
         .interaction-area textarea {
-            width: calc(100% - 22px); /* Padding compensation */
-            box-sizing: border-box; /* Include padding and border in the element's total width and height */
-            min-height: 80px;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            margin-bottom: 15px;
-            font-size: 1em;
+            width: calc(100% - 24px); /* Padding compensation */
+            box-sizing: border-box;
+            min-height: 100px; /* Increased min-height */
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            font-size: 1.1em; /* MODIFIED: Was 1em, changed to match .response-display pre */
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .interaction-area textarea:focus {
+            outline: none;
+            border-color: var(--border-active);
+            box-shadow: var(--input-shadow-focus);
         }
 
         .interaction-buttons {
             display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+            gap: 15px; /* Increased gap */
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         .interaction-area button {
-            padding: 10px 15px;
-            background-color: #007bff;
+            padding: 12px 20px; /* Increased padding */
+            background-color: var(--accent-primary);
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 0.95em;
-            transition: background-color 0.3s ease;
-            flex-grow: 1; /* Allow buttons to grow and share space */
-            flex-basis: 150px; /* Minimum width before wrapping/shrinking */
+            font-size: 1em; /* Slightly larger font */
+            font-weight: 500;
+            transition: background-color 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
+            flex-grow: 1;
+            flex-basis: 180px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .interaction-area button:hover {
-            background-color: #0056b3;
+            background-color: #2a6ac7; /* Darken on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+         .interaction-area button:active {
+            transform: translateY(0px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .interaction-area button:disabled {
-            background-color: #aaa;
+            background-color: #555; /* Darker disabled */
+            color: #999;
             cursor: not-allowed;
+            transform: translateY(0);
+            box-shadow: none;
         }
         
         #selected-leader-info {
-            margin-bottom: 15px;
-            padding: 10px;
-            background-color: #e9ecef;
-            border-radius: 4px;
+            margin-bottom: 20px;
+            padding: 12px 15px;
+            background-color: var(--bg-tertiary);
+            border-radius: 6px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            border-left: 4px solid var(--accent-primary);
+        }
+        #selected-leader-info #selectedLeaderName {
+            color: var(--text-primary);
             font-weight: bold;
         }
 
         .response-display {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border: 1px solid #e0e0e0;
-            border-radius: 4px;
+            margin-top: 25px;
+            padding: 20px;
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
         }
         .response-display h4 {
             margin-top:0;
-            color: #333;
+            color: var(--accent-secondary);
+            font-size: 1.1em;
+            font-weight: 500;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 15px;
         }
         .response-display pre {
             white-space: pre-wrap;
             word-wrap: break-word;
-            background-color: #fff;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-            font-size: 0.9em;
-            max-height: 300px;
+            background-color: var(--bg-primary); /* Darker pre background */
+            padding: 15px;
+            border: 1px solid #404052; /* Slightly different border for pre */
+            border-radius: 6px;
+            font-family: 'SF Mono', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+            font-size: 0.95em; /* This is the reference font size */
+            color: var(--text-primary);
+            max-height: 350px; /* Increased max height */
             overflow-y: auto;
         }
+         /* Custom Scrollbar for pre (Webkit) */
+        .response-display pre::-webkit-scrollbar {
+            width: 8px;
+        }
+        .response-display pre::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+        }
+        .response-display pre::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        .response-display pre::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-secondary);
+        }
+
+
         .loading-spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
+            border: 4px solid rgba(255,255,255,0.2); /* Lighter base for spinner on dark */
+            border-top: 4px solid var(--accent-secondary); /* Accent color for spinning part */
             border-radius: 50%;
             width: 20px;
             height: 20px;
@@ -348,160 +432,58 @@
 
         /* --- RESPONSIVE STYLES --- */
         @media (max-width: 768px) {
-            body {
-                line-height: 1.5;
-            }
+            body { line-height: 1.6; }
             h1 {
-                font-size: 1.8em;
-                margin-top: 20px;
-                margin-bottom: 20px;
+                font-size: 2.2em;
+                margin-top: 25px;
+                margin-bottom: 25px;
             }
             .container {
                 width: 95%;
-                padding: 15px;
-                margin-top: 10px;
+                padding: 20px;
+                margin-top: 15px;
             }
-            .tabs {
-                justify-content: flex-start; /* Align wrapped tabs to start */
-            }
-            .tab-button {
-                padding: 8px 12px;
-                font-size: 14px;
-                margin-right: 3px;
-            }
-             .tab-content h2, .interaction-area h2 {
-                font-size: 1.3em;
-            }
+            .tab-button { padding: 10px 18px; font-size: 15px; }
+            .tab-content h2, .interaction-area h2 { font-size: 1.4em; }
 
-            .leader-scroll-container {
-                padding: 0 35px; /* Reduced padding for smaller scroll buttons */
-            }
-            .leader-card {
-                flex: 0 0 240px; /* Smaller cards on tablet */
-                min-height: 250px; /* Adjust height */
-                padding: 12px;
-            }
-            .leader-card h3 {
-                font-size: 1em;
-            }
-            .leader-card p {
-                font-size: 0.8em;
-            }
-            .leader-card .remarks {
-                font-size: 0.75em;
-            }
-            .scroll-button {
-                width: 30px;
-                height: 30px;
-                font-size: 18px;
-            }
-            .scroll-button.left {
-                left: 2px; /* Adjust position with new padding */
-            }
-            .scroll-button.right {
-                right: 2px; /* Adjust position with new padding */
-            }
+            .leader-scroll-container { padding: 0 40px; }
+            .leader-card { flex: 0 0 260px; min-height: 280px; padding: 18px; }
+            .leader-card h3 { font-size: 1.15em; }
+            .scroll-button { width: 40px; height: 40px; font-size: 22px; }
+            .scroll-button.left { left: 5px; }
+            .scroll-button.right { right: 5px; }
 
-            .api-config {
-                flex-direction: column; /* Stack items vertically */
-                align-items: stretch; /* Make items take full width */
-                gap: 12px;
-            }
-            .api-config > div {
-                flex-direction: column; /* Stack label and input */
-                align-items: flex-start;
-                flex-basis: auto; /* Reset basis */
-                width: 100%;
-            }
-            .api-config label {
-                margin-right: 0;
-                margin-bottom: 5px;
-            }
-            .api-config input[type="text"], .api-config select {
-                width: 100%;
-                box-sizing: border-box; /* Ensure padding doesn't overflow */
-                min-width: 0; /* Reset min-width from desktop */
-            }
+            .api-config { flex-direction: column; align-items: stretch; gap: 15px; padding: 15px; }
+            .api-config > div { flex-direction: column; align-items: flex-start; flex-basis: auto; width: 100%; }
+            .api-config label { margin-bottom: 6px; }
+            .api-config input[type="text"], .api-config select { width: 100%; box-sizing: border-box; min-width: 0; }
 
-            .interaction-buttons {
-                flex-direction: column; /* Stack buttons */
-                gap: 8px;
-            }
-            .interaction-area button {
-                width: 100%; /* Make buttons full width */
-                font-size: 0.9em;
-                flex-grow: 0; /* Prevent growing when stacked */
-                flex-basis: auto; /* Reset basis */
-            }
-            .interaction-area textarea {
-                font-size: 0.9em;
-                min-height: 70px;
-            }
-            .response-display pre {
-                font-size: 0.85em;
-            }
+            .interaction-buttons { flex-direction: column; gap: 10px; }
+            .interaction-area button { width: 100%; font-size: 0.95em; }
         }
 
         @media (max-width: 480px) {
-            h1 {
-                font-size: 1.5em; /* Adjusted h1 font size for mobile */
-                letter-spacing: 0.2px;
-                 /* line-height: 1.2;  Adjust if second line font size is smaller */
-            }
-            /* Optional: if you want the second line of H1 to be smaller */
-            /*
-            h1 br + span { 
-                font-size: 0.7em; 
-                display: block; 
-                margin-top: 2px;
-            }
-            */
-            .container {
-                padding: 10px;
-            }
-             .tab-content h2, .interaction-area h2 {
-                font-size: 1.2em;
-                margin-bottom: 10px;
-            }
-            .tab-button {
-                font-size: 13px;
-                padding: 7px 10px;
-            }
+            h1 { font-size: 1.8em; letter-spacing: 0.5px; }
+            .container { padding: 15px; }
+            .tab-content h2, .interaction-area h2 { font-size: 1.25em; margin-bottom: 15px; }
+            .tab-button { font-size: 14px; padding: 8px 12px; }
 
-            .leader-scroll-container {
-                padding: 0 30px; /* Even less padding, buttons closer */
-            }
-            .leader-grid{
-                gap: 15px;
-            }
-            .leader-card {
-                flex: 0 0 75vw; /* One card mostly visible, part of next */
-                min-height: auto; /* Allow height to adjust */
-            }
-            .scroll-button {
-                width: 28px;
-                height: 28px;
-                font-size: 16px;
-            }
-            .scroll-button.left {
-                left: 1px;
-            }
-            .scroll-button.right {
-                right: 1px;
-            }
-            #selected-leader-info {
-                font-size: 0.9em;
-                padding: 8px;
-            }
-            .interaction-area textarea {
-                font-size: 0.85em;
-            }
+            .leader-scroll-container { padding: 0 35px; }
+            .leader-grid{ gap: 20px; }
+            .leader-card { flex: 0 0 80vw; } /* Adjusted for better mobile snapping */
+            .scroll-button { width: 35px; height: 35px; font-size: 20px; }
+            .scroll-button.left { left: 2px; }
+            .scroll-button.right { right: 2px; }
+
+            #selected-leader-info { font-size: 0.9em; padding: 10px; }
+            /* Note: At this breakpoint, textarea and pre already have the same font-size (0.9em) */
+            .interaction-area textarea { font-size: 1em; min-height: 90px;}
+            .response-display pre { font-size: 0.9em; }
         }
-
     </style>
 </head>
 <body>
-
+    <!-- HTML content remains the same -->
     <div class="container">
         <h1>对话北极星<br>"让AI点亮你心中永恒的导航"</h1>
 
@@ -603,6 +585,7 @@
             { id: "fei_fei_li", name: "Fei-Fei Li", contribution: "斯坦福大学教授，创建ImageNet，推动计算机视觉革命，倡导以人为本的AI，开发空间智能初创公司。", field: "人工智能（计算机视觉、伦理AI）。", remarks: "对AI教育与多样性有深远影响。" },
             { id: "andrej_karpathy", name: "Andrej Karpathy", contribution: "前Tesla与OpenAI研究员，开发神经网络与自动驾驶AI，斯坦福深度学习课程联合设计者，AI教育普及者。", field: "人工智能（深度学习、计算机视觉）。", remarks: "以简化复杂AI概念著称，影响下一代研究者。" },
             { id: "mustafa_suleyman", name: "Mustafa Suleyman", contribution: "DeepMind联合创始人，现任微软AI首席执行官，开发情感智能聊天机器人Pi，倡导伦理AI。", field: "人工智能（伦理AI、生成式AI）。", remarks: "在微软领导Copilot等消费级AI产品开发。" },
+            { id: "david_silver", name: "David Silver", contribution: "Google DeepMind首席研究员，领导AlphaGo与AlphaZero的开发，提出强化学习领域的关键算法（如DQN），推动AI在复杂决策任务中的应用。", field: "人工智能（强化学习、深度学习）。", remarks: "其强化学习研究对AI理论和学术影响力显著。" },
             { id: "marc_benioff", name: "Marc Benioff", contribution: "Salesforce首席执行官，推动Agentforce平台，将AI融入企业CRM，倡导AI商业化与社会责任。", field: "人工智能（企业AI、CRM）。", remarks: "通过Salesforce将AI应用于企业数字化转型。" },
             { id: "hartmut_neven", name: "Hartmut Neven", contribution: "Google量子AI实验室主任，领导量子计算研究，推动量子优越性与AI算法优化。", field: "量子计算、人工智能。", remarks: "Google在量子计算领域的核心人物，探索AI与量子交叉应用。" },
             { id: "yoshua_bengio", name: "Yoshua Bengio", contribution: "AI“教父”，蒙 Quebec人工智能研究所（Mila）创始人，2018年图灵奖得主，研究深度学习与AI伦理。", field: "人工智能（深度学习、伦理AI）。", remarks: "与Hinton、LeCun齐名，推动负责任AI发展。" },
@@ -618,6 +601,7 @@
             { id: "carl_icahn", name: "Carl Icahn", contribution: "Icahn Enterprises创始人，通过股东行动主义推动企业重组和价值释放。", field: "激进投资、股权投资、企业重组。", remarks: "以大胆投资和对抗管理层著称，影响美国企业治理格局。" },
             { id: "abigail_johnson", name: "Abigail Johnson", contribution: "富达投资主席兼首席执行官，推动低成本投资产品和数字化金融服务。", field: "资产管理、零售投资、金融科技。", remarks: "管理超4万亿美元资产，推动ETF和加密货币领域创新。" },
             { id: "jamie_dimon", name: "Jamie Dimon", contribution: "摩根大通首席执行官，领导全球最大银行之一，擅长风险管理和金融创新。", field: "投资银行、商业银行、金融管理。", remarks: "2008年金融危机中展现卓越领导力，被视为银行业标杆。" },
+            { id: "vinod_khosla", name: "Vinod Khosla", contribution: "Khosla Ventures创始人，投资支持多家AI与量子计算初创公司（如OpenAI早期投资），推动前沿技术商业化与可持续发展。", field: "人工智能、量子计算、风险投资。", remarks: "作为技术投资领域的先驱，对AI与量子计算交叉领域的战略投资具有深远影响力。" },
             { id: "cathie_wood", name: "Cathie Wood", contribution: "ARK Invest创始人，专注AI、区块链等创新投资，推动主动管理ETF普及。", field: "创新投资、ETF、人工智能与金融科技。", remarks: "以长期投资科技驱动行业著称，吸引年轻投资者。" },
             { id: "larry_fink", name: "Larry Fink", contribution: "贝莱德创始人兼首席执行官，推动ESG投资框架，开发iShares ETF。", field: "资产管理、ESG投资、指数基金。", remarks: "管理超10万亿美元资产，ESG倡导重塑全球投资趋势。" },
             { id: "george_soros", name: "George Soros", contribution: "索罗斯基金创始人，量子基金缔造者，以1992年狙击英镑闻名，提出“反身性”理论。", field: "对冲基金、货币投机、宏观投资。", remarks: "通过开放社会基金会影响政策，其策略深刻影响金融市场。" },
@@ -665,7 +649,6 @@
             if (currentSelectedLeader && currentSelectedLeaderCategory !== tabName) {
                 clearSelection();
             }
-            // Crucial: Update scroll buttons when tab changes, as new grid might be shown/hidden
             updateAllScrollButtonStates(); 
         }
 
@@ -689,7 +672,6 @@
                     grid.appendChild(card);
                 });
                 grid.addEventListener('scroll', () => updateScrollButtonStates(grid));
-                // Initial check after populating
                 updateScrollButtonStates(grid); 
             }
         }
@@ -699,6 +681,7 @@
                 const prevSelectedCard = document.querySelector(`.leader-card.selected[data-category='${currentSelectedLeaderCategory}']`);
                 if (prevSelectedCard) {
                     prevSelectedCard.classList.remove('selected');
+                     prevSelectedCard.style.paddingLeft = ''; // Reset padding
                 }
             }
             currentSelectedLeader = null;
@@ -716,6 +699,7 @@
                  const prevSelectedCard = document.querySelector(`.leader-card.selected[data-category='${currentSelectedLeaderCategory}']`);
                  if (prevSelectedCard) {
                     prevSelectedCard.classList.remove('selected');
+                    prevSelectedCard.style.paddingLeft = ''; // Reset padding from selected state
                  }
             }
 
@@ -723,6 +707,9 @@
             currentSelectedLeaderCategory = category;
             document.getElementById('selectedLeaderName').textContent = leader.name;
             cardElement.classList.add('selected');
+            // Note: The padding-left for selected state is now handled by CSS directly
+            // cardElement.style.paddingLeft = '15px'; // Or whatever the CSS value is for consistency
+
             currentGeneratedPrompt = ''; 
             document.getElementById('prompt-display-area').style.display = 'none';
             document.getElementById('ai-response-area').style.display = 'none';
@@ -734,7 +721,7 @@
                 const tabButtons = document.getElementsByClassName("tab-button");
                 for(let btn of tabButtons) {
                     if(btn.onclick.toString().includes(category)){
-                        btn.click(); // This will also trigger updateAllScrollButtonStates via openTab
+                        btn.click(); 
                         break;
                     }
                 }
@@ -746,14 +733,13 @@
             const grid = scrollContainer.querySelector('.leader-grid');
             const firstCard = grid.querySelector('.leader-card');
             
-            // On mobile, card width can be viewport-dependent, so we get it dynamically.
-            // If no card, default to a reasonable scroll amount.
-            let cardWidth = 250; // Default scroll amount
+            let cardWidth = 320; // Default based on CSS
             if (firstCard) {
                  cardWidth = firstCard.offsetWidth;
             }
             
-            const scrollAmount = (cardWidth + parseInt(getComputedStyle(grid).gap || '20px')) * 1.5; // Scroll 1.5 cards
+            const gap = parseInt(getComputedStyle(grid).gap || '25px');
+            const scrollAmount = (cardWidth + gap) * 1.2; // Scroll ~1.2 cards for a smoother feel
 
             grid.scrollBy({
                 left: scrollAmount * direction,
@@ -762,7 +748,7 @@
         }
 
         function updateScrollButtonStates(gridElement) {
-            if (!gridElement || !gridElement.closest('.tab-content.active')) { // Only update for active tab's grid
+            if (!gridElement || !gridElement.closest('.tab-content.active')) {
                  const scrollContainerInactive = gridElement.closest('.leader-scroll-container');
                  if(scrollContainerInactive) {
                     const leftBtnInactive = scrollContainerInactive.querySelector('.scroll-button.left');
@@ -781,8 +767,6 @@
 
             if (!leftButton || !rightButton) return;
 
-            // Ensure buttons are visible before checking scroll properties
-            // as display:none elements have no width/scrollWidth
             leftButton.style.display = 'flex';
             rightButton.style.display = 'flex';
 
@@ -790,23 +774,24 @@
             const scrollWidth = gridElement.scrollWidth;
             const clientWidth = gridElement.clientWidth;
 
-            // If content is not wide enough to scroll, hide buttons
-            if (scrollWidth <= clientWidth + 1) { // +1 for potential subpixel issues
+            // A small tolerance for floating point inaccuracies
+            const tolerance = 2; 
+
+            if (scrollWidth <= clientWidth + tolerance) {
                 leftButton.style.display = 'none';
                 rightButton.style.display = 'none';
             } else {
-                leftButton.disabled = scrollLeft <= 0;
-                rightButton.disabled = scrollLeft >= (scrollWidth - clientWidth - 1); // -1 for robustness
+                leftButton.disabled = scrollLeft <= tolerance;
+                rightButton.disabled = scrollLeft >= (scrollWidth - clientWidth - tolerance);
             }
         }
         
         function updateAllScrollButtonStates() {
-            // Use a timeout to ensure layout has been updated after tab switch or resize
             setTimeout(() => {
                 document.querySelectorAll('.leader-grid').forEach(grid => {
                     updateScrollButtonStates(grid);
                 });
-            }, 50); // A small delay can help
+            }, 50); 
         }
         
         function generateBasePrompt() {
@@ -846,7 +831,7 @@ ${currentSelectedLeader.name} 的核心信息:
 用户问题:
 "${question}"
 
-请你作为 ${currentSelectedLeader.name}，开始你的思考和回复:
+请你作为 ${currentSelectedLeader.name}，开始你的思考和用中文回复:
 `;
         }
 
@@ -960,16 +945,13 @@ ${currentSelectedLeader.name} 的核心信息:
             }
         }
 
-
         document.addEventListener('DOMContentLoaded', () => {
             populateLeaders(); 
             openTab(null, 'aiQuantum'); 
-            // Ensure the first tab button gets 'active' class if no event is passed
             const firstTabButton = document.querySelector('.tab-button');
             if (firstTabButton && !firstTabButton.classList.contains('active')) {
                  firstTabButton.classList.add('active');
             }
-            // Initial call after DOM is ready and content populated
             updateAllScrollButtonStates(); 
             window.addEventListener('resize', updateAllScrollButtonStates); 
         });
