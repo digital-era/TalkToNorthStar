@@ -813,8 +813,12 @@ ${currentSelectedLeader.name} 的核心信息:
 
             let fullApiUrl = (apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl) + "/v1/chat/completions";
 
-            if(apiBaseUrl == "https://hf-mirror.com") {
+            /*if(apiBaseUrl == "https://hf-mirror.com") {
                 fullApiUrl = "https://proxy-northstar-hsdkbifkpn.cn-hangzhou.fcapp.run"
+            }*/
+
+            if(apiBaseUrl == "generativelanguage.googleapis.com") {
+                fullApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
             }
 
             aiResponseTextElement.textContent = ''; 
@@ -829,7 +833,7 @@ ${currentSelectedLeader.name} 的核心信息:
             };
 
             const headers = { 'Content-Type': 'application/json', };
-            if (apiKey) { headers['Authorization'] = `Bearer ${apiKey}`; }
+            if (apiKey) and (!model.toLowerCase().includes("gemini") ) { headers['Authorization'] = `Bearer ${apiKey}`; }
 
             try {
                 const response = await fetch(fullApiUrl, {
