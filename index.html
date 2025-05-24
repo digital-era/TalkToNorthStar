@@ -903,7 +903,7 @@ ${currentSelectedLeader.name} 的核心信息:
                     // Gemini的错误信息通常在 error.message 中
                     throw new Error(`API Error: ${response.status} - ${errorData.error?.message || errorData.detail || 'Unknown error'}`);
                 }
-                const data = await response.json();
+                data = await response.json();
                 
                 // --- Google Gemini API响应解析 ---
                 if (data.candidates && data.candidates.length > 0 && 
