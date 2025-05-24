@@ -825,13 +825,39 @@ ${currentSelectedLeader.name} 的核心信息:
             aiResponseArea.style.display = 'block';
             loadingIndicator.style.display = 'inline-block';
             getAIResponseButton.disabled = true;
-
-            const requestBody = {
-                model: model,
-                messages: [ { role: "user", content: currentGeneratedPrompt } ], 
-                temperature: 0.7,
-            };
-
+            let requestBody; 
+            if (apiKey && !model.toLowerCase().includes("gemini")) {
+                requestBody = {
+                    model: model,
+                    messages: [ { role: "user", content: currentGeneratedPrompt } ], 
+                    temperature: 0.7,
+                };
+            } else if (apiKey && model.toLowerCase().includes("gemini")) {
+                requestBody = {
+                    contents: [
+                        {
+                            role: "user", // Gemini API 中 'user' 角色
+                            parts: [
+                                {
+                                    text: currentGeneratedPrompt // 用户输入
+                                }
+                            ]
+                        }
+                    ],
+                    generationConfig: { // 将 OpenAI 的 temperature 移到 generationConfig
+                        temperature: 0.7,
+                        // 你还可以添加其他 Gemini generationConfig 参数，例如:
+                        // "topP": 0.95,
+                        // "topK": 40,
+                        // "maxOutputTokens": 2048,
+                    }
+                    // 如果需要，还可以添加 safetySettings 等
+                    // safetySettings: [
+                    //   { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' },
+                    //   // ... 其他安全设置
+                    // ],
+                };
+            }
             const headers = { 'Content-Type': 'application/json', };
             if (apiKey && !model.toLowerCase().includes("gemini"))  { headers['Authorization'] = `Bearer ${apiKey}`; }
 
