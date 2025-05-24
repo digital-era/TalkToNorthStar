@@ -804,8 +804,8 @@ ${currentSelectedLeader.name} 的核心信息:
                 return;
             }
 
-            if (!apiKey) {
-                alert("请输入API Key！");
+            if (apiKey) {
+                alert("输入API Key:", apiKey);
                 return;
             }
 
