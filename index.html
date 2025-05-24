@@ -804,6 +804,11 @@ ${currentSelectedLeader.name} 的核心信息:
                 return;
             }
 
+            if (!apiKey) {
+                alert("请输入API Key！");
+                return;
+            }
+
             let fullApiUrl = (apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl) + "/v1/chat/completions";
 
             if(apiBaseUrl == "https://hf-mirror.com") {
