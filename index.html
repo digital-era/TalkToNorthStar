@@ -860,9 +860,9 @@ ${currentSelectedLeader.name} 的核心信息:
             const headers = { 'Content-Type': 'application/json', };
             if (apiKey && !model.toLowerCase().includes("gemini"))  { headers['Authorization'] = `Bearer ${apiKey}`; }
             
-            let response
-            let errorData
-            let data
+            let response;
+            let errorData;
+            let data;
             if (apiKey && !model.toLowerCase().includes("gemini"))  { 
                 try {
                         response = await fetch(fullApiUrl, {
