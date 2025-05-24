@@ -464,7 +464,7 @@
         <div class="api-config">
             <div>
                 <label for="apiEndpoint">大模型API URL:</label>
-                <input type="text" id="apiEndpoint" value="https://hf-mirror.com" placeholder="例如: https://hf-mirror.com">
+                <input type="text" id="apiEndpoint" value="https://https://generativelanguage.googleapis.com" placeholder="例如: https://https://generativelanguage.googleapis.com">
             </div>
             <div>
                 <label for="apiKey">API Key :</label>
@@ -472,11 +472,10 @@
             </div>
             <div>
                 <label for="apiModel">选择模型:</label>
-                <select id="apiModel">
+                <select id="apiModel">                    
+                    <option value="gemini-2.5-flash-preview-05-20">Gemini-2.5-Flash</option>
                     <option value="gpt-4o-mini">gpt-4o-mini</option>
                     <option value="DeepSeek-V3">DeepSeek-V3</option>
-                    <option value="Gemini-2.5-Flash">Gemini-2.5-Flash</option>
-                    <option value="Claude-3.7-Sonnet">Claude-3.7-Sonnet</option>
                     <!-- Add other compatible models if available -->
                 </select>
             </div>
