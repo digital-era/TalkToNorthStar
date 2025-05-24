@@ -865,7 +865,7 @@ ${currentSelectedLeader.name} 的核心信息:
             let data
             if (apiKey && !model.toLowerCase().includes("gemini"))  { 
                 try {
-                    response = await fetch(fullApiUrl, {
+                        response = await fetch(fullApiUrl, {
                         method: 'POST',
                         headers: headers,
                         body: JSON.stringify(requestBody)
@@ -884,7 +884,7 @@ ${currentSelectedLeader.name} 的核心信息:
                     }
                 } catch (error) {
                     console.error('Error calling API:', error);
-                    aiResponseTextElement.textContent = `请求API时出错: ${error.message}\n\n请检查: \n1. API镜像站URL是否正确且可访问。\n2. 该镜像站是否支持CORS跨域请求。\n3. 网络连接是否正常。\n4. API Key是否正确 (如果需要)。\n5. 控制台(F12)查看详细错误信息。`;
+                    aiResponseTextElement.textContent = `请求API时出错: ${error.message}\n\n请检查: \n1. API URL是否正确且可访问。\n2. 是否支持CORS跨域请求。\n3. 网络连接是否正常。\n4. API Key是否正确 (如果需要)。\n5. 控制台(F12)查看详细错误信息。`;
                 } finally {
                     loadingIndicator.style.display = 'none';
                     getAIResponseButton.disabled = false;
@@ -892,14 +892,14 @@ ${currentSelectedLeader.name} 的核心信息:
             }
         else if (apiKey && model.toLowerCase().includes("gemini")) {
             try {
-                const response = await fetch(fullApiUrl, {
+                    response = await fetch(fullApiUrl, {
                     method: 'POST',
                     headers: headers, // 请确保这里的headers包含了Gemini API所需的API Key（例如：'x-goog-api-key': 'YOUR_API_KEY' 或 Authorization Bearer）
                     body: JSON.stringify(requestBody) // 请确保这里的requestBody结构符合Gemini API的要求（例如：{ "contents": [{ "role": "user", "parts": [{ "text": "Your prompt here" }] }] }）
                 });
 
                 if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({ detail: response.statusText }));
+                    errorData = await response.json().catch(() => ({ detail: response.statusText }));
                     // Gemini的错误信息通常在 error.message 中
                     throw new Error(`API Error: ${response.status} - ${errorData.error?.message || errorData.detail || 'Unknown error'}`);
                 }
@@ -918,7 +918,7 @@ ${currentSelectedLeader.name} 的核心信息:
 
             } catch (error) {
                 console.error('Error calling API:', error);
-                aiResponseTextElement.textContent = `请求API时出错: ${error.message}\n\n请检查: \n1. Gemini API的URL/Endpoint是否正确且可访问 (例如：".../v1beta/models/gemini-pro:generateContent")。\n2. API Key是否正确且有效，并以正确的方式（Header或URL参数）传递。\n3. 网络连接是否正常。\n4. 请求体 (RequestBody) 是否符合Gemini API的要求。\n5. 控制台(F12)查看详细错误信息。`;
+                aiResponseTextElement.textContent = `请求API时出错: ${error.message}\n\n请检查: \n1. Gemini API的URL/Endpoint是否正确且可访问 \n2. API Key是否正确且有效，并以正确的方式（Header或URL参数）传递。\n3. 网络连接是否正常。\n4. 请求体 (RequestBody) 是否符合Gemini API的要求。\n5. 控制台(F12)查看详细错误信息。`;
             } finally {
                 loadingIndicator.style.display = 'none';
                 getAIResponseButton.disabled = false;
