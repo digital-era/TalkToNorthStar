@@ -825,13 +825,13 @@ ${currentSelectedLeader.name} 的核心信息:
             loadingIndicator.style.display = 'inline-block';
             getAIResponseButton.disabled = true;
             let requestBody; 
-            if (apiKey && !model.toLowerCase().includes("gemini")) {
+            if (apiKey && model.toLowerCase().includes("gpt")) {
                 requestBody = {
                     model: model,
                     messages: [ { role: "user", content: currentGeneratedPrompt } ], 
                     temperature: 0.7,
                 };
-            } else if (apiKey && !model.toLowerCase().includes("deepseek")) {
+            } else if (apiKey && model.toLowerCase().includes("deepseek")) {
                 requestBody = {
                     model: model,
                     messages: [ { role: "user", content: currentGeneratedPrompt } ], 
