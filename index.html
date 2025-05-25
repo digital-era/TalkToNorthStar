@@ -22,7 +22,7 @@
             --dark-accent-hover: #3a7bc8; /* 强调色悬停 */
             --dark-selected-bg: #004a8e; /* 选中项背景 */
             --dark-field-text: #4a90e2; /* 领域文本颜色 (原绿色系66bb6a调整为蓝色，调整亮度) */
-            --dark-remarks-border: #ffca28; /* 备注边框 (原黄色系，调整亮度) */
+            --dark-remarks-border: #00DFD8; /* 备注边框 (原黄色系#ffca28，修改为#00DFD8 Bright Cyan, 调整亮度 ) */
             --dark-remarks-text: #bdbdbd; /* 备注文本 */
             --dark-input-bg: #3a3a3a; /* 输入框背景 */
             --dark-input-border: #555555; /* 输入框边框 */
@@ -184,7 +184,7 @@
         }
         .leader-card .remarks {
             font-size: 0.8em;
-            color: #00DFD8; /*原来DARK var(--dark-remarks-text) 修改为亮青色 */
+            color: var(--dark-remarks-text); /*DARK */
             border-left: 3px solid var(--dark-remarks-border); /* DARK */
             padding-left: 10px;
             margin-top: 10px;
