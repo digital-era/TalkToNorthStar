@@ -836,7 +836,7 @@ ${currentSelectedLeader.name} 的核心信息:
                     model: model,
                     messages: [ { role: "user", content: currentGeneratedPrompt } ], 
                     temperature: 0.7,
-                    web_search: true  // 启用网络搜索
+                    // web_search: true  // 启用网络搜索
                 };
             } else if (apiKey && model.toLowerCase().includes("gemini")) {
                 requestBody = {
