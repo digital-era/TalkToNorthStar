@@ -464,7 +464,11 @@
         <div class="api-config">
             <div>
                 <label for="apiEndpoint">大模型API URL:</label>
-                <input type="text" id="apiEndpoint" value="https://generativelanguage.googleapis.com" placeholder="例如: https://generativelanguage.googleapis.com">
+                <select id="apiEndpoint">
+                    <option value="https://generativelanguage.googleapis.com">Google Gemini (generativelanguage.googleapis.com)</option>
+                    <option value="https://api.deepseek.com">DeepSeek (api.deepseek.com)</option>
+                    <option value="https://api.openai.com">OpenAI (api.openai.com)</option>
+                </select>
             </div>
             <div>
                 <label for="apiKey">API Key :</label>
@@ -975,6 +979,71 @@ ${currentSelectedLeader.name} 的核心信息:
             updateAllScrollButtonStates(); 
             window.addEventListener('resize', updateAllScrollButtonStates); 
         });
+
+         // 1. 预设 endpoint 与 model 对应关系
+        const endpointModelMap = {
+            "https://generativelanguage.googleapis.com": [
+                { value: "gemini-2.5-flash-preview-05-20", label: "Gemini-2.5-Flash" }
+            ],
+            "https://api.deepseek.com": [
+                { value: "deepseek-chat", label: "DeepSeek-V3" }
+            ],
+            "https://api.openai.com": [
+                { value: "gpt-4o-mini", label: "gpt-4o-mini" }
+                // 可继续添加更多OpenAI模型
+            ]
+        };
+        
+        // 2. 初始化 endpoint 下拉
+        function populateEndpointSelect() {
+            const endpointSelect = document.getElementById('apiEndpoint');
+            endpointSelect.innerHTML = "";
+            for (const ep in endpointModelMap) {
+                const option = document.createElement('option');
+                option.value = ep;
+                option.textContent = ep;
+                endpointSelect.appendChild(option);
+            }
+        }
+        
+        // 3. 根据 endpoint 设置 model 下拉
+        function updateModelSelectByEndpoint(endpoint) {
+            const modelSelect = document.getElementById('apiModel');
+            modelSelect.innerHTML = "";
+            (endpointModelMap[endpoint] || []).forEach(model => {
+                const option = document.createElement('option');
+                option.value = model.value;
+                option.textContent = model.label;
+                modelSelect.appendChild(option);
+            });
+        }
+        
+        // 4. 根据 model 自动切 endpoint
+        function updateEndpointByModel(modelValue) {
+            for (const ep in endpointModelMap) {
+                if (endpointModelMap[ep].some(m => m.value === modelValue)) {
+                    document.getElementById('apiEndpoint').value = ep;
+                    updateModelSelectByEndpoint(ep);
+                    document.getElementById('apiModel').value = modelValue; // 保持选择
+                    break;
+                }
+            }
+        }
+        
+        // 5. 事件监听
+        document.addEventListener('DOMContentLoaded', () => {
+            populateEndpointSelect();
+            // 默认根据第一个 endpoint 初始化 model
+            updateModelSelectByEndpoint(document.getElementById('apiEndpoint').value);
+        
+            document.getElementById('apiEndpoint').addEventListener('change', function() {
+                updateModelSelectByEndpoint(this.value);
+            });
+            document.getElementById('apiModel').addEventListener('change', function() {
+                updateEndpointByModel(this.value);
+            });
+        });
+
     </script>
 
 </body>
