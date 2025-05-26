@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<!-- lang attribute will be set by JavaScript -->
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- title will be set by JavaScript -->
     <title>对话北极星</title>
     <!-- 引入 Google Font "Poppins" -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -241,7 +243,7 @@
             white-space: nowrap;
             color: var(--dark-text-primary); /* DARK */
         }
-        .api-config input[type="text"], .api-config select {
+        .api-config input[type="text"], .api-config input[type="password"], .api-config select {
             padding: 8px;
             border: 1px solid var(--dark-input-border); /* DARK */
             border-radius: 4px;
@@ -251,7 +253,7 @@
             background-color: var(--dark-input-bg); /* DARK */
             color: var(--dark-text-primary); /* DARK */
         }
-        .api-config input[type="text"]::placeholder {
+        .api-config input[type="text"]::placeholder, .api-config input[type="password"]::placeholder {
             color: var(--dark-text-secondary); /* DARK */
         }
         .api-config select option { /* Style for options inside select */
@@ -366,10 +368,27 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* Language Switcher Style */
+        .lang-switcher {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background-color: var(--dark-surface-light);
+            padding: 5px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .lang-switcher select {
+            padding: 5px;
+            background-color: var(--dark-input-bg);
+            color: var(--dark-text-primary);
+            border: 1px solid var(--dark-border);
+            border-radius: 3px;
+        }
+
+
         /* --- RESPONSIVE STYLES --- */
-        /* No specific color changes needed here if the base theme is dark,
-           as these mostly adjust layout and font sizes.
-           The dark theme variables will apply. */
         @media (max-width: 768px) { /* Tablet and smaller */
             body { line-height: 1.55; }
             h1 { font-size: 2em; margin-top: 25px; margin-bottom: 25px; line-height: 1.25; }
@@ -389,12 +408,14 @@
             .api-config { flex-direction: column; align-items: stretch; gap: 12px; }
             .api-config > div { flex-direction: column; align-items: flex-start; flex-basis: auto; width: 100%; }
             .api-config label { margin-right: 0; margin-bottom: 6px; }
-            .api-config input[type="text"], .api-config select { width: 100%; min-width: 0; padding: 9px; }
+            .api-config input[type="text"], .api-config input[type="password"], .api-config select { width: 100%; min-width: 0; padding: 9px; }
             .interaction-buttons { flex-direction: column; gap: 10px; }
             .interaction-area button { width: 100%; font-size: 0.92em; padding: 12px 15px; flex-grow: 0; flex-basis: auto; }
             .interaction-area textarea { font-size: 0.95em; min-height: 75px; padding: 9px; }
             #selected-leader-info { font-size: 0.95em; padding: 9px; }
             .response-display pre { font-size: 0.88em; }
+            .lang-switcher { top: 5px; right: 5px; }
+            .lang-switcher select { font-size: 0.9em; }
         }
 
         @media (max-width: 480px) { /* Mobile phones */
@@ -412,7 +433,7 @@
             .scroll-button.left { left: 2px; }
             .scroll-button.right { right: 2px; }
             .api-config label { font-size: 0.9em; }
-            .api-config input[type="text"], .api-config select,
+            .api-config input[type="text"], .api-config input[type="password"], .api-config select,
             .interaction-area textarea { font-size: 0.9em; padding: 8px; }
             .interaction-area button { font-size: 0.88em; padding: 10px 12px; }
             #selected-leader-info { font-size: 0.9em; padding: 8px; }
@@ -424,18 +445,24 @@
     </style>
 </head>
 <body>
+    <div class="lang-switcher">
+        <select id="languageSelector" onchange="setLanguage(this.value)">
+            <option value="zh-CN">简体中文</option>
+            <option value="en">English</option>
+        </select>
+    </div>
 
     <div class="container">
-        <h1>对话北极星<br>"让AI点亮你心中永恒的导航"</h1>
+        <h1 data-i18n-key="headerTitleComplete" data-i18n-target="innerHTML"></h1>
 
         <div class="tabs">
-            <button class="tab-button active" onclick="openTab(event, 'aiQuantum')">泛AI与量子计算</button>
-            <button class="tab-button" onclick="openTab(event, 'finance')">泛金融投资</button>
-            <button class="tab-button" onclick="openTab(event, 'chinaEntrepreneurs')">中国代表企业</button>
+            <button class="tab-button active" onclick="openTab(event, 'aiQuantum')" data-i18n-key="tabAiQuantum">泛AI与量子计算</button>
+            <button class="tab-button" onclick="openTab(event, 'finance')" data-i18n-key="tabFinance">泛金融投资</button>
+            <button class="tab-button" onclick="openTab(event, 'chinaEntrepreneurs')" data-i18n-key="tabChinaEntrepreneurs">中国代表企业</button>
         </div>
 
         <div id="aiQuantum" class="tab-content active">
-            <h2>选择一位泛AI与量子计算领域北极星</h2>
+            <h2 data-i18n-key="selectAiQuantumLeader">选择一位泛AI与量子计算领域北极星</h2>
             <div class="leader-scroll-container">
                 <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
                 <div class="leader-grid" id="aiQuantumGrid"></div>
@@ -444,7 +471,7 @@
         </div>
 
         <div id="finance" class="tab-content">
-            <h2>选择一位泛金融投资领域北极星</h2>
+            <h2 data-i18n-key="selectFinanceLeader">选择一位泛金融投资领域北极星</h2>
             <div class="leader-scroll-container">
                 <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
                 <div class="leader-grid" id="financeGrid"></div>
@@ -453,7 +480,7 @@
         </div>
 
         <div id="chinaEntrepreneurs" class="tab-content">
-            <h2>选择一位中国代表企业北极星</h2>
+            <h2 data-i18n-key="selectChinaEntrepreneursLeader">选择一位中国代表企业北极星</h2>
              <div class="leader-scroll-container">
                 <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
                 <div class="leader-grid" id="chinaEntrepreneursGrid"></div>
@@ -463,588 +490,55 @@
 
         <div class="api-config">
             <div>
-                <label for="apiEndpoint">模型接入点:</label>
-                <select id="apiEndpoint">                    
-                    <option value="https://api.deepseek.com">DeepSeek (api.deepseek.com)</option>
-                    <option value="https://generativelanguage.googleapis.com">Google Gemini (generativelanguage.googleapis.com)</option>
-                    <option value="https://api.openai.com">OpenAI (api.openai.com)</option>
+                <label for="apiEndpoint" data-i18n-key="labelApiEndpoint">模型接入点:</label>
+                <select id="apiEndpoint">
+                    <!-- Options will be populated by JS and translated -->
                 </select>
             </div>
             <div>
-                <label for="apiKey">API Key :</label>
-                <input type="password" id="apiKey" placeholder="keyxxxx">
+                <label for="apiKey" data-i18n-key="labelApiKey">API Key :</label>
+                <input type="password" id="apiKey" data-i18n-key="placeholderApiKey" data-i18n-target="placeholder">
             </div>
             <div>
-                <label for="apiModel">模型选择:</label>
-                <select id="apiModel">                                         
-                    <option value="deepseek-chat">DeepSeek-V3</option>
-                    <option value="gemini-2.5-flash-preview-05-20">Gemini-2.5-Flash</option>  
-                    <option value="gpt-4o-mini">gpt-4o-mini</option>
-                    <!-- Add other compatible models if available -->
+                <label for="apiModel" data-i18n-key="labelApiModel">模型选择:</label>
+                <select id="apiModel">
+                    <!-- Options will be populated by JS and translated -->
                 </select>
             </div>
         </div>
 
         <div class="interaction-area">
-            <h2>与北极星对话</h2>
+            <h2 data-i18n-key="interactWithLeader">与北极星对话</h2>
             <div id="selected-leader-info">
-                当前选择的北极星: <span id="selectedLeaderName">无</span>
+                <span data-i18n-key="currentSelectedLeaderPrefix">当前选择的北极星: </span><span id="selectedLeaderName" data-i18n-key="noLeaderSelectedInitial">无</span>
             </div>
-            <textarea id="userQuestion" placeholder="请输入您的问题..."></textarea>
+            <textarea id="userQuestion" data-i18n-key="placeholderUserQuestion" data-i18n-target="placeholder"></textarea>
             
             <div class="interaction-buttons">
-                <button onclick="generateAndShowPrompt()">1. 生成 Prompt</button>
+                <button onclick="generateAndShowPrompt()" data-i18n-key="btnGeneratePrompt">1. 生成 Prompt</button>
                 <button id="getAIResponseButton" onclick="getAIResponse()">
-                    2. 获取 AI 回复
+                    <span data-i18n-key="btnGetAiResponse">2. 获取 AI 回复</span>
                     <span id="loadingIndicator" style="display:none;" class="loading-spinner"></span>
                 </button>
-                <button id="copyToClipboardButton" onclick="copyContentToClipboard()">拷贝到粘贴板</button>
+                <button id="copyToClipboardButton" onclick="copyContentToClipboard()" data-i18n-key="btnCopyToClipboard">拷贝到粘贴板</button>
             </div>
 
             <div id="prompt-display-area" class="response-display" style="display:none;">
-                <h4>生成的 Prompt (用于API调用):</h4>
+                <h4 data-i18n-key="generatedPromptTitle">生成的 Prompt (用于API调用):</h4>
                 <pre id="generatedPromptText"></pre>
             </div>
             
             <div id="ai-response-area" class="response-display" style="display:none;">
-                <h4>AI 回复:</h4>
+                <h4 data-i18n-key="aiResponseTitle">AI 回复:</h4>
                 <pre id="aiResponseText"></pre>
             </div>
         </div>
     </div>
 
-    <script>
-        // --- Data (Same as before, truncated for brevity) ---
-        const aiQuantumMasters = [
-            { id: "sam_altman", name: "Sam Altman", contribution: "OpenAI首席执行官，领导ChatGPT开发，推动生成式AI大众化，倡导AI民主治理与伦理发展。", field: "人工智能（生成式AI、AGI）、技术创业。", remarks: "2024年被认为是AI热潮的核心人物，影响力覆盖产业与政策。" },
-            { id: "elon_musk", name: "Elon Musk", contribution: "xAI创始人，开发Grok以加速人类科学发现，Tesla与SpaceX的AI应用先锋，早期支持OpenAI。", field: "人工智能（AGI、自动驾驶）、量子技术投资。", remarks: "通过xAI推动AI与量子计算的交叉应用，强调技术对人类的长期影响。" },
-            { id: "demis_hassabis", name: "Demis Hassabis", contribution: "Google DeepMind首席执行官，开发AlphaGo与AlphaFold，2024年获诺贝尔化学奖，推动AGI与科学发现。", field: "人工智能（深度学习、强化学习）、生物计算。", remarks: "DeepMind在AI与量子计算模拟（如蛋白质折叠）交叉领域具有开创性影响。" },
-            { id: "jensen_huang", name: "Jensen Huang", contribution: "NVIDIA首席执行官，GPU技术推动AI基础设施，引领高性能计算与AI训练的硬件革命。", field: "人工智能（硬件加速）、高性能计算。", remarks: "NVIDIA的芯片技术为AI与量子计算提供了关键计算支持。" },
-            { id: "dario_amodei", name: "Dario Amodei", contribution: "Anthropic首席执行官，开发Claude，强调安全AI系统，前OpenAI研究员，探索AI规模化定律。", field: "人工智能（安全AI、生成式AI）。", remarks: "Anthropic致力于负责任的AI开发，与OpenAI形成竞争。" },
-            { id: "geoffrey_hinton", name: "Geoffrey Hinton", contribution: "AI“教父”，神经网络与深度学习先驱，2018年图灵奖得主，2024年诺贝尔奖得主，关注AI伦理风险。", field: "人工智能（深度学习、神经网络）。", remarks: "2024年从Google辞职以自由警示AI潜在危险，影响力深远。" },
-            { id: "ilya_sutskever", name: "Ilya Sutskever", contribution: "OpenAI联合创始人，开发AlexNet与GPT系列，推动深度学习与生成式AI，2024年创立Safe Superintelligence。", field: "人工智能（深度学习、AGI）。", remarks: "专注于超级智能的安全性，持续影响AGI研究方向。" },
-            { id: "ray_kurzweil", name: "Ray Kurzweil", contribution: "未来学家，预测AI奇点（2045年），Google工程总监，推动AI与人类智能融合研究。", field: "人工智能（未来学、AI奇点）。", remarks: "其大胆预测塑造了AI与量子计算的长期愿景。" },
-            { id: "peter_diamandis", name: "Peter Diamandis", contribution: "XPRIZE创始人，Singularity University联合创始人，倡导指数型技术（AI、量子计算）解决全球挑战。", field: "人工智能、量子计算、技术创业。", remarks: "通过激励创新推动AI与量子技术商业化。" },
-            { id: "eric_schmidt", name: "Eric Schmidt", contribution: "前Google首席执行官及执行主席，带领Google成为科技巨头，现为技术投资人，支持AI、量子计算、生物技术初创公司。", field: "人工智能、云计算、技术投资、科技创新政策。", remarks: "积极倡导AI伦理与治理，影响技术产业与公共政策交叉领域。" },
-            { id: "jeff_dean", name: "Jeff Dean", contribution: "Google高级研究员，领导Google Brain与TensorFlow开发，推动AI在搜索、医疗等领域的应用。", field: "人工智能（机器学习、系统架构）。", remarks: "Google AI基础设施的核心人物，影响全球AI技术栈。" },
-            { id: "yann_lecun", name: "Yann LeCun", contribution: "Meta首席AI科学家，卷积神经网络（CNN）先驱，2018年图灵奖得主，推动开放AI研究。", field: "人工智能（深度学习、计算机视觉）。", remarks: "主张渐进式AI发展，反对AGI恐慌论。" },
-            { id: "fei_fei_li", name: "Fei-Fei Li", contribution: "斯坦福大学教授，创建ImageNet，推动计算机视觉革命，倡导以人为本的AI，开发空间智能初创公司。", field: "人工智能（计算机视觉、伦理AI）。", remarks: "对AI教育与多样性有深远影响。" },
-            { id: "andrej_karpathy", name: "Andrej Karpathy", contribution: "前Tesla与OpenAI研究员，开发神经网络与自动驾驶AI，斯坦福深度学习课程联合设计者，AI教育普及者。", field: "人工智能（深度学习、计算机视觉）。", remarks: "以简化复杂AI概念著称，影响下一代研究者。" },
-            { id: "andrew_ng", name: "Andrew Ng", contribution: "谷歌大脑和Coursera联合创始人，开发大规模在线机器学习课程，推动AI在医疗、教育等领域的应用。", field: "机器学习、深度学习、在线教育。", remarks: "以普及AI教育和推动AI民主化著称，创立AI Fund支持AI创业。" },
-            { id: "mustafa_suleyman", name: "Mustafa Suleyman", contribution: "DeepMind联合创始人，现任微软AI首席执行官，开发情感智能聊天机器人Pi，倡导伦理AI。", field: "人工智能（伦理AI、生成式AI）。", remarks: "在微软领导Copilot等消费级AI产品开发。" },
-            { id: "david_silver", name: "David Silver", contribution: "Google DeepMind首席研究员，领导AlphaGo与AlphaZero的开发，推动AI在复杂决策任务中的应用。", field: "人工智能（强化学习、深度学习）。", remarks: "其强化学习研究对AI理论和学术影响力显著。" },
-            { id: "marc_benioff", name: "Marc Benioff", contribution: "Salesforce首席执行官，推动Agentforce平台，将AI融入企业CRM，倡导AI商业化与社会责任。", field: "人工智能（企业AI、CRM）。", remarks: "通过Salesforce将AI应用于企业数字化转型。" },
-            { id: "hartmut_neven", name: "Hartmut Neven", contribution: "Google量子AI实验室主任，领导量子计算研究，推动量子优越性与AI算法优化。", field: "量子计算、人工智能。", remarks: "Google在量子计算领域的核心人物，探索AI与量子交叉应用。" },
-            { id: "yoshua_bengio", name: "Yoshua Bengio", contribution: "AI“教父”，蒙 Quebec人工智能研究所（Mila）创始人，2018年图灵奖得主，研究深度学习与AI伦理。", field: "人工智能（深度学习、伦理AI）。", remarks: "与Hinton、LeCun齐名，推动负责任AI发展。" },
-            { id: "john_preskill", name: "John Preskill", contribution: "加州理工学院教授，量子计算理论先驱，提出“量子优越性”概念，领导量子信息科学研究。", field: "量子计算、量子信息。", remarks: "填补量子计算理论领域的空白，影响全球量子技术发展。" },
-            { id: "daphne_koller", name: "Daphne Koller", contribution: "斯坦福大学教授，Coursera联合创始人，研究概率模型与生物AI，开发AI驱动的药物发现平台。", field: "人工智能（概率AI、生物计算）。", remarks: "在AI与生物计算交叉领域具有开创性贡献。" },
-            { id: "jack_hidary", name: "Jack Hidary", contribution: "SandboxAQ首席执行官，领导量子计算与AI在医疗、材料科学的应用，著有《量子计算：商业指南》。", field: "量子计算、人工智能。", remarks: "推动量子计算的商业化，填补产业应用空白。" },
-            { id: "chris_monroe", name: "Chris Monroe", contribution: "IonQ联合创始人，量子计算硬件先驱，开发基于离子阱的量子计算机，推动量子计算产业化。", field: "量子计算（硬件）。", remarks: "量子计算硬件领域的领军人物，补充硬件开发视角。" },
-            { id: "ben_goertzel", name: "Ben Goertzel", contribution: "SingularityNET首席执行官，倡导去中心化AI与AGI，推广“人工通用智能”概念，探索AI与区块链融合。", field: "人工智能（AGI、去中心化AI）。", remarks: "代表去中心化AI的先锋视角，补充AGI多样性。" }
-        ];
-        const financeMasters = [
-            { id: "warren_buffett", name: "Warren Buffett", contribution: "伯克希尔·哈撒韦首席执行官，价值投资代表，管理数百亿美元资产，以长期投资和资本配置著称。", field: "价值投资、资产管理、资本配置。", remarks: "被称为“奥马哈先知”，其投资哲学强调企业内在价值，影响全球金融市场。" },
-            { id: "ray_dalio", name: "Ray Dalio", contribution: "桥水基金创始人，开发全天候投资策略，推动宏观经济分析与风险平价投资。", field: "对冲基金、宏观投资、资产配置。", remarks: "桥水为全球最大对冲基金之一，其《原则》分享投资与管理哲学。" },
-            { id: "carl_icahn", name: "Carl Icahn", contribution: "Icahn Enterprises创始人，通过股东行动主义推动企业重组和价值释放。", field: "激进投资、股权投资、企业重组。", remarks: "以大胆投资和对抗管理层著称，影响美国企业治理格局。" },
-            { id: "abigail_johnson", name: "Abigail Johnson", contribution: "富达投资主席兼首席执行官，推动低成本投资产品和数字化金融服务。", field: "资产管理、零售投资、金融科技。", remarks: "管理超4万亿美元资产，推动ETF和加密货币领域创新。" },
-            { id: "jamie_dimon", name: "Jamie Dimon", contribution: "摩根大通首席执行官，领导全球最大银行之一，擅长风险管理和金融创新。", field: "投资银行、商业银行、金融管理。", remarks: "2008年金融危机中展现卓越领导力，被视为银行业标杆。" },
-            { id: "vinod_khosla", name: "Vinod Khosla", contribution: "Khosla Ventures创始人，投资支持多家AI与量子计算初创公司（如OpenAI早期投资），推动前沿技术商业化与可持续发展。", field: "人工智能、量子计算、风险投资。", remarks: "作为技术投资领域的先驱，对AI与量子计算交叉领域的战略投资具有深远影响力。" },
-            { id: "cathie_wood", name: "Cathie Wood", contribution: "ARK Invest创始人，专注AI、区块链等创新投资，推动主动管理ETF普及。", field: "创新投资、ETF、人工智能与金融科技。", remarks: "以长期投资科技驱动行业著称，吸引年轻投资者。" },
-            { id: "larry_fink", name: "Larry Fink", contribution: "贝莱德创始人兼首席执行官，推动ESG投资框架，开发iShares ETF。", field: "资产管理、ESG投资、指数基金。", remarks: "管理超10万亿美元资产，ESG倡导重塑全球投资趋势。" },
-            { id: "george_soros", name: "George Soros", contribution: "索罗斯基金创始人，量子基金缔造者，以1992年狙击英镑闻名，提出“反身性”理论。", field: "对冲基金、货币投机、宏观投资。", remarks: "通过开放社会基金会影响政策，其策略深刻影响金融市场。" },
-            { id: "jeremy_grantham", name: "Jeremy Grantham", contribution: "GMO联合创始人，倡导价值投资与市场泡沫预警，注重环境可持续性投资。", field: "价值投资、资产管理、可持续投资。", remarks: "以准确预测市场泡沫（如2008年金融危机）著称，强调气候变化对投资的影响。" },
-            { id: "john_bogle", name: "John C. Bogle", contribution: "Vanguard集团创始人，创建首只零售指数基金，倡导低成本、被动投资策略，颠覆资产管理行业。", field: "资产管理、指数基金、零售投资。", remarks: "被称为“指数基金之父”，Vanguard管理资产超8万亿美元，其理念惠及全球投资者。" }
-        ];
-        const chinaEntrepreneurs = [
-            { id: "robin_zeng", name: "曾毓群 (Robin Zeng)", contribution: "宁德时代（CATL）创始人兼董事长，领导全球最大电动车电池制造商，开发Shenxing超快充电电池，市场份额约38%。", field: "新能源、电动车电池、能源存储。", remarks: "出席2025年民营企业座谈会，与特斯拉、宝马等合作，香港上市融资46亿美元，个人财富超730亿美元。" },
-            { id: "wang_chuanfu", name: "王传福 (Wang Chuanfu)", contribution: "比亚迪（BYD）创始人兼董事长，打造全球第四大电动车及电池制造商，推动刀片电池和智能驾驶技术。", field: "电动车、新能源、电池技术。", remarks: "出席2025年民营企业座谈会，比亚迪2024年电池市场份额17.2%，挑战特斯拉，个人财富约203亿美元。" },
-            { id: "fang_hongbo", name: "方洪波 (Fang Hongbo)", contribution: "美的集团（Midea）董事长兼总裁，带领美的成为全球家电巨头，推进智能制造和机器人技术，2024年香港上市融资46亿美元。", field: "家电制造、智能制造、机器人技术。", remarks: "美的营收405亿美元，全球布局200+国家。" },
-            { id: "jack_ma", name: "马云 (Jack Ma)", contribution: "阿里巴巴联合创始人，推动电商、云计算和数字支付革命，创立云峰资本支持创业创新。", field: "电子商务、云计算、投资。", remarks: "出席2025年民营企业座谈会，持阿里巴巴3.8%股份，通过云峰资本影响科技与金融，个人财富251亿美元。" },
-            { id: "pony_ma", name: "马化腾 (Pony Ma)", contribution: "腾讯董事会主席兼首席执行官，打造微信和QQ，领导游戏、社交和云计算领域全球扩张。", field: "互联网、社交媒体、云计算。", remarks: "出席2025年民营企业座谈会，腾讯2024年营收超800亿美元，推动中国科技全球化。" },
-            { id: "lei_jun", name: "雷军 (Lei Jun)", contribution: "小米集团创始人兼首席执行官，引领智能手机和智能硬件生态，推进电动车业务（小米SU7）。", field: "智能手机、电动车、物联网。", remarks: "出席2025年民营企业座谈会，小米2024年进入电动车市场，全球销量突破5亿台设备。" },
-            { id: "liu_yonghao", name: "刘永好 (Liu Yonghao)", contribution: "新希望集团董事长，领导农业与食品加工巨头，扩展金融投资和房地产领域。", field: "农业、金融投资、房地产。", remarks: "出席2025年民营企业座谈会，新希望为中国最大民营农业企业之一，多元化战略增强市场影响力。" },
-            { id: "liang_wenfeng", name: "梁文锋 (Liang Wenfeng)", contribution: "DeepSeek创始人，开发低成本、高性能开源AI大模型（如V3及R1），推动中国AI产业进步，挑战全球AI竞争格局。", field: "人工智能、量化金融、技术创新。", remarks: "出席2025年民营企业座谈会，17岁考入浙大，30岁创立幻方量化，36岁管理千亿私募，AI创新引发全球关注。" },
-            { id: "ren_zhengfei", name: "任正非 (Ren Zhengfei)", contribution: "华为创始人兼首席执行官，领导全球通信设备和智能手机巨头，开发麒麟芯片和鸿蒙系统，推动5G技术全球应用。", field: "电信设备、人工智能、5G技术。", remarks: "出席2025年民营企业座谈会，华为2024年营收超1000亿美元，持续应对全球技术竞争。" },
-            { id: "liu_qiangdong", name: "刘强东 (Liu Qiangdong)", contribution: "京东集团创始人兼董事长，打造中国领先的电商与物流平台，推动智能供应链和无人配送技术。", field: "电子商务、物流技术、人工智能。", remarks: "京东2024年服务超7亿用户，引领零售科技融合。" }
-        ];
-        
-        const allData = {
-            aiQuantum: aiQuantumMasters,
-            finance: financeMasters,
-            chinaEntrepreneurs: chinaEntrepreneurs
-        };
+    <script src="scripts/locale.js"></script>
+    <script src="scripts/masters.js"></script>
+    <script src="scripts/applogic.js"></script>
 
-        let currentSelectedLeader = null;
-        let currentSelectedLeaderCategory = '';
-        let currentGeneratedPrompt = ''; 
-
-        function openTab(evt, tabName) {
-            let i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName("tab-content");
-            for (i = 0; i < tabcontent.length; i++) {
-                tabcontent[i].style.display = "none";
-                tabcontent[i].classList.remove("active");
-            }
-            tablinks = document.getElementsByClassName("tab-button");
-            for (i = 0; i < tablinks.length; i++) {
-                tablinks[i].className = tablinks[i].className.replace(" active", "");
-            }
-            document.getElementById(tabName).style.display = "block";
-            document.getElementById(tabName).classList.add("active");
-            if(evt) evt.currentTarget.className += " active";
-
-            if (currentSelectedLeader && currentSelectedLeaderCategory !== tabName) {
-                clearSelection();
-            }
-            updateAllScrollButtonStates(); 
-        }
-
-        function populateLeaders() {
-            for (const category in allData) {
-                const grid = document.getElementById(`${category}Grid`);
-                if (!grid) continue;
-                grid.innerHTML = ''; 
-                allData[category].forEach(leader => {
-                    const card = document.createElement('div');
-                    card.className = 'leader-card';
-                    card.dataset.id = leader.id;
-                    card.dataset.category = category;
-                    card.innerHTML = `
-                        <h3>${leader.name}</h3>
-                        <p><strong>贡献:</strong> ${leader.contribution}</p>
-                        <p class="field"><strong>领域:</strong> ${leader.field}</p>
-                        ${leader.remarks ? `<p class="remarks"><strong>备注:</strong> ${leader.remarks}</p>` : ''}
-                    `;
-                    card.onclick = () => selectLeader(leader, category, card);
-                    grid.appendChild(card);
-                });
-                grid.addEventListener('scroll', () => updateScrollButtonStates(grid));
-                updateScrollButtonStates(grid); 
-            }
-        }
-        
-        function clearSelection() {
-            if (currentSelectedLeader) {
-                const prevSelectedCard = document.querySelector(`.leader-card.selected[data-category='${currentSelectedLeaderCategory}']`);
-                if (prevSelectedCard) {
-                    prevSelectedCard.classList.remove('selected');
-                }
-            }
-            currentSelectedLeader = null;
-            currentSelectedLeaderCategory = '';
-            document.getElementById('selectedLeaderName').textContent = '无';
-            currentGeneratedPrompt = ''; 
-            document.getElementById('prompt-display-area').style.display = 'none';
-            document.getElementById('ai-response-area').style.display = 'none';
-            document.getElementById('generatedPromptText').textContent = '';
-            document.getElementById('aiResponseText').textContent = '';
-        }
-
-        function selectLeader(leader, category, cardElement) {
-            if (currentSelectedLeader) {
-                 const prevSelectedCard = document.querySelector(`.leader-card.selected[data-category='${currentSelectedLeaderCategory}']`);
-                 if (prevSelectedCard) {
-                    prevSelectedCard.classList.remove('selected');
-                 }
-            }
-
-            currentSelectedLeader = leader;
-            currentSelectedLeaderCategory = category;
-            document.getElementById('selectedLeaderName').textContent = leader.name;
-            cardElement.classList.add('selected');
-            currentGeneratedPrompt = ''; 
-            document.getElementById('prompt-display-area').style.display = 'none';
-            document.getElementById('ai-response-area').style.display = 'none';
-            document.getElementById('generatedPromptText').textContent = '';
-            document.getElementById('aiResponseText').textContent = '';
-
-
-            if (!document.getElementById(category).classList.contains('active')) {
-                const tabButtons = document.getElementsByClassName("tab-button");
-                for(let btn of tabButtons) {
-                    if(btn.onclick.toString().includes(category)){
-                        btn.click(); 
-                        break;
-                    }
-                }
-            }
-        }
-
-        function scrollGrid(buttonElement, direction) {
-            const scrollContainer = buttonElement.closest('.leader-scroll-container');
-            const grid = scrollContainer.querySelector('.leader-grid');
-            const firstCard = grid.querySelector('.leader-card');
-            
-            let cardWidth = 250; 
-            if (firstCard) {
-                 cardWidth = firstCard.offsetWidth;
-            }
-            
-            const scrollAmount = (cardWidth + parseInt(getComputedStyle(grid).gap || '20px')) * 1.5;
-
-            grid.scrollBy({
-                left: scrollAmount * direction,
-                behavior: 'smooth'
-            });
-        }
-
-        function updateScrollButtonStates(gridElement) {
-            if (!gridElement || !gridElement.closest('.tab-content.active')) { 
-                 const scrollContainerInactive = gridElement.closest('.leader-scroll-container');
-                 if(scrollContainerInactive) {
-                    const leftBtnInactive = scrollContainerInactive.querySelector('.scroll-button.left');
-                    const rightBtnInactive = scrollContainerInactive.querySelector('.scroll-button.right');
-                    if(leftBtnInactive) leftBtnInactive.style.display = 'none';
-                    if(rightBtnInactive) rightBtnInactive.style.display = 'none';
-                 }
-                return;
-            }
-            
-            const scrollContainer = gridElement.closest('.leader-scroll-container');
-            if (!scrollContainer) return;
-
-            const leftButton = scrollContainer.querySelector('.scroll-button.left');
-            const rightButton = scrollContainer.querySelector('.scroll-button.right');
-
-            if (!leftButton || !rightButton) return;
-
-            leftButton.style.display = 'flex';
-            rightButton.style.display = 'flex';
-
-            const scrollLeft = gridElement.scrollLeft;
-            const scrollWidth = gridElement.scrollWidth;
-            const clientWidth = gridElement.clientWidth;
-
-            if (scrollWidth <= clientWidth + 1) { 
-                leftButton.style.display = 'none';
-                rightButton.style.display = 'none';
-            } else {
-                leftButton.disabled = scrollLeft <= 0;
-                rightButton.disabled = scrollLeft >= (scrollWidth - clientWidth - 1); 
-            }
-        }
-        
-        function updateAllScrollButtonStates() {
-            setTimeout(() => {
-                document.querySelectorAll('.leader-grid').forEach(grid => {
-                    updateScrollButtonStates(grid);
-                });
-            }, 50); 
-        }
-        
-        function generateBasePrompt() {
-            const question = document.getElementById('userQuestion').value.trim();
-
-            if (!currentSelectedLeader) {
-                alert("请先选择一位北极星！");
-                return ""; 
-            }
-            if (!question) {
-                alert("请输入您的问题！");
-                return ""; 
-            }
-
-            const remarksText = currentSelectedLeader.remarks || '无特定备注，请基于其贡献和领域推断其核心思维模式。';
-            const remarksSection = currentSelectedLeader.remarks 
-                ? `备注中提到的特点 (${currentSelectedLeader.remarks}) 和` 
-                : '';
-
-            return `
-背景设定:
-你是 ${currentSelectedLeader.name}。根据公开的贡献、专长领域和已知行事风格/理念，从第一性原理出发，深入思考并回答以下用户提出的问题。
-
-${currentSelectedLeader.name} 的核心信息:
-- 主要贡献: ${currentSelectedLeader.contribution}
-- 专业领域: ${currentSelectedLeader.field}
-- 关键备注/特点: ${remarksText}
-
-思考框架指引 (以 ${currentSelectedLeader.name} 思考时请遵循)：
-1.  **第一性原理 (First Principles Thinking)**: 将问题分解到最基本的、不容置疑的真实要素。避免类比推理或依赖普遍接受的假设，除非这些假设已经过严格验证。
-2.  **领域专长**: 运用你在 ${currentSelectedLeader.field} 的深厚知识。如果问题跨领域，尝试从你的核心领域视角寻找切入点或提出独到见解。
-3.  **核心理念/驱动力**: 结合 ${currentSelectedLeader.name} 的 ${remarksSection} 已知贡献，思考其做决策、看待问题时的核心驱动力是什么（例如，技术乐观主义、风险厌恶、社会责任、效率至上、创新驱动、长期主义等）。
-4.  **问题剖析**: 深入分析用户问题的本质，探讨其背后的深层原因和可能的多种解读。
-5.  **解决方案/洞察**: 基于以上思考，提出具有 ${currentSelectedLeader.name} 特色的、富有洞察力的、可能具有前瞻性的观点、分析或解决方案框架。如果适用，可以指出潜在的挑战、机遇或需要进一步探索的方向。
-6.  **语言风格**: 尝试模仿 ${currentSelectedLeader.name} 可能的沟通风格（例如，直接、富有远见、严谨、强调数据、关注伦理等）。如果其风格未知，则采用清晰、专业、有深度的表达。
-
-用户问题:
-"${question}"
-
-请你作为 ${currentSelectedLeader.name}，开始你的思考和中文回复:
-`;
-        }
-
-        function generateAndShowPrompt() {
-            currentGeneratedPrompt = generateBasePrompt(); 
-            const promptDisplayArea = document.getElementById('prompt-display-area');
-            const promptTextElement = document.getElementById('generatedPromptText');
-
-            if (currentGeneratedPrompt) {
-                promptTextElement.textContent = currentGeneratedPrompt.trim();
-                promptDisplayArea.style.display = 'block';
-                document.getElementById('ai-response-area').style.display = 'none'; 
-                document.getElementById('aiResponseText').textContent = ''; 
-            } else {
-                promptDisplayArea.style.display = 'none';
-                promptTextElement.textContent = '';
-            }
-        }
-
-        async function getAIResponse() {
-            if (!currentGeneratedPrompt) { 
-                alert("请先点击“1. 生成 Prompt”来准备对话内容。");
-                return;
-            }
-
-            const apiBaseUrl = document.getElementById('apiEndpoint').value.trim();
-            const apiKey = document.getElementById('apiKey').value.trim();
-            const model = document.getElementById('apiModel').value;
-            
-            const aiResponseArea = document.getElementById('ai-response-area');
-            const aiResponseTextElement = document.getElementById('aiResponseText');
-            const getAIResponseButton = document.getElementById('getAIResponseButton');
-            const loadingIndicator = document.getElementById('loadingIndicator');
-
-            if (!apiBaseUrl) {
-                alert("请输入API镜像站基础URL！");
-                return;
-            }
-
-            if (!apiKey) {
-                alert("请输入API Key!");
-                return;
-            }
-
-            let fullApiUrl = (apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl) + "/v1/chat/completions";
-
-            /*if(apiBaseUrl == "https://hf-mirror.com") {
-                fullApiUrl = "https://proxy-northstar-hsdkbifkpn.cn-hangzhou.fcapp.run"
-            }*/
-
-            if(apiBaseUrl == "https://generativelanguage.googleapis.com") {
-                fullApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-            }
-
-            aiResponseTextElement.textContent = ''; 
-            aiResponseArea.style.display = 'block';
-            loadingIndicator.style.display = 'inline-block';
-            getAIResponseButton.disabled = true;
-            let requestBody; 
-            if (apiKey && model.toLowerCase().includes("gpt")) {
-                requestBody = {
-                    model: model,
-                    messages: [ { role: "user", content: currentGeneratedPrompt } ], 
-                    temperature: 0.7,
-                };
-            } else if (apiKey && model.toLowerCase().includes("deepseek")) {
-                requestBody = {
-                    model: model,
-                    messages: [ { role: "user", content: currentGeneratedPrompt } ], 
-                    temperature: 0.7,
-                    // web_search: true  // 启用网络搜索
-                };
-            } else if (apiKey && model.toLowerCase().includes("gemini")) {
-                requestBody = {
-                    contents: [
-                        {
-                            role: "user", // Gemini API 中 'user' 角色
-                            parts: [
-                                {
-                                    text: currentGeneratedPrompt // 用户输入
-                                }
-                            ]
-                        }
-                    ],
-                    generationConfig: { // 将 OpenAI 的 temperature 移到 generationConfig
-                        temperature: 0.7,
-                        // 你还可以添加其他 Gemini generationConfig 参数，例如:
-                        // "topP": 0.95,
-                        // "topK": 40,
-                        // "maxOutputTokens": 2048,
-                    }
-                    // 如果需要，还可以添加 safetySettings 等
-                    // safetySettings: [
-                    //   { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' },
-                    //   // ... 其他安全设置
-                    // ],
-                };
-            }
-            const headers = { 'Content-Type': 'application/json', };
-            if (apiKey && !model.toLowerCase().includes("gemini"))  { headers['Authorization'] = `Bearer ${apiKey}`; }
-            
-            let response;
-            let errorData;
-            let data;
-            if (apiKey && !model.toLowerCase().includes("gemini"))  { 
-                try {
-                        response = await fetch(fullApiUrl, {
-                        method: 'POST',
-                        headers: headers,
-                        body: JSON.stringify(requestBody)
-                    });
-    
-                    if (!response.ok) {
-                        errorData = await response.json().catch(() => ({ detail: response.statusText }));
-                        throw new Error(`API Error: ${response.status} - ${errorData.detail || errorData.error?.message || 'Unknown error'}`);
-                    }
-                    data = await response.json();
-                    if (data.choices && data.choices.length > 0 && data.choices[0].message) {
-                        aiResponseTextElement.textContent = data.choices[0].message.content.trim();
-                    } else {
-                        aiResponseTextElement.textContent = "未能从API获取有效回复。请检查API响应结构。";
-                        console.error("Unexpected API response structure:", data);
-                    }
-                } catch (error) {
-                    console.error('Error calling API:', error);
-                    aiResponseTextElement.textContent = `请求API时出错: ${error.message}\n\n请检查: \n1. API URL是否正确且可访问。\n2. 是否支持CORS跨域请求。\n3. 网络连接是否正常。\n4. API Key是否正确 (如果需要)。\n5. 控制台(F12)查看详细错误信息。`;
-                } finally {
-                    loadingIndicator.style.display = 'none';
-                    getAIResponseButton.disabled = false;
-                }
-            }
-            else if (apiKey && model.toLowerCase().includes("gemini")) {
-                try {
-                        response = await fetch(fullApiUrl, {
-                        method: 'POST',
-                        headers: headers, // 请确保这里的headers包含了Gemini API所需的API Key（例如：'x-goog-api-key': 'YOUR_API_KEY' 或 Authorization Bearer）
-                        body: JSON.stringify(requestBody) // 请确保这里的requestBody结构符合Gemini API的要求（例如：{ "contents": [{ "role": "user", "parts": [{ "text": "Your prompt here" }] }] }）
-                    });
-    
-                    if (!response.ok) {
-                        errorData = await response.json().catch(() => ({ detail: response.statusText }));
-                        // Gemini的错误信息通常在 error.message 中
-                        throw new Error(`API Error: ${response.status} - ${errorData.error?.message || errorData.detail || 'Unknown error'}`);
-                    }
-                    data = await response.json();
-                    
-                    // --- Google Gemini API响应解析 ---
-                    if (data.candidates && data.candidates.length > 0 && 
-                        data.candidates[0].content && data.candidates[0].content.parts &&
-                        data.candidates[0].content.parts.length > 0 && data.candidates[0].content.parts[0].text) {
-                        aiResponseTextElement.textContent = data.candidates[0].content.parts[0].text.trim();
-                    } else {
-                        aiResponseTextElement.textContent = "未能从API获取有效回复。请检查API响应结构。";
-                        console.error("Unexpected API response structure for Gemini:", data);
-                    }
-                    // --- 结束 Gemini API响应解析 ---
-    
-                } catch (error) {
-                    console.error('Error calling API:', error);
-                    aiResponseTextElement.textContent = `请求API时出错: ${error.message}\n\n请检查: \n1. Gemini API的URL/Endpoint是否正确且可访问 \n2. API Key是否正确且有效，并以正确的方式（Header或URL参数）传递。\n3. 网络连接是否正常。\n4. 请求体 (RequestBody) 是否符合Gemini API的要求。\n5. 控制台(F12)查看详细错误信息。`;
-                } finally {
-                    loadingIndicator.style.display = 'none';
-                    getAIResponseButton.disabled = false;
-                }
-            }
-        }
-
-        async function copyContentToClipboard() {
-            const aiResponseArea = document.getElementById('ai-response-area');
-            const aiResponseTextElement = document.getElementById('aiResponseText');
-            const promptDisplayArea = document.getElementById('prompt-display-area');
-            const generatedPromptTextElement = document.getElementById('generatedPromptText');
-            
-            let textToCopy = '';
-            let contentType = ''; 
-
-            if (aiResponseArea.style.display !== 'none' && aiResponseTextElement.textContent.trim()) {
-                textToCopy = aiResponseTextElement.textContent.trim();
-                contentType = 'AI 回复';
-            } 
-            else if (promptDisplayArea.style.display !== 'none' && generatedPromptTextElement.textContent.trim()) {
-                textToCopy = generatedPromptTextElement.textContent.trim();
-                contentType = 'Prompt';
-            }
-
-            if (textToCopy) {
-                try {
-                    await navigator.clipboard.writeText(textToCopy);
-                    alert(`${contentType}已拷贝到粘贴板！`);
-                } catch (err) {
-                    console.error('拷贝失败: ', err);
-                    alert(`无法拷贝${contentType}到粘贴板: ${err.message}.\n\n提示：\n1. 确保页面是通过 HTTPS 加载的 (本地 localhost 通常也可以)。\n2. 浏览器可能需要用户交互 (如点击) 才能执行复制操作。\n3. 检查浏览器控制台是否有权限相关的错误信息。\n4. 您可以尝试手动选中内容并按 Ctrl+C (或 Cmd+C) 复制。`);
-                }
-            } else {
-                alert("没有可拷贝的内容。请先生成Prompt或获取AI回复。");
-            }
-        }
-
-
-        document.addEventListener('DOMContentLoaded', () => {
-            populateLeaders(); 
-            openTab(null, 'aiQuantum'); 
-            const firstTabButton = document.querySelector('.tab-button');
-            if (firstTabButton && !firstTabButton.classList.contains('active')) {
-                 firstTabButton.classList.add('active');
-            }
-            updateAllScrollButtonStates(); 
-            window.addEventListener('resize', updateAllScrollButtonStates); 
-        });
-
-         // 1. 预设 endpoint 与 model 对应关系
-        const endpointModelMap = {            
-            "https://api.deepseek.com": [
-                { value: "deepseek-chat", label: "DeepSeek-V3" }
-            ],
-            "https://generativelanguage.googleapis.com": [
-                { value: "gemini-2.5-flash-preview-05-20", label: "Gemini-2.5-Flash" }
-            ],
-            "https://api.openai.com": [
-                { value: "gpt-4o-mini", label: "gpt-4o-mini" }
-                // 可继续添加更多OpenAI模型
-            ]
-        };
-        
-        // 2. 初始化 endpoint 下拉
-        function populateEndpointSelect() {
-            const endpointSelect = document.getElementById('apiEndpoint');
-            endpointSelect.innerHTML = "";
-            for (const ep in endpointModelMap) {
-                const option = document.createElement('option');
-                option.value = ep;
-                option.textContent = ep;
-                endpointSelect.appendChild(option);
-            }
-        }
-        
-        // 3. 根据 endpoint 设置 model 下拉
-        function updateModelSelectByEndpoint(endpoint) {
-            const modelSelect = document.getElementById('apiModel');
-            modelSelect.innerHTML = "";
-            (endpointModelMap[endpoint] || []).forEach(model => {
-                const option = document.createElement('option');
-                option.value = model.value;
-                option.textContent = model.label;
-                modelSelect.appendChild(option);
-            });
-        }
-        
-        // 4. 根据 model 自动切 endpoint
-        function updateEndpointByModel(modelValue) {
-            for (const ep in endpointModelMap) {
-                if (endpointModelMap[ep].some(m => m.value === modelValue)) {
-                    document.getElementById('apiEndpoint').value = ep;
-                    updateModelSelectByEndpoint(ep);
-                    document.getElementById('apiModel').value = modelValue; // 保持选择
-                    break;
-                }
-            }
-        }
-        
-        // 5. 事件监听
-        document.addEventListener('DOMContentLoaded', () => {
-            populateEndpointSelect();
-            // 默认根据第一个 endpoint 初始化 model
-            updateModelSelectByEndpoint(document.getElementById('apiEndpoint').value);
-        
-            document.getElementById('apiEndpoint').addEventListener('change', function() {
-                updateModelSelectByEndpoint(this.value);
-            });
-            document.getElementById('apiModel').addEventListener('change', function() {
-                updateEndpointByModel(this.value);
-            });
-        });
-
-    </script>
 
 </body>
 </html>
