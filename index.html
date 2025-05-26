@@ -464,9 +464,9 @@
         <div class="api-config">
             <div>
                 <label for="apiEndpoint">模型接入点:</label>
-                <select id="apiEndpoint">
-                    <option value="https://generativelanguage.googleapis.com">Google Gemini (generativelanguage.googleapis.com)</option>
+                <select id="apiEndpoint">                    
                     <option value="https://api.deepseek.com">DeepSeek (api.deepseek.com)</option>
+                    <option value="https://generativelanguage.googleapis.com">Google Gemini (generativelanguage.googleapis.com)</option>
                     <option value="https://api.openai.com">OpenAI (api.openai.com)</option>
                 </select>
             </div>
@@ -476,9 +476,9 @@
             </div>
             <div>
                 <label for="apiModel">模型选择:</label>
-                <select id="apiModel">                    
-                    <option value="gemini-2.5-flash-preview-05-20">Gemini-2.5-Flash</option>                    
+                <select id="apiModel">                                         
                     <option value="deepseek-chat">DeepSeek-V3</option>
+                    <option value="gemini-2.5-flash-preview-05-20">Gemini-2.5-Flash</option>  
                     <option value="gpt-4o-mini">gpt-4o-mini</option>
                     <!-- Add other compatible models if available -->
                 </select>
@@ -981,12 +981,12 @@ ${currentSelectedLeader.name} 的核心信息:
         });
 
          // 1. 预设 endpoint 与 model 对应关系
-        const endpointModelMap = {
-            "https://generativelanguage.googleapis.com": [
-                { value: "gemini-2.5-flash-preview-05-20", label: "Gemini-2.5-Flash" }
-            ],
+        const endpointModelMap = {            
             "https://api.deepseek.com": [
                 { value: "deepseek-chat", label: "DeepSeek-V3" }
+            ],
+            "https://generativelanguage.googleapis.com": [
+                { value: "gemini-2.5-flash-preview-05-20", label: "Gemini-2.5-Flash" }
             ],
             "https://api.openai.com": [
                 { value: "gpt-4o-mini", label: "gpt-4o-mini" }
