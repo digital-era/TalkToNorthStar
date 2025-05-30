@@ -78,6 +78,7 @@
                 "promptAs": "请你作为",
                 "promptReplyInChinese": "开始你的思考和中文回复:",
                 "promptReplyInEnglish": "开始你的思考和英文回复:",
+                 "footerRight": "© 2025 AI范式进化. 保留所有权利。",
             },
             "en": {
                 "pageTitle": "Talk with North Stars",
@@ -157,6 +158,7 @@
                 "promptAs": "As",
                 "promptReplyInChinese": "begin your thinking and reply in Chinese:",
                 "promptReplyInEnglish": "begin your thinking and reply in English:",
+                "footerRight": "© 2025 AI Paradigm Evolution. All rights reserved.",
             }
         };
         let currentLang = 'zh-CN'; // Default language
