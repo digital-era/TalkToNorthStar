@@ -466,7 +466,7 @@
 
         <div class="tabs">
             <button class="tab-button active" onclick="openTab(event, 'aiQuantum')" data-i18n-key="tabAiQuantum">泛AI与量子计算</button>
-            <button class="tab-button" onclick="openTab(event, 'finance')" data-i18n-key="tabFinance">泛金融投资</button>
+            <button class="tab-button" onclick="openTab(event, 'finance')" data-i18n-key="tabFinance">泛金融</button>
             <button class="tab-button" onclick="openTab(event, 'chinaEntrepreneurs')" data-i18n-key="tabChinaEntrepreneurs">中国代表企业</button>
         </div>
 
@@ -480,7 +480,7 @@
         </div>
 
         <div id="finance" class="tab-content">
-            <h2 data-i18n-key="selectFinanceLeader">选择一位泛金融投资领域北极星</h2>
+            <h2 data-i18n-key="selectFinanceLeader">选择一位泛金融领域北极星</h2>
             <div class="leader-scroll-container">
                 <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
                 <div class="leader-grid" id="financeGrid"></div>
@@ -524,16 +524,16 @@
             <textarea id="userQuestion" data-i18n-key="placeholderUserQuestion" data-i18n-target="placeholder"></textarea>
             
             <div class="interaction-buttons">
-                <button onclick="generateAndShowPrompt()" data-i18n-key="btnGeneratePrompt">1. 生成 Prompt</button>
+                <button onclick="generateAndShowPrompt()" data-i18n-key="btnGeneratePrompt">1. 生成 问题</button>
                 <button id="getAIResponseButton" onclick="getAIResponse()">
-                    <span data-i18n-key="btnGetAiResponse">2. 获取 AI 回复</span>
+                    <span data-i18n-key="btnGetAiResponse">2. 获取 北极星 回复</span>
                     <span id="loadingIndicator" style="display:none;" class="loading-spinner"></span>
                 </button>
                 <button id="copyToClipboardButton" onclick="copyContentToClipboard()" data-i18n-key="btnCopyToClipboard">拷贝到粘贴板</button>
             </div>
 
             <div id="prompt-display-area" class="response-display" style="display:none;">
-                <h4 data-i18n-key="generatedPromptTitle">生成的 Prompt (用于API调用):</h4>
+                <h4 data-i18n-key="generatedPromptTitle">生成的 问题 (对选择北极星):</h4>
                 <pre id="generatedPromptText"></pre>
             </div>
             
