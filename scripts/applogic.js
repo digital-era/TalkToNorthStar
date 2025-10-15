@@ -1,6 +1,62 @@
-        let currentSelectedLeader = null;
+let currentSelectedLeader = null;
         let currentSelectedLeaderCategory = '';
         let currentGeneratedPrompt = ''; 
+
+        // --- NEW: Modal Control ---
+        const apiSettingsModal = document.getElementById('apiSettingsModal');
+
+        function openApiSettingsModal(event) {
+            if (event) event.preventDefault(); // Prevent default anchor behavior
+            if (apiSettingsModal) apiSettingsModal.style.display = 'block';
+        }
+
+        function closeApiSettingsModal() {
+            if (apiSettingsModal) apiSettingsModal.style.display = 'none';
+        }
+
+        // Close modal if user clicks outside of the modal content
+        window.onclick = function(event) {
+            if (event.target == apiSettingsModal) {
+                closeApiSettingsModal();
+            }
+        }
+
+        // --- NEW: Settings Persistence ---
+        function saveApiSettings() {
+            const endpoint = document.getElementById('apiEndpoint').value;
+            const key = document.getElementById('apiKey').value;
+            const model = document.getElementById('apiModel').value;
+
+            localStorage.setItem('apiEndpoint', endpoint);
+            localStorage.setItem('apiKey', key);
+            localStorage.setItem('apiModel', model);
+            
+            // It's good practice to provide feedback to the user.
+            // Ensure you have a 'settingsSaved' key in your locale.js translations object.
+            alert(translations[currentLang].settingsSaved || 'Settings Saved!'); 
+            closeApiSettingsModal();
+        }
+
+        function loadApiSettings() {
+            const savedEndpoint = localStorage.getItem('apiEndpoint');
+            const savedKey = localStorage.getItem('apiKey');
+            const savedModel = localStorage.getItem('apiModel');
+
+            if (savedEndpoint) {
+                const endpointSelect = document.getElementById('apiEndpoint');
+                endpointSelect.value = savedEndpoint;
+                // Important: Update model list after setting endpoint
+                updateModelSelectByEndpoint(savedEndpoint);
+            }
+            if (savedKey) {
+                document.getElementById('apiKey').value = savedKey;
+            }
+            if (savedModel) {
+                // The model select is now populated based on the loaded endpoint,
+                // so we can safely set its value.
+                document.getElementById('apiModel').value = savedModel;
+            }
+        }
 
         function openTab(evt, tabName) {
             let i, tabcontent, tablinks;
@@ -34,11 +90,8 @@
                     card.dataset.id = leader.id;
                     card.dataset.category = category;
 
-                    // Dynamically get translated content for contribution, field, and remarks
-                    // Fallback to 'zh-CN' if the current language version is missing (shouldn't happen if data is complete)
                     const displayedContribution = leader.contribution[currentLang] || leader.contribution['zh-CN'];
                     const displayedField = leader.field[currentLang] || leader.field['zh-CN'];
-                    // Remarks might be optional, check if the remarks object exists before accessing its language property
                     const displayedRemarks = leader.remarks ? (leader.remarks[currentLang] || leader.remarks['zh-CN']) : '';
 
                     card.innerHTML = `
@@ -89,7 +142,6 @@
             document.getElementById('ai-response-area').style.display = 'none';
             document.getElementById('generatedPromptText').textContent = '';
             document.getElementById('aiResponseText').textContent = '';
-
 
             if (!document.getElementById(category).classList.contains('active')) {
                 const tabButtons = document.getElementsByClassName("tab-button");
@@ -166,7 +218,7 @@
         
         function generateBasePrompt() {
             const question = document.getElementById('userQuestion').value.trim();
-            const lang = currentLang; // Use the currently selected UI language
+            const lang = currentLang;
 
             if (!currentSelectedLeader) {
                 alert(translations[lang].alertSelectLeaderFirst);
@@ -177,10 +229,8 @@
                 return ""; 
             }
 
-            // Get translated content for the prompt
             const leaderContribution = currentSelectedLeader.contribution[lang] || currentSelectedLeader.contribution['zh-CN'];
             const leaderField = currentSelectedLeader.field[lang] || currentSelectedLeader.field['zh-CN'];
-            // Check if remarks object exists and then get the translated value
             const leaderRemarks = currentSelectedLeader.remarks ? (currentSelectedLeader.remarks[lang] || currentSelectedLeader.remarks['zh-CN']) : '';
 
             const remarksText = leaderRemarks || translations[lang].promptBaseRemarksNone;
@@ -213,7 +263,6 @@ ${translations[lang].promptUserQuestion}
 ${translations[lang].promptAs} ${currentSelectedLeader.name}, ${translations[lang][replyInstructionKey]}
 `;
         }
-
 
         function generateAndShowPrompt() {
             currentGeneratedPrompt = generateBasePrompt(); 
@@ -387,7 +436,7 @@ ${translations[lang].promptAs} ${currentSelectedLeader.name}, ${translations[lan
                 { value: "deepseek-chat", labelKey: "modelDeepSeekV3" }
             ],
             "https://generativelanguage.googleapis.com": [
-                { value: "gemini-2.5-flash-preview-05-20", labelKey: "modelGeminiFlash" }
+                { value: "gemini-1.5-flash-latest", labelKey: "modelGeminiFlash" }
             ],
             "https://api.openai.com": [
                 { value: "gpt-4o-mini", labelKey: "modelGpt4oMini" }
@@ -407,15 +456,14 @@ ${translations[lang].promptAs} ${currentSelectedLeader.name}, ${translations[lan
         
         function updateModelSelectByEndpoint(endpoint) {
             const modelSelect = document.getElementById('apiModel');
-            const currentModelValue = modelSelect.value; // Preserve selection if possible
-            modelSelect.innerHTML = ""; // Clear existing options
+            const currentModelValue = modelSelect.value;
+            modelSelect.innerHTML = "";
             (endpointModelMap[endpoint] || []).forEach(model => {
                 const option = document.createElement('option');
                 option.value = model.value;
-                option.textContent = translations[currentLang][model.labelKey] || model.labelKey; // Use translated label
+                option.textContent = translations[currentLang][model.labelKey] || model.labelKey;
                 modelSelect.appendChild(option);
             });
-             // Try to reselect the previous model if it still exists for this endpoint
             if (Array.from(modelSelect.options).some(opt => opt.value === currentModelValue)) {
                 modelSelect.value = currentModelValue;
             }
@@ -425,8 +473,8 @@ ${translations[lang].promptAs} ${currentSelectedLeader.name}, ${translations[lan
             for (const ep in endpointModelMap) {
                 if (endpointModelMap[ep].some(m => m.value === modelValue)) {
                     document.getElementById('apiEndpoint').value = ep;
-                    updateModelSelectByEndpoint(ep); // This will repopulate and translate
-                    document.getElementById('apiModel').value = modelValue; // Ensure correct model is selected
+                    updateModelSelectByEndpoint(ep);
+                    document.getElementById('apiModel').value = modelValue;
                     break;
                 }
             }
@@ -441,14 +489,14 @@ ${translations[lang].promptAs} ${currentSelectedLeader.name}, ${translations[lan
             } else if (browserLang.startsWith('en') && translations['en']) {
                 currentLang = 'en';
             } else {
-                currentLang = 'zh-CN'; // Default
+                currentLang = 'zh-CN';
             }
             document.getElementById('languageSelector').value = currentLang;
 
-            populateEndpointSelect();
-            updateModelSelectByEndpoint(document.getElementById('apiEndpoint').value); // Initial population
+            populateEndpointSelect(); // Populates endpoints first
+            loadApiSettings(); // Load settings, which will also trigger model list update for the loaded endpoint
         
-            setLanguage(currentLang); // Apply initial language
+            setLanguage(currentLang);
 
             openTab(null, 'aiQuantum'); 
             const firstTabButton = document.querySelector('.tab-button');
