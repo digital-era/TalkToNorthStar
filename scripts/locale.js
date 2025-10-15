@@ -78,6 +78,7 @@
                 "promptAs": "请你作为",
                 "promptReplyInChinese": "开始你的思考和中文回复:",
                 "promptReplyInEnglish": "开始你的思考和英文回复:",
+                "settingsBtnText": "设置",
                  "footerRight": "© 2025 AI范式进化. 保留所有权利。",
             },
             "en": {
@@ -157,7 +158,8 @@
                 "promptUserQuestion": "User Question:",
                 "promptAs": "As",
                 "promptReplyInChinese": "begin your thinking and reply in Chinese:",
-                "promptReplyInEnglish": "begin your thinking and reply in English:",
+                "promptReplyInEnglish": "begin your thinking and reply in English:",                    
+                "settingsBtnText": "Setting",
                 "footerRight": "© 2025 AI Paradigm Evolution. All rights reserved.",
             }
         };
