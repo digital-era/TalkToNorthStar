@@ -551,7 +551,11 @@
     <header>
         <h1 data-i18n-key="headerTitleComplete" data-i18n-target="innerHTML"></h1>
         <div class="top-right-controls">
-            <a href="#" onclick="openApiSettingsModal(event)" class="settings-link" data-i18n-key="settingsButton"><i class="fas fa-cog"></i> <span data-i18n-key="settingsBtnText">设置</span></a>
+            <a href="#" onclick="openApiSettingsModal(event)" class="settings-link">
+            <i class="fas fa-cog"></i>
+            <!-- 保留 span 上的 data-i18n-key -->
+            <span data-i18n-key="settingsBtnText">设置</span>
+            </a>
         </div>
     </header>
 
