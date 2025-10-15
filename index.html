@@ -52,15 +52,16 @@
             max-width: 1200px;
         }
 
-        /* --- MODIFIED: Parent container for buttons --- */
+        /* --- KEY CHANGE: Adjusted vertical position --- */
         .top-right-controls {
             position: absolute;
-            top: 50%;
+            top: 20px; /* 1. CHANGED: From 50% to a fixed value to align with the top */
             right: 20px;
-            transform: translateY(-50%);
-            display: flex; /* Use flexbox for alignment */
-            align-items: center; /* Vertically center items */
-            gap: 15px; /* Add space between items */
+            /* 2. REMOVED: The transform property that caused vertical centering */
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            align-items: center; 
+            gap: 10px; 
         }
 
         .settings-link {
@@ -72,8 +73,9 @@
             padding: 8px 15px;
             border-radius: 5px;
             border: 1px solid var(--dark-border);
-            display: flex; /* Ensure icon and text align well */
+            display: flex; 
             align-items: center;
+            justify-content: center; 
         }
         .settings-link:hover {
             color: var(--dark-accent);
@@ -83,25 +85,22 @@
             margin-right: 6px;
         }
         
-        /* --- NEW/MODIFIED: Styles for the language selector inside the controls --- */
         .language-selector {
-            padding: 8px;
+            padding: 8px; 
             background-color: var(--dark-input-bg);
             color: var(--dark-text-primary);
             border: 1px solid var(--dark-border);
             border-radius: 5px;
             font-size: 0.9rem;
             cursor: pointer;
+            box-sizing: border-box; 
+            width: 100%; 
         }
         .language-selector:hover {
             border-color: var(--dark-accent);
         }
         
-        /* --- REMOVED old .lang-switcher style --- */
-        /* The old .lang-switcher { position: fixed; ... } block has been removed */
-
-
-        /* --- Modal Styles --- */
+        /* --- Modal Styles (No changes below this point) --- */
         .modal {
             display: none;
             position: fixed;
@@ -147,7 +146,6 @@
             margin-right: 12px;
         }
 
-        /* --- Modal Form Styles --- */
         .settings-form .form-group {
             margin-bottom: 20px;
         }
@@ -198,18 +196,18 @@
         h1 {
             font-family: 'Poppins', sans-serif;
             text-align: center;
-            margin-top: 0; /* Adjusted for header */
-            margin-bottom: 0; /* Adjusted for header */
+            margin-top: 0;
+            margin-bottom: 0;
             font-size: 2.4em;
             font-weight: 600;
             letter-spacing: 0.5px;
             line-height: 1.3;
             background: linear-gradient(
                 90deg,
-                #007CF0, /* Bright Blue */
-                #00DFD8, /* Bright Cyan */
-                #7928CA, /* Bright Violet */
-                #007CF0  /* Bright Blue - repeat first color for smooth loop */
+                #007CF0,
+                #00DFD8,
+                #7928CA,
+                #007CF0
             );
             background-size: 200% auto;
             color: transparent;
@@ -229,14 +227,14 @@
             max-width: 1200px;
             margin: 20px auto;
             padding: 20px;
-            background-color: var(--dark-surface); /* DARK */
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); /* DARKER SHADOW */
+            background-color: var(--dark-surface);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
             border-radius: 8px;
         }
 
         .tabs {
             display: flex;
-            border-bottom: 2px solid var(--dark-accent); /* DARK */
+            border-bottom: 2px solid var(--dark-accent);
             margin-bottom: 20px;
             flex-wrap: wrap;
         }
@@ -246,7 +244,7 @@
             cursor: pointer;
             border: none;
             background-color: transparent;
-            color: var(--dark-text-secondary); /* DARK */
+            color: var(--dark-text-secondary);
             font-size: 16px;
             margin-right: 5px;
             border-bottom: 2px solid transparent;
@@ -255,21 +253,21 @@
         }
 
         .tab-button:hover {
-            background-color: var(--dark-surface-light); /* DARK */
-            color: var(--dark-text-primary); /* DARK */
+            background-color: var(--dark-surface-light);
+            color: var(--dark-text-primary);
         }
 
         .tab-button.active {
-            border-bottom-color: var(--dark-accent); /* DARK */
+            border-bottom-color: var(--dark-accent);
             font-weight: bold;
-            color: var(--dark-accent); /* DARK */
+            color: var(--dark-accent);
         }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
         .tab-content h2 {
-            color: var(--dark-accent); /* DARK */
+            color: var(--dark-accent);
             margin-top: 0;
             margin-bottom: 15px;
             font-size: 1.5em;
@@ -295,14 +293,14 @@
         .leader-grid::-webkit-scrollbar { display: none; }
 
         .leader-card {
-            border: 1px solid var(--dark-border); /* DARK */
+            border: 1px solid var(--dark-border);
             border-radius: 8px;
             padding: 15px;
-            background-color: var(--dark-surface-light); /* DARK */
-            color: var(--dark-text-primary); /* DARK */
+            background-color: var(--dark-surface-light);
+            color: var(--dark-text-primary);
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* DARKER SHADOW */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             flex: 0 0 300px;
             min-height: 280px;
             display: flex;
@@ -311,35 +309,35 @@
         }
 
         .leader-card:hover, .leader-card.selected {
-            border-color: var(--dark-accent); /* DARK */
-            box-shadow: 0 4px 10px rgba(0, 149, 255, 0.3); /* DARK (using accent color for shadow) */
+            border-color: var(--dark-accent);
+            box-shadow: 0 4px 10px rgba(0, 149, 255, 0.3);
             transform: translateY(-3px);
         }
         .leader-card.selected {
-             background-color: var(--dark-selected-bg); /* DARK */
+             background-color: var(--dark-selected-bg);
         }
 
         .leader-card h3 {
             margin-top: 0;
-            color: var(--dark-accent); /* DARK - make it stand out */
+            color: var(--dark-accent);
             font-size: 1.1em;
         }
 
         .leader-card p {
             font-size: 0.9em;
             margin-bottom: 8px;
-            color: var(--dark-text-secondary); /* DARK */
+            color: var(--dark-text-secondary);
             flex-grow: 1;
         }
          .leader-card .field {
             font-style: italic;
-            color: var(--dark-field-text); /* DARK */
+            color: var(--dark-field-text);
             margin-top: auto;
         }
         .leader-card .remarks {
             font-size: 0.8em;
-            color: var(--dark-remarks-text); /*DARK */
-            border-left: 3px solid var(--dark-remarks-border); /* DARK */
+            color: var(--dark-remarks-text);
+            border-left: 3px solid var(--dark-remarks-border);
             padding-left: 10px;
             margin-top: 10px;
         }
@@ -348,9 +346,9 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background-color: rgba(50, 50, 50, 0.8); /* DARK */
-            color: var(--dark-text-primary); /* DARK */
-            border: 1px solid var(--dark-border); /* DARK */
+            background-color: rgba(50, 50, 50, 0.8);
+            color: var(--dark-text-primary);
+            border: 1px solid var(--dark-border);
             border-radius: 50%;
             width: 35px;
             height: 35px;
@@ -365,8 +363,8 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .scroll-button:hover {
-            background-color: var(--dark-accent); /* DARK */
-            color: var(--dark-bg); /* DARK - text on accent hover */
+            background-color: var(--dark-accent);
+            color: var(--dark-bg);
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
         .scroll-button:disabled {
@@ -379,11 +377,11 @@
         .interaction-area {
             margin-top: 20px;
             padding-top: 20px;
-            border-top: 1px solid var(--dark-border); /* DARK */
+            border-top: 1px solid var(--dark-border);
         }
 
         .interaction-area h2 {
-            color: var(--dark-accent); /* DARK */
+            color: var(--dark-accent);
             margin-top: 0;
             font-size: 1.5em;
         }
@@ -394,14 +392,14 @@
             min-height: 80px;
             padding: 10px;
             border-radius: 4px;
-            border: 1px solid var(--dark-input-border); /* DARK */
+            border: 1px solid var(--dark-input-border);
             margin-bottom: 15px;
             font-size: 1em;
-            background-color: var(--dark-input-bg); /* DARK */
-            color: var(--dark-text-primary); /* DARK */
+            background-color: var(--dark-input-bg);
+            color: var(--dark-text-primary);
         }
          .interaction-area textarea::placeholder {
-            color: var(--dark-text-secondary); /* DARK */
+            color: var(--dark-text-secondary);
         }
 
         .interaction-buttons {
@@ -413,8 +411,8 @@
 
         .interaction-area button {
             padding: 10px 15px;
-            background-color: var(--dark-accent); /* DARK */
-            color: var(--dark-bg); /* DARK - or white, depending on accent darkness */
+            background-color: var(--dark-accent);
+            color: var(--dark-bg);
             border: none;
             border-radius: 4px;
             cursor: pointer;
@@ -425,50 +423,50 @@
             box-sizing: border-box;
         }
         .interaction-area button:hover {
-            background-color: var(--dark-accent-hover); /* DARK */
+            background-color: var(--dark-accent-hover);
         }
         .interaction-area button:disabled {
-            background-color: #555; /* DARK */
-            color: #999; /* DARK */
+            background-color: #555;
+            color: #999;
             cursor: not-allowed;
         }
         
         #selected-leader-info {
             margin-bottom: 15px;
             padding: 10px;
-            background-color: var(--dark-surface-light); /* DARK */
+            background-color: var(--dark-surface-light);
             border-radius: 4px;
             font-weight: bold;
-            color: var(--dark-text-primary); /* DARK */
+            color: var(--dark-text-primary);
         }
 
         .response-display {
             margin-top: 20px;
             padding: 15px;
-            background-color: var(--dark-surface); /* DARK */
-            border: 1px solid var(--dark-border); /* DARK */
+            background-color: var(--dark-surface);
+            border: 1px solid var(--dark-border);
             border-radius: 4px;
         }
         .response-display h4 {
             margin-top:0;
-            color: var(--dark-text-primary); /* DARK */
+            color: var(--dark-text-primary);
         }
         .response-display pre {
             white-space: pre-wrap;
             word-wrap: break-word;
-            background-color: var(--dark-pre-bg); /* DARK */
+            background-color: var(--dark-pre-bg);
             padding: 10px;
-            border: 1px solid var(--dark-pre-border); /* DARK */
+            border: 1px solid var(--dark-pre-border);
             border-radius: 4px;
             font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
             font-size: 0.9em;
-            color: var(--dark-text-secondary); /* DARK - for pre text */
+            color: var(--dark-text-secondary);
             max-height: 300px;
             overflow-y: auto;
         }
         .loading-spinner {
-            border: 4px solid #555; /* DARK */
-            border-top: 4px solid var(--dark-accent); /* DARK */
+            border: 4px solid #555;
+            border-top: 4px solid var(--dark-accent);
             border-radius: 50%;
             width: 20px;
             height: 20px;
@@ -482,21 +480,17 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* 页脚 */
         footer {
-            text-align: left; /* 左对齐 */
+            text-align: left;
             padding: 20px 50px;
             background: rgba(0, 0, 0, 0.5);
         }
 
-
-        /* --- RESPONSIVE STYLES --- */
-        @media (max-width: 768px) { /* Tablet and smaller */
-            header { padding-top: 20px; /* Reduced padding */ }
+        @media (max-width: 768px) {
+            header { padding-top: 20px; }
              .top-right-controls { 
-                top: 20px; /* Adjust position */
+                top: 20px;
                 right: 15px; 
-                transform: none; /* Remove vertical centering */
                 gap: 10px;
             }
             .settings-link { font-size: 0.9rem; padding: 6px 12px;}
@@ -524,7 +518,7 @@
             .response-display pre { font-size: 0.88em; }
         }
 
-        @media (max-width: 480px) { /* Mobile phones */
+        @media (max-width: 480px) {
             h1 { font-size: 1.6em; letter-spacing: 0.1px; line-height: 1.2; }
             .container { width: 95%; padding: 10px; margin-top: 10px; }
             .tab-content h2, .interaction-area h2 { font-size: 0.9em; margin-bottom: 10px; }
@@ -548,18 +542,14 @@
     </style>
 </head>
 <body>
-    <!-- The language switcher div has been REMOVED from here -->
 
     <header>
         <h1 data-i18n-key="headerTitleComplete" data-i18n-target="innerHTML"></h1>
-        <!-- MODIFIED: Container for both controls -->
         <div class="top-right-controls">
-            <!-- Settings Button -->
             <a href="#" onclick="openApiSettingsModal(event)" class="settings-link">
                 <i class="fas fa-cog"></i>
-                <span data-i18n-key="settingsBtnText">设置</span>
+                <span data-i1e-key="settingsBtnText">设置</span>
             </a>
-            <!-- Language Selector (MOVED here) -->
             <select id="languageSelector" class="language-selector" onchange="setLanguage(this.value)">
                 <option value="zh-CN">简体中文</option>
                 <option value="en">English</option>
@@ -568,7 +558,7 @@
     </header>
 
     <div class="container">
-        <!-- ... (rest of the body content is unchanged) ... -->
+        <!-- ... rest of the body is unchanged ... -->
         <div class="tabs">
             <button class="tab-button active" onclick="openTab(event, 'aiQuantum')" data-i18n-key="tabAiQuantum">泛AI与量子计算</button>
             <button class="tab-button" onclick="openTab(event, 'finance')" data-i18n-key="tabFinance">泛金融</button>
@@ -630,7 +620,6 @@
         </div>
     </div>
     
-    <!-- API Settings Modal -->
     <div id="apiSettingsModal" class="modal">
         <div class="modal-content">
             <span class="close-button" onclick="closeApiSettingsModal()">×</span>
@@ -639,7 +628,6 @@
                 <div class="form-group">
                     <label for="apiEndpoint" data-i18n-key="labelApiEndpoint">模型接入点:</label>
                     <select id="apiEndpoint">
-                        <!-- Options will be populated by JS and translated -->
                     </select>
                 </div>
                 <div class="form-group">
@@ -649,7 +637,6 @@
                 <div class="form-group">
                     <label for="apiModel" data-i18n-key="labelApiModel">模型选择:</label>
                     <select id="apiModel">
-                        <!-- Options will be populated by JS and translated -->
                     </select>
                 </div>
                 <button onclick="saveApiSettings()" class="save-btn">
@@ -664,7 +651,6 @@
     <script src="scripts/masters.js"></script>
     <script src="scripts/applogic.js"></script>
     
-    <!-- 页脚 -->
     <footer>
         <p data-i18n-key="footerRight">© 2025 AI范式进化. 保留所有权利。</p>
     </footer>
