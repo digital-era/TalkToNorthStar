@@ -1,5 +1,5 @@
         // --- Data (Modified to include English translations for contribution, field, remarks) ---
-        const aiQuantumMasters = [
+        const aiMasters = [
             { id: "sam_altman", name: "Sam Altman", 
               contribution: {
                 "zh-CN": "OpenAI首席执行官，领导ChatGPT开发，推动生成式AI大众化，倡导AI民主治理与伦理发展。",
@@ -252,6 +252,51 @@
                 "en": "Applies AI to enterprise digital transformation through Salesforce."
               } 
             },
+            { id: "yoshua_bengio", name: "Yoshua Bengio", 
+              contribution: {
+                "zh-CN": "AI“教父”，蒙 Quebec人工智能研究所（Mila）创始人，2018年图灵奖得主，研究深度学习与AI伦理。",
+                "en": "AI 'Godfather', founder of Quebec Artificial Intelligence Institute (Mila), Turing Award laureate (2018), researches deep learning and AI ethics."
+              }, 
+              field: {
+                "zh-CN": "人工智能（深度学习、伦理AI）。",
+                "en": "Artificial Intelligence (Deep Learning, Ethical AI)."
+              }, 
+              remarks: {
+                "zh-CN": "与Hinton、LeCun齐名，推动负责任AI发展。",
+                "en": "On par with Hinton and LeCun, promotes responsible AI development."
+              } 
+            },   
+            { id: "daphne_koller", name: "Daphne Koller", 
+              contribution: {
+                "zh-CN": "斯坦福大学教授，Coursera联合创始人，研究概率模型与生物AI，开发AI驱动的药物发现平台。",
+                "en": "Stanford University Professor, Coursera co-founder, researches probabilistic models and bio-AI, developed an AI-driven drug discovery platform."
+              }, 
+              field: {
+                "zh-CN": "人工智能（概率AI、生物计算）。",
+                "en": "Artificial Intelligence (Probabilistic AI, Bio-computation)."
+              }, 
+              remarks: {
+                "zh-CN": "在AI与生物计算交叉领域具有开创性贡献。",
+                "en": "Has pioneering contributions in the intersection of AI and bio-computation."
+              } 
+            },
+            { id: "ben_goertzel", name: "Ben Goertzel", 
+              contribution: {
+                "zh-CN": "SingularityNET首席执行官，倡导去中心化AI与AGI，推广“人工通用智能”概念，探索AI与区块链融合。",
+                "en": "CEO of SingularityNET, advocates for decentralized AI and AGI, promotes the concept of 'Artificial General Intelligence', explores the integration of AI and blockchain."
+              }, 
+              field: {
+                "zh-CN": "人工智能（AGI、去中心化AI）。",
+                "en": "Artificial Intelligence (AGI, Decentralized AI)."
+              }, 
+              remarks: {
+                "zh-CN": "代表去中心化AI的先锋视角，补充AGI多样性。",
+                "en": "Represents a pioneering perspective on decentralized AI, adding to the diversity of AGI discussions."
+              } 
+            }
+        ];
+
+        const QuantumMasters = [
             { id: "hartmut_neven", name: "Hartmut Neven", 
               contribution: {
                 "zh-CN": "Google量子AI实验室主任，领导量子计算研究，推动量子优越性与AI算法优化。",
@@ -266,20 +311,6 @@
                 "en": "A key figure in Google's quantum computing efforts, exploring the intersection of AI and quantum."
               } 
             },
-            { id: "yoshua_bengio", name: "Yoshua Bengio", 
-              contribution: {
-                "zh-CN": "AI“教父”，蒙 Quebec人工智能研究所（Mila）创始人，2018年图灵奖得主，研究深度学习与AI伦理。",
-                "en": "AI 'Godfather', founder of Quebec Artificial Intelligence Institute (Mila), Turing Award laureate (2018), researches deep learning and AI ethics."
-              }, 
-              field: {
-                "zh-CN": "人工智能（深度学习、伦理AI）。",
-                "en": "Artificial Intelligence (Deep Learning, Ethical AI)."
-              }, 
-              remarks: {
-                "zh-CN": "与Hinton、LeCun齐名，推动负责任AI发展。",
-                "en": "On par with Hinton and LeCun, promotes responsible AI development."
-              } 
-            },
             { id: "john_preskill", name: "John Preskill", 
               contribution: {
                 "zh-CN": "加州理工学院教授，量子计算理论先驱，提出“量子优越性”概念，领导量子信息科学研究。",
@@ -292,20 +323,6 @@
               remarks: {
                 "zh-CN": "填补量子计算理论领域的空白，影响全球量子技术发展。",
                 "en": "Fills gaps in quantum computing theory, influencing global quantum technology development."
-              } 
-            },
-            { id: "daphne_koller", name: "Daphne Koller", 
-              contribution: {
-                "zh-CN": "斯坦福大学教授，Coursera联合创始人，研究概率模型与生物AI，开发AI驱动的药物发现平台。",
-                "en": "Stanford University Professor, Coursera co-founder, researches probabilistic models and bio-AI, developed an AI-driven drug discovery platform."
-              }, 
-              field: {
-                "zh-CN": "人工智能（概率AI、生物计算）。",
-                "en": "Artificial Intelligence (Probabilistic AI, Bio-computation)."
-              }, 
-              remarks: {
-                "zh-CN": "在AI与生物计算交叉领域具有开创性贡献。",
-                "en": "Has pioneering contributions in the intersection of AI and bio-computation."
               } 
             },
             { id: "jack_hidary", name: "Jack Hidary", 
@@ -336,21 +353,8 @@
                 "en": "A leading figure in quantum computing hardware, supplementing the hardware development perspective."
               } 
             },
-            { id: "ben_goertzel", name: "Ben Goertzel", 
-              contribution: {
-                "zh-CN": "SingularityNET首席执行官，倡导去中心化AI与AGI，推广“人工通用智能”概念，探索AI与区块链融合。",
-                "en": "CEO of SingularityNET, advocates for decentralized AI and AGI, promotes the concept of 'Artificial General Intelligence', explores the integration of AI and blockchain."
-              }, 
-              field: {
-                "zh-CN": "人工智能（AGI、去中心化AI）。",
-                "en": "Artificial Intelligence (AGI, Decentralized AI)."
-              }, 
-              remarks: {
-                "zh-CN": "代表去中心化AI的先锋视角，补充AGI多样性。",
-                "en": "Represents a pioneering perspective on decentralized AI, adding to the diversity of AGI discussions."
-              } 
-            }
         ];
+
         const financeMasters = [
             { id: "warren_buffett", name: "Warren Buffett", 
               contribution: {
@@ -651,7 +655,8 @@
         ];
         
         const allData = {
-            aiQuantum: aiQuantumMasters,
+            ai: aiMasters,
+            Quantum: QuantumMasters,
             finance: financeMasters,
             chinaEntrepreneurs: chinaEntrepreneurs
         };
