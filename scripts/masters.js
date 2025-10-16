@@ -511,6 +511,42 @@
               } 
             }
         ];
+
+        const literatureMasters = [
+            { id: "hartmut_neven", name: "Hartmut Neven", 
+              contribution: {
+                "zh-CN": "Google量子AI实验室主任，领导量子计算研究，推动量子优越性与AI算法优化。",
+                "en": "Director of Google's Quantum AI Lab, leads quantum computing research, promotes quantum supremacy and AI algorithm optimization."
+              }, 
+              field: {
+                "zh-CN": "量子计算、人工智能。",
+                "en": "Quantum Computing, Artificial Intelligence."
+              }, 
+              remarks: {
+                "zh-CN": "Google在量子计算领域的核心人物，探索AI与量子交叉应用。",
+                "en": "A key figure in Google's quantum computing efforts, exploring the intersection of AI and quantum."
+              } 
+            },
+        ];
+
+        const artMasters = [
+            { id: "hartmut_neven", name: "Hartmut Neven", 
+              contribution: {
+                "zh-CN": "Google量子AI实验室主任，领导量子计算研究，推动量子优越性与AI算法优化。",
+                "en": "Director of Google's Quantum AI Lab, leads quantum computing research, promotes quantum supremacy and AI algorithm optimization."
+              }, 
+              field: {
+                "zh-CN": "量子计算、人工智能。",
+                "en": "Quantum Computing, Artificial Intelligence."
+              }, 
+              remarks: {
+                "zh-CN": "Google在量子计算领域的核心人物，探索AI与量子交叉应用。",
+                "en": "A key figure in Google's quantum computing efforts, exploring the intersection of AI and quantum."
+              } 
+            },
+        ];
+
+        
         const chinaEntrepreneurs = [
             { id: "robin_zeng", name: "曾毓群 (Robin Zeng)", 
               contribution: {
@@ -658,5 +694,7 @@
             ai: aiMasters,
             quantum: QuantumMasters,
             finance: financeMasters,
+            literature: literatureMasters,
+            art: artMasters,
             chinaEntrepreneurs: chinaEntrepreneurs
         };
