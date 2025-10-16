@@ -498,7 +498,7 @@ ${translations[lang].promptAs} ${currentSelectedLeader.name}, ${translations[lan
         
             setLanguage(currentLang);
 
-            openTab(null, 'aiQuantum'); 
+            openTab(null, 'ai'); 
             const firstTabButton = document.querySelector('.tab-button');
             if (firstTabButton && !firstTabButton.classList.contains('active')) {
                  firstTabButton.classList.add('active');
