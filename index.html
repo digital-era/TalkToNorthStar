@@ -33,7 +33,7 @@
             --dark-pre-bg: #1c1c1c; /* pre标签背景 */
             --dark-pre-border: #383838; /* pre标签边框 */
         }
-
+    
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -50,20 +50,20 @@
             margin: 0 auto;
             position: relative;
             max-width: 1200px;
-            padding-top: 80px; /* <--- NEW: 增加顶部内边距，为按钮留出空间。这个值可以根据按钮的高度和你想保留的间距来调整。 */
+            padding-top: 70px; /* MODIFIED: 增加桌面端顶部内边距 */
         }
-
+    
         /* --- KEY CHANGE: Moved closer to the right edge --- */
         .top-right-controls {
             position: absolute;
-            top: 20px;
+            top: 20px; /* MODIFIED: 调整按钮位置，与header的padding-top配合 */
             right: 10px; /* 1. CHANGED: From 20px to 10px to be closer to the edge */
             display: grid; 
             grid-template-columns: 1fr 1fr; 
             align-items: center; 
             gap: 10px; 
         }
-
+    
         .settings-link {
             color: var(--dark-text-secondary);
             text-decoration: none;
@@ -112,7 +112,7 @@
             animation: fadeIn 0.3s;
         }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
+    
         .modal-content {
             background-color: var(--dark-surface);
             margin: 15% auto;
@@ -134,7 +134,7 @@
             transition: color 0.2s;
         }
         .close-button:hover { color: var(--dark-text-primary); }
-
+    
         .modal h2 {
             margin-top: 0;
             margin-bottom: 25px;
@@ -145,7 +145,7 @@
         .modal h2 .fa-cog {
             margin-right: 12px;
         }
-
+    
         .settings-form .form-group {
             margin-bottom: 20px;
         }
@@ -171,7 +171,7 @@
             border-color: var(--dark-accent);
             box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.3);
         }
-
+    
         .settings-form .save-btn {
             width: 100%;
             padding: 12px;
@@ -191,14 +191,12 @@
         .settings-form .save-btn:hover {
             background-color: var(--dark-accent-hover);
         }
-
-
+    
+    
         h1 {
             font-family: 'Poppins', sans-serif;
             text-align: center;
-            /* margin-top: 0; <--- REMOVE OR CHANGE THIS */
-            margin-top: -25px; /* <--- NEW: 稍微向上调整h1，以抵消部分padding-top，使其更靠近按钮但仍在下方。你可以根据需要调整这个负值。 */
-            margin-top: 0;
+            margin-top: -35px; /* MODIFIED: 进一步减少h1的margin-top */
             margin-bottom: 0;
             font-size: 2.4em;
             font-weight: 600;
@@ -206,9 +204,8 @@
             line-height: 1.3;
             background: linear-gradient(
                 90deg,               
-                #00DFD8,
-                #7928CA           
-                /* 移除了蓝色#007CF0 */
+                #00DFD8, /* 亮青色 */
+                #7928CA  /* 紫色 */
             );
             background-size: 200% auto;
             color: transparent;
@@ -217,12 +214,12 @@
             animation: colorWave 7s linear infinite;
             -webkit-animation: colorWave 7s linear infinite;
         }
-
+    
         @keyframes colorWave {
             0% { background-position: 0% 50%; }
             100% { background-position: 100% 50%; }
         }
-
+    
         .container {
             width: 90%;
             max-width: 1200px;
@@ -232,14 +229,14 @@
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
             border-radius: 8px;
         }
-
+    
         .tabs {
             display: flex;
             border-bottom: 2px solid var(--dark-accent);
             margin-bottom: 20px;
             flex-wrap: wrap;
         }
-
+    
         .tab-button {
             padding: 10px 20px;
             cursor: pointer;
@@ -252,34 +249,34 @@
             transition: all 0.3s ease;
             margin-bottom: 5px;
         }
-
+    
         .tab-button:hover {
             background-color: var(--dark-surface-light);
             color: var(--dark-text-primary);
         }
-
+    
         .tab-button.active {
             border-bottom-color: var(--dark-accent);
             font-weight: bold;
             color: var(--dark-accent);
         }
-
+    
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-
+    
         .tab-content h2 {
             color: var(--dark-accent);
             margin-top: 0;
             margin-bottom: 15px;
             font-size: 1.5em;
         }
-
+    
         .leader-scroll-container {
             position: relative;
             margin-bottom: 20px;
             padding: 0 40px;
         }
-
+    
         .leader-grid {
             display: flex;
             overflow-x: auto;
@@ -292,7 +289,7 @@
             scrollbar-width: none;
         }
         .leader-grid::-webkit-scrollbar { display: none; }
-
+    
         .leader-card {
             border: 1px solid var(--dark-border);
             border-radius: 8px;
@@ -308,29 +305,29 @@
             flex-direction: column;
             justify-content: space-between;
         }
-
+    
         .leader-card:hover, .leader-card.selected {
             border-color: var(--dark-accent);
             box-shadow: 0 4px 10px rgba(0, 149, 255, 0.3);
             transform: translateY(-3px);
         }
         .leader-card.selected {
-             background-color: var(--dark-selected-bg);
+                background-color: var(--dark-selected-bg);
         }
-
+    
         .leader-card h3 {
             margin-top: 0;
             color: var(--dark-accent);
             font-size: 1.1em;
         }
-
+    
         .leader-card p {
             font-size: 0.9em;
             margin-bottom: 8px;
             color: var(--dark-text-secondary);
             flex-grow: 1;
         }
-         .leader-card .field {
+        .leader-card .field {
             font-style: italic;
             color: var(--dark-field-text);
             margin-top: auto;
@@ -342,7 +339,7 @@
             padding-left: 10px;
             margin-top: 10px;
         }
-
+    
         .scroll-button {
             position: absolute;
             top: 50%;
@@ -374,13 +371,13 @@
         }
         .scroll-button.left { left: 0px; }
         .scroll-button.right { right: 0px; }
-
+    
         .interaction-area {
             margin-top: 20px;
             padding-top: 20px;
             border-top: 1px solid var(--dark-border);
         }
-
+    
         .interaction-area h2 {
             color: var(--dark-accent);
             margin-top: 0;
@@ -399,17 +396,18 @@
             background-color: var(--dark-input-bg);
             color: var(--dark-text-primary);
         }
-         .interaction-area textarea::placeholder {
+        .interaction-area textarea::placeholder {
             color: var(--dark-text-secondary);
         }
-
+    
         .interaction-buttons {
             display: flex;
             gap: 10px;
             margin-bottom: 15px;
             flex-wrap: wrap;
+            justify-content: center; /* 让按钮在容器中居中 */
         }
-
+    
         .interaction-area button {
             padding: 10px 15px;
             background-color: var(--dark-accent);
@@ -419,9 +417,13 @@
             cursor: pointer;
             font-size: 0.95em;
             transition: background-color 0.3s ease;
-            flex-grow: 1;
-            flex-basis: 150px;
+            flex: 1 1 200px; /* 确保宽度一致性 */
             box-sizing: border-box;
+            max-width: 250px; /* 增加一个最大宽度，防止按钮在宽屏上过长 */
+            text-align: center; /* 文本居中 */
+            display: flex; /* 让按钮内容（文本和loading）也使用flex布局 */
+            align-items: center; /* 垂直居中 */
+            justify-content: center; /* 水平居中 */
         }
         .interaction-area button:hover {
             background-color: var(--dark-accent-hover);
@@ -440,7 +442,7 @@
             font-weight: bold;
             color: var(--dark-text-primary);
         }
-
+    
         .response-display {
             margin-top: 20px;
             padding: 15px;
@@ -480,30 +482,29 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
+    
         footer {
             text-align: left;
             padding: 20px 50px;
             background: rgba(0, 0, 0, 0.5);
         }
-
+    
         @media (max-width: 768px) {
             header {
-                /* padding-top: 20px; <--- REMOVE OR CHANGE THIS */
-                padding-top: 70px; /* <--- NEW: 适应小屏幕 */
+                padding-top: 60px; /* MODIFIED: 增加移动端顶部内边距 */
             }
             h1 {
-                margin-top: -20px; /* <--- NEW: 适应小屏幕 */
-                font-size: 2em; margin-top: 0; margin-bottom: 0; line-height: 1.25;
+                margin-top: -30px; /* MODIFIED: 调整移动端h1的margin-top */
+                font-size: 2em; margin-bottom: 0; line-height: 1.25;
             }
-             .top-right-controls { 
-                top: 20px;
-                right: 10px; /* Also update for tablet */
+            .top-right-controls { 
+                top: 15px; /* MODIFIED: 调整移动端按钮位置 */
+                right: 10px; 
                 gap: 10px;
             }
             .settings-link { font-size: 0.9rem; padding: 6px 12px;}
             .language-selector { font-size: 0.8rem; padding: 7px; }
-
+    
             body { line-height: 1.55; }
             .container { width: 92%; padding: 15px; margin-top: 15px; }
             .tabs { justify-content: flex-start; margin-bottom: 15px; }
@@ -519,19 +520,18 @@
             .scroll-button.left { left: 3px; }
             .scroll-button.right { right: 3px; }
             .interaction-buttons { flex-direction: column; gap: 10px; }
-            .interaction-area button { width: 100%; font-size: 0.92em; padding: 12px 15px; flex-grow: 0; flex-basis: auto; }
+            .interaction-area button { width: 100%; font-size: 0.92em; padding: 12px 15px; flex-grow: 0; flex-basis: auto; max-width: none; }
             .interaction-area textarea { font-size: 0.95em; min-height: 75px; padding: 9px; }
             #selected-leader-info { font-size: 0.95em; padding: 9px; }
             .response-display pre { font-size: 0.88em; }
         }
-
+    
         @media (max-width: 480px) {
             header {
-                /* padding-top: 20px; <--- REMOVE OR CHANGE THIS */
-                padding-top: 60px; /* <--- NEW: 适应更小屏幕 */
+                padding-top: 50px; /* MODIFIED: 增加更小屏幕顶部内边距 */
             }
             h1 {
-                margin-top: -10px; /* <--- NEW: 适应更小屏幕 */
+                margin-top: -25px; /* MODIFIED: 调整更小屏幕h1的margin-top */
                 font-size: 1.6em; letter-spacing: 0.1px; line-height: 1.2; 
             }
             .container { width: 95%; padding: 10px; margin-top: 10px; }
