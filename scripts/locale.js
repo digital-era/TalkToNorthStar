@@ -97,7 +97,7 @@
                 "tabAi": "Pan-AI",
                 "tabQuantum": "Pan-Quantum",
                 "tabFinance": "Pan-Finance",                    
-                "tabLiterature": "Pan-Literature"",
+                "tabLiterature": "Pan-Literature",
                 "tabArt": "Pan-Art"",
                 "tabChinaEntrepreneurs": "Pan-Chinese",
                 "selectAiLeader": "Select a Pan-AI North Star",
