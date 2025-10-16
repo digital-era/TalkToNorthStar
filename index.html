@@ -618,13 +618,15 @@
         <!-- ... rest of the body is unchanged ... -->
         <div class="tabs">
             <button class="tab-button active" onclick="openTab(event, 'ai')" data-i18n-key="tabAi">泛AI</button>
-            <button class="tab-button" onclick="openTab(event, 'Quantum')" data-i18n-key="tabQuantum">泛量子</button>
+            <button class="tab-button" onclick="openTab(event, 'quantum')" data-i18n-key="tabQuantum">泛量子</button>
             <button class="tab-button" onclick="openTab(event, 'finance')" data-i18n-key="tabFinance">泛金融</button>
+            <button class="tab-button" onclick="openTab(event, 'literature')" data-i18n-key="tabLiterature">泛文学</button>
+            <button class="tab-button" onclick="openTab(event, 'art')" data-i18n-key="tabArt">泛艺术</button>
             <button class="tab-button" onclick="openTab(event, 'chinaEntrepreneurs')" data-i18n-key="tabChinaEntrepreneurs">泛中华</button>
         </div>
 
         <div id="ai" class="tab-content active">
-            <h2 data-i18n-key="selectAiLeader">选择一位泛AI领域北极星</h2>
+            <h2 data-i18n-key="selectAiLeader">选择一位泛AI北极星</h2>
             <div class="leader-scroll-container">
                 <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
                 <div class="leader-grid" id="aiGrid"></div>
@@ -632,8 +634,8 @@
             </div>
         </div>
 
-        <div id="Quantum" class="tab-content">
-            <h2 data-i18n-key="selectQuantumLeader">选择一位泛量子领域北极星</h2>
+        <div id="quantum" class="tab-content">
+            <h2 data-i18n-key="selectQuantumLeader">选择一位泛量子北极星</h2>
             <div class="leader-scroll-container">
                 <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
                 <div class="leader-grid" id="quantumGrid"></div>
@@ -642,10 +644,28 @@
         </div>
 
         <div id="finance" class="tab-content">
-            <h2 data-i18n-key="selectFinanceLeader">选择一位泛金融领域北极星</h2>
+            <h2 data-i18n-key="selectFinanceLeader">选择一位泛金融北极星</h2>
             <div class="leader-scroll-container">
                 <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
                 <div class="leader-grid" id="financeGrid"></div>
+                <button class="scroll-button right" onclick="scrollGrid(this, 1)" aria-label="Scroll Right">></button>
+            </div>
+        </div>
+
+       <div id="finance" class="tab-content">
+            <h2 data-i18n-key="selectLiteratureLeader">选择一位泛文学领域北极星</h2>
+            <div class="leader-scroll-container">
+                <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
+                <div class="leader-grid" id="literatureGrid"></div>
+                <button class="scroll-button right" onclick="scrollGrid(this, 1)" aria-label="Scroll Right">></button>
+            </div>
+        </div>
+
+        <div id="finance" class="tab-content">
+            <h2 data-i18n-key="selectArtLeader">选择一位泛艺术领域北极星</h2>
+            <div class="leader-scroll-container">
+                <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
+                <div class="leader-grid" id="artGrid"></div>
                 <button class="scroll-button right" onclick="scrollGrid(this, 1)" aria-label="Scroll Right">></button>
             </div>
         </div>
