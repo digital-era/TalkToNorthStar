@@ -50,14 +50,15 @@
             margin: 0 auto;
             position: relative;
             max-width: 1200px;
-            padding-top: 70px; /* MODIFIED: 增加桌面端顶部内边距 */
+            /* CHANGE 1: 减少 header 自身的顶部内边距，因为我们将用 h1 的 margin 来控制标题位置 */
+            padding-top: 20px; 
         }
     
-        /* --- KEY CHANGE: Moved closer to the right edge --- */
         .top-right-controls {
             position: absolute;
-            top: 20px; /* MODIFIED: 调整按钮位置，与header的padding-top配合 */
-            right: 10px; /* 1. CHANGED: From 20px to 10px to be closer to the edge */
+            /* CHANGE 2: 调整按钮的垂直位置以适应新的 header 内边距 */
+            top: 20px; 
+            right: 20px;
             display: grid; 
             grid-template-columns: 1fr 1fr; 
             align-items: center; 
@@ -196,8 +197,9 @@
         h1 {
             font-family: 'Poppins', sans-serif;
             text-align: center;
-            margin-top: -35px; /* MODIFIED: 进一步减少h1的margin-top */
-            margin-bottom: 0;
+            /* CHANGE 3: 将负 margin 改为正 margin，将标题向下推，从而为顶部的按钮留出空间 */
+            margin-top: 50px; 
+            margin-bottom: 10px; /* 增加一点底部边距 */
             font-size: 2.4em;
             font-weight: 600;
             letter-spacing: 0.5px;
@@ -491,15 +493,19 @@
     
         @media (max-width: 768px) {
             header {
-                padding-top: 60px; /* MODIFIED: 增加移动端顶部内边距 */
+                padding-top: 20px;
             }
             h1 {
-                margin-top: -30px; /* MODIFIED: 调整移动端h1的margin-top */
-                font-size: 2em; margin-bottom: 0; line-height: 1.25;
+                /* CHANGE 4: 调整移动端的 h1 margin-top */
+                margin-top: 60px; 
+                font-size: 2em; 
+                margin-bottom: 0; 
+                line-height: 1.25;
             }
             .top-right-controls { 
-                top: 15px; /* MODIFIED: 调整移动端按钮位置 */
-                right: 10px; 
+                /* CHANGE 5: 相应调整移动端按钮位置 */
+                top: 15px;
+                right: 15px; 
                 gap: 10px;
             }
             .settings-link { font-size: 0.9rem; padding: 6px 12px;}
@@ -528,11 +534,17 @@
     
         @media (max-width: 480px) {
             header {
-                padding-top: 50px; /* MODIFIED: 增加更小屏幕顶部内边距 */
+                padding-top: 15px;
             }
             h1 {
-                margin-top: -25px; /* MODIFIED: 调整更小屏幕h1的margin-top */
-                font-size: 1.6em; letter-spacing: 0.1px; line-height: 1.2; 
+                /* CHANGE 6: 调整更小屏幕的 h1 margin-top */
+                margin-top: 55px; 
+                font-size: 1.8em; /* 稍微调整字体大小以获得更好的视觉效果 */
+                letter-spacing: 0.1px; 
+                line-height: 1.2; 
+            }
+             .top-right-controls { 
+                right: 10px; 
             }
             .container { width: 95%; padding: 10px; margin-top: 10px; }
             .tab-content h2, .interaction-area h2 { font-size: 0.9em; margin-bottom: 10px; }
