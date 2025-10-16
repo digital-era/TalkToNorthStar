@@ -656,7 +656,7 @@
         
         const allData = {
             ai: aiMasters,
-            Quantum: QuantumMasters,
+            quantum: QuantumMasters,
             finance: financeMasters,
             chinaEntrepreneurs: chinaEntrepreneurs
         };
