@@ -197,7 +197,7 @@
             font-family: 'Poppins', sans-serif;
             text-align: center;
             /* margin-top: 0; <--- REMOVE OR CHANGE THIS */
-            margin-top: -30px; /* <--- NEW: 稍微向上调整h1，以抵消部分padding-top，使其更靠近按钮但仍在下方。你可以根据需要调整这个负值。 */
+            margin-top: -25px; /* <--- NEW: 稍微向上调整h1，以抵消部分padding-top，使其更靠近按钮但仍在下方。你可以根据需要调整这个负值。 */
             margin-top: 0;
             margin-bottom: 0;
             font-size: 2.4em;
@@ -207,8 +207,8 @@
             background: linear-gradient(
                 90deg,               
                 #00DFD8,
-                #7928CA,
-                #007CF0
+                #7928CA           
+                /* 移除了蓝色#007CF0 */
             );
             background-size: 200% auto;
             color: transparent;
@@ -220,7 +220,7 @@
 
         @keyframes colorWave {
             0% { background-position: 0% 50%; }
-            100% { background-position: 200% 50%; }
+            100% { background-position: 100% 50%; }
         }
 
         .container {
