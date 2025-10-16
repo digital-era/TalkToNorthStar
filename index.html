@@ -50,6 +50,7 @@
             margin: 0 auto;
             position: relative;
             max-width: 1200px;
+            padding-top: 80px; /* <--- NEW: 增加顶部内边距，为按钮留出空间。这个值可以根据按钮的高度和你想保留的间距来调整。 */
         }
 
         /* --- KEY CHANGE: Moved closer to the right edge --- */
@@ -195,6 +196,8 @@
         h1 {
             font-family: 'Poppins', sans-serif;
             text-align: center;
+            /* margin-top: 0; <--- REMOVE OR CHANGE THIS */
+            margin-top: -30px; /* <--- NEW: 稍微向上调整h1，以抵消部分padding-top，使其更靠近按钮但仍在下方。你可以根据需要调整这个负值。 */
             margin-top: 0;
             margin-bottom: 0;
             font-size: 2.4em;
@@ -485,7 +488,14 @@
         }
 
         @media (max-width: 768px) {
-            header { padding-top: 20px; }
+            header {
+                /* padding-top: 20px; <--- REMOVE OR CHANGE THIS */
+                padding-top: 70px; /* <--- NEW: 适应小屏幕 */
+            }
+            h1 {
+                margin-top: -20px; /* <--- NEW: 适应小屏幕 */
+                font-size: 2em; margin-top: 0; margin-bottom: 0; line-height: 1.25;
+            }
              .top-right-controls { 
                 top: 20px;
                 right: 10px; /* Also update for tablet */
@@ -495,7 +505,6 @@
             .language-selector { font-size: 0.8rem; padding: 7px; }
 
             body { line-height: 1.55; }
-            h1 { font-size: 2em; margin-top: 0; margin-bottom: 0; line-height: 1.25; }
             .container { width: 92%; padding: 15px; margin-top: 15px; }
             .tabs { justify-content: flex-start; margin-bottom: 15px; }
             .tab-button { padding: 9px 14px; font-size: 10px; margin-right: 4px; margin-bottom: 4px; }
@@ -517,7 +526,14 @@
         }
 
         @media (max-width: 480px) {
-            h1 { font-size: 1.6em; letter-spacing: 0.1px; line-height: 1.2; }
+            header {
+                /* padding-top: 20px; <--- REMOVE OR CHANGE THIS */
+                padding-top: 60px; /* <--- NEW: 适应更小屏幕 */
+            }
+            h1 {
+                margin-top: -10px; /* <--- NEW: 适应更小屏幕 */
+                font-size: 1.6em; letter-spacing: 0.1px; line-height: 1.2; 
+            }
             .container { width: 95%; padding: 10px; margin-top: 10px; }
             .tab-content h2, .interaction-area h2 { font-size: 0.9em; margin-bottom: 10px; }
             .tab-button { font-size: 10px; padding: 8px 10px; margin-right: 3px; margin-bottom: 3px; }
