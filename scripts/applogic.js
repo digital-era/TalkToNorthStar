@@ -450,7 +450,7 @@ ${translations[lang].promptAs} ${currentSelectedLeader.name}, ${translations[lan
                 { value: "deepseek-chat", labelKey: "modelDeepSeekV3" }
             ],
             "https://generativelanguage.googleapis.com": [
-                { value: "gemini-1.5-flash", labelKey: "modelGeminiFlash" } // Corrected model name
+                { value: "gemini-2.5-flash", labelKey: "modelGeminiFlash" } // Corrected model name
             ],
             "https://api.openai.com": [
                 { value: "gpt-4o-mini", labelKey: "modelGpt4oMini" }
