@@ -782,20 +782,146 @@
         ];
 
         const artMasters = [
-            { id: "hartmut_neven", name: "Hartmut Neven", 
+            { id: "leonardo_da_vinci", name: "Leonardo da Vinci", 
               contribution: {
-                "zh-CN": "Google量子AI实验室主任，领导量子计算研究，推动量子优越性与AI算法优化。",
-                "en": "Director of Google's Quantum AI Lab, leads quantum computing research, promotes quantum supremacy and AI algorithm optimization."
+                "zh-CN": "创作《蒙娜丽莎》《最后的晚餐》，革新透视法与解剖学绘画。",
+                "en": "Created Mona Lisa, The Last Supper, revolutionized perspective and anatomical art."
               }, 
               field: {
-                "zh-CN": "量子计算、人工智能。",
-                "en": "Quantum Computing, Artificial Intelligence."
+                "zh-CN": "绘画、雕塑、跨学科艺术。",
+                "en": "Painting, Sculpture, Interdisciplinary Art."
               }, 
               remarks: {
-                "zh-CN": "Google在量子计算领域的核心人物，探索AI与量子交叉应用。",
-                "en": "A key figure in Google's quantum computing efforts, exploring the intersection of AI and quantum."
+                "zh-CN": "文艺复兴全才，艺术与科学融合的先驱。",
+                "en": "Renaissance polymath, pioneer of art-science integration."
               } 
             },
+            { id: "michelangelo", name: "Michelangelo", 
+              contribution: {
+                "zh-CN": "创作《大卫》《西斯廷教堂天顶画》，推雕塑与壁画至巅峰。",
+                "en": "Created David, Sistine Chapel frescoes, elevated sculpture and mural art."
+              }, 
+              field: {
+                "zh-CN": "雕塑、绘画、建筑。",
+                "en": "Sculpture, Painting, Architecture."
+              }, 
+              remarks: {
+                "zh-CN": "文艺复兴巨匠，定义人体美学与宗教艺术。",
+                "en": "Renaissance master, defined human aesthetics and religious art."
+              } 
+            },
+            { id: "pablo_picasso", name: "Pablo Picasso", 
+              contribution: {
+                "zh-CN": "创立立体主义，创作《格尔尼卡》，革新现代艺术形式。",
+                "en": "Founded Cubism, created Guernica, transformed modern art forms."
+              }, 
+              field: {
+                "zh-CN": "绘画、雕塑、陶瓷。",
+                "en": "Painting, Sculpture, Ceramics."
+              }, 
+              remarks: {
+                "zh-CN": "20世纪艺术先锋，挑战传统美学界限。",
+                "en": "20th-century art pioneer, challenged traditional aesthetics."
+              } 
+            },
+            { id: "vincent_van_gogh", name: "Vincent van Gogh", 
+              contribution: {
+                "zh-CN": "创作《星夜》《向日葵》，以表现主义捕捉情感与自然。",
+                "en": "Created The Starry Night, Sunflowers, captured emotion via expressionism."
+              }, 
+              field: {
+                "zh-CN": "绘画、后印象主义。",
+                "en": "Painting, Post-Impressionism."
+              }, 
+              remarks: {
+                "zh-CN": "影响现代艺术情感表达，作品广受推崇。",
+                "en": "Influenced modern emotional expression, works widely revered."
+              } 
+            },
+            { id: "rembrandt_van_rijn", name: "Rembrandt van Rijn", 
+              contribution: {
+                "zh-CN": "创作《夜巡》，以光影与心理深度革新肖像画。",
+                "en": "Created The Night Watch, revolutionized portraiture with light and depth."
+              }, 
+              field: {
+                "zh-CN": "绘画、版画。",
+                "en": "Painting, Printmaking."
+              }, 
+              remarks: {
+                "zh-CN": "巴洛克艺术大师，奠定荷兰黄金时代画风。",
+                "en": "Baroque art master, shaped Dutch Golden Age style."
+              } 
+            },
+            { id: "claude_monet", name: "Claude Monet", 
+              contribution: {
+                "zh-CN": "创作《睡莲》《印象·日出》，开创印象主义画派。",
+                "en": "Created Water Lilies, Impression: Sunrise, founded Impressionism."
+              }, 
+              field: {
+                "zh-CN": "绘画、印象主义。",
+                "en": "Painting, Impressionism."
+              }, 
+              remarks: {
+                "zh-CN": "现代风景画先驱，影响户外写生传统。",
+                "en": "Modern landscape painting pioneer, shaped plein air tradition."
+              } 
+            },
+            { id: "raphael", name: "Raphael", 
+              contribution: {
+                "zh-CN": "创作《雅典学院》，以和谐构图推文艺复兴美学。",
+                "en": "Created The School of Athens, advanced Renaissance aesthetics."
+              }, 
+              field: {
+                "zh-CN": "绘画、壁画。",
+                "en": "Painting, Fresco."
+              }, 
+              remarks: {
+                "zh-CN": "文艺复兴三杰之一，定义古典美学标准。",
+                "en": "Renaissance trio member, defined classical aesthetic standards."
+              } 
+            },
+            { id: "andy_warhol", name: "Andy Warhol", 
+              contribution: {
+                "zh-CN": "创作《玛丽莲·梦露》《汤罐》，开创波普艺术运动。",
+                "en": "Created Marilyn Monroe, Campbell’s Soup Cans, pioneered Pop Art."
+              }, 
+              field: {
+                "zh-CN": "绘画、版画、电影。",
+                "en": "Painting, Printmaking, Film."
+              }, 
+              remarks: {
+                "zh-CN": "艺术与流行文化融合的20世纪代表。",
+                "en": "20th-century icon merging art with popular culture."
+              } 
+            },
+            { id: "gustav_klimt", name: "Gustav Klimt", 
+              contribution: {
+                "zh-CN": "创作《吻》，以装饰性风格融合象征主义艺术。",
+                "en": "Created The Kiss, blended symbolism with decorative style."
+              }, 
+              field: {
+                "zh-CN": "绘画、装饰艺术。",
+                "en": "Painting, Decorative Art."
+              }, 
+              remarks: {
+                "zh-CN": "奥地利艺术代表，影响新艺术运动。",
+                "en": "Austrian art icon, influenced Art Nouveau movement."
+              } 
+            },
+            { id: "frida_kahlo", name: "Frida Kahlo", 
+              contribution: {
+                "zh-CN": "创作《自画像》，以超现实主义表达痛苦与身份。",
+                "en": "Created Self-Portraits, expressed pain and identity via surrealism."
+              }, 
+              field: {
+                "zh-CN": "绘画、超现实主义。",
+                "en": "Painting, Surrealism."
+              }, 
+              remarks: {
+                "zh-CN": "墨西哥艺术象征，女性主义与民族先锋。",
+                "en": "Mexican art icon, feminist and nationalist pioneer."
+              } 
+            }
         ];
 
         
