@@ -639,20 +639,146 @@
         ];
 
         const literatureMasters = [
-            { id: "hartmut_neven", name: "Hartmut Neven", 
+            { id: "william_shakespeare", name: "William Shakespeare", 
               contribution: {
-                "zh-CN": "Google量子AI实验室主任，领导量子计算研究，推动量子优越性与AI算法优化。",
-                "en": "Director of Google's Quantum AI Lab, leads quantum computing research, promotes quantum supremacy and AI algorithm optimization."
+                "zh-CN": "创作《哈姆雷特》《罗密欧与朱丽叶》，革新英语戏剧形式，探索人性与命运。",
+                "en": "Authored Hamlet and Romeo and Juliet, revolutionized English drama, explored humanity and fate."
               }, 
               field: {
-                "zh-CN": "量子计算、人工智能。",
-                "en": "Quantum Computing, Artificial Intelligence."
+                "zh-CN": "戏剧、诗歌。",
+                "en": "Drama, Poetry."
               }, 
               remarks: {
-                "zh-CN": "Google在量子计算领域的核心人物，探索AI与量子交叉应用。",
-                "en": "A key figure in Google's quantum computing efforts, exploring the intersection of AI and quantum."
+                "zh-CN": "英语文学之父，作品影响全球戏剧与电影艺术。",
+                "en": "Father of English literature, works influence global theater and film."
               } 
             },
+            { id: "fyodor_dostoevsky", name: "Fyodor Dostoevsky", 
+              contribution: {
+                "zh-CN": "著有《罪与罚》《卡拉马佐夫兄弟》，剖析心理与道德困境。",
+                "en": "Wrote Crime and Punishment, The Brothers Karamazov, probed psychological and moral dilemmas."
+              }, 
+              field: {
+                "zh-CN": "小说、哲学文学。",
+                "en": "Novel, Philosophical Literature."
+              }, 
+              remarks: {
+                "zh-CN": "俄罗斯文学巨擘，影响心理学与存在主义思想。",
+                "en": "Russian literary giant, influenced psychology and existentialism."
+              } 
+            },
+            { id: "leo_tolstoy", name: "Leo Tolstoy", 
+              contribution: {
+                "zh-CN": "创作《战争与和平》《安娜·卡列尼娜》，描绘社会与个人命运。",
+                "en": "Authored War and Peace, Anna Karenina, depicted society and personal fate."
+              }, 
+              field: {
+                "zh-CN": "现实主义小说。",
+                "en": "Realist Novel."
+              }, 
+              remarks: {
+                "zh-CN": "最伟大小说家之一，推动文学对历史的反思。",
+                "en": "Among greatest novelists, advanced literary reflection on history."
+              } 
+            },
+            { id: "miguel_de_cervantes", name: "Miguel de Cervantes", 
+              contribution: {
+                "zh-CN": "撰写《堂吉诃德》，开创现代小说，讽刺理想与现实冲突。",
+                "en": "Wrote Don Quixote, pioneered modern novel, satirized ideal vs. reality."
+              }, 
+              field: {
+                "zh-CN": "小说、讽刺文学。",
+                "en": "Novel, Satirical Literature."
+              }, 
+              remarks: {
+                "zh-CN": "西班牙文学奠基人，标志小说向现实主义转变。",
+                "en": "Spanish literature founder, marked novel’s shift to realism."
+              } 
+            },
+            { id: "homer", name: "Homer", 
+              contribution: {
+                "zh-CN": "创作《伊利亚特》《奥德赛》，奠定西方叙事文学传统。",
+                "en": "Authored Iliad, Odyssey, established Western narrative tradition."
+              }, 
+              field: {
+                "zh-CN": "史诗诗歌。",
+                "en": "Epic Poetry."
+              }, 
+              remarks: {
+                "zh-CN": "古希腊文学之源，影响神话与英雄叙事千年。",
+                "en": "Source of Greek literature, influenced myth and heroic narrative."
+              } 
+            },
+            { id: "charles_dickens", name: "Charles Dickens", 
+              contribution: {
+                "zh-CN": "著有《雾都孤儿》《双城记》，揭示维多利亚时代社会不公。",
+                "en": "Wrote Oliver Twist, A Tale of Two Cities, exposed Victorian social injustices."
+              }, 
+              field: {
+                "zh-CN": "社会小说。",
+                "en": "Social Novel."
+              }, 
+              remarks: {
+                "zh-CN": "维多利亚文学代表，推动文学为社会改革工具。",
+                "en": "Victorian literature leader, used novels for social reform."
+              } 
+            },
+            { id: "virginia_woolf", name: "Virginia Woolf", 
+              contribution: {
+                "zh-CN": "创作《达洛维夫人》，创新意识流，探索女性内心世界。",
+                "en": "Authored Mrs Dalloway, pioneered stream-of-consciousness, explored female psyche."
+              }, 
+              field: {
+                "zh-CN": "现代主义小说。",
+                "en": "Modernist Novel."
+              }, 
+              remarks: {
+                "zh-CN": "女性主义文学先驱，革新叙事视角与结构。",
+                "en": "Feminist literature pioneer, transformed narrative perspective."
+              } 
+            },
+            { id: "ernest_hemingway", name: "Ernest Hemingway", 
+              contribution: {
+                "zh-CN": "创作《老人与海》《永别了，武器》，简洁文风刻画人性，获诺贝尔奖。",
+                "en": "Wrote The Old Man and the Sea, A Farewell to Arms, concise style, won Nobel Prize."
+              }, 
+              field: {
+                "zh-CN": "现实主义小说。",
+                "en": "Realist Novel."
+              }, 
+              remarks: {
+                "zh-CN": "美国文学代表，冰山理论影响现代叙事风格。",
+                "en": "American literature icon, iceberg theory shaped modern narrative."
+              } 
+            },
+            { id: "gabriel_garcia_marquez", name: "Gabriel García Márquez", 
+              contribution: {
+                "zh-CN": "创作《百年孤独》，开创魔幻现实主义，融合拉美神话历史。",
+                "en": "Wrote One Hundred Years of Solitude, pioneered magical realism, blended Latin American myth."
+              }, 
+              field: {
+                "zh-CN": "魔幻现实主义。",
+                "en": "Magical Realism."
+              }, 
+              remarks: {
+                "zh-CN": "拉美文学代表，获诺贝尔奖，桥接西方与拉美叙事。",
+                "en": "Latin American literary icon, Nobel laureate, bridged Western and Latin narratives."
+              } 
+            },
+            { id: "franz_kafka", name: "Franz Kafka", 
+              contribution: {
+                "zh-CN": "著有《变形记》《审判》，描绘荒诞与存在焦虑。",
+                "en": "Wrote The Metamorphosis, The Trial, depicted absurdity and existential anxiety."
+              }, 
+              field: {
+                "zh-CN": "现代主义小说。",
+                "en": "Modernist Novel."
+              }, 
+              remarks: {
+                "zh-CN": "卡夫卡式概念定义现代异化感，影响深远。",
+                "en": "Kafkaesque defined modern alienation, profoundly influential."
+              } 
+            }
         ];
 
         const artMasters = [
