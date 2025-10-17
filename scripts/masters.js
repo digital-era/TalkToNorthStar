@@ -171,7 +171,7 @@
             { id: "edwin_chen", name: "Edwin Chen", 
               contribution: {
                 "zh-CN": "Surge AI创始人兼首席执行官，专注于高质量数据标注，服务于OpenAI等公司，推动AI模型训练的数据质量革命。",
-                "en": "Founder and CEO of Surge AI, focused on high-quality data annotation, serving companies like OpenAI, driving a data quality revolution for AI model training.""
+                "en": "Founder and CEO of Surge AI, focused on high-quality data annotation, serving companies like OpenAI, driving a data quality revolution for AI model training."
               }, 
               field: {
                 "zh-CN": "人工智能（数据标注、自然语言处理）、技术创业。",
