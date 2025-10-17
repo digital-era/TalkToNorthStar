@@ -297,6 +297,132 @@
         ];
 
         const QuantumMasters = [
+            { id: "max_planck", name: "Max Planck", 
+              contribution: {
+                "zh-CN": "提出能量量子化假设，引入普朗克常数，奠定量子理论基础，获1918年诺贝尔物理学奖。",
+                "en": "Proposed energy quantization hypothesis, introduced Planck's constant, laid foundation for quantum theory, won 1918 Nobel Prize in Physics."
+              }, 
+              field: {
+                "zh-CN": "量子理论、黑体辐射。",
+                "en": "Quantum Theory, Blackbody Radiation."
+              }, 
+              remarks: {
+                "zh-CN": "量子力学的奠基人，开启现代物理学新篇章。",
+                "en": "Founder of quantum mechanics, opened a new chapter in modern physics."
+              } 
+            },
+            { id: "albert_einstein", name: "Albert Einstein", 
+              contribution: {
+                "zh-CN": "解释光电效应，提出光量子（光子）概念，获1921年诺贝尔物理学奖，对量子力学持怀疑态度。",
+                "en": "Explained photoelectric effect, proposed photon concept, won 1921 Nobel Prize in Physics, skeptical of quantum mechanics."
+              }, 
+              field: {
+                "zh-CN": "量子理论、光电效应。",
+                "en": "Quantum Theory, Photoelectric Effect."
+              }, 
+              remarks: {
+                "zh-CN": "量子理论的先驱，挑战量子力学随机性。",
+                "en": "Pioneer of quantum theory, challenged quantum mechanics' randomness."
+              } 
+            },
+            { id: "niels_bohr", name: "Niels Bohr", 
+              contribution: {
+                "zh-CN": "提出量子原子模型，解释原子能级与辐射光谱，创立哥本哈根解释，获1922年诺贝尔物理学奖。",
+                "en": "Proposed quantum atomic model, explained atomic energy levels and spectra, founded Copenhagen interpretation, won 1922 Nobel Prize in Physics."
+              }, 
+              field: {
+                "zh-CN": "量子力学、原子物理。",
+                "en": "Quantum Mechanics, Atomic Physics."
+              }, 
+              remarks: {
+                "zh-CN": "量子力学理论核心人物，与爱因斯坦展开著名辩论。",
+                "en": "Central figure in quantum mechanics theory, engaged in famous debates with Einstein."
+              } 
+            },
+            { id: "werner_heisenberg", name: "Werner Heisenberg", 
+              contribution: {
+                "zh-CN": "发明矩阵力学，提出不确定性原理，奠定量子力学基础，获1932年诺贝尔物理学奖。",
+                "en": "Developed matrix mechanics, proposed uncertainty principle, laid foundation for quantum mechanics, won 1932 Nobel Prize in Physics."
+              }, 
+              field: {
+                "zh-CN": "量子力学、矩阵力学。",
+                "en": "Quantum Mechanics, Matrix Mechanics."
+              }, 
+              remarks: {
+                "zh-CN": "量子力学理论的奠基人，影响深远。",
+                "en": "Founder of quantum mechanics theory, profoundly influential."
+              } 
+            },
+            { id: "erwin_schrodinger", name: "Erwin Schrödinger", 
+              contribution: {
+                "zh-CN": "提出薛定谔方程和波函数，描述物质波，提出薛定谔猫思想实验，获1933年诺贝尔物理学奖。",
+                "en": "Proposed Schrödinger equation and wave function, described matter waves, introduced Schrödinger's cat, won 1933 Nobel Prize in Physics."
+              }, 
+              field: {
+                "zh-CN": "量子力学、波动力学。",
+                "en": "Quantum Mechanics, Wave Mechanics."
+              }, 
+              remarks: {
+                "zh-CN": "量子力学波动理论的奠基人，影响宏观与微观连接。",
+                "en": "Founder of quantum wave mechanics, influenced macro-micro connections."
+              } 
+            },
+            { id: "louis_de_broglie", name: "Louis de Broglie", 
+              contribution: {
+                "zh-CN": "提出物质波假说，统一波粒二象性，奠定量子力学基础，获1929年诺贝尔物理学奖。",
+                "en": "Proposed matter wave hypothesis, unified wave-particle duality, laid foundation for quantum mechanics, won 1929 Nobel Prize in Physics."
+              }, 
+              field: {
+                "zh-CN": "量子力学、物质波。",
+                "en": "Quantum Mechanics, Matter Waves."
+              }, 
+              remarks: {
+                "zh-CN": "波粒二象性的开创者，后反对量子力学主流解释。",
+                "en": "Pioneer of wave-particle duality, later opposed mainstream quantum mechanics."
+              } 
+            },
+            { id: "max_born", name: "Max Born", 
+              contribution: {
+                "zh-CN": "提出波函数概率解释，奠定哥本哈根解释基础，获1954年诺贝尔物理学奖。",
+                "en": "Proposed probabilistic interpretation of wave function, foundational to Copenhagen interpretation, won 1954 Nobel Prize in Physics."
+              }, 
+              field: {
+                "zh-CN": "量子力学、概率解释。",
+                "en": "Quantum Mechanics, Probabilistic Interpretation."
+              }, 
+              remarks: {
+                "zh-CN": "量子力学概率理论的奠基人，影响深远。",
+                "en": "Founder of quantum mechanics' probabilistic theory, profoundly influential."
+              } 
+            },
+            { id: "wolfgang_pauli", name: "Wolfgang Pauli", 
+              contribution: {
+                "zh-CN": "提出泡利不相容原理，解释电子排列与化学现象，获1945年诺贝尔物理学奖。",
+                "en": "Proposed Pauli exclusion principle, explained electron arrangement and chemical phenomena, won 1945 Nobel Prize in Physics."
+              }, 
+              field: {
+                "zh-CN": "量子力学、原子物理。",
+                "en": "Quantum Mechanics, Atomic Physics."
+              }, 
+              remarks: {
+                "zh-CN": "哥本哈根学派核心人物，奠定化学与量子理论基础。",
+                "en": "Core figure in Copenhagen school, foundational to chemistry and quantum theory."
+              } 
+            },
+            { id: "paul_dirac", name: "Paul Dirac", 
+              contribution: {
+                "zh-CN": "提出狄拉克方程，融合量子力学与相对论，预测反物质，获1933年诺贝尔物理学奖。",
+                "en": "Proposed Dirac equation, merged quantum mechanics with relativity, predicted antimatter, won 1933 Nobel Prize in Physics."
+              }, 
+              field: {
+                "zh-CN": "量子力学、相对论。",
+                "en": "Quantum Mechanics, Relativity."
+              }, 
+              remarks: {
+                "zh-CN": "量子力学与相对论结合的先驱，发现正电子。",
+                "en": "Pioneer in combining quantum mechanics and relativity, discovered positron."
+              } 
+            },
             { id: "hartmut_neven", name: "Hartmut Neven", 
               contribution: {
                 "zh-CN": "Google量子AI实验室主任，领导量子计算研究，推动量子优越性与AI算法优化。",
@@ -352,7 +478,7 @@
                 "zh-CN": "量子计算硬件领域的领军人物，补充硬件开发视角。",
                 "en": "A leading figure in quantum computing hardware, supplementing the hardware development perspective."
               } 
-            },
+            }
         ];
 
         const financeMasters = [
