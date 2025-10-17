@@ -1,5 +1,7 @@
 let currentSelectedLeader = null;
         let currentSelectedLeaderCategory = '';
+        // This variable can still be used to store the *initially* generated prompt if needed elsewhere,
+        // but the API call will now use the live content from the textarea.
         let currentGeneratedPrompt = ''; 
 
         // --- NEW: Modal Control ---
@@ -121,7 +123,7 @@ let currentSelectedLeader = null;
             currentGeneratedPrompt = ''; 
             document.getElementById('prompt-display-area').style.display = 'none';
             document.getElementById('ai-response-area').style.display = 'none';
-            document.getElementById('generatedPromptText').textContent = '';
+            document.getElementById('generatedPromptText').value = '';
             document.getElementById('aiResponseText').textContent = '';
         }
 
@@ -140,7 +142,7 @@ let currentSelectedLeader = null;
             currentGeneratedPrompt = ''; 
             document.getElementById('prompt-display-area').style.display = 'none';
             document.getElementById('ai-response-area').style.display = 'none';
-            document.getElementById('generatedPromptText').textContent = '';
+            document.getElementById('generatedPromptText').value = '';
             document.getElementById('aiResponseText').textContent = '';
 
             if (!document.getElementById(category).classList.contains('active')) {
@@ -270,21 +272,27 @@ ${translations[lang].promptAs} ${currentSelectedLeader.name}, ${translations[lan
             const promptTextElement = document.getElementById('generatedPromptText');
 
             if (currentGeneratedPrompt) {
-                promptTextElement.textContent = currentGeneratedPrompt.trim();
+                // Now we set the value of the textarea
+                promptTextElement.value = currentGeneratedPrompt.trim();
                 promptDisplayArea.style.display = 'block';
                 document.getElementById('ai-response-area').style.display = 'none'; 
                 document.getElementById('aiResponseText').textContent = ''; 
             } else {
                 promptDisplayArea.style.display = 'none';
-                promptTextElement.textContent = '';
+                promptTextElement.value = '';
             }
         }
 
         async function getAIResponse() {
-            if (!currentGeneratedPrompt) { 
+            // === MODIFICATION START ===
+            // 1. Get the latest content from the editable textarea.
+            const promptText = document.getElementById('generatedPromptText').value.trim();
+
+            if (!promptText) { 
                 alert(translations[currentLang].alertNoPrompt);
                 return;
             }
+            // === MODIFICATION END ===
 
             const apiBaseUrl = document.getElementById('apiEndpoint').value.trim();
             const apiKey = document.getElementById('apiKey').value.trim();
@@ -316,24 +324,29 @@ ${translations[lang].promptAs} ${currentSelectedLeader.name}, ${translations[lan
             loadingIndicator.style.display = 'inline-block';
             getAIResponseButton.disabled = true;
             let requestBody; 
+
+            // === MODIFICATION START ===
+            // 2. Use the 'promptText' variable (from the textarea) in the request body.
             if (apiKey && model.toLowerCase().includes("gpt")) {
                 requestBody = {
                     model: model,
-                    messages: [ { role: "user", content: currentGeneratedPrompt } ], 
+                    messages: [ { role: "user", content: promptText } ], 
                     temperature: 0.7,
                 };
             } else if (apiKey && model.toLowerCase().includes("deepseek")) {
                 requestBody = {
                     model: model,
-                    messages: [ { role: "user", content: currentGeneratedPrompt } ], 
+                    messages: [ { role: "user", content: promptText } ], 
                     temperature: 0.7,
                 };
             } else if (apiKey && model.toLowerCase().includes("gemini")) {
                 requestBody = {
-                    contents: [ { role: "user", parts: [ { text: currentGeneratedPrompt } ] } ],
+                    contents: [ { role: "user", parts: [ { text: promptText } ] } ],
                     generationConfig: { temperature: 0.7 }
                 };
             }
+            // === MODIFICATION END ===
+
             const headers = { 'Content-Type': 'application/json', };
             if (apiKey && !model.toLowerCase().includes("gemini"))  { headers['Authorization'] = `Bearer ${apiKey}`; }
             
@@ -413,8 +426,9 @@ ${translations[lang].promptAs} ${currentSelectedLeader.name}, ${translations[lan
                 textToCopy = aiResponseTextElement.textContent.trim();
                 contentTypeKey = 'contentTypeAiResponse';
             } 
-            else if (promptDisplayArea.style.display !== 'none' && generatedPromptTextElement.textContent.trim()) {
-                textToCopy = generatedPromptTextElement.textContent.trim();
+            // Read from textarea's value now
+            else if (promptDisplayArea.style.display !== 'none' && generatedPromptTextElement.value.trim()) {
+                textToCopy = generatedPromptTextElement.value.trim();
                 contentTypeKey = 'contentTypePrompt';
             }
 
@@ -436,7 +450,7 @@ ${translations[lang].promptAs} ${currentSelectedLeader.name}, ${translations[lan
                 { value: "deepseek-chat", labelKey: "modelDeepSeekV3" }
             ],
             "https://generativelanguage.googleapis.com": [
-                { value: "gemini-2.5-flash", labelKey: "modelGeminiFlash" }
+                { value: "gemini-1.5-flash", labelKey: "modelGeminiFlash" } // Corrected model name
             ],
             "https://api.openai.com": [
                 { value: "gpt-4o-mini", labelKey: "modelGpt4oMini" }
