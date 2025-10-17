@@ -423,6 +423,49 @@
                 "en": "Pioneer in combining quantum mechanics and relativity, discovered positron."
               } 
             },
+
+            { id: "john_von_neumann", name: "John von Neumann", 
+              contribution: {
+                "zh-CN": "发展量子力学数学框架，提出密度矩阵与算符理论，奠定量子测量基础。",
+                "en": "Developed quantum mechanics' mathematical framework, proposed density matrix and operator theory, foundational to quantum measurement."
+              }, 
+              field: {
+                "zh-CN": "量子力学、数学物理。",
+                "en": "Quantum Mechanics, Mathematical Physics."
+              }, 
+              remarks: {
+                "zh-CN": "量子理论形式化的先驱，影响计算与物理学交叉。",
+                "en": "Pioneer of quantum theory formalization, impacted computing and physics."
+              } 
+            },
+            { id: "richard_feynman", name: "Richard Feynman", 
+              contribution: {
+                "zh-CN": "提出量子电动力学与路径积分，发明费曼图，获1965年诺贝尔物理学奖。",
+                "en": "Developed quantum electrodynamics and path integral formulation, invented Feynman diagrams, won 1965 Nobel Prize in Physics."
+              }, 
+              field: {
+                "zh-CN": "量子电动力学、理论物理。",
+                "en": "Quantum Electrodynamics, Theoretical Physics."
+              }, 
+              remarks: {
+                "zh-CN": "量子力学教学与研究的革新者，提出量子计算概念。",
+                "en": "Innovator in quantum mechanics teaching, proposed quantum computing."
+              } 
+            },
+            { id: "james_clerk_maxwell", name: "James Clerk Maxwell", 
+              contribution: {
+                "zh-CN": "建立电磁场理论，统一电与磁，奠定量子场论与光量子研究基础。",
+                "en": "Formulated electromagnetic field theory, unified electricity and magnetism, foundational to quantum field theory."
+              }, 
+              field: {
+                "zh-CN": "电磁学、量子场论。",
+                "en": "Electromagnetism, Quantum Field Theory."
+              }, 
+              remarks: {
+                "zh-CN": "经典电磁学的奠基人，启发量子理论发展。",
+                "en": "Founder of classical electromagnetism, inspired quantum theory."
+              } 
+            },
             { id: "hartmut_neven", name: "Hartmut Neven", 
               contribution: {
                 "zh-CN": "Google量子AI实验室主任，领导量子计算研究，推动量子优越性与AI算法优化。",
