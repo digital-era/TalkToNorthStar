@@ -403,6 +403,7 @@
             font-size: 1.5em;
         }
         
+        /* Shared styles for textareas */
         .interaction-area textarea {
             width: 100%;
             box-sizing: border-box;
@@ -414,7 +415,12 @@
             font-size: 1em;
             background-color: var(--dark-input-bg);
             color: var(--dark-text-primary);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+            line-height: 1.5;
         }
+
         .interaction-area textarea::placeholder {
             color: var(--dark-text-secondary);
         }
@@ -496,6 +502,10 @@
             line-height: 1.7;   /* 更宽松的行高 */
             text-align: justify;/* 两端对齐 */
             color: var(--dark-text-primary); /* 确保文字颜色为主要文字颜色 */
+        }
+        /* Make the prompt textarea taller */
+        #generatedPromptText {
+            min-height: 200px; /* Increased height for better editing */
         }
         /* --- [新增] 结束 --- */
 
@@ -714,7 +724,9 @@
 
             <div id="prompt-display-area" class="response-display" style="display:none;">
                 <h4 data-i18n-key="generatedPromptTitle">生成的 问题 (对选择北极星):</h4>
-                <pre id="generatedPromptText"></pre>
+                <!-- === MODIFICATION START === -->
+                <textarea id="generatedPromptText"></textarea>
+                <!-- === MODIFICATION END === -->
             </div>
             
             <div id="ai-response-area" class="response-display" style="display:none;">
