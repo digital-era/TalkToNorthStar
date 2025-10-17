@@ -70,6 +70,20 @@
                 "en": "Anthropic is committed to responsible AI development, forming competition with OpenAI."
               } 
             },
+            { id: "mark_zuckerberg", name: "Mark Zuckerberg", 
+              contribution: {
+                "zh-CN": "Meta创始人兼首席执行官，领导Llama开源模型开发，推动开放源AI与Meta AI助手，2025年投资600亿美元推进AI基础设施。",
+                "en": "Founder and CEO of Meta, leads Llama open-source model development, promotes open-source AI and Meta AI assistant, invested $60 billion in AI infrastructure in 2025."
+              }, 
+              field: {
+                "zh-CN": "人工智能（开源AI、生成式AI）、社交平台。",
+                "en": "Artificial Intelligence (Open-Source AI, Generative AI), Social Platforms."
+              }, 
+              remarks: {
+                "zh-CN": "通过Llama系列模型影响全球AI生态，强调开源AI的长期优势。",
+                "en": "Influences global AI ecosystem through Llama series, emphasizes long-term advantages of open-source AI."
+              } 
+            },
             { id: "geoffrey_hinton", name: "Geoffrey Hinton", 
               contribution: {
                 "zh-CN": "AI“教父”，神经网络与深度学习先驱，2018年图灵奖得主，2024年诺贝尔奖得主，关注AI伦理风险。",
@@ -863,6 +877,90 @@
                 "zh-CN": "卡夫卡式概念定义现代异化感，影响深远。",
                 "en": "Kafkaesque defined modern alienation, profoundly influential."
               } 
+            },
+            { id: "plutarch", name: "Plutarch", 
+              contribution: {
+                "zh-CN": "撰写《希腊罗马名人传》，以比较传记揭示历史人物品格与命运。",
+                "en": "Authored Parallel Lives, revealed character and fate of historical figures through comparative biographies."
+              }, 
+              field: {
+                "zh-CN": "历史传记、比较文学。",
+                "en": "Historical Biography, Comparative Literature."
+              }, 
+              remarks: {
+                "zh-CN": "古代传记文学奠基人，影响西方历史与文学叙事。",
+                "en": "Founder of ancient biography, shaped Western historical and literary narrative."
+              } 
+            },
+            { id: "sima_qian", name: "司马迁", 
+              contribution: {
+                "zh-CN": "撰写《史记》，开创中国纪传体史学，记录帝王与英雄生平。",
+                "en": "Authored Records of the Grand Historian, pioneered Chinese biographical historiography, chronicled emperors and heroes."
+              }, 
+              field: {
+                "zh-CN": "历史传记、史学。",
+                "en": "Historical Biography, Historiography."
+              }, 
+              remarks: {
+                "zh-CN": "中国史学之父，其叙事影响亚洲历史写作传统。",
+                "en": "Father of Chinese historiography, narrative shaped Asian historical writing."
+              } 
+            },
+            { id: "suetonius", name: "Suetonius", 
+              contribution: {
+                "zh-CN": "撰写《罗马十二帝王传》，记录罗马皇帝生平，揭示权力与人性。",
+                "en": "Authored The Twelve Caesars, chronicled Roman emperors' lives, explored power and humanity."
+              }, 
+              field: {
+                "zh-CN": "历史传记、罗马史。",
+                "en": "Historical Biography, Roman History."
+              }, 
+              remarks: {
+                "zh-CN": "罗马传记文学代表，影响欧洲历史与政治叙事。",
+                "en": "Roman biography icon, influenced European historical and political narrative."
+              } 
+            },
+            { id: "marco_polo", name: "Marco Polo", 
+              contribution: {
+                "zh-CN": "撰写《马可波罗游记》，记录亚洲地理与文化，激发西方对东方的探索。",
+                "en": "Authored The Travels of Marco Polo, documented Asian geography and culture, inspired Western exploration."
+              }, 
+              field: {
+                "zh-CN": "地理传记、旅行文学。",
+                "en": "Geographical Biography, Travel Literature."
+              }, 
+              remarks: {
+                "zh-CN": "中世纪地理文学先驱，促进东西方文化交流。",
+                "en": "Medieval geographical literature pioneer, fostered East-West cultural exchange."
+              } 
+            },
+            { id: "xu_xiake", name: "徐霞客", 
+              contribution: {
+                "zh-CN": "撰写《徐霞客游记》，记录中国地理与风貌，奠定中国旅行文学基础。",
+                "en": "Authored Xu Xiake's Travels, documented Chinese geography and landscapes, founded Chinese travel literature."
+              }, 
+              field: {
+                "zh-CN": "地理传记、旅行文学。",
+                "en": "Geographical Biography, Travel Literature."
+              }, 
+              remarks: {
+                "zh-CN": "中国地理学与文学的先驱，影响后世自然与文化研究。",
+                "en": "Pioneer of Chinese geography and literature, influenced natural and cultural studies."
+              } 
+            },
+            { id: "alexander_von_humboldt", name: "Alexander von Humboldt", 
+              contribution: {
+                "zh-CN": "撰写《宇宙》，记录美洲地理与自然，奠定现代地理学与生态学基础。",
+                "en": "Authored Cosmos, documented American geography and nature, founded modern geography and ecology."
+              }, 
+              field: {
+                "zh-CN": "地理传记、自然科学。",
+                "en": "Geographical Biography, Natural Science."
+              }, 
+              remarks: {
+                "zh-CN": "近代地理学之父，连接科学与文学的叙述方式。",
+                "en": "Father of modern geography, linked science with literary narrative."
+              } 
             }
         ];
 
@@ -1006,9 +1104,92 @@
                 "zh-CN": "墨西哥艺术象征，女性主义与民族先锋。",
                 "en": "Mexican art icon, feminist and nationalist pioneer."
               } 
+            },
+            { id: "wolfgang_amadeus_mozart", name: "Wolfgang Amadeus Mozart", 
+              contribution: {
+                "zh-CN": "创作《魔笛》《安魂曲》，以钢琴协奏曲与歌剧革新古典音乐。",
+                "en": "Composed The Magic Flute, Requiem, revolutionized classical music with piano concertos and operas."
+              }, 
+              field: {
+                "zh-CN": "钢琴音乐、古典音乐、歌剧。",
+                "en": "Piano Music, Classical Music, Opera."
+              }, 
+              remarks: {
+                "zh-CN": "古典音乐天才，钢琴作品奠定音乐表现力基础。",
+                "en": "Classical music genius, piano works foundational to musical expression."
+              } 
+            },
+            { id: "ludwig_van_beethoven", name: "Ludwig van Beethoven", 
+              contribution: {
+                "zh-CN": "创作《月光奏鸣曲》《第九交响曲》，以钢琴与交响乐桥接古典与浪漫主义。",
+                "en": "Composed Moonlight Sonata, Symphony No. 9, bridged Classical and Romanticism with piano and orchestral works."
+              }, 
+              field: {
+                "zh-CN": "钢琴音乐、交响乐、古典音乐。",
+                "en": "Piano Music, Symphony, Classical Music."
+              }, 
+              remarks: {
+                "zh-CN": "音乐史上巨匠，钢琴作品推动情感深度表达。",
+                "en": "Musical titan, piano works advanced emotional depth."
+              } 
+            },
+            { id: "frederic_chopin", name: "Frédéric Chopin", 
+              contribution: {
+                "zh-CN": "创作《夜曲》《波兰舞曲》，以抒情钢琴曲定义浪漫主义音乐。",
+                "en": "Composed Nocturnes, Polonaises, defined Romantic music with lyrical piano works."
+              }, 
+              field: {
+                "zh-CN": "钢琴音乐、浪漫主义音乐。",
+                "en": "Piano Music, Romantic Music."
+              }, 
+              remarks: {
+                "zh-CN": "浪漫派钢琴大师，影响现代钢琴演奏技艺。",
+                "en": "Romantic piano master, shaped modern piano technique."
+              } 
+            },
+            { id: "luciano_pavarotti", name: "Luciano Pavarotti", 
+              contribution: {
+                "zh-CN": "意大利男高音，演唱《今夜无人入睡》，推广歌剧大众化，获格莱美奖。",
+                "en": "Italian tenor, performed Nessun Dorma, popularized opera, Grammy winner."
+              }, 
+              field: {
+                "zh-CN": "声乐、歌剧。",
+                "en": "Vocal Music, Opera."
+              }, 
+              remarks: {
+                "zh-CN": "20世纪歌剧巨星，推动古典声乐全球传播。",
+                "en": "20th-century opera superstar, globalized classical vocal music."
+              } 
+            },
+            { id: "maria_callas", name: "Maria Callas", 
+              contribution: {
+                "zh-CN": "希腊裔女高音，诠释贝利尼与威尔第角色，革新歌剧表演艺术。",
+                "en": "Greek-American soprano, interpreted Bellini and Verdi roles, revolutionized opera performance."
+              }, 
+              field: {
+                "zh-CN": "声乐、歌剧。",
+                "en": "Vocal Music, Opera."
+              }, 
+              remarks: {
+                "zh-CN": "被誉为“歌剧女王”，影响声乐技巧与戏剧性。",
+                "en": "Dubbed 'La Divina,' influenced vocal technique and drama."
+              } 
+            },
+            { id: "enrico_caruso", name: "Enrico Caruso", 
+              contribution: {
+                "zh-CN": "意大利男高音，先驱唱片录音，推动歌剧商业化与技术传播。",
+                "en": "Italian tenor, pioneered recordings, advanced opera commercialization and technology."
+              }, 
+              field: {
+                "zh-CN": "声乐、歌剧。",
+                "en": "Vocal Music, Opera."
+              }, 
+              remarks: {
+                "zh-CN": "早期录音时代传奇，奠定现代演唱基础。",
+                "en": "Recording era legend, foundational to modern singing."
+              } 
             }
         ];
-
         
         const chinaEntrepreneurs = [
             { id: "robin_zeng", name: "曾毓群 (Robin Zeng)", 
