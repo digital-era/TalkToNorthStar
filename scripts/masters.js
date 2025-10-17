@@ -84,6 +84,34 @@
                 "en": "Influences global AI ecosystem through Llama series, emphasizes long-term advantages of open-source AI."
               } 
             },
+            { id: "jeff_bezos", name: "Jeff Bezos",
+              contribution: {
+                "zh-CN": "亚马逊创始人，创建AWS奠定AI云计算基础，投资AI创新，推动Alexa和企业AI工具的早期发展。",
+                "en": "Founder of Amazon, established AWS as the foundation for AI cloud computing, invested in AI innovation, drove early development of Alexa and enterprise AI tools."
+              },
+              field: {
+                "zh-CN": "人工智能（云计算、语音AI）、电子商务。",
+                "en": "Artificial Intelligence (Cloud Computing, Voice AI), E-commerce."
+              },
+              remarks: {
+                "zh-CN": "通过AWS和Alexa为AI的商业化和普及奠定了基础，影响全球科技生态。",
+                "en": "Laid the groundwork for AI commercialization and adoption through AWS and Alexa, shaping the global tech ecosystem."
+              }
+            },
+            { id: "larry_ellison", name: "Larry Ellison",
+              contribution: {
+                "zh-CN": "Oracle创始人，领导Oracle数据库和云基础设施发展，推动AI驱动的企业解决方案和云端数据管理。",
+                "en": "Founder of Oracle, led development of Oracle databases and cloud infrastructure, advancing AI-driven enterprise solutions and cloud data management."
+              },
+              field: {
+                "zh-CN": "人工智能（企业AI、云数据库）、企业软件。",
+                "en": "Artificial Intelligence (Enterprise AI, Cloud Databases), Enterprise Software."
+              },
+              remarks: {
+                "zh-CN": "Oracle的数据库和云服务为AI驱动的企业数字化转型提供了关键技术支持。",
+                "en": "Oracle's databases and cloud services provide critical technical support for AI-driven enterprise digital transformation."
+              }
+            },
             { id: "geoffrey_hinton", name: "Geoffrey Hinton", 
               contribution: {
                 "zh-CN": "AI“教父”，神经网络与深度学习先驱，2018年图灵奖得主，2024年诺贝尔奖得主，关注AI伦理风险。",
