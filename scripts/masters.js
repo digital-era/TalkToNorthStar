@@ -112,6 +112,20 @@
                 "en": "His bold predictions have shaped the long-term vision for AI and quantum computing."
               } 
             },
+            { id: "kevin_kelly", name: "Kevin Kelly", 
+              contribution: {
+                "zh-CN": "《连线》杂志创始人，预测AI奇点与镜像世界，著《必然》推动技术哲学与未来学研究。",
+                "en": "Founder of Wired magazine, predicted AI singularity and mirrorworld, authored The Inevitable, advancing tech philosophy and futurism."
+              }, 
+              field: {
+                "zh-CN": "人工智能（未来学、技术哲学）。",
+                "en": "Artificial Intelligence (Futurism, Tech Philosophy)."
+              }, 
+              remarks: {
+                "zh-CN": "技术乐观主义代表，桥接AI与人文长期愿景。",
+                "en": "Tech optimism leader, bridging AI with long-term human vision."
+              } 
+            },
             { id: "peter_diamandis", name: "Peter Diamandis", 
               contribution: {
                 "zh-CN": "XPRIZE创始人，Singularity University联合创始人，倡导指数型技术（AI、量子计算）解决全球挑战。",
@@ -438,6 +452,20 @@
                 "en": "Pioneer of quantum theory formalization, impacted computing and physics."
               } 
             },
+            { id: "bernhard_riemann", name: "Bernhard Riemann", 
+              contribution: {
+                "zh-CN": "提出黎曼几何与黎曼猜想，为量子场论和广义相对论提供数学基础。",
+                "en": "Proposed Riemann geometry and Riemann hypothesis, providing mathematical foundations for quantum field theory and general relativity."
+              }, 
+              field: {
+                "zh-CN": "数学物理、黎曼几何。",
+                "en": "Mathematical Physics, Riemann Geometry."
+              }, 
+              remarks: {
+                "zh-CN": "数学与量子理论的桥梁，影响现代物理学发展。",
+                "en": "Bridge between mathematics and quantum theory, shaped modern physics."
+              } 
+            },
             { id: "richard_feynman", name: "Richard Feynman", 
               contribution: {
                 "zh-CN": "提出量子电动力学与路径积分，发明费曼图，获1965年诺贝尔物理学奖。",
@@ -565,6 +593,20 @@
               remarks: {
                 "zh-CN": "以大胆投资和对抗管理层著称，影响美国企业治理格局。",
                 "en": "Known for bold investments and challenging management, influencing the landscape of U.S. corporate governance."
+              } 
+            },
+            { id: "mary_meeker", name: "Mary Meeker", 
+              contribution: {
+                "zh-CN": "Kleiner Perkins合伙人，发布年度《互联网趋势报告》，推动互联网与AI投资，预测数字经济转型。",
+                "en": "Kleiner Perkins partner, publishes annual Internet Trends Report, drives internet and AI investments, predicts digital economy transformation."
+              }, 
+              field: {
+                "zh-CN": "风险投资、互联网金融、技术趋势分析。",
+                "en": "Venture Capital, Internet Finance, Technology Trends Analysis."
+              }, 
+              remarks: {
+                "zh-CN": "被誉为“互联网女王”，其报告指引全球科技投资方向。",
+                "en": "Dubbed the 'Queen of the Internet,' her reports guide global tech investment trends."
               } 
             },
             { id: "abigail_johnson", name: "Abigail Johnson", 
