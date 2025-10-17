@@ -168,6 +168,20 @@
                 "en": "Actively advocates for AI ethics and governance, influencing the intersection of tech industry and public policy."
               } 
             },
+            { id: "edwin_chen", name: "Edwin Chen", 
+              contribution: {
+                "zh-CN": "Surge AI创始人兼首席执行官，专注于高质量数据标注，服务于OpenAI等公司，推动AI模型训练的数据质量革命。",
+                "en": "Founder and CEO of Surge AI, focused on high-quality data annotation, serving companies like OpenAI, driving a data quality revolution for AI model training.""
+              }, 
+              field: {
+                "zh-CN": "人工智能（数据标注、自然语言处理）、技术创业。",
+                "en": "Artificial Intelligence (Data Annotation, Natural Language Processing), Tech Entrepreneurship."
+              }, 
+              remarks: {
+                "zh-CN": "通过自筹资金模式带领Surge AI实现快速增长，2025年拒绝多家收购提议，强调智能数据对AGI的重要性。",
+                "en": "Led Surge AI to rapid growth through a bootstrapped model, rejected acquisition offers in 2025, emphasizing the importance of intelligent data for AGI."
+              } 
+            },
             { id: "jeff_dean", name: "Jeff Dean", 
               contribution: {
                 "zh-CN": "Google高级研究员，领导Google Brain与TensorFlow开发，推动AI在搜索、医疗等领域的应用。",
