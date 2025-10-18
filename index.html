@@ -48,13 +48,13 @@
         /* --- Header & Controls --- */
         header {
             display: flex; /* 使用 Flexbox 布局 */
-            flex-wrap: wrap; /* 允许子元素换行 */
+            align-items: center; /* 垂直居中对齐所有子项 */
             justify-content: space-between; /* 在主轴上均匀分布空间 */
-            align-items: center; /* 垂直居中对齐 */
             padding: 20px; /* 整体内边距 */
             max-width: 1200px;
             margin: 0 auto;
             position: relative; /* 保持相对定位以便子元素定位 */
+            /* 移除 flex-wrap: wrap; 确保所有元素尝试在一行 */
         }
 
         /* --- Logo Styles --- */
@@ -63,6 +63,7 @@
             align-items: center;
             z-index: 20; 
             flex-shrink: 0; /* 防止Logo区域缩小 */
+            /* 保持Logo在最左侧 */
         }
         .logo-container img {
             height: 70px; /* 根据实际图标大小调整 */
@@ -74,7 +75,7 @@
             font-family: 'Poppins', sans-serif;
             text-align: center;
             margin: 0; /* 移除H1默认的margin */
-            margin-top: 50px; /* 向下推以保持在原来位置 */
+            /* 移除 margin-top: 50px; 不再需要单独向下推 */
             font-size: 2.4em;
             font-weight: 600;
             letter-spacing: 0.5px;
@@ -92,6 +93,9 @@
             -webkit-animation: colorWave 7s linear infinite;
             flex-grow: 1; /* 允许标题占据中心大部分空间 */
             min-width: 0; /* 允许在flex容器中缩小 */
+            /* 在宽屏时，让标题和logo之间有适当的间距 */
+            margin-left: 20px; 
+            margin-right: 20px;
         }
     
         .top-right-controls {
@@ -100,6 +104,7 @@
             gap: 15px; /* 增加按钮之间的间距 */
             z-index: 10; 
             flex-shrink: 0; /* 防止按钮区域缩小 */
+            /* 保持控制按钮在最右侧 */
         }
         /* 新增：关于我们按钮样式 */
         .about-us-button {
@@ -604,6 +609,7 @@
                 flex-direction: column; /* 小屏幕上垂直堆叠 */
                 align-items: center; /* 居中对齐 */
                 padding: 15px;
+                flex-wrap: wrap; /* 重新启用换行 */
             }
             .logo-container {
                 width: 100%;
@@ -616,11 +622,13 @@
                 margin-right: 10px;
             }
             h1 {
-                margin-top: 20px; /* 调整标题在小屏幕上的位置 */
+                margin-top: 10px; /* 调整标题在小屏幕上的位置 */
                 font-size: 2em; /* 调整移动端的字体大小 */
                 text-align: center;
                 width: 100%; /* 占据整行 */
                 order: 2; /* 确保标题在Logo和控制按钮之间 */
+                margin-left: 0; /* 移除左右边距 */
+                margin-right: 0;
             }
             .top-right-controls { 
                 width: 100%; /* 占据整行 */
