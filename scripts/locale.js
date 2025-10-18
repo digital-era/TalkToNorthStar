@@ -92,7 +92,7 @@
             },
             "en": {
                 "pageTitle": "Talk with North Stars",
-                "headerTitleComplete": "Talk with North Stars<br>\"Let AI Light the Eternal Lighthouse in Your Heart\"",
+                "headerTitleComplete": "Talk with North Stars<br>\"Let AI Illuminate the Eternal Lighthouse in Your Heart\"",
                 "headerTitle": "Talk with North Stars",
                 "headerSubtitle": "Let AI Illuminate the Eternal Lighthouse in Your Heart",
                 "tabAi": "Pan-AI",
