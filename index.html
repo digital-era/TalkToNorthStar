@@ -57,7 +57,7 @@
         /* --- Logo Styles --- */
         .logo-container {
             position: absolute;
-            top: 20px; /* 调整 Logo 的 top 值，使其与按钮的底部对齐 */
+            top: 1px; /* 调整 Logo 的 top 值从20-》1，使其与按钮的底部对齐 */
             left: 20px; /* 左侧距离 */
             z-index: 20; /* 确保在其他内容之上 */
             display: flex; /* 让logo内部的img居中 */
@@ -102,7 +102,7 @@
             gap: 15px; /* 按钮之间间距 */
             z-index: 10;
         }
-        /* 修改：关于我们按钮样式，与其他按钮保持一致 */
+        /* 修改：了解我们按钮样式，与其他按钮保持一致 */
         .about-us-button {
             color: var(--dark-text-secondary); /* 文本颜色 */
             text-decoration: none;
@@ -186,7 +186,7 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             position: relative;
         }
-        /* 新增：关于我们模态框的特定样式 */
+        /* 新增：了解我们模态框的特定样式 */
         .manifesto-modal .modal-content {
             max-width: 700px; /* 宣言模态框可以更宽 */
             margin: 8% auto; /* 稍微向上移动，并居中 */
@@ -740,9 +740,10 @@
             <img src="images/TalktoNorthStarIcon.png" alt="Talk to NorthStar Logo">
         </div>
         <div class="top-right-controls">
-            <!-- “关于我们”按钮现在在这里，并放在最左边 -->
+            <!-- “了解我们”按钮现在在这里，并放在最左边 -->
             <button class="about-us-button" onclick="openManifestoModal()">
-                <i class="fas fa-book-open"></i> 关于我们
+                <i class="fas fa-book-open"></i>                 
+                <span data-i18n-key="aboutBtnText">了解我们</span>
             </button>
             <a href="#" onclick="openApiSettingsModal(event)" class="settings-link">
                 <i class="fas fa-cog"></i>
