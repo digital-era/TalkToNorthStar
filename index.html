@@ -12,7 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-
     <style>
         /* --- DARK THEME VARIABLES --- */
         :root {
@@ -48,38 +47,83 @@
         
         /* --- Header & Controls --- */
         header {
-            text-align: center;
-            padding: 20px 0;
+            display: flex; /* 使用 Flexbox 布局 */
+            align-items: center; /* 垂直居中对齐所有子项 */
+            justify-content: space-between; /* 子项之间平均分布空间 */
+            padding: 20px; /* 整体内边距 */
+            max-width: 1200px;
             margin: 0 auto;
             position: relative;
-            max-width: 1200px;
-            /* 减少 header 自身的顶部内边距，因为我们将用 h1 的 margin 来控制标题位置 */
-            padding-top: 20px; 
         }
 
         /* --- Logo Styles --- */
         .logo-container {
-            position: absolute;
-            top: 20px; /* 与右上角按钮保持一致的顶部距离 */
-            left: 20px; /* 左侧距离 */
-            z-index: 20; /* 确保在其他内容之上 */
+            /* 移除绝对定位，让它参与flex布局 */
+            /* position: absolute; */
+            /* top: 20px; */
+            /* left: 20px; */
+            z-index: 20; 
+            display: flex; /* 确保图片和文本也能垂直居中 */
+            align-items: center;
         }
         .logo-container img {
             height: 70px; /* 根据实际图标大小调整 */
             width: auto;
             border-radius: 5px; /* 可以给logo加一点圆角 */
+            margin-right: 15px; /* Logo与H1之间的间距 */
+        }
+        /* 新增：Logo旁边的标题文本样式 */
+        .logo-title-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.4em; /* 保持H1的字体大小 */
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            line-height: 1.3;
+            background: linear-gradient(
+                90deg,               
+                #00DFD8, /* 亮青色 */
+                #7928CA  /* 紫色 */
+            );
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: colorWave 7s linear infinite;
+            -webkit-animation: colorWave 7s linear infinite;
+            margin: 0; /* 移除H1默认的margin */
+            flex-shrink: 0; /* 防止标题缩小 */
         }
     
         .top-right-controls {
-            position: absolute;
-            /* 调整按钮的垂直位置以适应新的 header 内边距 */
-            top: 20px; 
-            right: 20px;
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
+            /* 移除绝对定位，让它参与flex布局 */
+            /* position: absolute; */
+            /* top: 20px; */
+            /* right: 20px; */
+            display: flex; /* 修改为 flex */
             align-items: center; 
-            gap: 10px; 
-            z-index: 10; /* 确保在logo之下，如果logo更大可能会盖住 */
+            gap: 15px; /* 增加按钮之间的间距 */
+            z-index: 10; 
+            flex-shrink: 0; /* 防止按钮区域缩小 */
+        }
+        /* 新增：关于我们按钮样式 */
+        .about-us-button {
+            background-color: var(--dark-accent);
+            color: var(--dark-bg);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .about-us-button:hover {
+            background-color: var(--dark-accent-hover);
+            transform: translateY(-2px);
         }
     
         .settings-link {
@@ -112,7 +156,7 @@
             font-size: 0.9rem;
             cursor: pointer;
             box-sizing: border-box; 
-            width: 100%; 
+            width: auto; /* 自动调整宽度 */
         }
         .language-selector:hover {
             border-color: var(--dark-accent);
@@ -142,6 +186,56 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             position: relative;
         }
+        /* 新增：关于我们模态框的特定样式 */
+        .manifesto-modal .modal-content {
+            max-width: 700px; /* 宣言模态框可以更宽 */
+            margin: 8% auto; /* 稍微向上移动，并居中 */
+            background-color: var(--dark-surface-light); /* 稍亮的背景 */
+            border: 2px solid var(--dark-accent); /* 强调色边框 */
+        }
+        .manifesto-modal .manifesto-text {
+            font-family: var(--font-family-novel); /* 使用小说风格字体 */
+            color: var(--dark-text-primary);
+            font-size: 1.1em;
+            line-height: 1.8;
+            padding: 10px;
+            max-height: 70vh; /* 限制高度并允许滚动 */
+            overflow-y: auto;
+            text-align: justify; /* 两端对齐 */
+        }
+        .manifesto-modal h2 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark-accent);
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            letter-spacing: 0.8px;
+            line-height: 1.4;
+            background: linear-gradient(
+                90deg,               
+                #00DFD8, /* 亮青色 */
+                #7928CA  /* 紫色 */
+            );
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: colorWave 7s linear infinite;
+            -webkit-animation: colorWave 7s linear infinite;
+        }
+        .manifesto-modal p {
+            margin-bottom: 1.2em;
+        }
+        .manifesto-modal p.conclusion {
+            text-align: center;
+            font-style: italic;
+            font-weight: bold;
+            color: var(--dark-remarks-border); /* 使用备注边框的颜色作为强调 */
+            margin-top: 30px;
+            font-size: 1.2em;
+        }
+
+
         .close-button {
             color: var(--dark-text-secondary);
             position: absolute;
@@ -210,21 +304,20 @@
             background-color: var(--dark-accent-hover);
         }
     
-    
-        h1 {
+        /* 移除原有的H1样式，因为现在它被 Logo 容器中的 span 替代 */
+        /* h1 {
             font-family: 'Poppins', sans-serif;
             text-align: center;
-            /* 将负 margin 改为正 margin，将标题向下推，从而为顶部的按钮留出空间 */
             margin-top: 50px; 
-            margin-bottom: 10px; /* 增加一点底部边距 */
+            margin-bottom: 10px; 
             font-size: 2.4em;
             font-weight: 600;
             letter-spacing: 0.5px;
             line-height: 1.3;
             background: linear-gradient(
                 90deg,               
-                #00DFD8, /* 亮青色 */
-                #7928CA  /* 紫色 */
+                #00DFD8,
+                #7928CA
             );
             background-size: 200% auto;
             color: transparent;
@@ -232,7 +325,7 @@
             background-clip: text;
             animation: colorWave 7s linear infinite;
             -webkit-animation: colorWave 7s linear infinite;
-        }
+        } */
     
         @keyframes colorWave {
             0% { background-position: 0% 50%; }
@@ -534,30 +627,33 @@
     
         @media (max-width: 768px) {
             header {
-                padding-top: 20px;
+                flex-wrap: wrap; /* 允许换行 */
+                justify-content: center; /* 小屏幕下居中 */
+                padding: 15px;
             }
             .logo-container {
-                top: 15px;
-                left: 15px;
+                margin-bottom: 15px; /* Logo和标题在小屏幕下占据一行 */
+                justify-content: center; /* Logo和标题在小屏幕下居中 */
+                width: 100%;
+                margin-right: 0; /* 移除右侧间距 */
             }
             .logo-container img {
                 height: 50px;
+                margin-right: 10px;
             }
-            h1 {
-                /* 调整移动端的 h1 margin-top */
-                margin-top: 60px; 
-                font-size: 2em; 
-                margin-bottom: 0; 
-                line-height: 1.25;
+            .logo-title-text {
+                font-size: 2em; /* 调整移动端的字体大小 */
+                text-align: center;
+                flex-grow: 1;
             }
             .top-right-controls { 
-                /* 相应调整移动端按钮位置 */
-                top: 15px;
-                right: 15px; 
+                width: 100%; /* 占据整行 */
+                justify-content: center; /* 按钮居中 */
                 gap: 10px;
             }
             .settings-link { font-size: 0.9rem; padding: 6px 12px;}
             .language-selector { font-size: 0.8rem; padding: 7px; }
+            .about-us-button { font-size: 0.9rem; padding: 6px 12px; }
     
             body { line-height: 1.55; }
             .container { width: 92%; padding: 15px; margin-top: 15px; }
@@ -578,29 +674,47 @@
             .interaction-area textarea { font-size: 0.95em; min-height: 75px; padding: 9px; }
             #selected-leader-info { font-size: 0.95em; padding: 9px; }
             .response-display pre { font-size: 0.88em; }
+
+            .manifesto-modal .modal-content {
+                margin: 5% auto;
+                max-width: 95%;
+            }
+            .manifesto-modal h2 {
+                font-size: 1.5em;
+                margin-bottom: 15px;
+            }
+            .manifesto-modal .manifesto-text {
+                font-size: 0.95em;
+                line-height: 1.7;
+            }
+            .manifesto-modal p.conclusion {
+                font-size: 1.05em;
+                margin-top: 20px;
+            }
         }
     
         @media (max-width: 480px) {
             header {
-                padding-top: 15px;
+                padding: 10px;
             }
             .logo-container {
-                top: 10px;
-                left: 10px;
+                margin-bottom: 10px;
             }
             .logo-container img {
                 height: 45px;
             }
-            h1 {
-                /* 调整更小屏幕的 h1 margin-top */
-                margin-top: 55px; 
-                font-size: 1.8em; /* 稍微调整字体大小以获得更好的视觉效果 */
+            .logo-title-text {
+                font-size: 1.8em;
                 letter-spacing: 0.1px; 
                 line-height: 1.2; 
             }
              .top-right-controls { 
-                right: 10px; 
+                gap: 8px;
             }
+            .settings-link { font-size: 0.8rem; padding: 5px 10px;}
+            .language-selector { font-size: 0.75rem; padding: 6px; }
+            .about-us-button { font-size: 0.8rem; padding: 5px 10px; }
+
             .container { width: 95%; padding: 10px; margin-top: 10px; }
             .tab-content h2, .interaction-area h2 { font-size: 0.9em; margin-bottom: 10px; }
             .tab-button { font-size: 10px; padding: 8px 10px; margin-right: 3px; margin-bottom: 3px; }
@@ -618,7 +732,18 @@
             .interaction-area textarea { min-height: 65px; font-size: 0.9em; padding: 8px; }
             .response-display pre { font-size: 0.82em; }
             .response-display { padding: 10px; }
-            .response-display pre { padding: 8px; }            
+            .response-display pre { padding: 8px; }     
+            
+            .manifesto-modal h2 {
+                font-size: 1.3em;
+            }
+            .manifesto-modal .manifesto-text {
+                font-size: 0.9em;
+                line-height: 1.6;
+            }
+            .manifesto-modal p.conclusion {
+                font-size: 1em;
+            }
         }
     </style>
 </head>
@@ -627,8 +752,13 @@
     <header>
         <div class="logo-container">
             <img src="images/TalktoNorthStarIcon.png" alt="Talk to NorthStar Logo">
+            <h1 class="logo-title-text" data-i18n-key="headerTitleComplete" data-i18n-target="innerHTML">对话北极星</h1>
         </div>
         <div class="top-right-controls">
+            <!-- 新增“关于我们”按钮 -->
+            <button class="about-us-button" onclick="openManifestoModal()">
+                <i class="fas fa-book-open"></i> 关于我们
+            </button>
             <a href="#" onclick="openApiSettingsModal(event)" class="settings-link">
                 <i class="fas fa-cog"></i>
                 <span data-i18n-key="settingsBtnText">设置</span>
@@ -638,7 +768,7 @@
                 <option value="en">English</option>
             </select>
         </div>
-        <h1 data-i18n-key="headerTitleComplete" data-i18n-target="innerHTML"></h1>
+        <!-- <h1> 被移到 .logo-container 内部并改名为 .logo-title-text -->
     </header>
 
     <div class="container">
@@ -763,6 +893,24 @@
         </div>
     </div>
 
+    <!-- 新增宣言模态框的HTML -->
+    <div id="manifestoModal" class="modal manifesto-modal">
+        <div class="modal-content large">
+            <span class="close-button" onclick="closeManifestoModal()">×</span>
+            <div class="manifesto-text">
+                <h2>你认知世界的边界，决定你投资的边界</h2>
+                <p>财富无法被简化为K线，伟大的投资组合也无法被压缩成冰冷的收益率。人类的远见绝非商品。</p>
+                <p>你无法从噪音中发现信号，即便穷尽所有数据。</p>
+                <p>达·芬奇、巴菲特、马斯克为何卓越？是他们对世界运转的深刻洞察：物理的第一性原理、商业的护城河、人性的贪婪与恐惧。他们理解的系统与未理解的混沌，每一次的远见与修正都教会他们某些东西，从而塑造了他们的时代。</p>
+                <p>数据之于投资，犹如灵感之于达·芬奇——将其升华为一种洞见，能够预见产业的兴衰、洞察人性的周期、绘制通往未来的蓝图。</p>
+                <p>我们建造的AI将在算力、广度和不知疲倦上超越我们。但它将是人类智慧的伙伴，由我们对世界的深刻好奇和我们在无数抉择中沉淀的哲学所引导。</p>
+                <p>我们的使命是以AI原生智慧，重燃投资创意之火——敏锐、深刻、富有想象力，充满构建未来的力量。</p>
+                <p>我们是想建造在数据噪音中迷航、为市场情绪优化、追逐短期热点的投资机器，还是想建造能够与我们一同探索商业本质、激发创作灵感、与未来进行深度对话的智慧伙伴？</p>
+                <p class="conclusion"><em>投资，本应是一场与未来最深刻的对话。</em></p>
+            </div>
+        </div>
+    </div>
+
     <script src="scripts/locale.js"></script>
     <script src="scripts/masters.js"></script>
     <script src="scripts/applogic.js"></script>
@@ -770,5 +918,36 @@
     <footer>
         <p data-i18n-key="footerRight">© 2025 AI范式进化. 保留所有权利。</p>
     </footer>
+    <script>
+        // --- 宣言模态框控制逻辑 (与您提供的示例脚本一致) ---
+        const manifestoModal = document.getElementById('manifestoModal');
+        
+        function openManifestoModal() {
+            if (manifestoModal) {
+                manifestoModal.style.display = 'block';
+            }
+        }
+        
+        function closeManifestoModal() {
+            if (manifestoModal) {
+                manifestoModal.style.display = 'none';
+            }
+        }
+        
+        // 在 DOM 完全加载后，为按钮绑定事件 (这是更可靠的方法)
+        document.addEventListener('DOMContentLoaded', () => {
+            const openBtn = document.querySelector('.about-us-button'); // 使用class选择器
+            if (openBtn) {
+                openBtn.addEventListener('click', openManifestoModal);
+            }
+        });
+        
+        // 点击模态框外部区域也可以关闭
+        window.addEventListener('click', function(event) {
+            if (manifestoModal && event.target == manifestoModal) {
+                closeManifestoModal();
+            }
+        });
+    </script>
 </body>
 </html>
