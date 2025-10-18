@@ -23,7 +23,9 @@
                 "labelApiKey": "API Key :",
                 "placeholderApiKey": "sk-xxxx",
                 "labelApiModel": "模型选择:",
-                "interactWithLeader": "与北极星对话",
+                "labelSetDefaultModel": "设为默认模型", // 新增
+                "settingsSaved": "设置已保存！", // 新增
+                "settingsCleared": "API信息已清除！", // 新增                "interactWithLeader": "与北极星对话",
                 "currentSelectedLeaderPrefix": "当前选择的北极星: ",
                 "noLeaderSelected": "无",
                 "noLeaderSelectedInitial": "无",
@@ -124,6 +126,9 @@
                 "labelApiKey": "API Key :",
                 "placeholderApiKey": "sk-xxxx",
                 "labelApiModel": "Model Selection:",
+                "labelSetDefaultModel": "Set as Default Model", // 新增
+                "settingsSaved": "Settings saved!", // 新增
+                "settingsCleared": "API info cleared!", // 新增
                 "interactWithLeader": "Talk with North Star",
                 "currentSelectedLeaderPrefix": "Currently Selected North Star: ",
                 "noLeaderSelected": "None",
