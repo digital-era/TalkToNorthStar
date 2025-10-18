@@ -48,34 +48,34 @@
         /* --- Header & Controls --- */
         header {
             display: flex; /* 使用 Flexbox 布局 */
-            align-items: center; /* 垂直居中对齐所有子项 */
-            justify-content: space-between; /* 子项之间平均分布空间 */
+            flex-wrap: wrap; /* 允许子元素换行 */
+            justify-content: space-between; /* 在主轴上均匀分布空间 */
+            align-items: center; /* 垂直居中对齐 */
             padding: 20px; /* 整体内边距 */
             max-width: 1200px;
             margin: 0 auto;
-            position: relative;
+            position: relative; /* 保持相对定位以便子元素定位 */
         }
 
         /* --- Logo Styles --- */
         .logo-container {
-            /* 移除绝对定位，让它参与flex布局 */
-            /* position: absolute; */
-            /* top: 20px; */
-            /* left: 20px; */
-            z-index: 20; 
             display: flex; /* 确保图片和文本也能垂直居中 */
             align-items: center;
+            z-index: 20; 
+            flex-shrink: 0; /* 防止Logo区域缩小 */
         }
         .logo-container img {
             height: 70px; /* 根据实际图标大小调整 */
             width: auto;
             border-radius: 5px; /* 可以给logo加一点圆角 */
-            margin-right: 15px; /* Logo与H1之间的间距 */
         }
-        /* 新增：Logo旁边的标题文本样式 */
-        .logo-title-text {
+        /* 标题现在独立于 Logo 容器，并使用 h1 标签 */
+        h1 {
             font-family: 'Poppins', sans-serif;
-            font-size: 2.4em; /* 保持H1的字体大小 */
+            text-align: center;
+            margin: 0; /* 移除H1默认的margin */
+            margin-top: 50px; /* 向下推以保持在原来位置 */
+            font-size: 2.4em;
             font-weight: 600;
             letter-spacing: 0.5px;
             line-height: 1.3;
@@ -90,16 +90,12 @@
             background-clip: text;
             animation: colorWave 7s linear infinite;
             -webkit-animation: colorWave 7s linear infinite;
-            margin: 0; /* 移除H1默认的margin */
-            flex-shrink: 0; /* 防止标题缩小 */
+            flex-grow: 1; /* 允许标题占据中心大部分空间 */
+            min-width: 0; /* 允许在flex容器中缩小 */
         }
     
         .top-right-controls {
-            /* 移除绝对定位，让它参与flex布局 */
-            /* position: absolute; */
-            /* top: 20px; */
-            /* right: 20px; */
-            display: flex; /* 修改为 flex */
+            display: flex; /* 使用 flex */
             align-items: center; 
             gap: 15px; /* 增加按钮之间的间距 */
             z-index: 10; 
@@ -303,29 +299,6 @@
         .settings-form .save-btn:hover {
             background-color: var(--dark-accent-hover);
         }
-    
-        /* 移除原有的H1样式，因为现在它被 Logo 容器中的 span 替代 */
-        /* h1 {
-            font-family: 'Poppins', sans-serif;
-            text-align: center;
-            margin-top: 50px; 
-            margin-bottom: 10px; 
-            font-size: 2.4em;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            line-height: 1.3;
-            background: linear-gradient(
-                90deg,               
-                #00DFD8,
-                #7928CA
-            );
-            background-size: 200% auto;
-            color: transparent;
-            -webkit-background-clip: text;
-            background-clip: text;
-            animation: colorWave 7s linear infinite;
-            -webkit-animation: colorWave 7s linear infinite;
-        } */
     
         @keyframes colorWave {
             0% { background-position: 0% 50%; }
@@ -625,31 +598,36 @@
             background: rgba(0, 0, 0, 0.5);
         }
     
+        /* 媒体查询，在小屏幕上调整布局 */
         @media (max-width: 768px) {
             header {
-                flex-wrap: wrap; /* 允许换行 */
-                justify-content: center; /* 小屏幕下居中 */
+                flex-direction: column; /* 小屏幕上垂直堆叠 */
+                align-items: center; /* 居中对齐 */
                 padding: 15px;
             }
             .logo-container {
-                margin-bottom: 15px; /* Logo和标题在小屏幕下占据一行 */
-                justify-content: center; /* Logo和标题在小屏幕下居中 */
                 width: 100%;
-                margin-right: 0; /* 移除右侧间距 */
+                justify-content: center; /* logo和图片居中 */
+                margin-bottom: 10px; /* 在标题上方留出一些空间 */
+                order: 1; /* 确保Logo在顶部 */
             }
             .logo-container img {
                 height: 50px;
                 margin-right: 10px;
             }
-            .logo-title-text {
+            h1 {
+                margin-top: 20px; /* 调整标题在小屏幕上的位置 */
                 font-size: 2em; /* 调整移动端的字体大小 */
                 text-align: center;
-                flex-grow: 1;
+                width: 100%; /* 占据整行 */
+                order: 2; /* 确保标题在Logo和控制按钮之间 */
             }
             .top-right-controls { 
                 width: 100%; /* 占据整行 */
                 justify-content: center; /* 按钮居中 */
                 gap: 10px;
+                margin-top: 10px; /* 在标题下方留出一些空间 */
+                order: 3; /* 确保控制按钮在标题下方 */
             }
             .settings-link { font-size: 0.9rem; padding: 6px 12px;}
             .language-selector { font-size: 0.8rem; padding: 7px; }
@@ -703,13 +681,15 @@
             .logo-container img {
                 height: 45px;
             }
-            .logo-title-text {
+            h1 {
                 font-size: 1.8em;
                 letter-spacing: 0.1px; 
                 line-height: 1.2; 
+                margin-top: 15px;
             }
              .top-right-controls { 
                 gap: 8px;
+                margin-top: 8px;
             }
             .settings-link { font-size: 0.8rem; padding: 5px 10px;}
             .language-selector { font-size: 0.75rem; padding: 6px; }
@@ -752,8 +732,8 @@
     <header>
         <div class="logo-container">
             <img src="images/TalktoNorthStarIcon.png" alt="Talk to NorthStar Logo">
-            <h1 class="logo-title-text" data-i18n-key="headerTitleComplete" data-i18n-target="innerHTML">对话北极星</h1>
         </div>
+        <h1 data-i18n-key="headerTitleComplete" data-i18n-target="innerHTML">对话北极星</h1>
         <div class="top-right-controls">
             <!-- 新增“关于我们”按钮 -->
             <button class="about-us-button" onclick="openManifestoModal()">
@@ -768,7 +748,6 @@
                 <option value="en">English</option>
             </select>
         </div>
-        <!-- <h1> 被移到 .logo-container 内部并改名为 .logo-title-text -->
     </header>
 
     <div class="container">
