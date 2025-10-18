@@ -87,6 +87,7 @@
                 "settingsBtnText": "设置",
                 "modalTitle": "API及模型设置",
                 "saveBtnText": "保存设置",
+                "aboutBtnText": "了解我们",    
                  "footerRight": "© 2025 AI范式进化. 保留所有权利。",
             },
             "en": {
@@ -175,7 +176,8 @@
                 "promptReplyInEnglish": "begin your thinking and reply in English:",                    
                 "settingsBtnText": "Setting",
                 "modalTitle": "API&Modal Setting",
-                "saveBtnText": "Save Setting",
+                "saveBtnText": "Save Setting",                    
+                "aboutBtnText": "About Us",    
                 "footerRight": "© 2025 AI Paradigm Evolution. All rights reserved.",
             }
         };
