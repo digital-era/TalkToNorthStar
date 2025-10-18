@@ -52,8 +52,6 @@
             margin: 0 auto;
             position: relative;
             max-width: 1200px;
-            /* 移除 padding-top: 20px; 因为 h1 的 margin-top 会处理垂直间距 */
-            /* padding-top: 20px; */
         }
         
         /* --- Logo Styles --- */
@@ -62,7 +60,6 @@
             top: 20px; /* 与右上角按钮保持一致的顶部距离 */
             left: 20px; /* 左侧距离 */
             z-index: 20; /* 确保在其他内容之上 */
-            /* 新增：在大屏幕上，确保Logo不会导致flexbox布局问题 */
             display: flex; /* 让logo内部的img居中 */
             align-items: center; 
             justify-content: center;
@@ -77,8 +74,6 @@
         h1 {
             font-family: 'Poppins', sans-serif;
             text-align: center;
-            /* 将 h1 向下推，为上方绝对定位的元素（logo和设置/语言按钮）腾出空间 */
-            /* 调整这个值，确保足够空间，并与 logo 和 top-right-controls 的 top 值协调 */
             margin-top: 100px; /* 根据实际 Logo 和按钮高度调整 */
             margin-bottom: 20px; /* 增加一点底部边距，与下方内容隔开 */
             font-size: 2.4em;
@@ -107,29 +102,28 @@
             gap: 15px; /* 按钮之间间距 */
             z-index: 10;
         }
-        /* 新增：关于我们按钮样式 */
+        /* 修改：关于我们按钮样式，与其他按钮保持一致 */
         .about-us-button {
-            background-color: var(--dark-accent);
-            color: var(--dark-bg);
-            border: none;
+            color: var(--dark-text-secondary); /* 文本颜色 */
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.3s, border-color 0.3s, background-color 0.3s;
+            background-color: var(--dark-surface-light); /* 背景色 */
             padding: 8px 15px;
             border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
+            border: 1px solid var(--dark-border); /* 边框 */
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
-            /* 新增：在大屏幕上，让“关于我们”按钮相对标题居中或靠右显示 */
-            margin: 0 auto; /* 自动左右边距，使其在大屏幕上居中 */
-            margin-top: 10px; /* 与标题保持距离 */
-            /* 暂时不使用 position: absolute;，使其成为流式布局的一部分 */
+            cursor: pointer; /* 添加指针样式 */
         }
 
         .about-us-button:hover {
-            background-color: var(--dark-accent-hover);
-            transform: translateY(-2px);
+            color: var(--dark-accent); /* 悬停时强调色 */
+            border-color: var(--dark-accent); /* 悬停时边框颜色 */
+            background-color: var(--dark-surface-light); /* 保持背景色不变或微调 */
+            transform: none; /* 移除原来的 translateY 效果 */
         }
     
        .settings-link {
@@ -633,16 +627,12 @@
                 right: 15px; 
                 gap: 10px;
             }
+            .about-us-button {
+                font-size: 0.9rem; /* 恢复自动宽度 */
+                padding: 6px 12px;
+            }
             .settings-link { font-size: 0.9rem; padding: 6px 12px;}
             .language-selector { font-size: 0.8rem; padding: 7px; }
-
-            .about-us-button {
-                /* 在小屏幕上，让“关于我们”按钮保持居中，并占据一定宽度 */
-                width: 80%; /* 占据80%的宽度 */
-                max-width: 200px; /* 限制最大宽度 */
-                margin-top: 10px; /* 与标题保持距离 */
-                margin-bottom: 10px; /* 与下方内容保持距离 */
-            }
     
             body { line-height: 1.55; }
             .container { width: 92%; padding: 15px; margin-top: 15px; }
@@ -704,15 +694,12 @@
                 right: 10px; 
                 gap: 8px;
             }
+            .about-us-button {
+                font-size: 0.8rem; 
+                padding: 5px 10px;
+            }
             .settings-link { font-size: 0.8rem; padding: 5px 10px;}
             .language-selector { font-size: 0.75rem; padding: 6px; }
-
-            .about-us-button {
-                width: 90%; /* 更小屏幕上可以占据更多宽度 */
-                max-width: 180px;
-                margin-top: 8px;
-                margin-bottom: 8px;
-            }
 
             .container { width: 95%; padding: 10px; margin-top: 10px; }
             .tab-content h2, .interaction-area h2 { font-size: 0.9em; margin-bottom: 10px; }
@@ -753,6 +740,10 @@
             <img src="images/TalktoNorthStarIcon.png" alt="Talk to NorthStar Logo">
         </div>
         <div class="top-right-controls">
+            <!-- “关于我们”按钮现在在这里，并放在最左边 -->
+            <button class="about-us-button" onclick="openManifestoModal()">
+                <i class="fas fa-book-open"></i> 关于我们
+            </button>
             <a href="#" onclick="openApiSettingsModal(event)" class="settings-link">
                 <i class="fas fa-cog"></i>
                 <span data-i18n-key="settingsBtnText">设置</span>
@@ -765,10 +756,6 @@
         <!-- h1 保持原位，但会通过 margin-top 被向下推 -->
         <h1 data-i18n-key="headerTitleComplete" data-i18n-target="innerHTML">对话北极星</h1>
         
-        <!-- “关于我们”按钮放在 h1 之后 -->
-        <button class="about-us-button" onclick="openManifestoModal()">
-            <i class="fas fa-book-open"></i> 关于我们
-        </button>
     </header>
 
     <div class="container">
