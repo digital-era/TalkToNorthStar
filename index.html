@@ -861,18 +861,35 @@
             <h2 data-i18n-key="modalTitle"><i class="fas fa-cog"></i> API及模型设置</h2>
             <div class="settings-form">
                 <div class="form-group">
-                    <label for="apiEndpoint" data-i18n-key="labelApiEndpoint">模型接入点:</label>
+                    <label for="apiEndpoint" data-i18n-key="labelApiEndpoint" style="display: flex; align-items: center;">
+                        <i class="fas fa-server" style="margin-right: 8px;"></i> <!-- 添加服务器图标 -->
+                        <span>模型接入点:</span>
+                    </label>
                     <select id="apiEndpoint">
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="apiKey" data-i18n-key="labelApiKey">API Key :</label>
+                    <label for="apiKey" data-i18n-key="labelApiKey" style="display: flex; align-items: center;">
+                        <i class="fas fa-key" style="margin-right: 8px;"></i> <!-- 添加密钥图标 -->
+                        <span>API Key :</span>
+                    </label>
                     <input type="password" id="apiKey" data-i18n-key="placeholderApiKey" data-i18n-target="placeholder">
                 </div>
                 <div class="form-group">
-                    <label for="apiModel" data-i18n-key="labelApiModel">模型选择:</label>
+                    <label for="apiModel" data-i18n-key="labelApiModel" style="display: flex; align-items: center;">
+                        <i class="fas fa-robot" style="margin-right: 8px;"></i> <!-- 添加机器人图标 -->
+                        <span>模型选择:</span>
+                    </label>
                     <select id="apiModel">
                     </select>
+                </div>
+                <!-- 设为默认模型选项 -->
+                <div class="form-group">
+                    <label style="display: flex; align-items: center;">
+                        <i class="fas fa-star" style="margin-right: 8px; color: gold;"></i> <!-- 添加星形图标 -->
+                        <span data-i18n-key="labelSetDefaultModel">设为默认模型</span>
+                        <input type="checkbox" id="apiDefaultModelCheck" style="margin-left: 10px;">
+                    </label>
                 </div>
                 <button onclick="saveApiSettings()" class="save-btn">
                     <i class="fas fa-save"></i> 
