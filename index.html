@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<style>
+    <style>
         /* --- DARK THEME VARIABLES --- */
         :root {
             --dark-bg: #1e1e1e; /* 更深的背景 */
@@ -48,8 +48,7 @@
         /* --- Header & Controls --- */
         header {
             text-align: center;
-            /* 修改：调整 padding，主要控制顶部和底部，让内容有更多空间 */
-            padding: 20px 0 40px 0; /* 顶部20px, 左右0, 底部40px - 为标题和下面内容留出空间 */
+            padding: 20px 0; /* 保持原有的垂直内边距 */
             margin: 0 auto;
             position: relative;
             max-width: 1200px;
@@ -75,8 +74,7 @@
         h1 {
             font-family: 'Poppins', sans-serif;
             text-align: center;
-            /* 修改：移除或大幅减小 margin-top，让 header 的 padding 控制垂直间距 */
-            margin-top: 20px; /* 适当的顶部边距，使其与顶部 Logo/按钮下方对齐 */
+            margin-top: 100px; /* 根据实际 Logo 和按钮高度调整 */
             margin-bottom: 20px; /* 增加一点底部边距，与下方内容隔开 */
             font-size: 2.4em;
             font-weight: 600;
@@ -608,7 +606,6 @@
         @media (max-width: 768px) {
              header {
                 padding-top: 15px; /* 适当减少顶部内边距 */
-                padding-bottom: 30px; /* 调整移动端底部内边距 */
             }
             .logo-container {
                 top: 15px;
@@ -619,7 +616,7 @@
             }
             h1 {
                 /* 调整移动端的 h1 margin-top */
-                margin-top: 15px; /* 根据实际情况调整，确保不被 Logo 遮挡 */
+                margin-top: 80px; /* 根据实际情况调整，确保不被 Logo 遮挡 */
                 font-size: 2em; 
                 margin-bottom: 15px; /* 增加一点底部边距 */
                 line-height: 1.25;
@@ -678,7 +675,6 @@
         @media (max-width: 480px) {
             header {
                 padding-top: 10px;
-                padding-bottom: 25px; /* 调整更小屏幕的底部内边距 */
             }
             .logo-container {
                 top: 10px;
@@ -689,7 +685,7 @@
             }
             h1 {
                 /* 调整更小屏幕的 h1 margin-top */
-                margin-top: 10px; /* 进一步调整，适应更小屏幕 */
+                margin-top: 70px; /* 进一步调整，适应更小屏幕 */
                 font-size: 1.8em;
                 letter-spacing: 0.1px; 
                 line-height: 1.2; 
