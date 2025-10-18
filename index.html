@@ -47,45 +47,40 @@
         
         /* --- Header & Controls --- */
         header {
-            display: flex;
-            flex-wrap: wrap; /* 允许项目换行 */
-            align-items: center; /* 垂直居中对齐所有子项，在同一行时生效 */
-            justify-content: space-between; /* 在主轴上均匀分布空间 */
-            padding: 20px;
-            max-width: 1200px;
+            text-align: center;
+            padding: 20px 0; /* 保持原有的垂直内边距 */
             margin: 0 auto;
             position: relative;
-        }
-
-
-        /* logo和标题容器 */
-        .logo-title-group {
-            display: flex;
-            align-items: center;
-            order: 2; /* 确保它在第二排 */
-            flex-grow: 1; /* 允许它占据剩余空间 */
-            min-width: 0; /* 允许在flex容器中缩小 */
-            margin-top: 10px; /* 与上排按钮保持间距 */
+            max-width: 1200px;
+            /* 移除 padding-top: 20px; 因为 h1 的 margin-top 会处理垂直间距 */
+            /* padding-top: 20px; */
         }
         
+        /* --- Logo Styles --- */
         .logo-container {
-            display: flex;
-            align-items: center;
-            z-index: 20;
-            flex-shrink: 0;
-            /* 在大屏幕上不需要特殊的宽度，但可以确保最小宽度 */
-            /* min-width: 0; */
+            position: absolute;
+            top: 20px; /* 与右上角按钮保持一致的顶部距离 */
+            left: 20px; /* 左侧距离 */
+            z-index: 20; /* 确保在其他内容之上 */
+            /* 新增：在大屏幕上，确保Logo不会导致flexbox布局问题 */
+            display: flex; /* 让logo内部的img居中 */
+            align-items: center; 
+            justify-content: center;
         }
         .logo-container img {
             height: 70px;
             width: auto;
             border-radius: 5px;
         }
+        
         /* 标题现在独立于 Logo 容器，并使用 h1 标签 */
         h1 {
             font-family: 'Poppins', sans-serif;
-            text-align: left; /* 调整为左对齐 */
-            margin: 0;
+            text-align: center;
+            /* 将 h1 向下推，为上方绝对定位的元素（logo和设置/语言按钮）腾出空间 */
+            /* 调整这个值，确保足够空间，并与 logo 和 top-right-controls 的 top 值协调 */
+            margin-top: 100px; /* 根据实际 Logo 和按钮高度调整 */
+            margin-bottom: 20px; /* 增加一点底部边距，与下方内容隔开 */
             font-size: 2.4em;
             font-weight: 600;
             letter-spacing: 0.5px;
@@ -101,21 +96,16 @@
             background-clip: text;
             animation: colorWave 7s linear infinite;
             -webkit-animation: colorWave 7s linear infinite;
-            flex-grow: 1; /* 允许标题占据中间大部分空间 */
-            min-width: 0;
-            margin-left: 20px; /* 标题与logo的间距 */
         }
     
-        /* 顶部右侧控制按钮容器（设置和语言选择） */
         .top-right-controls {
-            display: flex;
+            position: absolute;
+            top: 20px; /* 保持与原代码一致 */
+            right: 20px; /* 保持与原代码一致 */
+            display: flex; /* 改回 flex，因为按钮要水平对齐 */
             align-items: center;
-            gap: 15px;
-            z-index: 20; /* 确保它在最上层 */
-            order: 1; /* 确保它在第一排 */
-            /* 在大屏幕上靠右对齐，占据尽可能小的空间 */
-            margin-left: auto; /* 推到右边 */
-            flex-shrink: 0;
+            gap: 15px; /* 按钮之间间距 */
+            z-index: 10;
         }
         /* 新增：关于我们按钮样式 */
         .about-us-button {
@@ -131,12 +121,12 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
-            order: 3; /* 确保它在第三个顺序（第二排的右侧） */
-            margin-top: 10px; /* 与上排按钮保持间距 */
-            margin-left: auto; /* 推到右边 */
-            flex-shrink: 0;
+            /* 新增：在大屏幕上，让“关于我们”按钮相对标题居中或靠右显示 */
+            margin: 0 auto; /* 自动左右边距，使其在大屏幕上居中 */
+            margin-top: 10px; /* 与标题保持距离 */
+            /* 暂时不使用 position: absolute;，使其成为流式布局的一部分 */
         }
-        
+
         .about-us-button:hover {
             background-color: var(--dark-accent-hover);
             transform: translateY(-2px);
@@ -620,57 +610,38 @@
     
         /* 媒体查询，在小屏幕上调整布局 */
         @media (max-width: 768px) {
-            header {
-                flex-direction: column; /* 小屏幕上垂直堆叠 */
-                align-items: center; /* 居中对齐 */
-                padding: 15px;
-                flex-wrap: wrap; /* 重新启用换行 */
-            }
-            .top-right-controls {
-                order: 1; /* 保持在顶部 */
-                width: 100%; /* 占据整行 */
-                justify-content: center; /* 按钮居中 */
-                margin-left: 0; /* 移除 auto margin */
-                gap: 10px;
-                margin-bottom: 10px; /* 与下方元素保持距离 */
-                margin-top: 0; /* 重置大屏幕设置的 margin */
-            }
-        
-            .logo-title-group {
-                order: 2; /* 位于第二排 */
-                width: 100%; /* 占据整行 */
-                flex-direction: column; /* Logo和标题在小屏幕上垂直堆叠 */
-                align-items: center; /* 居中 */
-                margin-top: 0; /* 重置大屏幕设置的 margin */
+             header {
+                padding-top: 15px; /* 适当减少顶部内边距 */
             }
             .logo-container {
-                margin-bottom: 5px; /* Logo和标题之间的间距 */
-                margin-right: 0;
+                top: 15px;
+                left: 15px;
             }
             .logo-container img {
                 height: 50px;
-                margin-right: 0; /* 重置大屏幕设置的 margin */
             }
             h1 {
-                margin-top: 5px;
-                font-size: 2em;
-                text-align: center;
-                width: 100%;
-                margin-left: 0;
-                margin-right: 0;
+                /* 调整移动端的 h1 margin-top */
+                margin-top: 80px; /* 根据实际情况调整，确保不被 Logo 遮挡 */
+                font-size: 2em; 
+                margin-bottom: 15px; /* 增加一点底部边距 */
+                line-height: 1.25;
             }
-        
+            .top-right-controls { 
+                /* 相应调整移动端按钮位置 */
+                top: 15px;
+                right: 15px; 
+                gap: 10px;
+            }
+            .settings-link { font-size: 0.9rem; padding: 6px 12px;}
+            .language-selector { font-size: 0.8rem; padding: 7px; }
+
             .about-us-button {
-                order: 3; /* 位于第三排 */
-                width: 100%; /* 占据整行 */
-                max-width: 250px; /* 限制最大宽度，美观 */
-                justify-content: center; /* 文本居中 */
-                margin-top: 10px; /* 与上方元素保持距离 */
-                margin-left: 0; /* 移除 auto margin */
-            }
-            .settings-link, .language-selector {
-                width: auto; /* 在小屏幕上让它们自适应内容宽度 */
-                max-width: none; /* 移除可能的限制 */
+                /* 在小屏幕上，让“关于我们”按钮保持居中，并占据一定宽度 */
+                width: 80%; /* 占据80%的宽度 */
+                max-width: 200px; /* 限制最大宽度 */
+                margin-top: 10px; /* 与标题保持距离 */
+                margin-bottom: 10px; /* 与下方内容保持距离 */
             }
     
             body { line-height: 1.55; }
@@ -712,15 +683,36 @@
         }
     
         @media (max-width: 480px) {
-            header { padding: 10px; }
-            .top-right-controls { gap: 8px; margin-bottom: 8px; }
+            header {
+                padding-top: 10px;
+            }
+            .logo-container {
+                top: 10px;
+                left: 10px;
+            }
+            .logo-container img {
+                height: 45px;
+            }
+            h1 {
+                /* 调整更小屏幕的 h1 margin-top */
+                margin-top: 70px; /* 进一步调整，适应更小屏幕 */
+                font-size: 1.8em;
+                letter-spacing: 0.1px; 
+                line-height: 1.2; 
+            }
+             .top-right-controls { 
+                right: 10px; 
+                gap: 8px;
+            }
             .settings-link { font-size: 0.8rem; padding: 5px 10px;}
             .language-selector { font-size: 0.75rem; padding: 6px; }
-        
-            .logo-container img { height: 45px; }
-            h1 { font-size: 1.8em; letter-spacing: 0.1px; line-height: 1.2; margin-top: 5px; }
-        
-            .about-us-button { font-size: 0.8rem; padding: 5px 10px; margin-top: 8px; }
+
+            .about-us-button {
+                width: 90%; /* 更小屏幕上可以占据更多宽度 */
+                max-width: 180px;
+                margin-top: 8px;
+                margin-bottom: 8px;
+            }
 
             .container { width: 95%; padding: 10px; margin-top: 10px; }
             .tab-content h2, .interaction-area h2 { font-size: 0.9em; margin-bottom: 10px; }
@@ -756,9 +748,11 @@
 </head>
 <body>
 
-    <header>
+  <header>
+        <div class="logo-container">
+            <img src="images/TalktoNorthStarIcon.png" alt="Talk to NorthStar Logo">
+        </div>
         <div class="top-right-controls">
-            <!-- 设置和语言选择按钮 -->
             <a href="#" onclick="openApiSettingsModal(event)" class="settings-link">
                 <i class="fas fa-cog"></i>
                 <span data-i18n-key="settingsBtnText">设置</span>
@@ -768,16 +762,10 @@
                 <option value="en">English</option>
             </select>
         </div>
-    
-        <!-- 新增一个 div 来包裹 logo 和 h1 标题 -->
-        <div class="logo-title-group">
-            <div class="logo-container">
-                <img src="images/TalktoNorthStarIcon.png" alt="Talk to NorthStar Logo">
-            </div>
-            <h1 data-i18n-key="headerTitleComplete" data-i18n-target="innerHTML">对话北极星</h1>
-        </div>
-    
-        <!-- “关于我们”按钮单独放在一行 -->
+        <!-- h1 保持原位，但会通过 margin-top 被向下推 -->
+        <h1 data-i18n-key="headerTitleComplete" data-i18n-target="innerHTML">对话北极星</h1>
+        
+        <!-- “关于我们”按钮放在 h1 之后 -->
         <button class="about-us-button" onclick="openManifestoModal()">
             <i class="fas fa-book-open"></i> 关于我们
         </button>
