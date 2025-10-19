@@ -2,7 +2,7 @@
         const translations = {
             "zh-CN": {
                 "pageTitle": "对话北极星",
-                "headerTitleComplete": "对话北极星",
+                "headerTitleComplete": "对话北极星<br>\"让AI点亮你心中永恒的灯塔\"",
                 "headerTitle": "对话北极星",
                 "headerSubtitle": "让AI点亮你心中永恒的灯塔",
                 "tabAi": "泛AI",
@@ -106,7 +106,7 @@
             },
             "en": {
                 "pageTitle": "Talk with North Stars",
-                "headerTitleComplete": "Talk with North Stars",
+                "headerTitleComplete": "Talk with North Stars<br>\"Let AI Illuminate the Eternal Lighthouse in Your Heart\"",
                 "headerTitle": "Talk with North Stars",
                 "headerSubtitle": "Let AI Illuminate the Eternal Lighthouse in Your Heart",
                 "tabAi": "Pan-AI",
