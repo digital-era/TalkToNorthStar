@@ -2,9 +2,9 @@
         const translations = {
             "zh-CN": {
                 "pageTitle": "对话北极星",
-                "headerTitleComplete": "对话北极星<br>\"让AI点亮你心中永恒的灯塔\"",
+                "headerTitleComplete": "对话北极星<br>\"让AI点亮你心中永恒的灯&nbsp;塔\"",
                 "headerTitle": "对话北极星",
-                "headerSubtitle": "让AI点亮你心中永恒的灯塔",
+                "headerSubtitle": "让AI点亮你心中永恒的灯&nbsp;塔",
                 "tabAi": "泛AI",
                 "tabQuantum": "泛量子",
                 "tabFinance": "泛金融",
