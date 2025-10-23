@@ -407,6 +407,7 @@ async function getAIResponse() {
         requestBody = {
             model: model,
             messages: [ { role: "user", content: promptText } ],
+            use_web_search: true,  /*修改增加*/
             temperature: 0.7,
         };
     } else if (model.toLowerCase().includes("gemini")) {
