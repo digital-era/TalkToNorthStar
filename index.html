@@ -20,6 +20,23 @@
         s.parentNode.insertBefore(hm, s);
       })();
     </script>
+    
+    <!-- *** START: MathJax Integration *** -->
+    <script>
+      MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']]
+        },
+        svg: {
+          fontCache: 'global'
+        }
+      };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+    </script>
+    <!-- *** END: MathJax Integration *** -->
+
 
     <style>
         /* (CSS 部分保持不变) */
@@ -559,7 +576,9 @@
             margin-top:0;
             color: var(--dark-text-primary);
         }
-        .response-display pre {
+        
+        /* --- MODIFICATION START: Styles for aiResponseText (was pre) --- */
+        #aiResponseText {
             white-space: pre-wrap;
             word-wrap: break-word;
             background-color: var(--dark-pre-bg);
@@ -572,6 +591,7 @@
             max-height: 300px;
             overflow-y: auto;
         }
+        /* --- MODIFICATION END --- */
 
         /* --- [新增] 统一输入框与答复框为小说阅读字体风格 --- */
         #userQuestion, 
@@ -663,7 +683,7 @@
             .interaction-area button { width: 100%; font-size: 0.92em; padding: 12px 15px; flex-grow: 0; flex-basis: auto; max-width: none; }
             .interaction-area textarea { font-size: 0.95em; min-height: 75px; padding: 9px; }
             #selected-leader-info { font-size: 0.95em; padding: 9px; }
-            .response-display pre { font-size: 0.88em; }
+            #aiResponseText { font-size: 0.88em; } /* MODIFIED: was pre */
 
             .manifesto-modal .modal-content {
                 margin: 5% auto;
@@ -728,9 +748,8 @@
             .interaction-area button { font-size: 0.88em; padding: 10px 12px; }
             #selected-leader-info { font-size: 0.9em; padding: 8px; }
             .interaction-area textarea { min-height: 65px; font-size: 0.9em; padding: 8px; }
-            .response-display pre { font-size: 0.82em; }
             .response-display { padding: 10px; }
-            .response-display pre { padding: 8px; }     
+            #aiResponseText { font-size: 0.82em; padding: 8px; } /* MODIFIED: was pre */
             
             .manifesto-modal h2 {
                 font-size: 1.3em;
@@ -861,7 +880,9 @@
             
             <div id="ai-response-area" class="response-display" style="display:none;">
                 <h4 data-i18n-key="aiResponseTitle">AI 回复:</h4>
-                <pre id="aiResponseText"></pre>
+                <!-- *** MODIFICATION START: Changed <pre> to <div> *** -->
+                <div id="aiResponseText"></div>
+                <!-- *** MODIFICATION END *** -->
             </div>
         </div>
     </div>
@@ -967,7 +988,8 @@
             if (manifestoModal && event.target == manifestoModal) {
                 closeManifestoModal();
             }
-        });
+        });      
+
     </script>
 </body>
 </html>
