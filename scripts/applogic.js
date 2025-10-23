@@ -397,7 +397,7 @@ async function getAIResponse() {
         fullApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
     }
 
-    aiResponseTextElement.textContent = '';
+    aiResponseTextElement.textContent = ''; // 使用 textContent 清空以防注入
     aiResponseArea.style.display = 'block';
     loadingIndicator.style.display = 'inline-block';
     getAIResponseButton.disabled = true;
@@ -440,14 +440,38 @@ async function getAIResponse() {
             if (data.candidates && data.candidates.length > 0 &&
                 data.candidates[0].content && data.candidates[0].content.parts &&
                 data.candidates[0].content.parts.length > 0 && data.candidates[0].content.parts[0].text) {
-                aiResponseTextElement.textContent = data.candidates[0].content.parts[0].text.trim();
+                
+                // --- MODIFICATION START ---
+                // 使用 innerHTML 以便AI回复中的换行符等格式能正确显示
+                aiResponseTextElement.innerHTML = data.candidates[0].content.parts[0].text.trim();
+
+                // 添加此部分以渲染数学公式
+                if (window.MathJax) {
+                    MathJax.typesetPromise([aiResponseTextElement]).catch(function (err) {
+                        console.error('MathJax rendering error:', err);
+                    });
+                }
+                // --- MODIFICATION END ---
+
             } else {
                 aiResponseTextElement.textContent = translations[currentLang].apiNoValidResponse;
                 console.error("Unexpected API response structure for Gemini:", data);
             }
         } else { // For GPT, Deepseek, etc.
             if (data.choices && data.choices.length > 0 && data.choices[0].message) {
-                aiResponseTextElement.textContent = data.choices[0].message.content.trim();
+
+                // --- MODIFICATION START ---
+                // 使用 innerHTML 以便AI回复中的换行符等格式能正确显示
+                aiResponseTextElement.innerHTML = data.choices[0].message.content.trim();
+                
+                // 添加此部分以渲染数学公式
+                if (window.MathJax) {
+                    MathJax.typesetPromise([aiResponseTextElement]).catch(function (err) {
+                        console.error('MathJax rendering error:', err);
+                    });
+                }
+                // --- MODIFICATION END ---
+
             } else {
                 aiResponseTextElement.textContent = translations[currentLang].apiNoValidResponse;
                 console.error("Unexpected API response structure:", data);
