@@ -112,6 +112,34 @@
                 "en": "Oracle's databases and cloud services provide critical technical support for AI-driven enterprise digital transformation."
               }
             },
+            { id: "bill_gates", name: "Bill Gates",
+              contribution: {
+                "zh-CN": "微软创始人，通过Microsoft Azure云平台与OpenAI合作，推动AI在全球企业与开发者的普及与应用。",
+                "en": "Founder of Microsoft, promotes AI adoption among global enterprises and developers via Microsoft Azure and OpenAI partnership."
+              },
+              field: {
+                "zh-CN": "人工智能（企业AI、云平台）、全球健康与教育投资。",
+                "en": "Artificial Intelligence (Enterprise AI, Cloud Platforms), Global Health and Education Investment."
+              },
+              remarks: {
+                "zh-CN": "Azure AI基础设施与Copilot系列产品显著加速了生产力工具的智能化转型。",
+                "en": "Azure AI infrastructure and Copilot series significantly accelerate the intelligent transformation of productivity tools."
+              }
+            },
+            { id: "brett_adcock", name: "Brett Adcock",
+              contribution: {
+                "zh-CN": "Figure AI首席执行官，领导人形机器人Figure 01/02开发，目标实现通用人工智能机器人商业化。",
+                "en": "CEO of Figure AI, leads development of humanoid robots Figure 01/02, aiming for commercialization of general-purpose AI robots."
+              },
+              field: {
+                "zh-CN": "人工智能（具身智能、人形机器人）、机器人创业。",
+                "en": "Artificial Intelligence (Embodied Intelligence, Humanoid Robotics), Robotics Entrepreneurship."
+              },
+              remarks: {
+                "zh-CN": "Figure AI获OpenAI、Microsoft、NVIDIA等巨额投资，标志着具身AI进入加速发展阶段。",
+                "en": "Figure AI secured major investments from OpenAI, Microsoft, NVIDIA, marking the acceleration of embodied AI development."
+              }
+            },
             { id: "geoffrey_hinton", name: "Geoffrey Hinton", 
               contribution: {
                 "zh-CN": "AI“教父”，神经网络与深度学习先驱，2018年图灵奖得主，2024年诺贝尔奖得主，关注AI伦理风险。",
@@ -932,6 +960,34 @@
               remarks: {
                 "zh-CN": "古代传记文学奠基人，影响西方历史与文学叙事。",
                 "en": "Founder of ancient biography, shaped Western historical and literary narrative."
+              } 
+            },
+            { id: "alfred_adler", name: "Alfred Adler", 
+              contribution: {
+                "zh-CN": "著有《自卑与超越》，创立个体心理学，探讨自卑补偿与社会兴趣。",
+                "en": "Authored What Life Could Mean to You, founded individual psychology, explored inferiority compensation and social interest."
+              }, 
+              field: {
+                "zh-CN": "心理学文学、自我超越。",
+                "en": "Psychological Literature, Self-Transcendence."
+              }, 
+              remarks: {
+                "zh-CN": "奥地利心理学巨擘，作品通俗化深刻影响现代励志与人文思想。",
+                "en": "Austrian psychology titan, popularized works profoundly shaped modern motivational and humanistic thought."
+              } 
+            },
+            { id: "ludwig_wittgenstein", name: "Ludwig Wittgenstein", 
+              contribution: {
+                "zh-CN": "撰写《逻辑哲学论》《哲学研究》，革新语言哲学，提出语言游戏理论。",
+                "en": "Authored Tractatus Logico-Philosophicus, Philosophical Investigations, revolutionized philosophy of language with language-game theory."
+              }, 
+              field: {
+                "zh-CN": "语言哲学、分析哲学。",
+                "en": "Philosophy of Language, Analytic Philosophy."
+              }, 
+              remarks: {
+                "zh-CN": "20世纪最伟大哲学家之一，影响逻辑、AI与当代文化批评。",
+                "en": "Among 20th century’s greatest philosophers, impacted logic, AI, and contemporary cultural critique."
               } 
             },
             { id: "sima_qian", name: "司马迁", 
