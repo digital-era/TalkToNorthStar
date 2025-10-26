@@ -990,6 +990,62 @@
                 "en": "Among 20th century’s greatest philosophers, impacted logic, AI, and contemporary cultural critique."
               } 
             },
+            { id: "li_bai", name: "李白", 
+              contribution: {
+                "zh-CN": "创作《蜀道难》《将进酒》，浪漫主义巅峰，抒发豪迈情怀与自然意象。",
+                "en": "Authored Shu Dao Nan and Jiang Jin Jiu, pinnacle of romanticism, expressed bold sentiments and natural imagery."
+              }, 
+              field: {
+                "zh-CN": "浪漫主义诗歌。",
+                "en": "Romantic Poetry."
+              }, 
+              remarks: {
+                "zh-CN": "唐代诗仙，作品体现自由奔放精神，影响东亚诗歌传统。",
+                "en": "Tang Dynasty Poet Immortal, works embody free-spirited essence, influenced East Asian poetic tradition."
+              } 
+            },
+            { id: "du_fu", name: "杜甫", 
+              contribution: {
+                "zh-CN": "著有《春夜喜雨》《三吏》《三别》，现实主义典范，反映民生疾苦与家国情怀。",
+                "en": "Wrote Spring Night Joyful Rain, Three Officials, Three Partings, realist exemplar, reflected people’s hardships and patriotic sentiment."
+              }, 
+              field: {
+                "zh-CN": "现实主义诗歌。",
+                "en": "Realist Poetry."
+              }, 
+              remarks: {
+                "zh-CN": "唐代诗圣，深刻的社会关怀奠定中国古典诗歌现实主义基础。",
+                "en": "Tang Dynasty Poet Sage, profound social concern established foundation of Chinese classical realist poetry."
+              } 
+            },
+            { id: "bai_juyi", name: "白居易", 
+              contribution: {
+                "zh-CN": "创作《长恨歌》《琵琶行》，通俗叙事诗，关注社会现实与人性情感。",
+                "en": "Authored Song of Everlasting Sorrow, Pipa Song, accessible narrative poetry, focused on social reality and human emotions."
+              }, 
+              field: {
+                "zh-CN": "叙事诗歌、通俗文学。",
+                "en": "Narrative Poetry, Popular Literature."
+              }, 
+              remarks: {
+                "zh-CN": "唐代新乐府运动代表，推动诗歌平民化与社会批判功能。",
+                "en": "Tang Dynasty New Yuefu representative, advanced poetry’s popularization and social critique."
+              } 
+            },
+            { id: "su_dongpo", name: "Su Dongpo", 
+              contribution: {
+                "zh-CN": "撰写《水调歌头》《念奴娇·赤壁怀古》，豪放词风，融合哲理与旷达胸怀。",
+                "en": "Wrote Shui Diao Ge Tou, Nian Nu Jiao: Chibi Nostalgia, bold ci poetry, blended philosophy and broad-mindedness."
+              }, 
+              field: {
+                "zh-CN": "宋词、豪放派。",
+                "en": "Song Ci Poetry, Bold Style."
+              }, 
+              remarks: {
+                "zh-CN": "北宋文学巨匠，多才艺影响词体发展与文人生活美学。",
+                "en": "Northern Song literary master, versatile talents shaped ci form and literati aesthetic life."
+              } 
+            }, 
             { id: "sima_qian", name: "司马迁", 
               contribution: {
                 "zh-CN": "撰写《史记》，开创中国纪传体史学，记录帝王与英雄生平。",
