@@ -665,34 +665,48 @@
                 "en": "Bridgewater is one of the world's largest hedge funds; his book 'Principles' shares investment and management philosophies."
               } 
             },
-            { id: "carl_icahn", name: "Carl Icahn", 
+            { id: "larry_fink", name: "Larry Fink", 
               contribution: {
-                "zh-CN": "Icahn Enterprises创始人，通过股东行动主义推动企业重组和价值释放。",
-                "en": "Founder of Icahn Enterprises, drives corporate restructuring and value creation through shareholder activism."
+                "zh-CN": "贝莱德创始人兼首席执行官，推动ESG投资框架，开发iShares ETF。",
+                "en": "Founder and CEO of BlackRock, promotes ESG investment framework, developed iShares ETFs."
               }, 
               field: {
-                "zh-CN": "激进投资、股权投资、企业重组。",
-                "en": "Activist Investing, Equity Investment, Corporate Restructuring."
+                "zh-CN": "资产管理、ESG投资、指数基金。",
+                "en": "Asset Management, ESG Investing, Index Funds."
               }, 
               remarks: {
-                "zh-CN": "以大胆投资和对抗管理层著称，影响美国企业治理格局。",
-                "en": "Known for bold investments and challenging management, influencing the landscape of U.S. corporate governance."
+                "zh-CN": "管理超10万亿美元资产，ESG倡导重塑全球投资趋势。",
+                "en": "Manages over $10 trillion in assets, ESG advocacy reshaping global investment trends."
               } 
-            },
-            { id: "mary_meeker", name: "Mary Meeker", 
+            }, 
+            { id: "john_bogle", name: "John C. Bogle", 
               contribution: {
-                "zh-CN": "Kleiner Perkins合伙人，发布年度《互联网趋势报告》，推动互联网与AI投资，预测数字经济转型。",
-                "en": "Kleiner Perkins partner, publishes annual Internet Trends Report, drives internet and AI investments, predicts digital economy transformation."
+                "zh-CN": "Vanguard集团创始人，创建首只零售指数基金，倡导低成本、被动投资策略，颠覆资产管理行业。",
+                "en": "Founder of The Vanguard Group, created the first retail index fund, advocated for low-cost, passive investment strategies, disrupting the asset management industry."
               }, 
               field: {
-                "zh-CN": "风险投资、互联网金融、技术趋势分析。",
-                "en": "Venture Capital, Internet Finance, Technology Trends Analysis."
+                "zh-CN": "资产管理、指数基金、零售投资。",
+                "en": "Asset Management, Index Funds, Retail Investment."
               }, 
               remarks: {
-                "zh-CN": "被誉为“互联网女王”，其报告指引全球科技投资方向。",
-                "en": "Dubbed the 'Queen of the Internet,' her reports guide global tech investment trends."
+                "zh-CN": "被称为“指数基金之父”，Vanguard管理资产超8万亿美元，其理念惠及全球投资者。",
+                "en": "Dubbed the 'Father of Index Funds,' Vanguard manages over $8 trillion in assets, and his philosophy benefits investors worldwide."
               } 
             },
+            { id: "george_soros", name: "George Soros", 
+              contribution: {
+                "zh-CN": "索罗斯基金创始人，量子基金缔造者，以1992年狙击英镑闻名，提出“反身性”理论。",
+                "en": "Founder of Soros Fund Management, creator of the Quantum Fund, famous for shorting the British pound in 1992, proposed the 'reflexivity' theory."
+              }, 
+              field: {
+                "zh-CN": "对冲基金、货币投机、宏观投资。",
+                "en": "Hedge Funds, Currency Speculation, Macro Investment."
+              }, 
+              remarks: {
+                "zh-CN": "通过开放社会基金会影响政策，其策略深刻影响金融市场。",
+                "en": "Influences policy through the Open Society Foundations; his strategies profoundly impact financial markets."
+              } 
+            },  
             { id: "abigail_johnson", name: "Abigail Johnson", 
               contribution: {
                 "zh-CN": "富达投资主席兼首席执行官，推动低成本投资产品和数字化金融服务。",
@@ -748,33 +762,33 @@
                 "zh-CN": "以长期投资科技驱动行业著称，吸引年轻投资者。",
                 "en": "Known for long-term investment in tech-driven industries, attracting younger investors."
               } 
-            },
-            { id: "larry_fink", name: "Larry Fink", 
+            },   
+            { id: "mary_meeker", name: "Mary Meeker", 
               contribution: {
-                "zh-CN": "贝莱德创始人兼首席执行官，推动ESG投资框架，开发iShares ETF。",
-                "en": "Founder and CEO of BlackRock, promotes ESG investment framework, developed iShares ETFs."
+                "zh-CN": "Kleiner Perkins合伙人，发布年度《互联网趋势报告》，推动互联网与AI投资，预测数字经济转型。",
+                "en": "Kleiner Perkins partner, publishes annual Internet Trends Report, drives internet and AI investments, predicts digital economy transformation."
               }, 
               field: {
-                "zh-CN": "资产管理、ESG投资、指数基金。",
-                "en": "Asset Management, ESG Investing, Index Funds."
+                "zh-CN": "风险投资、互联网金融、技术趋势分析。",
+                "en": "Venture Capital, Internet Finance, Technology Trends Analysis."
               }, 
               remarks: {
-                "zh-CN": "管理超10万亿美元资产，ESG倡导重塑全球投资趋势。",
-                "en": "Manages over $10 trillion in assets, ESG advocacy reshaping global investment trends."
+                "zh-CN": "被誉为“互联网女王”，其报告指引全球科技投资方向。",
+                "en": "Dubbed the 'Queen of the Internet,' her reports guide global tech investment trends."
               } 
             },
-            { id: "george_soros", name: "George Soros", 
+            { id: "carl_icahn", name: "Carl Icahn", 
               contribution: {
-                "zh-CN": "索罗斯基金创始人，量子基金缔造者，以1992年狙击英镑闻名，提出“反身性”理论。",
-                "en": "Founder of Soros Fund Management, creator of the Quantum Fund, famous for shorting the British pound in 1992, proposed the 'reflexivity' theory."
+                "zh-CN": "Icahn Enterprises创始人，通过股东行动主义推动企业重组和价值释放。",
+                "en": "Founder of Icahn Enterprises, drives corporate restructuring and value creation through shareholder activism."
               }, 
               field: {
-                "zh-CN": "对冲基金、货币投机、宏观投资。",
-                "en": "Hedge Funds, Currency Speculation, Macro Investment."
+                "zh-CN": "激进投资、股权投资、企业重组。",
+                "en": "Activist Investing, Equity Investment, Corporate Restructuring."
               }, 
               remarks: {
-                "zh-CN": "通过开放社会基金会影响政策，其策略深刻影响金融市场。",
-                "en": "Influences policy through the Open Society Foundations; his strategies profoundly impact financial markets."
+                "zh-CN": "以大胆投资和对抗管理层著称，影响美国企业治理格局。",
+                "en": "Known for bold investments and challenging management, influencing the landscape of U.S. corporate governance."
               } 
             },
             { id: "jeremy_grantham", name: "Jeremy Grantham", 
@@ -791,19 +805,20 @@
                 "en": "Known for accurately predicting market bubbles (e.g., the 2008 financial crisis), emphasizes the impact of climate change on investment."
               } 
             },
-            { id: "john_bogle", name: "John C. Bogle", 
-              contribution: {
-                "zh-CN": "Vanguard集团创始人，创建首只零售指数基金，倡导低成本、被动投资策略，颠覆资产管理行业。",
-                "en": "Founder of The Vanguard Group, created the first retail index fund, advocated for low-cost, passive investment strategies, disrupting the asset management industry."
-              }, 
-              field: {
-                "zh-CN": "资产管理、指数基金、零售投资。",
-                "en": "Asset Management, Index Funds, Retail Investment."
-              }, 
-              remarks: {
-                "zh-CN": "被称为“指数基金之父”，Vanguard管理资产超8万亿美元，其理念惠及全球投资者。",
-                "en": "Dubbed the 'Father of Index Funds,' Vanguard manages over $8 trillion in assets, and his philosophy benefits investors worldwide."
-              } 
+            { 
+                id: "rupert_hoogewerf", name: "Rupert Hoogewerf", 
+                contribution: {
+                    "zh-CN": "胡润百富创始人，主要编制胡润富豪榜，推动中国企业家财富透明化与全球富豪排名标准化。",
+                    "en": "Founder of Hurun Report, primarily compiles the Hurun Rich List, promoting transparency in Chinese entrepreneurs' wealth and standardization of global billionaire rankings."
+                }, 
+                field: {
+                    "zh-CN": "财富排名、富豪榜编制、企业家研究。",
+                    "en": "Wealth Rankings, Rich List Compilation, Entrepreneur Research."
+                }, 
+                remarks: {
+                    "zh-CN": "被称为“胡润”，其榜单已成为中国财富风向标，影响全球商业与投资决策。",
+                    "en": "Known as 'Hurun,' his lists have become a barometer of wealth in China, influencing global business and investment decisions."
+                } 
             }
         ];
 
