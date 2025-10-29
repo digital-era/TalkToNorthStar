@@ -1416,6 +1416,20 @@
                 "en": "Attended the 2025 Private Enterprise Symposium, Tencent's 2024 revenue exceeded $80 billion, driving China's tech globalization."
               } 
             },
+            { id: "zhang_yiming", name: "张一鸣 (Zhang Yiming)", 
+              contribution: {
+                "zh-CN": "字节跳动（ByteDance）创始人，开发TikTok和抖音，推动短视频和人工智能算法全球革命，领导内容推荐技术创新。",
+                "en": "Founder of ByteDance, developed TikTok and Douyin, propelled global short-video and AI algorithm revolutions, leading innovations in content recommendation technology."
+              }, 
+              field: {
+                "zh-CN": "互联网、短视频、人工智能。",
+                "en": "Internet, Short Video, Artificial Intelligence."
+              }, 
+              remarks: {
+                "zh-CN": "字节跳动2024年营收约1200亿美元，TikTok全球用户超17亿，推动数字娱乐全球化，个人财富约435亿美元。",
+                "en": "ByteDance's 2024 revenue approximately $120 billion, TikTok has over 1.7 billion global users, driving digital entertainment globalization, personal wealth approx. $43.5 billion."
+              } 
+            },
             { id: "lei_jun", name: "雷军 (Lei Jun)", 
               contribution: {
                 "zh-CN": "小米集团创始人兼首席执行官，引领智能手机和智能硬件生态，推进电动车业务（小米SU7）。",
