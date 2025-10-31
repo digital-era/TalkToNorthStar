@@ -1,4 +1,4 @@
-        const chinaEntrepreneurs = [
+const chinaEntrepreneurs = [
             { id: "robin_zeng", name: "曾毓群 (Robin Zeng)", 
               contribution: {
                 "zh-CN": "宁德时代（CATL）创始人兼董事长，领导全球最大电动车电池制造商，开发Shenxing超快充电电池，市场份额约38%。",
