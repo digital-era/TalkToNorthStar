@@ -193,6 +193,7 @@
                 remarks: {
                 "zh-CN": "其基金实现卓越长期回报，影响全球价值投资实践。",
                 "en": "Praised by Charlie Munger, his fund achieved outstanding long-term returns, influencing global value investing practices."
+                }
             },
             { 
                 id: "rupert_hoogewerf", name: "Rupert Hoogewerf", 
