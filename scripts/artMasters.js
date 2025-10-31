@@ -391,5 +391,4 @@
                 "en": "Recording era legend, foundational to modern singing."
               } 
             }
-        ];
-        
+        ];       
