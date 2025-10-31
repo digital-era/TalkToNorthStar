@@ -390,6 +390,7 @@
                 remarks: {
                 "zh-CN": "领导Snowflake的AI举措，使企业能够利用数据进行AI应用。",
                 "en": "Leading Snowflake's AI initiatives, enabling enterprises to leverage data for AI applications."
+               }
             },
             { id: "yoshua_bengio", name: "Yoshua Bengio", 
               contribution: {
