@@ -91,10 +91,11 @@
              field: {
                 "zh-CN": "小说、现实主义文学。",
                 "en": "Novel, Realist Literature."
-                },
+              },
               remarks: {
                 "zh-CN": "1965年诺贝尔文学奖得主，苏联文学巨擘，其作品影响全球对俄罗斯历史的文学理解。",
                 "en": "1965 Nobel Prize in Literature laureate, Soviet literary giant, works influence global literary understanding of Russian history."
+              }
             },
             { id: "virginia_woolf", name: "Virginia Woolf", 
               contribution: {
