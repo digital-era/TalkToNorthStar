@@ -183,7 +183,7 @@
             },
             { id: "martin_scorsese", name: "Martin Scorsese",
                 contribution: {
-                "zh-CN": "执导《好家伙》《盗梦空间》，探索犯罪、救赎与美国社会主题。",
+                "zh-CN": "执导《好家伙》《无间道风云》，探索犯罪、救赎与美国社会主题。",
                 "en": "Directed Goodfellas, The Departed, explored crime, redemption, and American society themes."
                 },
                 field: {
@@ -197,8 +197,8 @@
             },
             { id: "christopher_nolan", name: "Christopher Nolan",
                 contribution: {
-                "zh-CN": "执导《奥本海默》，以复杂情节与视觉效果革新叙事。",
-                "en": "Directed Oppenheimer, revolutionized narratives with complex plots and visual effects."
+                "zh-CN": "执导《奥本海默》《盗梦空间》，以复杂情节与视觉效果革新叙事。",
+                "en": "Directed Oppenheimer, Inception, revolutionized narratives with complex plots and visual effects."
                 },
                 field: {
                 "zh-CN": "电影导演、科幻片、剧情片。",
