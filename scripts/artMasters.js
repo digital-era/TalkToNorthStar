@@ -223,7 +223,21 @@
                 "en": "Hollywood blockbuster pioneer, influenced global film industry."
                 }
             },
-            { id: "quentin_tarantino", name: "Quentin Tarantino",
+            { id: "james_cameron", name: "James Cameron",
+                contribution: {
+                "zh-CN": "执导《阿凡达》《泰坦尼克号》，以革命性视觉效果与3D技术革新电影。",
+                "en": "Directed Avatar, Titanic, revolutionized cinema with groundbreaking visual effects and 3D technology."
+                },
+                field: {
+                 "zh-CN": "电影导演、科幻片、动作片。",
+                 "en": "Film Direction, Science Fiction, Action."
+                },
+                remarks: {
+                 "zh-CN": "视觉特效先驱，推动全球票房纪录与沉浸式体验。",
+                 "en": "Visual effects pioneer, drove global box office records and immersive experiences."
+                }
+           },
+           { id: "quentin_tarantino", name: "Quentin Tarantino",
                 contribution: {
                 "zh-CN": "执导《低俗小说》《好莱坞往事》，以非线性叙事与流行文化革新独立电影。",
                 "en": "Directed Pulp Fiction, Once Upon a Time in Hollywood, revolutionized indie cinema with nonlinear narratives and pop culture."
