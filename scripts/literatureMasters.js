@@ -195,6 +195,34 @@
                 "en": "Among 20th century’s greatest philosophers, impacted logic, AI, and contemporary cultural critique."
               } 
             },
+           { id: "cixin_liu", name: "Cixin Liu",
+               contribution: {
+               "zh-CN": "创作《三体》系列，推动中国科幻文学，融合硬科幻与人文主题，探讨科技伦理与人类命运。",
+               "en": "Authored The Three-Body Problem series, advanced Chinese science fiction, blended hard sci-fi with humanistic themes, explored technological ethics and human destiny."
+               },
+               field: {
+                 "zh-CN": "科幻小说。",
+                 "en": "Science Fiction Novel."
+               },
+               remarks: {
+                  "zh-CN": "中国当代科幻代表，获雨果奖，推动全球科幻文学发展。",
+                  "en": "Contemporary Chinese sci-fi representative, Hugo Award winner, advanced global science fiction literature."
+               }
+            },
+             { id: "andy_weir", name: "Andy Weir",
+                contribution: {
+                  "zh-CN": "创作《火星救援》《海尔·玛丽计划》，以硬科幻风格融合生存冒险、科技细节与人文情感。",
+                  "en": "Authored The Martian and Project Hail Mary, blended hard sci-fi with survival adventure, technical details, and humanistic emotions."
+                },
+                field: {
+                  "zh-CN": "科幻小说。",
+                   "en": "Science Fiction Novel."
+                },
+                remarks: {
+                  "zh-CN": "当代美国科幻作家，推动科普式科幻文学，作品被成功改编为电影。",
+                "en": "Contemporary American sci-fi author, advanced educational science fiction, works successfully adapted into films."
+                }
+            },
             { id: "li_bai", name: "李白", 
               contribution: {
                 "zh-CN": "创作《蜀道难》《将进酒》，浪漫主义巅峰，抒发豪迈情怀与自然意象。",
