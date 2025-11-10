@@ -195,6 +195,35 @@
                 "en": "Among 20th century’s greatest philosophers, impacted logic, AI, and contemporary cultural critique."
               } 
             },
+
+            { id: "robert_caro", name: "Robert Caro",
+                    contribution: {
+                      "zh-CN": "著有《权力掮客》与林登·约翰逊总统传记系列，以详尽档案研究揭示政治权力机制。",
+                      "en": "Authored The Power Broker and Lyndon B. Johnson biography series, revealed political power through exhaustive archival research."
+                    },
+                    field: {
+                      "zh-CN": "政治传记。",
+                      "en": "Political Biography."
+                    },
+                    remarks: {
+                      "zh-CN": "两度普利策奖得主，现代传记标杆，推动对权力结构的文学剖析。",
+                      "en": "Two-time Pulitzer Prize winner, modern biography benchmark, advanced literary analysis of power structures."
+                    }
+           },
+           { id: "walter_isaacson", name: "Walter Isaacson",
+                    contribution: {
+                      "zh-CN": "撰写《乔布斯传》《爱因斯坦传》，结合访谈与历史分析剖析创新天才的人生。",
+                      "en": "Wrote Steve Jobs and Einstein biographies, dissected innovative geniuses' lives through interviews and historical analysis."
+                    },
+                    field: {
+                      "zh-CN": "科技与科学传记。",
+                      "en": "Technology and Science Biography."
+                    },
+                    remarks: {
+                      "zh-CN": "当代传记大师，前CNN主编，其畅销作品桥接历史与现代创新。",
+                      "en": "Contemporary biography master, former CNN editor, bestsellers bridging history and modern innovation."
+                    }
+           },
            { id: "cixin_liu", name: "Cixin Liu",
                contribution: {
                "zh-CN": "创作《三体》系列，推动中国科幻文学，融合硬科幻与人文主题，探讨科技伦理与人类命运。",
