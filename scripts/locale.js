@@ -114,7 +114,7 @@
                 "tabAi": "Pan-AI",
                 "tabQuantum": "Pan-Quantum",
                 "tabFinance": "Pan-Finance",                    
-                "tabLiterature": "Pan-humanities",
+                "tabLiterature": "Pan-Humanities",
                 "tabArt": "Pan-Art",
                 "tabSport": "Pan-Sport",
                 "tabChinaEntrepreneurs": "Pan-Chinese",
