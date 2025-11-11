@@ -326,7 +326,7 @@
               contribution: {
                 "zh-CN": "Google DeepMind首席研究员，领导AlphaGo与AlphaZero的开发，推动AI在复杂决策任务中的应用。",
                 "en": "Lead researcher at Google DeepMind, spearheaded AlphaGo and AlphaZero development, advanced AI applications in complex decision-making tasks."
-              }, 
+              },              
               field: {
                 "zh-CN": "人工智能（强化学习、深度学习）。",
                 "en": "Artificial Intelligence (Reinforcement Learning, Deep Learning)."
@@ -334,6 +334,20 @@
               remarks: {
                 "zh-CN": "其强化学习研究对AI理论和学术影响力显著。",
                 "en": "His reinforcement learning research has significant theoretical and academic influence on AI."
+              } 
+            },
+            { id: "denny_zhou", name: "Denny Zhou", 
+              contribution: {
+                "zh-CN": "Google DeepMind首席科学家，CoT提示（Chain-of-Thought Prompting）和自一致性（Self-Consistency）方法的先驱，极大增强了LLM的推理能力，对Gemini模型做出基础贡献。",
+                "en": "Principal Scientist at Google DeepMind, pioneer of Chain-of-Thought (CoT) Prompting and Self-Consistency methods, significantly enhanced LLM reasoning capabilities, contributed foundational technology to the Gemini model."
+              }, 
+              field: {
+                "zh-CN": "人工智能（大型语言模型LLM、推理能力、AGI）。",
+                "en": "Artificial Intelligence (Large Language Models LLM, Reasoning Capabilities, AGI)."
+              }, 
+              remarks: {
+                "zh-CN": "他的工作是推动LLM从模式匹配走向复杂逻辑推理的关键人物之一，累计论文引用量超9万次。",
+                "en": "One of the key figures driving LLMs from pattern matching to complex logical reasoning, with over 90k cumulative citations."
               } 
             },
             { id: "marc_benioff", name: "Marc Benioff", 
