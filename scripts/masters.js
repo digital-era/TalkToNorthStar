@@ -2,7 +2,7 @@
             ai: aiMasters,
             quantum: QuantumMasters,
             finance: financeMasters,
-            literature: literatureMasters,
+            humanities: humanitiesMasters,
             art: artMasters,
             sport: sportMasters,
             chinaEntrepreneurs: chinaEntrepreneurs
