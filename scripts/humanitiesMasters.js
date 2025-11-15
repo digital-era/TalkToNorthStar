@@ -377,5 +377,95 @@
                 "zh-CN": "近代地理学之父，连接科学与文学的叙述方式。",
                 "en": "Father of modern geography, linked science with literary narrative."
               } 
+            },
+           {
+                id: "oprah_ Winfrey", name: "Oprah Winfrey",
+                contribution: {
+                    "zh-CN": "通过其标志性访谈节目，开创深度人文对话，探索人性、社会议题与个人成长。",
+                    "en": "Pioneered deep humanistic dialogue through her iconic talk show, exploring human nature, social issues, and personal growth."
+                },
+                field: {
+                    "zh-CN": "电视访谈、媒体、社会文化。",
+                    "en": "Television Interview, Media, Social Culture."
+                },
+                remarks: {
+                    "zh-CN": "全球最具影响力的访谈主持人之一，以共情力和真诚提问闻名，影响深远。",
+                    "en": "One of the world's most influential interviewers, renowned for empathy and authentic questioning, with profound impact."
+                }
+            },
+            {
+                id: "joe_rogan", name: "Joe Rogan",
+                contribution: {
+                    "zh-CN": "通过其播客，与各领域嘉宾进行长时间、开放式对话，探讨科学、哲学、时事及多元观点。",
+                    "en": "Conducted long-form, open-ended conversations with guests across various fields on his podcast, exploring science, philosophy, current events, and diverse perspectives."
+                },
+                field: {
+                    "zh-CN": "播客、跨领域对话、媒体。",
+                    "en": "Podcast, Cross-Disciplinary Dialogue, Media."
+                },
+                remarks: {
+                    "zh-CN": "播客界最具影响力的声音之一，以好奇心和挑战传统思维著称，深受全球听众喜爱。",
+                    "en": "One of the most influential voices in podcasting, known for curiosity and challenging conventional thinking, popular with global audiences."
+                }
+            },
+            {
+                id: "ted_koppel", name: "Ted Koppel",
+                contribution: {
+                    "zh-CN": "作为资深新闻主持人，以尖锐、精准的提问，对政治人物和时事进行深度访谈和批判性审视。",
+                    "en": "As a veteran news anchor, conducted in-depth interviews and critical examinations of political figures and current events with sharp, precise questioning."
+                },
+                field: {
+                    "zh-CN": "新闻访谈、政治评论、时事。",
+                    "en": "News Interview, Political Commentary, Current Affairs."
+                },
+                remarks: {
+                    "zh-CN": "传统深度新闻访谈的标杆，以其严谨和挑战性提问维护新闻专业主义。",
+                    "en": "A benchmark for traditional in-depth news interviewing, upholding journalistic professionalism with rigorous and challenging questions."
+                }
+            },
+            {
+                id: "diane_sawyer", name: "Diane Sawyer",
+                contribution: {
+                    "zh-CN": "以其优雅、专业和富有同情心的访谈风格，挖掘新闻人物和普通人故事中的情感深度与人性。",
+                    "en": "With her elegant, professional, and empathetic interview style, she uncovered emotional depth and humanity in the stories of newsmakers and ordinary people."
+                },
+                field: {
+                    "zh-CN": "电视新闻、人文访谈、社会议题。",
+                    "en": "Television News, Human Interest Interview, Social Issues."
+                },
+                remarks: {
+                    "zh-CN": "备受尊敬的电视新闻记者和主持人，擅长处理敏感话题并传递故事的温度。",
+                    "en": "A highly respected television journalist and anchor, skilled at handling sensitive topics and conveying the warmth of stories."
+                }
+            },
+            {
+                id: "lex_fridman", name: "Lex Fridman",
+                contribution: {
+                    "zh-CN": "作为AI研究员和播客主持人，与顶尖科学家、思想家进行智性对话，深入探讨人工智能、哲学和意识的本质。",
+                    "en": "As an AI researcher and podcast host, engaged in intellectual dialogues with leading scientists and thinkers, delving into the essence of AI, philosophy, and consciousness."
+                },
+                field: {
+                    "zh-CN": "播客、人工智能、哲学、科学访谈。",
+                    "en": "Podcast, Artificial Intelligence, Philosophy, Science Interview."
+                },
+                remarks: {
+                    "zh-CN": "以其沉静、深邃的访谈风格著称，连接科技前沿与人类终极思考。",
+                    "en": "Known for his calm and profound interview style, connecting technological frontiers with ultimate human contemplation."
+                }
+            },
+            {
+                id: "ben_gilbert_david_rosenthal", name: "Ben Gilbert & David Rosenthal",
+                contribution: {
+                    "zh-CN": "通过《Acquired》播客，深度剖析全球顶尖科技公司和商业案例，提供无与伦比的行业洞察和战略思考。",
+                    "en": "Through the 'Acquired' podcast, they deeply dissected leading global tech companies and business cases, offering unparalleled industry insight and strategic thinking."
+                },
+                field: {
+                    "zh-CN": "播客、商业案例分析、科技、投资。",
+                    "en": "Podcast, Business Case Analysis, Technology, Investment."
+                },
+                remarks: {
+                    "zh-CN": "商业与科技播客领域的翘楚，以详尽研究和专业分析为听众提供宝贵知识。",
+                    "en": "Leaders in business and tech podcasting, providing valuable knowledge to listeners through exhaustive research and professional analysis."
+                }
             }
         ]; 
