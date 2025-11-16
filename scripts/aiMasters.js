@@ -86,16 +86,16 @@
             },
            { id: "steve_jobs", name: "Steve Jobs",
               contribution: {
-                "zh-CN": "苹果公司联合创始人，通过Macintosh、iPod、iPhone、iPad等创新产品，重塑个人计算、数字音乐、智能手机和移动设备行业，虽然未直接参与AI，但其开创的用户体验和平台生态为现代AI产品的普及奠定了基础。",
-                "en": "Co-founder of Apple Inc., reshaped personal computing, digital music, smartphones, and mobile device industries through innovative products like Macintosh, iPod, iPhone, and iPad. Though not directly involved in AI, his pioneering user experience and platform ecosystem laid the groundwork for the widespread adoption of modern AI products."
+                "zh-CN": "苹果公司联合创始人，通过Macintosh、iPod、iPhone、iPad等创新产品，重塑个人计算、数字音乐、智能手机和移动设备行业。",
+                "en": "Co-founder of Apple Inc., reshaped personal computing, digital music, smartphones, and mobile device industries through innovative products like Macintosh, iPod, iPhone, and iPad."
               },
               field: {
                 "zh-CN": "个人计算、移动技术、用户体验设计、数字娱乐。",
                 "en": "Personal Computing, Mobile Technology, User Experience Design, Digital Entertainment."
               },
               remarks: {
-                "zh-CN": "乔布斯对简约设计和卓越用户体验的极致追求，为所有科技产品包括AI应用树立了标杆，深刻影响了产品与用户的交互方式。",
-                "en": "Jobs' ultimate pursuit of minimalist design and exceptional user experience set a benchmark for all tech products, including AI applications, profoundly influencing how products interact with users."
+                "zh-CN": "乔布斯对简约设计和卓越用户体验的极致追求，为所有科技产品包括AI应用树立了标杆。",
+                "en": "Jobs' ultimate pursuit of minimalist design and exceptional user experience set a benchmark for all tech products."
               }
             },
             { id: "jeff_bezos", name: "Jeff Bezos",
