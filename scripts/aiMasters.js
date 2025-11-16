@@ -84,6 +84,20 @@
                 "en": "Influences global AI ecosystem through Llama series, emphasizes long-term advantages of open-source AI."
               } 
             },
+           { id: "steve_jobs", name: "Steve Jobs",
+              contribution: {
+                "zh-CN": "苹果公司联合创始人，通过Macintosh、iPod、iPhone、iPad等创新产品，重塑个人计算、数字音乐、智能手机和移动设备行业，虽然未直接参与AI，但其开创的用户体验和平台生态为现代AI产品的普及奠定了基础。",
+                "en": "Co-founder of Apple Inc., reshaped personal computing, digital music, smartphones, and mobile device industries through innovative products like Macintosh, iPod, iPhone, and iPad. Though not directly involved in AI, his pioneering user experience and platform ecosystem laid the groundwork for the widespread adoption of modern AI products."
+              },
+              field: {
+                "zh-CN": "个人计算、移动技术、用户体验设计、数字娱乐。",
+                "en": "Personal Computing, Mobile Technology, User Experience Design, Digital Entertainment."
+              },
+              remarks: {
+                "zh-CN": "乔布斯对简约设计和卓越用户体验的极致追求，为所有科技产品包括AI应用树立了标杆，深刻影响了产品与用户的交互方式。",
+                "en": "Jobs' ultimate pursuit of minimalist design and exceptional user experience set a benchmark for all tech products, including AI applications, profoundly influencing how products interact with users."
+              }
+            },
             { id: "jeff_bezos", name: "Jeff Bezos",
               contribution: {
                 "zh-CN": "亚马逊创始人，创建AWS奠定AI云计算基础，投资AI创新，推动Alexa和企业AI工具的早期发展。",
@@ -97,7 +111,7 @@
                 "zh-CN": "通过AWS和Alexa为AI的商业化和普及奠定了基础，影响全球科技生态。",
                 "en": "Laid the groundwork for AI commercialization and adoption through AWS and Alexa, shaping the global tech ecosystem."
               }
-            },
+            },            
             { id: "larry_ellison", name: "Larry Ellison",
               contribution: {
                 "zh-CN": "Oracle创始人，领导Oracle数据库和云基础设施发展，推动AI驱动的企业解决方案和云端数据管理。",
