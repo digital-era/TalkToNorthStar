@@ -224,7 +224,7 @@
                       "en": "Contemporary biography master, former CNN editor, bestsellers bridging history and modern innovation."
                     }
            },
-           { id: "cixin_liu", name: "Cixin Liu",
+           { id: "cixin_liu", name: "刘慈欣 (Liu Cixin)",
                contribution: {
                "zh-CN": "创作《三体》系列，推动中国科幻文学，融合硬科幻与人文主题，探讨科技伦理与人类命运。",
                "en": "Authored The Three-Body Problem series, advanced Chinese science fiction, blended hard sci-fi with humanistic themes, explored technological ethics and human destiny."
@@ -252,7 +252,7 @@
                 "en": "Contemporary American sci-fi author, advanced educational science fiction, works successfully adapted into films."
                 }
             },
-            { id: "li_bai", name: "李白", 
+            { id: "li_bai", name: "李白 (Li Bai)", 
               contribution: {
                 "zh-CN": "创作《蜀道难》《将进酒》，浪漫主义巅峰，抒发豪迈情怀与自然意象。",
                 "en": "Authored Shu Dao Nan and Jiang Jin Jiu, pinnacle of romanticism, expressed bold sentiments and natural imagery."
@@ -266,7 +266,7 @@
                 "en": "Tang Dynasty Poet Immortal, works embody free-spirited essence, influenced East Asian poetic tradition."
               } 
             },
-            { id: "du_fu", name: "杜甫", 
+            { id: "du_fu", name: "杜甫 (Du Fu)", 
               contribution: {
                 "zh-CN": "著有《春夜喜雨》《三吏》《三别》，现实主义典范，反映民生疾苦与家国情怀。",
                 "en": "Wrote Spring Night Joyful Rain, Three Officials, Three Partings, realist exemplar, reflected people’s hardships and patriotic sentiment."
@@ -280,7 +280,7 @@
                 "en": "Tang Dynasty Poet Sage, profound social concern established foundation of Chinese classical realist poetry."
               } 
             },
-            { id: "bai_juyi", name: "白居易", 
+            { id: "bai_juyi", name: "白居易 (Bai Juyi)", 
               contribution: {
                 "zh-CN": "创作《长恨歌》《琵琶行》，通俗叙事诗，关注社会现实与人性情感。",
                 "en": "Authored Song of Everlasting Sorrow, Pipa Song, accessible narrative poetry, focused on social reality and human emotions."
@@ -294,7 +294,7 @@
                 "en": "Tang Dynasty New Yuefu representative, advanced poetry’s popularization and social critique."
               } 
             },
-            { id: "su_dongpo", name: "Su Dongpo", 
+            { id: "su_dongpo", name: "苏东坡 (Su Dongpo)", 
               contribution: {
                 "zh-CN": "撰写《水调歌头》《念奴娇·赤壁怀古》，豪放词风，融合哲理与旷达胸怀。",
                 "en": "Wrote Shui Diao Ge Tou, Nian Nu Jiao: Chibi Nostalgia, bold ci poetry, blended philosophy and broad-mindedness."
@@ -308,7 +308,7 @@
                 "en": "Northern Song literary master, versatile talents shaped ci form and literati aesthetic life."
               } 
             }, 
-            { id: "sima_qian", name: "司马迁", 
+            { id: "sima_qian", name: "司马迁 (Si Maqian)", 
               contribution: {
                 "zh-CN": "撰写《史记》，开创中国纪传体史学，记录帝王与英雄生平。",
                 "en": "Authored Records of the Grand Historian, pioneered Chinese biographical historiography, chronicled emperors and heroes."
@@ -350,7 +350,7 @@
                 "en": "Medieval geographical literature pioneer, fostered East-West cultural exchange."
               } 
             },
-            { id: "xu_xiake", name: "徐霞客", 
+            { id: "xu_xiake", name: "徐霞客 (Xu Xiake)", 
               contribution: {
                 "zh-CN": "撰写《徐霞客游记》，记录中国地理与风貌，奠定中国旅行文学基础。",
                 "en": "Authored Xu Xiake's Travels, documented Chinese geography and landscapes, founded Chinese travel literature."
