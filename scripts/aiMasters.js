@@ -378,6 +378,34 @@
                 "en": "Applies AI to enterprise digital transformation through Salesforce."
               } 
             },
+            { id: "peter_thiel", name: "Peter Thiel",
+               contribution: {
+                 "zh-CN": "Palantir Technologies联合创始人兼董事会主席，推动大数据分析与AI平台在国防、情报与商业领域的应用，早年PayPal联合创始人及Facebook首位外部投资者。",
+                 "en": "Co-founder and Chairman of Palantir Technologies, advancing big data analytics and AI platforms in defense, intelligence, and commercial sectors; early co-founder of PayPal and first external investor in Facebook."
+               },
+               field: {
+                 "zh-CN": "人工智能（大数据分析、机器学习）、风险投资。",
+                 "en": "Artificial Intelligence (Big Data Analytics, Machine Learning), Venture Capital."
+               },
+               remarks: {
+                 "zh-CN": "通过Palantir和Founders Fund塑造AI创业生态，著《从0到1》探讨创新垄断与技术进步。",
+                 "en": "Shapes the AI startup ecosystem through Palantir and Founders Fund; authored 'Zero to One,' exploring innovation, monopoly, and technological progress."
+               }
+             },
+             { id: "alexander_karp", name: "Alexander Karp",
+               contribution: {
+                 "zh-CN": "Palantir Technologies联合创始人兼首席执行官，领导Gotham与Foundry平台的开发，推动AI驱动的数据集成与决策在政府与企业中的应用。",
+                 "en": "Co-founder and CEO of Palantir Technologies, leads development of Gotham and Foundry platforms, advancing AI-driven data integration and decision-making in government and enterprise."
+               },
+               field: {
+                 "zh-CN": "人工智能（数据集成、决策AI）、软件工程。",
+                 "en": "Artificial Intelligence (Data Integration, Decision AI), Software Engineering."
+               },
+               remarks: {
+                 "zh-CN": "以哲学背景指导技术伦理，2025年合著《技术共和国》，探讨AI在国家安全与社会治理中的作用。",
+                 "en": "Guides technology ethics with a philosophy background; co-authored 'The Technological Republic' in 2025, exploring AI's role in national security and societal governance."
+               }
+            },
             { id: "ali_ghodsi", name: "Ali Ghodsi",
                 contribution: {
                 "zh-CN": "Databricks联合创始人兼首席执行官，Apache Spark共同创造者，推动数据湖仓架构，赋能企业可扩展AI解决方案。",
