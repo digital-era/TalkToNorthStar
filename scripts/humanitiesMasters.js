@@ -438,6 +438,20 @@
                     "en": "A highly respected television journalist and anchor, skilled at handling sensitive topics and conveying the warmth of stories."
                 }
             },
+           { id: "naval_ravikant", name: "Naval Ravikant",
+             contribution: {
+               "zh-CN": "通过播客《Naval Ravikant Podcast》、Twitter 线程及《纳瓦尔宝典》系统阐述财富创造、幸福哲学与杠杆原理，将古代智慧与现代创业、科技投资相结合。",
+               "en": "Through The Naval Ravikant Podcast, Twitter threads, and The Almanack of Naval Ravikant, systematically articulated philosophies on wealth creation, happiness, and leverage, fusing ancient wisdom with modern entrepreneurship and technology investing."
+             },
+             field: {
+               "zh-CN": "智慧文学、创业哲学、科技人文。",
+               "en": "Wisdom Literature, Entrepreneurial Philosophy, Tech Humanism."
+             },
+             remarks: {
+               "zh-CN": "当代最具影响力的思想企业家，其格言式表达被全球数百万读者奉为人生与事业指南，被誉为“硅谷哲学家”。",
+               "en": "The most influential thinker-entrepreneur of our time; his aphoristic wisdom has become a life and career guide for millions worldwide, often called the 'Silicon Valley Philosopher'."
+             }
+            },
             {
                 id: "lex_fridman", name: "Lex Fridman",
                 contribution: {
