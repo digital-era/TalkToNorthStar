@@ -440,8 +440,8 @@
             },
            { id: "naval_ravikant", name: "Naval Ravikant",
              contribution: {
-               "zh-CN": "通过播客《Naval Ravikant Podcast》、Twitter 线程及《纳瓦尔宝典》系统阐述财富创造、幸福哲学与杠杆原理，将古代智慧与现代创业、科技投资相结合。",
-               "en": "Through The Naval Ravikant Podcast, Twitter threads, and The Almanack of Naval Ravikant, systematically articulated philosophies on wealth creation, happiness, and leverage, fusing ancient wisdom with modern entrepreneurship and technology investing."
+               "zh-CN": "通过播客、Twitter及《纳瓦尔宝典》系统阐述财富创造、幸福哲学与杠杆原理，将古代智慧与现代创业、科技投资相结合。",
+               "en": "Through  Podcast, Twitter , and The Almanack of Naval Ravikant, systematically articulated philosophies on wealth creation, happiness, and leverage, fusing ancient wisdom with modern entrepreneurship and technology investing."
              },
              field: {
                "zh-CN": "智慧文学、创业哲学、科技人文。",
