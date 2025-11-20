@@ -518,6 +518,48 @@
                 "en": "Contemporary superstar, advanced film production and acting integration."
                 }
             },
+            { id: "joel_robuchon", name: "Joël Robuchon",
+              contribution: {
+                "zh-CN": "创作传奇土豆泥，主张回归食材本味，生涯累计32颗米其林星创历史纪录。",
+                "en": "Created legendary Pommes Purée, advocated ingredient purity, held historical record of 32 Michelin stars."
+              },
+              field: {
+                "zh-CN": "法式料理、高级餐饮。",
+                "en": "French Cuisine, Fine Dining."
+              },
+              remarks: {
+                "zh-CN": "被誉为“世纪名厨”，以极致完美主义重新定义法餐标准，影响力居全球之首。",
+                "en": "Hailed as 'Chef of the Century'; redefined French standards with extreme perfectionism, holding top global influence."
+              }
+            },
+            { id: "alain_ducasse", name: "Alain Ducasse",
+              contribution: {
+                "zh-CN": "首位在三城拥有米其林三星的主厨，建立全球餐饮帝国，推崇“自然本质”烹饪哲学。",
+                "en": "First chef with 3-star restaurants in three cities, built global dining empire, championed 'Naturalness' culinary philosophy."
+              },
+              field: {
+                "zh-CN": "法式高级料理、烹饪教育。",
+                "en": "Haute Cuisine, Culinary Education."
+              },
+              remarks: {
+                "zh-CN": "法餐教父，现役摘星最多厨师，其严谨哲学代表了高级料理的最高规格。",
+                "en": "Godfather of French cuisine; holding most active stars, his rigorous philosophy represents the pinnacle of Haute Cuisine."
+              }
+            },
+            { id: "gordon_ramsay", name: "Gordon Ramsay",
+              contribution: {
+                "zh-CN": "伦敦旗舰店保持三星超20年，通过《地狱厨房》将精湛厨艺与现代商业传媒完美结合。",
+                "en": "Maintained 3 stars at London flagship for 20+ years, merged culinary mastery with modern media via Hell's Kitchen."
+              },
+              field: {
+                "zh-CN": "现代欧陆菜、餐饮管理。",
+                "en": "Modern European Cuisine, Restaurant Management."
+              },
+              remarks: {
+                "zh-CN": "全球知名度最高主厨，以精准纪律与商业成就树立当代跨界名厨标杆。",
+                "en": "World's most famous chef; established the benchmark for contemporary crossover chefs through precision and commercial success."
+              }
+            },
             { id: "shigeru_miyamoto", name: "Shigeru Miyamoto",
                 contribution: {
                 "zh-CN": "创作《马里奥》《塞尔达传说》，确立平台跳跃与3D动作游戏标准。",
