@@ -518,6 +518,76 @@
                 "en": "Contemporary superstar, advanced film production and acting integration."
                 }
             },
+            { id: "shigeru_miyamoto", name: "Shigeru Miyamoto",
+                contribution: {
+                "zh-CN": "创作《马里奥》《塞尔达传说》，确立平台跳跃与3D动作游戏标准。",
+                "en": "Created Mario, The Legend of Zelda, established standards for platformers and 3D action games."
+                },
+                field: {
+                "zh-CN": "游戏设计、电子游戏。",
+                "en": "Game Design, Video Games."
+                },
+                remarks: {
+                "zh-CN": "现代电子游戏之父，强调直觉乐趣，定义了任天堂的设计哲学。",
+                "en": "Father of modern video games; emphasized intuitive fun and defined Nintendo's design philosophy."
+                }
+            },
+            { id: "hideo_kojima", name: "Hideo Kojima",
+                contribution: {
+                "zh-CN": "创作《合金装备》《死亡搁浅》，开创战术潜行类别与电影化叙事。",
+                "en": "Created Metal Gear, Death Stranding, pioneered tactical stealth genre and cinematic narrative."
+                },
+                field: {
+                "zh-CN": "游戏导演、互动电影。",
+                "en": "Game Direction, Interactive Cinema."
+                },
+                remarks: {
+                "zh-CN": "游戏界作者导演先驱，融合反战哲学与第九艺术表达。",
+                "en": "Pioneer of auteur game direction; fused anti-war philosophy with Ninth Art expression."
+                }
+            },
+            { id: "sid_meier", name: "Sid Meier",
+                contribution: {
+                "zh-CN": "创作《文明》系列，奠定4X策略游戏基础与历史模拟机制。",
+                "en": "Created Civilization series, laid foundations for 4X strategy games and historical simulation."
+                },
+                field: {
+                "zh-CN": "策略游戏、模拟。",
+                "en": "Strategy Games, Simulation."
+                },
+                remarks: {
+                "zh-CN": "策略游戏教父，提出“游戏是一系列有趣选择”的经典理论。",
+                "en": "Godfather of strategy games; famously defined games as 'a series of interesting decisions'."
+                }
+            },
+            { id: "john_carmack", name: "John Carmack",
+                contribution: {
+                "zh-CN": "开发《毁灭战士》《雷神之锤》，革新FPS玩法与3D图形引擎技术。",
+                "en": "Developed Doom, Quake, revolutionized FPS gameplay and 3D graphics engine technology."
+                },
+                field: {
+                "zh-CN": "游戏编程、图形引擎。",
+                "en": "Game Programming, Graphics Engines."
+                },
+                remarks: {
+                "zh-CN": "FPS之父与技术极客，以代码一己之力推动3D游戏时代到来。",
+                "en": "Father of FPS and tech visionary; single-handedly drove the arrival of the 3D gaming era."
+                }
+            },
+            { id: "hidetaka_miyazaki", name: "Hidetaka Miyazaki",
+                contribution: {
+                "zh-CN": "创作《黑暗之魂》《艾尔登法环》，开创“魂类”流派与碎片化叙事。",
+                "en": "Created Dark Souls, Elden Ring, established 'Soulslike' genre and fragmented storytelling."
+                },
+                field: {
+                "zh-CN": "动作角色扮演、暗黑奇幻。",
+                "en": "Action RPG, Dark Fantasy."
+                },
+                remarks: {
+                "zh-CN": "当代游戏美学大师，重塑高难度挑战与箱庭世界设计。",
+                "en": "Master of contemporary game aesthetics; reshaped high-difficulty challenges and world design."
+                }
+            }, 
             { id: "luciano_pavarotti", name: "Luciano Pavarotti", 
               contribution: {
                 "zh-CN": "意大利男高音，演唱《今夜无人入睡》，推广歌剧大众化，获格莱美奖。",
