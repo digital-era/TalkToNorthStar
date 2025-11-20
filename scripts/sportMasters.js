@@ -96,5 +96,117 @@
                   "zh-CN": "进球机器的代名词，其跨联赛冠军与持久耐力重塑了足球竞技标准，激励全球数亿球迷。",
                   "en": "Synonym for goal-scoring machine, his cross-league titles and enduring stamina reshaped football standards, inspiring billions worldwide."
                 }
+              },
+             { id: "simone_biles", name: "Simone Biles",
+                contribution: {
+                  "zh-CN": "11枚世锦赛金牌+8枚奥运金牌，创造多项体操最高难度动作。",
+                  "en": "11 World Championship golds + 8 Olympic golds, created multiple highest-difficulty gymnastics elements."
+                },
+                field: {
+                  "zh-CN": "体操。",
+                  "en": "Gymnastics."
+                },
+                remarks: {
+                  "zh-CN": "体操史上最伟大女运动员，其难度与艺术性重新定义女子体操天花板，推动心理健康议题。",
+                  "en": "Greatest female gymnast ever; redefined the ceiling of women's gymnastics with difficulty and artistry, advanced mental health advocacy."
+                }
+              },
+              { id: "carl_lewis", name: "Carl Lewis",
+                contribution: {
+                  "zh-CN": "9枚奥运金牌（跨100m、跳远、4×100m），保持多项田径世界纪录长达30年。",
+                  "en": "9 Olympic golds (100m, long jump, 4×100m), held multiple world records for over 30 years."
+                },
+                field: {
+                  "zh-CN": "田径（短跑与跳远）。",
+                  "en": "Athletics (Sprinting & Long Jump)."
+                },
+                remarks: {
+                  "zh-CN": "田径全能王，其优雅与统治力使跳远成为艺术，跨时代影响力仅次于博尔特。",
+                  "en": "King of track and field versatility; made long jump an art form, cross-era influence second only to Bolt."
+                }
+              },
+              { id: "pele", name: "Pelé",
+                contribution: {
+                  "zh-CN": "3次世界杯冠军，官方1283粒职业进球，唯一三夺世界杯球员。",
+                  "en": "3 World Cup titles, 1,283 official career goals, only player to win three World Cups."
+                },
+                field: {
+                  "zh-CN": "足球。",
+                  "en": "Football."
+                },
+                remarks: {
+                  "zh-CN": "足球史上最伟大的球王，其创造力与进球效率奠定现代足球美学，全球第一体育偶像。",
+                  "en": "Greatest footballer ever; creativity and goal efficiency established modern football aesthetics, world's first global sports icon."
+                }
+              },
+              { id: "novak_djokovic", name: "Novak Djokovic",
+                contribution: {
+                  "zh-CN": "24个大满贯单打冠军（截至2025年11月），保持No.1周数最长纪录。",
+                  "en": "24 Grand Slam singles titles (as of November 2025), longest weeks as world No.1."
+                },
+                field: {
+                  "zh-CN": "网球。",
+                  "en": "Tennis."
+                },
+                remarks: {
+                  "zh-CN": "男子网球历史最佳，其身体素质、防守与心理韧性重塑现代底线打法。",
+                  "en": "Greatest male tennis player ever; physicality, defense, and mental toughness reshaped baseline play."
+                }
+              },
+              { id: "max_verstappen", name: "Max Verstappen",
+                contribution: {
+                  "zh-CN": "4次F1世界冠军（2021–2024），最年轻分站冠军，最多单赛季胜利纪录。",
+                  "en": "4 consecutive F1 World Championships (2021–2024), youngest race winner, most wins in a season record."
+                },
+                field: {
+                  "zh-CN": "一级方程式赛车。",
+                  "en": "Formula 1 Racing."
+                },
+                remarks: {
+                  "zh-CN": "当代F1统治者，其进攻性驾驶与数据分析能力推动赛车运动进入新世代。",
+                  "en": "Dominant force in modern F1; aggressive driving and data mastery ushered motorsport into a new era."
+                }
+              },
+             { id: "tiger_woods", name: "Tiger Woods",
+                contribution: {
+                  "zh-CN": "15个大满贯冠军、82场美巡赛胜利（并列历史第一）、保持世界第一位310周。",
+                  "en": "15 Major championships, 82 PGA Tour wins (tied for most all-time), 310 weeks as world No.1."
+                },
+                field: {
+                  "zh-CN": "高尔夫。",
+                  "en": "Golf."
+                },
+                remarks: {
+                  "zh-CN": "高尔夫运动的全球革命者，其力量、精准与竞技精神将高尔夫带入亿万观众时代，影响力无人能及。",
+                  "en": "Global revolutionary of golf; his power, precision, and competitive spirit brought the game to billions, unmatched influence in history."
+                }
+              },
+              { id: "faker", name: "Faker",
+                contribution: {
+                  "zh-CN": "6次LoL世界冠军（2013,2015,2016,2023,2024,2025）、首位10次参赛、LoL名人堂首位入选者。",
+                  "en": "6 LoL Worlds titles (2013,2015,2016,2023,2024,2025), first to 10 Worlds appearances, inaugural LoL Hall of Legends inductee."
+                },
+                field: {
+                  "zh-CN": "电子竞技（英雄联盟）。",
+                  "en": "Esports (League of Legends)."
+                },
+                remarks: {
+                  "zh-CN": "电子竞技史上无可争议GOAT，其统治力、长寿职业生涯与国际成就定义MOBA竞技巅峰。",
+                  "en": "Undisputed GOAT of esports history; dominance, longevity, and international feats defined MOBA competitive peak."
+                }
+              },
+              { id: "s1mple", name: "s1mple",
+                contribution: {
+                  "zh-CN": "21次HLTV MVP、1次Major冠军、Intel Grand Slam，CS:GO/CS2历史最佳选手。",
+                  "en": "21 HLTV MVPs, 1 Major title, Intel Grand Slam; greatest CS:GO/CS2 player of all time."
+                },
+                field: {
+                  "zh-CN": "电子竞技（CS:GO/CS2）。",
+                  "en": "Esports (CS:GO/CS2)."
+                },
+                remarks: {
+                  "zh-CN": "FPS竞技传奇，其超凡瞄准与游戏感重塑射击游戏标准，MVP纪录无人能及。",
+                  "en": "FPS legend; unparalleled aim and game sense reshaped shooter standards, MVP record unmatched."
+                }
               }
         ]; 
