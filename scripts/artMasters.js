@@ -181,6 +181,106 @@
                 "en": "Romantic piano master, shaped modern piano technique."
               } 
             },
+
+           { id: "paul_rand", name: "Paul Rand",
+              contribution: {
+                "zh-CN": "设计IBM、UPS等标志性标识与书籍海报，创立极简主义布局与视觉美学原则。",
+                "en": "Designed iconic IBM, UPS logos and book posters, established minimalist layout and visual aesthetics principles."
+              },
+              field: {
+                "zh-CN": "平面设计、品牌标识、布局美学。",
+                "en": "Graphic Design, Branding, Layout Aesthetics."
+              },
+              remarks: {
+                "zh-CN": "20世纪最伟大平面设计师，其不对称平衡与负空间理论影响当代UI与封面设计。",
+                "en": "Greatest 20th-century graphic designer; asymmetric balance and negative space theory shaped modern UI and cover design."
+              }
+            },
+            { id: "chip_kidd", name: "Chip Kidd",
+              contribution: {
+                "zh-CN": "设计《侏罗纪公园》等2000+书籍封面，融合概念隐喻与大胆排版，革新当代封面叙事美感。",
+                "en": "Designed 2000+ book covers including Jurassic Park, blending conceptual metaphors with bold typography, revolutionized contemporary cover narrative aesthetics."
+              },
+              field: {
+                "zh-CN": "书籍封面设计、平面叙事。",
+                "en": "Book Cover Design, Graphic Narrative."
+              },
+              remarks: {
+                "zh-CN": "在世最著名书籍封面大师，其创意深刻影响全球出版视觉文化。",
+                "en": "World's most famous living book cover designer; creativity profoundly influenced global publishing visual culture."
+              }
+            },
+            { id: "jonathan_ive", name: "Jonathan Ive",
+              contribution: {
+                "zh-CN": "主导iPhone、iPad等界面设计，开创扁平化触控UI与沉浸式布局美学。",
+                "en": "Led iPhone, iPad interface designs, pioneered flat touch UI and immersive layout aesthetics."
+              },
+              field: {
+                "zh-CN": "数字界面设计、UI/UX。",
+                "en": "Digital Interface Design, UI/UX."
+              },
+              remarks: {
+                "zh-CN": "苹果前首席设计官，其极简交互美学定义21世纪全球数字界面标准。",
+                "en": "Former Apple Chief Design Officer; minimalist interaction aesthetics defined 21st-century global digital interface standards."
+              }
+            },
+            // 以下为时尚（Fashion）与科技Cyber维度各一位大师（2025年全球共识）
+            { id: "coco_chanel", name: "Coco Chanel",
+              contribution: {
+                "zh-CN": "发明小黑裙与香奈儿套装，解放女性着装，开创现代简约奢华美学。",
+                "en": "Invented the little black dress and Chanel suit, liberated women's fashion, pioneered modern minimalist luxury aesthetics."
+              },
+              field: {
+                "zh-CN": "高级时装、现代时尚。",
+                "en": "Haute Couture, Modern Fashion."
+              },
+              remarks: {
+                "zh-CN": "20世纪最伟大时尚设计师，永恒定义女性优雅与实用主义，影响全球奢侈品百年。",
+                "en": "Greatest fashion designer of the 20th century; eternally defined feminine elegance and pragmatism, influencing global luxury for a century."
+              }
+            },
+            { id: "iris_van_herpen", name: "Iris van Herpen",
+              contribution: {
+                "zh-CN": "融合3D打印、激光切割与生物科技，开创科技高定与赛博未来主义时尚。",
+                "en": "Integrated 3D printing, laser cutting, and biotechnology, pioneered tech couture and cyber-futuristic fashion."
+              },
+              field: {
+                "zh-CN": "科技时尚、赛博高定。",
+                "en": "Technology Fashion, Cyber Couture."
+              },
+              remarks: {
+                "zh-CN": "当代最革命性设计师，其人与科技融合美学定义21世纪赛博时尚，影响全球未来主义潮流。",
+                "en": "Most revolutionary contemporary designer; human-tech fusion aesthetics define 21st-century cyber fashion, influencing global futurism trends."
+              }
+            },
+           { id: "henri_cartier_bresson", name: "Henri Cartier-Bresson",
+              contribution: {
+                "zh-CN": "创立“决定性瞬间”理论，奠定街头摄影与新闻摄影美学准则，创办马格南图片社。",
+                "en": "Founded the 'Decisive Moment' theory, established street and photojournalism aesthetics, co-founded Magnum Photos."
+              },
+              field: {
+                "zh-CN": "街头摄影、新闻摄影、人文纪实。",
+                "en": "Street Photography, Photojournalism, Humanistic Documentary."
+              },
+              remarks: {
+                "zh-CN": "现代摄影之父，其几何构图与瞬间抓拍原则影响20-21世纪所有摄影师，被尊为摄影史上最伟大人物。",
+                "en": "Father of modern photography; geometric composition and decisive moment principles shaped every photographer of the 20-21st centuries."
+              }
+            },
+            { id: "annie_leibovitz", name: "Annie Leibovitz",
+              contribution: {
+                "zh-CN": "拍摄约翰·列侬与小野洋子、怀孕黛米·摩尔等世纪肖像，将戏剧化布光与叙事观念引入名人摄影。",
+                "en": "Captured iconic portraits of John Lennon & Yoko Ono, pregnant Demi Moore; introduced dramatic lighting and conceptual narrative to celebrity portraiture."
+              },
+              field: {
+                "zh-CN": "肖像摄影、时尚摄影、观念摄影。",
+                "en": "Portrait Photography, Fashion Photography, Conceptual Photography."
+              },
+              remarks: {
+                "zh-CN": "在世最伟大肖像摄影师，其作品定义当代名人影像文化与杂志封面美学，商业与艺术价值巅峰。",
+                "en": "Greatest living portrait photographer; works define contemporary celebrity visual culture and magazine cover aesthetics, peak of commercial-art fusion."
+              }
+            },
             { id: "martin_scorsese", name: "Martin Scorsese",
                 contribution: {
                 "zh-CN": "执导《好家伙》《无间道风云》，探索犯罪、救赎与美国社会主题。",
