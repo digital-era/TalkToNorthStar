@@ -195,6 +195,90 @@
                 "en": "Praised by Charlie Munger, his fund achieved outstanding long-term returns, influencing global value investing practices."
                 }
             },
+           { id: "satoshi_nakamoto", name: "Satoshi Nakamoto",
+            contribution: {
+              "zh-CN": "2008年发布比特币白皮书，2009年创世区块上线，发明工作量证明共识与去中心化电子现金系统。",
+              "en": "Published Bitcoin white paper in 2008, launched genesis block in 2009, invented Proof-of-Work and decentralized electronic cash."
+            },
+            field: {
+              "zh-CN": "数字货币、区块链、密码学经济学。",
+              "en": "Digital Currency, Blockchain, Cryptoeconomics."
+            },
+            remarks: {
+              "zh-CN": "比特币创始人，真身未知，开启万亿美元加密资产时代，被誉为‘加密货币之父’。",
+              "en": "Pseudonymous creator of Bitcoin, identity unknown, initiated the trillion-dollar crypto era, revered as the 'Father of Cryptocurrency'."
+            }
+          },
+           { id: "vitalik_buterin", name: "Vitalik Buterin",
+            contribution: {
+              "zh-CN": "以太坊创始人，提出智能合约与EVM，开启DeFi、NFT与Web3时代。",
+              "en": "Founder of Ethereum, introduced smart contracts and EVM, launched DeFi, NFT, and Web3 eras."
+            },
+            field: {
+              "zh-CN": "区块链基础设施、智能合约、去中心化金融。",
+              "en": "Blockchain Infrastructure, Smart Contracts, DeFi."
+            },
+            remarks: {
+              "zh-CN": "被誉为‘去中心化世界计算机之父’，以太坊生态市值超4000亿美元。",
+              "en": "Known as the 'father of the decentralized world computer,' Ethereum ecosystem exceeds $400B in value."
+            }
+          },
+          { id: "jeremy_allaire", name: "Jeremy Allaire",
+            contribution: {
+              "zh-CN": "Circle联合创始人兼CEO，推出合规稳定币USDC，构建机构级加密美元桥梁。",
+              "en": "Co-founder and CEO of Circle, launched regulated stablecoin USDC, building institutional crypto-dollar bridge."
+            },
+            field: {
+              "zh-CN": "稳定币、金融科技、合规加密资产。",
+              "en": "Stablecoins, FinTech, Regulated Crypto Assets."
+            },
+            remarks: {
+              "zh-CN": "USDC流通量超600亿美元，Circle已于2025年纽交所上市。",
+              "en": "USDC circulation exceeds $60B; Circle listed on NYSE in 2025."
+            }
+          },
+          { id: "brian_armstrong", name: "Brian Armstrong",
+            contribution: {
+              "zh-CN": "Coinbase联合创始人兼CEO，打造全球最大合规加密交易所，推动比特币ETF等主流产品。",
+              "en": "Co-founder and CEO of Coinbase, built world's largest regulated crypto exchange, advanced Bitcoin ETFs."
+            },
+            field: {
+              "zh-CN": "加密交易所、合规金融、零售投资。",
+              "en": "Crypto Exchanges, Regulated Finance, Retail Investing."
+            },
+            remarks: {
+              "zh-CN": "Coinbase纳斯达克上市，被称为‘加密行业的摩根大通’。",
+              "en": "Coinbase Nasdaq-listed, regarded as the 'JPMorgan of crypto'."
+            }
+          },
+          { id: "anatoly_yakovenko", name: "Anatoly Yakovenko",
+            contribution: {
+              "zh-CN": "Solana联合创始人，发明Proof-of-History共识，实现高性能公链。",
+              "en": "Co-founder of Solana, invented Proof-of-History consensus, enabling high-performance blockchain."
+            },
+            field: {
+              "zh-CN": "高性能区块链、Layer1、去中心化应用。",
+              "en": "High-Performance Blockchain, Layer1, dApps."
+            },
+            remarks: {
+              "zh-CN": "Solana单链TPS达数万，被称为‘以太坊杀手’。",
+              "en": "Solana achieves tens of thousands TPS, dubbed the 'Ethereum killer'."
+            }
+          },
+          { id: "changpeng_zhao", name: "Changpeng Zhao (CZ)",
+            contribution: {
+              "zh-CN": "币安创始人，前CEO，2017年数月内建成全球最大加密交易所与BNB生态。",
+              "en": "Founder and former CEO of Binance, built world's largest crypto exchange and BNB ecosystem in months in 2017."
+            },
+            field: {
+              "zh-CN": "中心化交易所、流动性提供、生态平台。",
+              "en": "CEX, Liquidity Provision, Ecosystem Platforms."
+            },
+            remarks: {
+              "zh-CN": "币安一度占据全球交易量60%以上，塑造加密资产流动性格局。",
+              "en": "Binance once held over 60% of global trading volume, defining crypto liquidity landscape."
+            }
+          },
             { 
                 id: "rupert_hoogewerf", name: "Rupert Hoogewerf", 
                 contribution: {
