@@ -153,6 +153,48 @@
                 "en": "Kafkaesque defined modern alienation, profoundly influential."
               } 
             },
+           { id: "agatha_christie", name: "Agatha Christie",
+              contribution: {
+                "zh-CN": "创作《东方快车谋杀案》《无人生还》，开创黄金时代本格推理，发明精密诡计与惊人反转。",
+                "en": "Authored Murder on the Orient Express and And Then There Were None, pioneered Golden Age puzzle mysteries with intricate plots and twists."
+              },
+              field: {
+                "zh-CN": "悬疑·推理小说、本格派。",
+                "en": "Mystery & Detective Fiction, Classic Whodunit."
+              },
+              remarks: {
+                "zh-CN": "推理小说女王，全球销量超20亿册，永恒定义封闭空间与公平推理规则。",
+                "en": "Queen of Crime, over 2 billion books sold, eternally defined locked-room and fair-play mysteries."
+              }
+            },
+            { id: "arthur_conan_doyle", name: "Arthur Conan Doyle",
+              contribution: {
+                "zh-CN": "创作《福尔摩斯探案全集》《巴斯克维尔的猎犬》，创立现代侦探形象与科学逻辑推理模式。",
+                "en": "Authored The Adventures of Sherlock Holmes and The Hound of the Baskervilles, created modern detective archetype and scientific deduction."
+              },
+              field: {
+                "zh-CN": "侦探小说、硬汉推理。",
+                "en": "Detective Fiction, Rational Deduction."
+              },
+              remarks: {
+                "zh-CN": "侦探小说之父，夏洛克·福尔摩斯成为全球最具标志性的文学角色。",
+                "en": "Father of the detective novel; Sherlock Holmes remains the most iconic literary character worldwide."
+              }
+            },
+            { id: "gillian_flynn", name: "Gillian Flynn",
+              contribution: {
+                "zh-CN": "创作《消失的爱人》《利器》，革新心理悬疑与不可靠叙述者手法，开创21世纪国内惊悚潮流。",
+                "en": "Authored Gone Girl and Sharp Objects, revolutionized psychological suspense with unreliable narrators, launched 21st-century domestic thriller wave."
+              },
+              field: {
+                "zh-CN": "心理悬疑、惊悚小说。",
+                "en": "Psychological Thriller, Domestic Suspense."
+              },
+              remarks: {
+                "zh-CN": "当代悬疑大师，其双重视角与颠覆性反转深刻影响全球流行文化与影视改编。",
+                "en": "Leading contemporary master of suspense; dual-perspective twists profoundly shaped modern popular culture and adaptations."
+              }
+            },
             { id: "plutarch", name: "Plutarch", 
               contribution: {
                 "zh-CN": "撰写《希腊罗马名人传》，以比较传记揭示历史人物品格与命运。",
