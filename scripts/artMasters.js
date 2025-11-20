@@ -224,7 +224,6 @@
                 "en": "Former Apple Chief Design Officer; minimalist interaction aesthetics defined 21st-century global digital interface standards."
               }
             },
-            // 以下为时尚（Fashion）与科技Cyber维度各一位大师（2025年全球共识）
             { id: "coco_chanel", name: "Coco Chanel",
               contribution: {
                 "zh-CN": "发明小黑裙与香奈儿套装，解放女性着装，开创现代简约奢华美学。",
@@ -279,6 +278,62 @@
               remarks: {
                 "zh-CN": "在世最伟大肖像摄影师，其作品定义当代名人影像文化与杂志封面美学，商业与艺术价值巅峰。",
                 "en": "Greatest living portrait photographer; works define contemporary celebrity visual culture and magazine cover aesthetics, peak of commercial-art fusion."
+              }
+            },
+            { id: "frank_lloyd_wright", name: "Frank Lloyd Wright",
+              contribution: {
+                "zh-CN": "创作《流水别墅》《古根海姆博物馆》，开创有机建筑理念，强调人与自然和谐共生。",
+                "en": "Authored Fallingwater and Guggenheim Museum, pioneered organic architecture emphasizing harmony between human and nature."
+              },
+              field: {
+                "zh-CN": "有机建筑、现代主义。",
+                "en": "Organic Architecture, Modernism."
+              },
+              remarks: {
+                "zh-CN": "20世纪最伟大建筑师，其草原式住宅与流动空间理论影响全球当代可持续设计。",
+                "en": "Greatest architect of the 20th century; Prairie School and flowing spaces theory shaped global contemporary sustainable design."
+              }
+            },
+            { id: "le_corbusier", name: "Le Corbusier",
+              contribution: {
+                "zh-CN": "提出新建筑五点与光辉城市理论，设计《萨伏伊别墅》《昌迪加尔规划》。",
+                "en": "Proposed Five Points of Architecture and Radiant City, designed Villa Savoye and Chandigarh."
+              },
+              field: {
+                "zh-CN": "现代主义、城市规划。",
+                "en": "Modernism, Urban Planning."
+              },
+              remarks: {
+                "zh-CN": "现代建筑之父，17项作品入选UNESCO，其功能主义与国际风格定义20世纪城市面貌。",
+                "en": "Father of modern architecture; 17 UNESCO sites, functionalism and International Style defined 20th-century urbanism."
+              }
+            },
+            { id: "zaha_hadid", name: "Zaha Hadid",
+              contribution: {
+                "zh-CN": "创作《海达尔·阿里耶夫中心》《北京大兴机场》，开创参数化流动形态与解构主义当代建筑。",
+                "en": "Authored Heydar Aliyev Center and Beijing Daxing Airport, pioneered parametric fluid forms and deconstructivist contemporary architecture."
+              },
+              field: {
+                "zh-CN": "参数化建筑、解构主义。",
+                "en": "Parametric Architecture, Deconstructivism."
+              },
+              remarks: {
+                "zh-CN": "首位普利兹克奖女性得主，其未来主义曲线语言重塑21世纪全球地标与数字设计范式。",
+                "en": "First female Pritzker laureate; futuristic curves reshaped 21st-century global landmarks and digital design paradigms."
+              }
+            },
+            { id: "liu_jiakun", name: "刘家琨 (Liu Jiakun)",
+              contribution: {
+                "zh-CN": "创作《西村大院》《苏州御窑砖博物馆》，以日常性与社区活力为核心，融合中国文脉与当代功能。",
+                "en": "Authored West Village and Suzhou Imperial Kiln Museum, centering everyday life and community vitality while integrating Chinese context with contemporary function."
+              },
+              field: {
+                "zh-CN": "当代中国建筑、社会性文脉主义。",
+                "en": "Contemporary Chinese Architecture, Social Contextualism."
+              },
+              remarks: {
+                "zh-CN": "2025年普利兹克建筑奖得主，其作品庆祝普通人生活，被誉为当下最具影响力的在世建筑大师。",
+                "en": "2025 Pritzker Prize laureate; works celebrate ordinary lives, recognized as the most influential living architect today."
               }
             },
             { id: "martin_scorsese", name: "Martin Scorsese",
