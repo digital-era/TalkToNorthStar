@@ -360,7 +360,7 @@
                 "en": "Artificial Intelligence (Large Language Models LLM, Reasoning Capabilities, AGI)."
               }, 
               remarks: {
-                "zh-CN": "他的工作是推动LLM从模式匹配走向复杂逻辑推理的关键人物之一，累计论文引用量超9万次。",
+                "zh-CN": "推动LLM从模式匹配走向复杂逻辑推理的关键人物之一，累计论文引用量超9万次。",
                 "en": "One of the key figures driving LLMs from pattern matching to complex logical reasoning, with over 90k cumulative citations."
               } 
             },
