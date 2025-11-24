@@ -444,7 +444,7 @@
                "en": "Film Score, Symphonic Music, Ethnic Fusion."
              },
              remarks: {
-               "zh-CN": "好莱坞史上最伟大的电影配乐大师之一，其旋律直击人心，《泰坦尼克号》专辑全球销量超3000万张，至今无人超越。",
+               "zh-CN": "好莱坞史上最伟大的电影配乐大师之一，用旋律书写人类情感，直击人心。",
                "en": "One of the greatest film composers in Hollywood history; heart-piercing melodies, Titanic soundtrack sold over 30 million copies worldwide, remains unmatched."
              }
             },
