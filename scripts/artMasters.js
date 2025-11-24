@@ -434,6 +434,20 @@
                 "en": "Contemporary sci-fi giant, advanced visual and narrative depth integration."
                 }
             },
+            { id: "james_horner", name: "James Horner",
+             contribution: {
+               "zh-CN": "创作《泰坦尼克号》《阿凡达》《勇敢的心》配乐，以宏大交响与民族乐器融合，开创现代史诗电影音乐典范。",
+               "en": "Composed Titanic, Avatar, Braveheart scores, pioneered modern epic film music through grand orchestral and ethnic instrument fusion."
+             },
+             field: {
+               "zh-CN": "电影配乐、交响乐、民族音乐融合。",
+               "en": "Film Score, Symphonic Music, Ethnic Fusion."
+             },
+             remarks: {
+               "zh-CN": "好莱坞史上最伟大的电影配乐大师之一，其旋律直击人心，《泰坦尼克号》专辑全球销量超3000万张，至今无人超越。",
+               "en": "One of the greatest film composers in Hollywood history; heart-piercing melodies, Titanic soundtrack sold over 30 million copies worldwide, remains unmatched."
+             }
+            },
             { id: "meryl_streep", name: "Meryl Streep",
                 contribution: {
                 "zh-CN": "出演《苏菲的选择》《穿普拉达的女王》，以多变角色展现演技深度。",
