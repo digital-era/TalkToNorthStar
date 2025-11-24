@@ -923,7 +923,7 @@
                     <span id="selectedLeaderName" data-i18n-key="noLeaderSelectedInitial">无</span>
                 </div>
                 <!-- 点击此图标调用新的合并拷贝功能 -->
-                <i class="fas fa-copy copy-leader-btn" onclick="copyConversationToClipboard()" title="拷贝问答到剪贴板"></i>
+                <i class="fas fa-copy copy-leader-btn"  onclick="copyConversationToClipboard()" title="拷贝问答到剪贴板" data-i18n-key="tooltipCopyConversation"  data-i18n-target="title"></i>
             </div>
             <!-- --- 修改结束 --- -->
             <textarea id="userQuestion" data-i18n-key="placeholderUserQuestion" data-i18n-target="placeholder"></textarea>
@@ -935,7 +935,7 @@
                     <span id="loadingIndicator" style="display:none;" class="loading-spinner"></span>
                 </button>
                 <!-- --- 修改开始：按钮改名，移除原有 onclick --- -->
-                <button id="immersiveModeButton" style="cursor: default; opacity: 0.8;">沉浸模式 (未来构想)</button>
+                 <button id="immersiveModeButton" style="cursor: default; opacity: 0.8;" data-i18n-key="btnImmersiveMode"> </button>
                 <!-- --- 修改结束 --- -->
             </div>
 
