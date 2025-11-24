@@ -445,7 +445,7 @@
              },
              remarks: {
                "zh-CN": "好莱坞史上最伟大的电影配乐大师之一，用旋律书写人类情感，直击人心。",
-               "en": "One of the greatest film composers in Hollywood history; heart-piercing melodies, Titanic soundtrack sold over 30 million copies worldwide, remains unmatched."
+               "en": "One of the greatest film composers in Hollywood history; Composing human emotions through melody, heart-piercing melodies."
              }
             },
             { id: "john_williams", name: "John Williams",
@@ -459,7 +459,7 @@
               },
               remarks: {
               "zh-CN": "当代最杰出的电影作曲家，获得5项奥斯卡奖，对全球电影配乐产生持久影响。",
-              "en": "One of the most acclaimed film composers, winner of 5 Oscars with over 50 nominations, enduring impact on global film scoring."
+              "en": "One of the most acclaimed film composers, winner of 5 Oscars, enduring impact on global film scoring."
               }
               },
               { id: "hans_zimmer", name: "Hans Zimmer",
