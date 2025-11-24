@@ -556,6 +556,7 @@
             cursor: not-allowed;
         }
         
+        /* --- 修改开始：调整选中北极星信息的样式支持 Flex 布局 --- */
         #selected-leader-info {
             margin-bottom: 15px;
             padding: 10px;
@@ -563,7 +564,27 @@
             border-radius: 4px;
             font-weight: bold;
             color: var(--dark-text-primary);
+            /* 新增 Flex 布局以实现左右对齐 */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+
+        /* 新增：右侧拷贝小图标的样式 */
+        .copy-leader-btn {
+            cursor: pointer;
+            color: var(--dark-text-secondary);
+            font-size: 1.1em;
+            padding: 5px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .copy-leader-btn:hover {
+            color: var(--dark-accent);
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: scale(1.1);
+        }
+        /* --- 修改结束 --- */
     
         .response-display {
             margin-top: 20px;
@@ -895,9 +916,16 @@
         
         <div class="interaction-area">
             <h2 data-i18n-key="interactWithLeader">与北极星对话</h2>
+            <!-- --- 修改开始：增加右侧小图标 --- -->
             <div id="selected-leader-info">
-                <span data-i18n-key="currentSelectedLeaderPrefix">当前选择的北极星: </span><span id="selectedLeaderName" data-i18n-key="noLeaderSelectedInitial">无</span>
+                <div>
+                    <span data-i18n-key="currentSelectedLeaderPrefix">当前选择的北极星: </span>
+                    <span id="selectedLeaderName" data-i18n-key="noLeaderSelectedInitial">无</span>
+                </div>
+                <!-- 点击此图标调用新的合并拷贝功能 -->
+                <i class="fas fa-copy copy-leader-btn" onclick="copyConversationToClipboard()" title="拷贝问答到剪贴板"></i>
             </div>
+            <!-- --- 修改结束 --- -->
             <textarea id="userQuestion" data-i18n-key="placeholderUserQuestion" data-i18n-target="placeholder"></textarea>
             
             <div class="interaction-buttons">
@@ -906,7 +934,9 @@
                     <span data-i18n-key="btnGetAiResponse">2. 获取 北极星 回复</span>
                     <span id="loadingIndicator" style="display:none;" class="loading-spinner"></span>
                 </button>
-                <button id="copyToClipboardButton" onclick="copyContentToClipboard()" data-i18n-key="btnCopyToClipboard">拷贝到粘贴板</button>
+                <!-- --- 修改开始：按钮改名，移除原有 onclick --- -->
+                <button id="immersiveModeButton" style="cursor: default; opacity: 0.8;">沉浸模式 (未来构想)</button>
+                <!-- --- 修改结束 --- -->
             </div>
 
             <div id="prompt-display-area" class="response-display" style="display:none;">
