@@ -458,7 +458,7 @@
               "en": "Film Score, Orchestral Music, Classical Fusion."
               },
               remarks: {
-              "zh-CN": "当代最杰出的电影作曲家，获得5项奥斯卡奖，提名超过50次，对全球电影配乐产生持久影响。",
+              "zh-CN": "当代最杰出的电影作曲家，获得5项奥斯卡奖，对全球电影配乐产生持久影响。",
               "en": "One of the most acclaimed film composers, winner of 5 Oscars with over 50 nominations, enduring impact on global film scoring."
               }
               },
