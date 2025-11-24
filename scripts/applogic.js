@@ -518,6 +518,32 @@ async function copyContentToClipboard() {
     }
 }
 
+// --- 新增功能：合并拷贝用户问题和AI回答 ---
+async function copyConversationToClipboard() {
+    const userQuestion = document.getElementById('userQuestion').value.trim();
+    const aiResponseElement = document.getElementById('aiResponseText');
+    // 使用 innerText 获取可见文本（保留换行），而不是 HTML
+    const aiResponse = aiResponseElement.innerText.trim();
+
+    // 检查是否有内容可拷贝
+    if (!userQuestion && !aiResponse) {
+        alert(translations[currentLang].nothingToCopy || "没有可拷贝的内容");
+        return;
+    }
+
+    // 格式化合并内容
+    const combinedText = `Question:\n${userQuestion}\n\nAnswer:\n${aiResponse}`;
+
+    try {
+        await navigator.clipboard.writeText(combinedText);
+        // 这里可以直接用中文提示，或者您也可以添加对应的翻译键值
+        alert("已合并拷贝【问题】与【北极星答复】到粘贴板！");
+    } catch (err) {
+        console.error('Copy failed: ', err);
+        alert((translations[currentLang].copyFailed || "拷贝失败: ") + err.message);
+    }
+}
+
 const endpointModelMap = {
     "https://api.deepseek.com": [
         { value: "deepseek-chat", labelKey: "modelDeepSeekV3" }
