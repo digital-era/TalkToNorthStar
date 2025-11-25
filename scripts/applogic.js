@@ -698,6 +698,54 @@ function updateEndpointByModel(modelValue) {
     }
 }
 
+// --- 沉浸模式逻辑 ---
+const immersiveModal = document.getElementById('immersiveModal');
+
+function handleImmersiveMode() {
+    // 1. 获取参数
+    const pLeader = currentSelectedLeader; // 参数(1)
+    const pUserQuestion = document.getElementById('userQuestion').value; // 参数(2)
+    const pPrompt = document.getElementById('generatedPromptText').value; // 参数(3)
+    const pAiResponse = document.getElementById('aiResponseText').innerHTML; // 参数(4)
+
+    // 2. 逻辑判断
+    if (!pLeader) {
+        // 如果参数(1)为空，跟点击生成问题按钮时的处理一样 (弹出提示)
+        alert(translations[currentLang].alertSelectLeaderFirst);
+        return;
+    }
+
+    // 3. 如果参数(1)不为空，弹出模态框
+    // 这里可以在控制台打印一下参数，模拟"传入处理"
+    console.log("Entering Immersive Mode with:", {
+        leader: pLeader.name,
+        question: pUserQuestion,
+        prompt: pPrompt,
+        response: pAiResponse
+    });
+
+    openImmersiveModal();
+}
+
+function openImmersiveModal() {
+    if (immersiveModal) {
+        immersiveModal.style.display = 'block';
+    }
+}
+
+function closeImmersiveModal() {
+    if (immersiveModal) {
+        immersiveModal.style.display = 'none';
+    }
+}
+
+// 注册点击外部关闭事件 (合并到现有的 window.onclick 或添加监听器)
+window.addEventListener('click', function(event) {
+    if (event.target == immersiveModal) {
+        closeImmersiveModal();
+    }
+});
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const preferredLang = localStorage.getItem('preferredLang');
