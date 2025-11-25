@@ -107,6 +107,17 @@
                 "manifestoPara7": "这不仅仅是技术，更是一次灵魂的邀约，一次思维的远征。我们精心构建《对话北极星》，让AI化身为连接人类智慧与潜能的桥梁。它严格遵循每一位“北极星”人物的思想框架、专业领域和语言风格，确保每一次回复都深邃而富有启发性。",
                 "manifestoPara8": "你无需穷尽所有数据，也无需在噪音中苦寻信号。在这里，你的每一个问题，都将得到北极星般的回应。每一次提问，都可能激发你内心深处未曾触及的创新火花；每一次对话，都将拓展你认知世界的边界，推动你个人成长的进程。",
                 "manifestoConclusion": "我们使命是以AI原生智慧，重燃探索与创意的火花——点亮你心中永恒的灯塔。",
+
+                "immersiveTitle": "《对话北极星》沉浸模式：以多模态旋律，重谱信仰的乐章",
+                "immersiveCoreTitle": "【核心理念】",
+                "immersiveCoreText": "文字，仅仅是思想的影子。真正的智慧信仰，流淌在声音的起伏中，凝结在岁月的深邃里，共振于环境的氛围间。我们将AI化作感官的笔触，为您重建那座失落的巴别塔。",
+                "immersiveFuncTitle": "【功能诗篇】",
+                "immersiveFeat1Title": "初见 · 灵魂的底色",
+                "immersiveFeat1Desc": "<em>默认展现表征情感与思想内涵的视觉与听觉场域</em><br>当你点亮一位“北极星”，屏幕不再是平面的玻璃，而是一扇通往他精神世界的窗。<br>在你开口之前，海明威的雪茄烟雾已在哈瓦那的背景音中缭绕，达·芬奇画室的光影已洒满画布。我们要展现的，不仅仅是他们的形象，更是那段历史的<strong>氛围与体温</strong>。每一张背景图、每一段前奏曲，都是这位北极星灵魂底色的映照。",
+                "immersiveFeat2Title": "共振 · 随心流动的交响",
+                "immersiveFeat2Desc": "<em>针对对话主题，动态生成契合的图、文、声、乐</em><br>对话是一场流动的盛宴。当你与巴菲特聊起1929年的大萧条，背景乐会悄然转为低沉的大提琴，画风染上历史的颗粒感；当你与马斯克展望火星殖民，电子合成器的激昂旋律将随之升腾，深空的壮丽图景在眼前铺陈。<br>你的声音与北极星的声音在云端交汇，<strong>AI实时编曲，让情绪互通</strong>。不仅是你在对话，更是世界在随你的思维起舞。",
+                "immersiveFeat3Title": "临在 · 跨越时空的凝视",
+                "immersiveFeat3Desc": "<em>动态生成高度一致性、连续性的视频与立体空间视听</em><br>告别碎片的拼接，迎来连贯的生命。<br>依托最前沿的视频生成模型，北极星不再静止。你会看到他们思考时眉头的微蹙，听到他们兴奋时语速的加快。立体空间音频技术（Spatial Audio）将你包裹其中，仿佛你正坐在维也纳的咖啡馆或硅谷的会议室对面。<br><strong>这不仅是视频，这是“在场”。</strong> 是一次打破物理法则的面对面，是两颗心灵在同一时空的深度纠缠。",
                  "footerRight": "© 2025 AI范式进化. 保留所有权利。",
             },
             "en": {
@@ -216,7 +227,19 @@
                 "manifestoPara7": "This is not just technology; it is an invitation to the soul, an expedition of the mind. We meticulously built 'Talk to NorthStar' to let AI serve as a bridge connecting human wisdom and potential. It strictly adheres to the thought framework, professional field, and linguistic style of each 'NorthStar' figure, ensuring every response is profound and inspiring.",
                 "manifestoPara8": "You don't need to exhaust all data, nor search tirelessly for signals amidst the noise. Here, every question you ask will receive a NorthStar-like response. Every inquiry may spark innovative fires previously untouched deep within you; every dialogue will expand the boundaries of your perception of the world and propel your personal growth.",
                 "manifestoConclusion": "Our mission is to rekindle the spark of exploration and creativity with AI-native wisdom—Illuminate the eternal lighthouse in your heart.",
+
+                "immersiveTitle": "NorthStar Dialogue Immersive Mode: Recomposing the Melody of Faith",
+                "immersiveCoreTitle": "【Core Philosophy】",
+                "immersiveCoreText": "Words are merely shadows of thought. True wisdom flows in the undulations of sound, condenses in the depths of time, and resonates within the atmosphere. We use AI as sensory brushstrokes to rebuild that lost Tower of Babel for you.",
+                "immersiveFuncTitle": "【Functional Verses】",
+                "immersiveFeat1Title": "First Sight · The Soul's Base Color",
+                "immersiveFeat1Desc": "<em>Default display of visual and auditory fields representing emotional and intellectual depth</em><br>When you light up a 'NorthStar', the screen is no longer flat glass, but a window into their spiritual world.<br>Before you speak, Hemingway's cigar smoke swirls in the background sounds of Havana; Da Vinci's studio light spills onto the canvas. We show not just their image, but the <strong>atmosphere and warmth</strong> of history. Every background image, every prelude, reflects the soul's base color of this NorthStar.",
+                "immersiveFeat2Title": "Resonance · A Symphony Flowing at Will",
+                "immersiveFeat2Desc": "<em>Dynamic generation of images, text, sound, and music tailored to the dialogue theme</em><br>Dialogue is a moveable feast. When you talk to Buffett about the Great Depression of 1929, the background music quietly shifts to a deep cello, and the visual style takes on historical grain; when you discuss Mars colonization with Musk, the soaring melody of synthesizers rises, spreading magnificent deep space views before you.<br>Your voice meets the NorthStar's in the cloud, <strong>AI composing in real-time to interconnect emotions</strong>. It's not just you talking; the world dances with your thoughts.",
+                "immersiveFeat3Title": "Presence · Gaze Across Time and Space",
+                "immersiveFeat3Desc": "<em>Dynamic generation of highly consistent, continuous video and spatial audio</em><br>Farewell to fragmented splicing, welcome coherent life.<br>Relying on cutting-edge video generation models, NorthStar is no longer static. You will see the slight frown when they think, hear the acceleration of speech when excited. Spatial Audio technology wraps around you, as if you are sitting opposite them in a Vienna café or a Silicon Valley meeting room.<br><strong>This is not just video; this is 'Presence'.</strong> A face-to-face encounter breaking physical laws, a deep entanglement of two souls in the same space-time.",                                        
                 "footerRight": "© 2025 AI Paradigm Evolution. All rights reserved.",
+                
             }
         };
         let currentLang = 'zh-CN'; // Default language
