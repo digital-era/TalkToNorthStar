@@ -770,6 +770,16 @@
                 font-size: 1.05em;
                 margin-top: 20px;
             }
+
+            #immersiveModal .modal-section-title {
+                font-size: 1.1em; /* 调整子标题 H3/H4 字体大小 */
+                margin: 15px 0 8px 0;
+            }
+            #immersiveModal .manifesto-text p,
+            #immersiveModal .manifesto-text blockquote {
+                font-size: 0.95em; /* 调整段落和引用文本大小，与宣言模态框内容 (.manifesto-modal .manifesto-text) 保持一致 */
+                line-height: 1.6; 
+            }
         }
     
         @media (max-width: 480px) {
@@ -830,7 +840,16 @@
             .manifesto-modal p.conclusion {
                 font-size: 1em;
             }
-        }
+            #immersiveModal .modal-section-title {
+                font-size: 1.0em; /* 进一步调整子标题 H3/H4 字体大小 */
+                margin: 12px 0 6px 0;
+            }
+            #immersiveModal .manifesto-text p,
+            #immersiveModal .manifesto-text blockquote {
+                font-size: 0.9em; /* 进一步调整段落和引用文本大小，与宣言模态框内容 (.manifesto-modal .manifesto-text) 保持一致 */
+                line-height: 1.5;
+            }            
+        }      
     </style>
 </head>
 <body>
