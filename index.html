@@ -262,22 +262,13 @@
             font-size: 1.2em;
         }
 
-        .modal-section-title {
+         .modal-section-title {
             font-family: 'Poppins', sans-serif;
-            color: var(--dark-accent);
+            color: var(--dark-accent); /* 固定为强调蓝色 */
             font-size: 1.4em;
             margin: 20px 0 10px 0;
             letter-spacing: 0.5px;
-            background: linear-gradient(
-                90deg,               
-                #00DFD8, 
-                #7928CA  
-            );
-            background-size: 200% auto;
-            color: transparent;
-            -webkit-background-clip: text;
-            background-clip: text;
-            animation: colorWave 7s linear infinite;
+            /* 移除渐变相关属性 */
             font-weight: bold;
             display: block;
         }
@@ -676,7 +667,7 @@
             border-left: 4px solid var(--dark-accent); 
             padding: 10px 15px; 
             margin: 15px 0 25px 0; 
-            color: var(--dark-text-secondary); 
+            color: var(--dark-text-primary); /* === 修改为纯白色（主文本颜色） === */
             background-color: var(--dark-surface); 
             border-radius: 0 4px 4px 0; 
         }
