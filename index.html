@@ -262,9 +262,7 @@
             font-size: 1.2em;
         }
 
-        /* 天使模式模态框标题样式 */
-        .angel-mode-modal .angel-core-title,
-        .angel-mode-modal .angel-features-title {
+        .modal-section-title {
             font-family: 'Poppins', sans-serif;
             color: var(--dark-accent);
             font-size: 1.4em;
@@ -283,7 +281,6 @@
             font-weight: bold;
             display: block;
         }
-
         .close-button {
             color: var(--dark-text-secondary);
             position: absolute;
@@ -651,6 +648,45 @@
         }
         /* --- [新增] 结束 --- */
 
+        /* 覆盖 Manifesto 模式对 H2 的特殊处理 */
+        #immersiveModal h2 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark-accent);
+            /* 继承渐变，但调整为字体大小和对齐 */
+            font-size: 1.8em; /* H2 保持比 H3/H4 稍大，但用通用样式 */
+            text-align: center; /* 保持居中 */
+            margin: 0 0 25px 0; /* 恢复标题居中边距 */
+            letter-spacing: 0.8px; 
+            /* 渐变效果已在 .manifesto-modal h2 定义，无需重复 */
+        }
+        
+        /* 覆盖 Manifesto 模式的正文和 Blockquote 样式，使其更像标准特性列表 */
+        #immersiveModal .manifesto-text p {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            text-align: left; 
+            line-height: 1.6; 
+            font-size: 1.05rem; /* 保持与输入框等一致 */
+        }
+        
+        #immersiveModal .manifesto-text blockquote {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            font-size: 1em; 
+            line-height: 1.6; 
+            text-align: left; 
+            border-left: 4px solid var(--dark-accent); 
+            padding: 10px 15px; 
+            margin: 15px 0 25px 0; 
+            color: var(--dark-text-secondary); 
+            background-color: var(--dark-surface); 
+            border-radius: 0 4px 4px 0; 
+        }
+        
+        /* 确保 manifesto-text 区域也恢复标准字体和对齐 */
+        #immersiveModal .manifesto-text {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            text-align: left;
+            font-size: 1.05rem;
+        }
 
         .loading-spinner {
             border: 4px solid #555;
@@ -1024,15 +1060,15 @@
             <div class="manifesto-text">
                 <h2 data-i18n-key="immersiveTitle">《对话北极星》沉浸模式：以多模态旋律，重谱信仰的乐章</h2>
                 
-                <h3 data-i18n-key="immersiveCoreTitle">【核心理念】</h3>
+                <h3 data-i18n-key="immersiveCoreTitle" class="modal-section-title">【核心理念】</h3>
                 <p data-i18n-key="immersiveCoreText">
                     文字，仅仅是思想的影子。真正的智慧信仰，流淌在声音的起伏中，凝结在岁月的深邃里，共振于环境的氛围间。我们将AI化作感官的笔触，为您重建那座失落的巴别塔。
                 </p>
     
-                <h3 data-i18n-key="immersiveFuncTitle">【功能诗篇】</h3>
+                <h3 data-i18n-key="immersiveFuncTitle" class="modal-section-title">【功能诗篇】</h3>
     
                 <div class="immersive-feature">
-                    <h4 data-i18n-key="immersiveFeat1Title">初见 · 灵魂的底色</h4>
+                    <h4 data-i18n-key="immersiveFeat1Title" class="modal-section-title">初见 · 灵魂的底色</h4>
                     <blockquote data-i18n-key="immersiveFeat1Desc" data-i18n-target="innerHTML">
                         <em>默认展现表征情感与思想内涵的视觉与听觉场域</em><br>
                         当你点亮一位“北极星”，屏幕不再是平面的玻璃，而是一扇通往他精神世界的窗。
@@ -1041,7 +1077,7 @@
                 </div>
     
                 <div class="immersive-feature">
-                    <h4 data-i18n-key="immersiveFeat2Title">共振 · 随心流动的交响</h4>
+                    <h4 data-i18n-key="immersiveFeat2Title" class="modal-section-title">共振 · 随心流动的交响</h4>
                     <blockquote data-i18n-key="immersiveFeat2Desc" data-i18n-target="innerHTML">
                         <em>针对对话主题，动态生成契合的图、文、声、乐</em><br>
                         对话是一场流动的盛宴。当你与巴菲特聊起1929年的大萧条，背景乐会悄然转为低沉的大提琴，画风染上历史的颗粒感；当你与马斯克展望火星殖民，电子合成器的激昂旋律将随之升腾，深空的壮丽图景在眼前铺陈。
@@ -1050,7 +1086,7 @@
                 </div>
     
                 <div class="immersive-feature">
-                    <h4 data-i18n-key="immersiveFeat3Title">临在 · 跨越时空的凝视</h4>
+                    <h4 data-i18n-key="immersiveFeat3Title" class="modal-section-title">临在 · 跨越时空的凝视</h4>
                     <blockquote data-i18n-key="immersiveFeat3Desc" data-i18n-target="innerHTML">
                         <em>动态生成高度一致性、连续性的视频与立体空间视听</em><br>
                         告别碎片的拼接，迎来连贯的生命。
