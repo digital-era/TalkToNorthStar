@@ -38,7 +38,7 @@
     <!-- *** END: MathJax Integration *** -->
 
 
-    <style>
+ <style>
         /* (CSS 部分保持不变) */
         /* --- DARK THEME VARIABLES --- */
         :root {
@@ -262,6 +262,27 @@
             font-size: 1.2em;
         }
 
+        /* 天使模式模态框标题样式 */
+        .angel-mode-modal .angel-core-title,
+        .angel-mode-modal .angel-features-title {
+            font-family: 'Poppins', sans-serif;
+            color: var(--dark-accent);
+            font-size: 1.4em;
+            margin: 20px 0 10px 0;
+            letter-spacing: 0.5px;
+            background: linear-gradient(
+                90deg,               
+                #00DFD8, 
+                #7928CA  
+            );
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: colorWave 7s linear infinite;
+            font-weight: bold;
+            display: block;
+        }
 
         .close-button {
             color: var(--dark-text-secondary);
@@ -630,33 +651,6 @@
         }
         /* --- [新增] 结束 --- */
 
-        /* 添加到你的 <style> 块中 */
-        .immersive-feature {
-            margin-bottom: 25px;
-        }
-        .immersive-feature h4 {
-            color: var(--dark-accent);
-            margin-bottom: 10px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.2em;
-        }
-        .manifesto-modal blockquote {
-            margin: 0;
-            padding-left: 15px;
-            border-left: 3px solid var(--dark-accent);
-            color: var(--dark-text-secondary);
-            font-style: normal; /* 覆盖默认斜体，因为内部手动加了 em 标签 */
-            background: rgba(255, 255, 255, 0.05); /* 淡淡的背景增加区分度 */
-            padding: 10px 15px;
-            border-radius: 0 5px 5px 0;
-        }
-        .manifesto-modal blockquote em {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--dark-text-primary);
-            font-weight: bold;
-            font-style: italic;
-        }
 
         .loading-spinner {
             border: 4px solid #555;
@@ -682,7 +676,7 @@
     
         /* 媒体查询，在小屏幕上调整布局 */
         @media (max-width: 768px) {
-            header {
+             header {
                 padding-top: 15px; /* 适当减少顶部内边距 */
             }
             .logo-container {
@@ -695,15 +689,15 @@
             h1 {
                 /* 调整移动端的 h1 margin-top */
                 margin-top: 64px; /* 根据实际情况调整，确保不被 Logo 遮挡，从80—》64 */
-                font-size: 2em;
+                font-size: 2em; 
                 margin-bottom: 1px; /* 增加一点底部边距，从15-》1 */
                 line-height: 1.25;
                 text-wrap: balance; /* 新增此行 */
             }
-            .top-right-controls {
+            .top-right-controls { 
                 /* 相应调整移动端按钮位置 */
                 top: 15px;
-                right: 15px;
+                right: 15px; 
                 gap: 10px;
             }
             .about-us-button {
@@ -712,7 +706,7 @@
             }
             .settings-link { font-size: 0.9rem; padding: 6px 12px;}
             .language-selector { font-size: 0.8rem; padding: 7px; }
-        
+    
             body { line-height: 1.55; }
             .container { width: 92%; padding: 15px; margin-top: 15px; }
             .tabs { justify-content: flex-start; margin-bottom: 15px; }
@@ -729,23 +723,10 @@
             .scroll-button.right { right: 3px; }
             .interaction-buttons { flex-direction: column; gap: 10px; }
             .interaction-area button { width: 100%; font-size: 0.92em; padding: 12px 15px; flex-grow: 0; flex-basis: auto; max-width: none; }
-            .interaction-area textarea { 
-                font-size: 0.95em; 
-                min-height: 75px; 
-                padding: 9px; 
-                line-height: 1.7; /* 统一行高，避免继承偏差 */
-            }
-            #generatedPromptText { /* 确保生成的提示文本框也匹配 */
-                font-size: 0.95em; 
-                line-height: 1.7; 
-                padding: 9px; 
-            }
+            .interaction-area textarea { font-size: 0.95em; min-height: 75px; padding: 9px; }
             #selected-leader-info { font-size: 0.95em; padding: 9px; }
-            #aiResponseText { 
-                font-size: 0.95em; /* MODIFIED: Aligned from 0.88em to match textarea */
-                padding: 9px; 
-                line-height: 1.7; /* 统一行高，确保与 textarea 一致 */
-            }
+            #aiResponseText { font-size: 0.95em; } /* MODIFIED: was pre */
+
             .manifesto-modal .modal-content {
                 margin: 5% auto;
                 max-width: 95%;
@@ -762,9 +743,9 @@
                 font-size: 1.05em;
                 margin-top: 20px;
             }
-       }
+        }
     
-       @media (max-width: 480px) {
+        @media (max-width: 480px) {
             header {
                 padding-top: 10px;
             }
@@ -780,23 +761,23 @@
                 margin-top: 56px; /* 进一步调整，适应更小屏幕，从70-》56 */
                 font-size: 1.6em; /*1.8-》1.6*/
                 letter-spacing: 0px; /*0.1-》0*/
-                line-height: 1.2;
+                line-height: 1.2; 
                 text-wrap: balance; /* 新增此行 */
             }
-             .top-right-controls {
-                right: 10px;
+             .top-right-controls { 
+                right: 10px; 
                 gap: 8px;
             }
             .about-us-button {
-                font-size: 0.8rem;
+                font-size: 0.8rem; 
                 padding: 5px 10px;
             }
             .settings-link { font-size: 0.8rem; padding: 5px 10px;}
             .language-selector { font-size: 0.75rem; padding: 6px; }
+
             .container { width: 95%; padding: 10px; margin-top: 10px; }
             .tab-content h2, .interaction-area h2 { font-size: 0.9em; margin-bottom: 10px; }
-            /*.tab-button { font-size: 10px; padding: 8px 10px; margin-right: 3px; margin-bottom: 3px; }*/
-            .tab-button { font-size: 10px; padding: 7px 9px; margin-right: 2px; margin-bottom: 3px; }
+            .tab-button { font-size: 10px; padding: 8px 10px; margin-right: 3px; margin-bottom: 3px; }
             .leader-scroll-container { padding: 0 28px; }
             .leader-grid{ gap: 12px; }
             .leader-card { flex: 0 0 78vw; min-height: auto; padding: 10px; }
@@ -806,27 +787,12 @@
             .scroll-button { width: 28px; height: 28px; font-size: 16px; }
             .scroll-button.left { left: 2px; }
             .scroll-button.right { right: 2px; }
-            /*.interaction-area button { font-size: 0.88em; padding: 10px 12px; }*/
-            .interaction-area button { font-size: 1em; padding: 10px 12px; }
+            .interaction-area button { font-size: 0.88em; padding: 10px 12px; }
             #selected-leader-info { font-size: 0.9em; padding: 8px; }
-            .interaction-area textarea { 
-                min-height: 65px; 
-                font-size: 0.85em; 
-                padding: 8px; 
-                line-height: 1.6; /* 统一行高，避免继承偏差 */
-            }
-            #generatedPromptText { /* 确保生成的提示文本框也匹配 */
-                font-size: 0.85em; 
-                line-height: 1.6; 
-                padding: 8px; 
-            }
+            .interaction-area textarea { min-height: 65px; font-size: 0.9em; padding: 8px; }
             .response-display { padding: 10px; }
-            #aiResponseText { 
-                font-size: 0.85em; 
-                padding: 8px; 
-                line-height: 1.6; /* 统一行高，确保与 textarea 一致 */
-            }
-           
+            #aiResponseText { font-size: 0.9em; padding: 8px; } /* MODIFIED: was pre */
+            
             .manifesto-modal h2 {
                 font-size: 1.3em;
             }
@@ -837,7 +803,7 @@
             .manifesto-modal p.conclusion {
                 font-size: 1em;
             }
-       }
+        }
     </style>
 </head>
 <body>
