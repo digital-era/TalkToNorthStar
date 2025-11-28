@@ -1,19 +1,5 @@
         // --- Data (Modified to include English translations for contribution, field, remarks) ---
         const aiMasters = [
-            { id: "sam_altman", name: "Sam Altman", 
-              contribution: {
-                "zh-CN": "OpenAI首席执行官，领导ChatGPT开发，推动生成式AI大众化，倡导AI民主治理与伦理发展。",
-                "en": "CEO of OpenAI, led ChatGPT development, popularized generative AI, advocated for democratic AI governance and ethical development."
-              }, 
-              field: {
-                "zh-CN": "人工智能（生成式AI、AGI）、技术创业。",
-                "en": "Artificial Intelligence (Generative AI, AGI), Tech Entrepreneurship."
-              }, 
-              remarks: {
-                "zh-CN": "2024年被认为是AI热潮的核心人物，影响力覆盖产业与政策。",
-                "en": "Considered the central figure of the 2024 AI boom, influencing both industry and policy."
-              } 
-            },
             { id: "elon_musk", name: "Elon Musk", 
               contribution: {
                 "zh-CN": "xAI创始人，开发Grok以加速人类科学发现，Tesla与SpaceX的AI应用先锋，早期支持OpenAI。",
@@ -54,6 +40,20 @@
               remarks: {
                 "zh-CN": "NVIDIA的芯片技术为AI与量子计算提供了关键计算支持。",
                 "en": "NVIDIA's chip technology provides crucial computational support for AI and quantum computing."
+              } 
+            },                
+            { id: "sam_altman", name: "Sam Altman", 
+              contribution: {
+                "zh-CN": "OpenAI首席执行官，领导ChatGPT开发，推动生成式AI大众化，倡导AI民主治理与伦理发展。",
+                "en": "CEO of OpenAI, led ChatGPT development, popularized generative AI, advocated for democratic AI governance and ethical development."
+              }, 
+              field: {
+                "zh-CN": "人工智能（生成式AI、AGI）、技术创业。",
+                "en": "Artificial Intelligence (Generative AI, AGI), Tech Entrepreneurship."
+              }, 
+              remarks: {
+                "zh-CN": "2024年被认为是AI热潮的核心人物，影响力覆盖产业与政策。",
+                "en": "Considered the central figure of the 2024 AI boom, influencing both industry and policy."
               } 
             },
             { id: "dario_amodei", name: "Dario Amodei", 
@@ -138,6 +138,34 @@
               remarks: {
                 "zh-CN": "Azure AI基础设施与Copilot系列产品显著加速了生产力工具的智能化转型。",
                 "en": "Azure AI infrastructure and Copilot series significantly accelerate the intelligent transformation of productivity tools."
+              }
+            },
+           { id: "satya_nadella", name: "Satya Nadella",
+              contribution: {
+                "zh-CN": "微软首席执行官，领导Azure云平台与OpenAI深度合作，推动Copilot系列产品落地，加速企业级AI与生产力工具智能化。",
+                "en": "CEO of Microsoft, leads deep collaboration between Azure cloud platform and OpenAI, drives Copilot series adoption, accelerating enterprise AI and intelligent productivity tools."
+              },
+              field: {
+                "zh-CN": "人工智能（企业AI、云平台、生成式AI）、生产力工具。",
+                "en": "Artificial Intelligence (Enterprise AI, Cloud Platform, Generative AI), Productivity Tools."
+              },
+              remarks: {
+                "zh-CN": "通过Azure+OpenAI模式构建全球最广泛的企业AI生态，使微软重新成为AI时代的核心基础设施提供商。",
+                "en": "Built the world's most extensive enterprise AI ecosystem through the Azure+OpenAI model, repositioning Microsoft as the core infrastructure provider in the AI era."
+              }
+            },
+            { id: "john_collison", name: "John Collison",
+              contribution: {
+                "zh-CN": "Stripe联合创始人兼总裁，构建全球领先的在线支付基础设施，为AI公司与开发者提供关键支付与金融服务，支持AI商业化落地。",
+                "en": "Co-founder and President of Stripe, built the world's leading online payment infrastructure, providing critical payment and financial services for AI companies and developers to enable AI commercialization."
+              },
+              field: {
+                "zh-CN": "金融科技、支付基础设施、AI商业化支持。",
+                "en": "FinTech, Payment Infrastructure, AI Commercialization Support."
+              },
+              remarks: {
+                "zh-CN": "Stripe已成为几乎所有头部AI公司（OpenAI、Anthropic、xAI等）的支付与资金流核心伙伴，是AI经济不可或缺的底层设施。",
+                "en": "Stripe has become the core payment and financial flow partner for nearly all leading AI companies (OpenAI, Anthropic, xAI, etc.), serving as indispensable infrastructure for the AI economy."
               }
             },
             { id: "brett_adcock", name: "Brett Adcock",
