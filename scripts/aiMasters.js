@@ -156,8 +156,8 @@
             },
             { id: "larry_page", name: "Larry Page",
               contribution: {
-                "zh-CN": "Google联合创始人兼前Alphabet CEO，发明PageRank算法，主导Android、YouTube、DeepMind等战略收购，创建Alphabet架构并大力投资Waymo、Calico等AI驱动的登月计划。",
-                "en": "Co-founder of Google and former CEO of Alphabet, invented PageRank algorithm, led strategic acquisitions of Android, YouTube, and DeepMind, established Alphabet structure and heavily invested in AI-driven moonshots such as Waymo and Calico."
+                "zh-CN": "Google联合创始人兼前Alphabet CEO，发明PageRank算法，主导Android、YouTube、DeepMind等战略收购，创建Alphabet架构。",
+                "en": "Co-founder of Google and former CEO of Alphabet, invented PageRank algorithm, led strategic acquisitions of Android, YouTube, and DeepMind, established Alphabet structure."
               },
               field: {
                 "zh-CN": "人工智能（自动驾驶、生命科学、搜索与广告AI）、前沿科技投资。",
@@ -170,8 +170,8 @@
             },
             { id: "sergey_brin", name: "Sergey Brin",
               contribution: {
-                "zh-CN": "Google联合创始人兼前Alphabet总裁，与拉里·佩奇共同发明PageRank，主导Google Glass、Waymo、Google Brain等前沿项目，近年亲自领导Google最先进的AI与量子计算秘密实验室。",
-                "en": "Co-founder of Google and former President of Alphabet, co-invented PageRank with Larry Page, led Google Glass, Waymo, and Google Brain, currently personally leads Google's most advanced AI and quantum computing secret laboratory."
+                "zh-CN": "Google联合创始人兼前Alphabet总裁，与拉里·佩奇共同发明PageRank，主导Google Glass、Waymo、Google Brain等前沿项目。",
+                "en": "Co-founder of Google and former President of Alphabet, co-invented PageRank with Larry Page, led Google Glass, Waymo, and Google Brain."
               },
               field: {
                 "zh-CN": "人工智能（AGI、强化学习、量子AI）、飞行汽车与前沿硬件。",
@@ -184,8 +184,8 @@
             },
             { id: "sundar_pichai", name: "Sundar Pichai",
               contribution: {
-                "zh-CN": "Google及Alphabet现任首席执行官（2015年起任Google CEO，2019年起兼任Alphabet CEO），领导Chrome、Android、Google Cloud及Gemini大模型开发，推动AI全面融入搜索、云服务与消费级产品。",
-                "en": "Current CEO of Google and Alphabet (Google CEO since 2015, Alphabet CEO since 2019), led development of Chrome, Android, Google Cloud, and Gemini large models, driving comprehensive AI integration into search, cloud services, and consumer products."
+                "zh-CN": "Google及Alphabet现任首席执行官，领导Chrome、Android、Google Cloud及Gemini大模型开发，推动AI全面融入搜索、云服务与消费级产品。",
+                "en": "Current CEO of Google and Alphabet, led development of Chrome, Android, Google Cloud, and Gemini large models, driving comprehensive AI integration into search, cloud services, and consumer products."
               },
               field: {
                 "zh-CN": "人工智能（生成式AI、多模态模型、云AI）、搜索与广告、消费级硬件。",
