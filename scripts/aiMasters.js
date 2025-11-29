@@ -154,6 +154,48 @@
                 "en": "Built the world's most extensive enterprise AI ecosystem through the Azure+OpenAI model, repositioning Microsoft as the core infrastructure provider in the AI era."
               }
             },
+            { id: "larry_page", name: "Larry Page",
+              contribution: {
+                "zh-CN": "Google联合创始人兼前Alphabet CEO，发明PageRank算法，主导Android、YouTube、DeepMind等战略收购，创建Alphabet架构并大力投资Waymo、Calico等AI驱动的登月计划。",
+                "en": "Co-founder of Google and former CEO of Alphabet, invented PageRank algorithm, led strategic acquisitions of Android, YouTube, and DeepMind, established Alphabet structure and heavily invested in AI-driven moonshots such as Waymo and Calico."
+              },
+              field: {
+                "zh-CN": "人工智能（自动驾驶、生命科学、搜索与广告AI）、前沿科技投资。",
+                "en": "Artificial Intelligence (Autonomous Driving, Life Sciences, Search & Advertising AI), Moonshot Technology Investment."
+              },
+              remarks: {
+                "zh-CN": "通过Alphabet X实验室和DeepMind推动AI与量子计算、生物计算的深度融合，是AI长线主义与科学发现型AI的最重要推动者之一。",
+                "en": "Through Alphabet X lab and DeepMind, promotes deep integration of AI with quantum computing and bio-computation; one of the most significant advocates of long-termism and science-discovery-oriented AI."
+              }
+            },
+            { id: "sergey_brin", name: "Sergey Brin",
+              contribution: {
+                "zh-CN": "Google联合创始人兼前Alphabet总裁，与拉里·佩奇共同发明PageRank，主导Google Glass、Waymo、Google Brain等前沿项目，近年亲自领导Google最先进的AI与量子计算秘密实验室。",
+                "en": "Co-founder of Google and former President of Alphabet, co-invented PageRank with Larry Page, led Google Glass, Waymo, and Google Brain, currently personally leads Google's most advanced AI and quantum computing secret laboratory."
+              },
+              field: {
+                "zh-CN": "人工智能（AGI、强化学习、量子AI）、飞行汽车与前沿硬件。",
+                "en": "Artificial Intelligence (AGI, Reinforcement Learning, Quantum AI), Flying Cars and Frontier Hardware."
+              },
+              remarks: {
+                "zh-CN": "2023年起重新深度参与Google AI核心研发，被认为是Gemini系列与后AlphaFold时代Google AI战略的幕后关键人物。",
+                "en": "Returned to deep involvement in Google AI core R&D since 2023, regarded as the key behind-the-scenes figure in Gemini series and post-AlphaFold era Google AI strategy."
+              }
+            },
+            { id: "sundar_pichai", name: "Sundar Pichai",
+              contribution: {
+                "zh-CN": "Google及Alphabet现任首席执行官（2015年起任Google CEO，2019年起兼任Alphabet CEO），领导Chrome、Android、Google Cloud及Gemini大模型开发，推动AI全面融入搜索、云服务与消费级产品。",
+                "en": "Current CEO of Google and Alphabet (Google CEO since 2015, Alphabet CEO since 2019), led development of Chrome, Android, Google Cloud, and Gemini large models, driving comprehensive AI integration into search, cloud services, and consumer products."
+              },
+              field: {
+                "zh-CN": "人工智能（生成式AI、多模态模型、云AI）、搜索与广告、消费级硬件。",
+                "en": "Artificial Intelligence (Generative AI, Multimodal Models, Cloud AI), Search & Advertising, Consumer Hardware."
+              },
+              remarks: {
+                "zh-CN": "2023–2025年带领Google成功从搜索时代转型为AI优先公司，使Gemini系列成为与ChatGPT、Claude直接竞争的全球顶级大模型之一。",
+                "en": "Led Google's successful transformation from search-first to AI-first company during 2023–2025, establishing Gemini series as one of the world's top large models directly competing with ChatGPT and Claude."
+              }
+            },
             { id: "john_collison", name: "John Collison",
               contribution: {
                 "zh-CN": "Stripe联合创始人兼总裁，构建全球领先的在线支付基础设施，为AI公司与开发者提供关键支付与金融服务，支持AI商业化落地。",
