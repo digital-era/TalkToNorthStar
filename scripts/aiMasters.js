@@ -184,8 +184,8 @@
             },
             { id: "sundar_pichai", name: "Sundar Pichai",
               contribution: {
-                "zh-CN": "Google及Alphabet现任首席执行官，领导Chrome、Android、Google Cloud及Gemini大模型开发，推动AI全面融入搜索、云服务与消费级产品。",
-                "en": "Current CEO of Google and Alphabet, led development of Chrome, Android, Google Cloud, and Gemini large models, driving comprehensive AI integration into search, cloud services, and consumer products."
+                "zh-CN": "Google及Alphabet现任首席执行官，领导Chrome、Android、Google Cloud及Gemini大模型开发，推动AI全面融入主流产品。",
+                "en": "Current CEO of Google and Alphabet, led development of Chrome, Android, Google Cloud, and Gemini large models, driving comprehensive AI integration into Mainstream products."
               },
               field: {
                 "zh-CN": "人工智能（生成式AI、多模态模型、云AI）、搜索与广告、消费级硬件。",
