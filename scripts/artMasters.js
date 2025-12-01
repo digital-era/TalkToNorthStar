@@ -546,7 +546,35 @@
                 "en": "Acting legend, influenced contemporary performer depth."
                 }
             },
-            { id: "brad_pitt", name: "Brad Pitt",
+            { id: "audrey_hepburn", name: "Audrey Hepburn",
+             contribution: {
+               "zh-CN": "主演《罗马假日》《蒂凡尼的早餐》《窈窕淑女》，以优雅气质与精湛表演开创银幕仙女与现代时尚偶像形象。",
+               "en": "Starred in Roman Holiday, Breakfast at Tiffany's, My Fair Lady; pioneered the ethereal screen goddess and modern fashion icon with elegance and superb acting."
+             },
+             field: {
+               "zh-CN": "电影表演、浪漫喜剧、音乐剧、时尚影响。",
+               "en": "Film Acting, Romantic Comedy, Musical, Fashion Influence."
+             },
+             remarks: {
+               "zh-CN": "20世纪最具标志性女演员，唯一凭借首部好莱坞主演作品即获奥斯卡影后，永恒定义女性优雅与人道主义精神。",
+               "en": "Most iconic actress of the 20th century; only performer to win Best Actress Oscar for Hollywood debut lead role, eternally defined elegance and humanitarian spirit."
+             }
+           },
+           { id: "al_pacino", name: "Al Pacino",
+             contribution: {
+               "zh-CN": "主演《教父》系列、《疤面煞星》《闻香识女人》，以爆发力与方法派演技重塑黑帮、军人、盲人等复杂角色，成就演技三冠王。",
+               "en": "Starred in The Godfather trilogy, Scarface, Scent of a Woman; reshaped complex characters with explosive intensity and method acting, achieving the Triple Crown of Acting."
+             },
+             field: {
+               "zh-CN": "电影表演、舞台剧、剧情片、犯罪剧。",
+               "en": "Film Acting, Theater, Drama, Crime Drama."
+             },
+             remarks: {
+               "zh-CN": "公认在世最伟大男演员之一，九提奥斯卡终凭《闻香识女人》封帝，其表演深度与情感张力深刻影响当代电影表演美学。",
+               "en": "Widely regarded as one of the greatest living actors; ninth Oscar nomination finally won for Scent of a Woman, profoundly influenced contemporary acting aesthetics with depth and emotional intensity."
+             }
+           },
+           { id: "brad_pitt", name: "Brad Pitt",
                 contribution: {
                 "zh-CN": "出演《搏击俱乐部》《好莱坞往事》，以魅力与多变角色著称。",
                 "en": "Starred in Fight Club, Once Upon a Time in Hollywood, known for charisma and versatile roles."
