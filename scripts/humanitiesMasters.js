@@ -208,21 +208,49 @@
                 "zh-CN": "古代传记文学奠基人，影响西方历史与文学叙事。",
                 "en": "Founder of ancient biography, shaped Western historical and literary narrative."
               } 
-            },
-            { id: "alfred_adler", name: "Alfred Adler", 
+            },           
+            { id: "plato", name: "Plato",
               contribution: {
-                "zh-CN": "著有《自卑与超越》，创立个体心理学，探讨自卑补偿与社会兴趣。",
-                "en": "Authored What Life Could Mean to You, founded individual psychology, explored inferiority compensation and social interest."
-              }, 
+                "zh-CN": "提出理念论，著《理想国》，创立西方第一所高等学府阿卡德米学园，奠定形而上学与政治哲学根基。",
+                "en": "Proposed the theory of Forms, authored The Republic, founded the Academy—the West’s first institution of higher learning, establishing foundations of metaphysics and political philosophy."
+              },
               field: {
-                "zh-CN": "心理学文学、自我超越。",
-                "en": "Psychological Literature, Self-Transcendence."
-              }, 
+                "zh-CN": "形而上学、政治哲学、认识论、教育哲学。",
+                "en": "Metaphysics, Political Philosophy, Epistemology, Philosophy of Education."
+              },
               remarks: {
-                "zh-CN": "奥地利心理学巨擘，作品通俗化深刻影响现代励志与人文思想。",
-                "en": "Austrian psychology titan, popularized works profoundly shaped modern motivational and humanistic thought."
-              } 
+                "zh-CN": "西方观念论之父，整个西方哲学传统被怀特海称为‘对柏拉图的一系列注脚’。",
+                "en": "Father of Western idealism; the entire Western philosophical tradition described by Whitehead as ‘a series of footnotes to Plato’."
+              }
             },
+            { id: "aristotle", name: "Aristotle",
+              contribution: {
+                "zh-CN": "创立形式逻辑、四因说与中道伦理学，构建百科全书式哲学体系，奠定西方科学与学科分类基础。",
+                "en": "Founded formal logic, four causes theory, and virtue ethics of the mean; constructed an encyclopedic philosophical system, laying foundations for Western science and disciplinary division."
+              },
+              field: {
+                "zh-CN": "形而上学、逻辑学、伦理学、政治学、自然哲学。",
+                "en": "Metaphysics, Logic, Ethics, Politics, Natural Philosophy."
+              },
+              remarks: {
+                "zh-CN": "西方哲学之父，从古希腊至17世纪两千年间被尊为‘最权威者’，大学学科划分源自其分类。",
+                "en": "The Philosopher of Western tradition; ultimate authority for two millennia; modern university disciplines originate from his classification."
+              }
+            },
+            { id: "immanuel_kant", name: "Immanuel Kant",
+              contribution: {
+                "zh-CN": "著三大批判，完成认识论‘哥白尼式革命’，提出定言命令与人为自然与道德立法原则。",
+                "en": "Authored the three Critiques, accomplished the Copernican revolution in epistemology, proposed the categorical imperative and human legislation for nature and morality."
+              },
+              field: {
+                "zh-CN": "认识论、伦理学、形而上学、美学。",
+                "en": "Epistemology, Ethics, Metaphysics, Aesthetics."
+              },
+              remarks: {
+                "zh-CN": "近代哲学的转折点与集大成者，后世所有重要哲学流派皆须回应其体系。",
+                "en": "The watershed and culmination of modern philosophy; all subsequent major schools must respond to his system."
+              }
+            },                
             { id: "ludwig_wittgenstein", name: "Ludwig Wittgenstein", 
               contribution: {
                 "zh-CN": "撰写《逻辑哲学论》《哲学研究》，革新语言哲学，提出语言游戏理论。",
@@ -236,8 +264,21 @@
                 "zh-CN": "20世纪最伟大哲学家之一，影响逻辑、AI与当代文化批评。",
                 "en": "Among 20th century’s greatest philosophers, impacted logic, AI, and contemporary cultural critique."
               } 
-            },
-
+            },        
+            { id: "alfred_adler", name: "Alfred Adler", 
+              contribution: {
+                "zh-CN": "著有《自卑与超越》，创立个体心理学，探讨自卑补偿与社会兴趣。",
+                "en": "Authored What Life Could Mean to You, founded individual psychology, explored inferiority compensation and social interest."
+              }, 
+              field: {
+                "zh-CN": "心理学文学、自我超越。",
+                "en": "Psychological Literature, Self-Transcendence."
+              }, 
+              remarks: {
+                "zh-CN": "奥地利心理学巨擘，作品通俗化深刻影响现代励志与人文思想。",
+                "en": "Austrian psychology titan, popularized works profoundly shaped modern motivational and humanistic thought."
+              } 
+            },     
             { id: "robert_caro", name: "Robert Caro",
                     contribution: {
                       "zh-CN": "著有《权力掮客》与林登·约翰逊总统传记系列，以详尽档案研究揭示政治权力机制。",
