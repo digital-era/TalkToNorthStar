@@ -714,6 +714,22 @@
                 "en": "20th-century opera superstar, globalized classical vocal music."
               } 
             },
+            {
+                "id": "sissel_kyrkjebø",
+                "name": "Sissel Kyrkjebø",
+                "contribution": {
+                  "zh-CN": "挪威国宝级跨界女高音，为《泰坦尼克号》录制无词人声主题（电影中最具标志性的空灵女声），两次献唱奥运会开幕/闭幕式，被誉为“挪威天籁”。",
+                  "en": "Norwegian crossover soprano, recorded the iconic wordless vocal theme for Titanic (the ethereal female voice in the film), performed at two Olympic ceremonies, known as 'Norway's divine voice'."
+                },
+                "field": {
+                  "zh-CN": "跨界古典、流行、北欧民谣、电影配乐。",
+                  "en": "Crossover Classical, Pop, Nordic Folk, Film Score."
+                },
+                "remarks": {
+                  "zh-CN": "嗓音纯净空灵，被詹姆斯·霍纳称为“靠近天使的声音”，挪威史上最畅销女歌手，常被误认为是《My Heart Will Go On》主唱。",
+                  "en": "Possesses an extraordinarily pure and ethereal voice, called 'the voice closest to an angel' by James Horner; Norway's best-selling female artist, often mistaken as the lead singer of My Heart Will Go On."
+                }
+            },
             { id: "maria_callas", name: "Maria Callas", 
               contribution: {
                 "zh-CN": "希腊裔女高音，诠释贝利尼与威尔第角色，革新歌剧表演艺术。",
