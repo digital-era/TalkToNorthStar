@@ -283,8 +283,8 @@
                 id: "yuval_noah_harari",
                 name: "Yuval Noah Harari",
                 contribution: {
-                "zh-CN": "著有《人类简史》《未来简史》《智人之上》，剖析人类历史、科技与伦理交汇，探讨信息网络与人工智能未来。",
-                "en": "Authored Sapiens, Homo Deus, and Nexus, analyzed human history, technology, and ethics intersections, explored information networks and AI futures."
+                "zh-CN": "著有《人类简史》《未来简史》，剖析人类历史、科技与伦理交汇，探讨信息网络与人工智能未来。",
+                "en": "Authored Sapiens, Homo Deus, analyzed human history, technology, and ethics intersections, explored information networks and AI futures."
                 },
                 field: {
                 "zh-CN": "历史学、未来主义、哲学。",
