@@ -279,6 +279,38 @@
                 "en": "Austrian psychology titan, popularized works profoundly shaped modern motivational and humanistic thought."
               } 
             },     
+            {
+                id: "yuval_noah_harari",
+                name: "Yuval Noah Harari",
+                contribution: {
+                "zh-CN": "著有《人类简史》《未来简史》《智人之上》，剖析人类历史、科技与伦理交汇，探讨信息网络与人工智能未来。",
+                "en": "Authored Sapiens, Homo Deus, and Nexus, analyzed human history, technology, and ethics intersections, explored information networks and AI futures."
+                },
+                field: {
+                "zh-CN": "历史学、未来主义、哲学。",
+                "en": "History, Futurism, Philosophy."
+                },
+                remarks: {
+                "zh-CN": "以色列历史学家与全球思想领袖，其简史系列销量逾5000万册，影响当代对人类命运的哲学反思。",
+                "en": "Israeli historian and global thought leader, Sapiens series sold over 50 million copies, shaping contemporary philosophical reflections on human destiny."
+                }
+             },
+             {
+                id: "lars_tvede",
+                name: "Lars Tvede",
+                contribution: {
+                "zh-CN": "著有《超智能未来》，分析从宇宙起源到人工智能文明的智能演化，预测科技趋势对社会影响。",
+                "en": "Authored Supertrends, analyzed intelligence evolution from cosmic origins to AI civilizations, predicted tech trends' societal impacts."
+                },
+                field: {
+                "zh-CN": "未来学、科技创业。",
+                "en": "Futurism, Tech Entrepreneurship."
+                },
+                remarks: {
+                "zh-CN": "丹麦企业家与未来学家，创立多家高科技公司，其著作桥接创新投资与全球趋势预测。",
+                "en": "Danish entrepreneur and futurist, founded multiple high-tech companies, works bridge innovation investment and global trend forecasting."
+                }
+            },
             { id: "robert_caro", name: "Robert Caro",
                     contribution: {
                       "zh-CN": "著有《权力掮客》与林登·约翰逊总统传记系列，以详尽档案研究揭示政治权力机制。",
