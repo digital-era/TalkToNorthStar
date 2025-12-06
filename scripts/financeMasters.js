@@ -107,8 +107,8 @@
                 "en": "Quantitative Trading, Hedge Funds, Applied Mathematics."
               }, 
               remarks: {
-                "zh-CN": "作为世界级数学家（提出陈-西蒙斯形式），他彻底改变了华尔街的交易方式，并设立基金会致力于基础科学研究。",
-                "en": "As a world-class mathematician (co-creator of Chern-Simons form), he revolutionized Wall Street trading and established a foundation dedicated to basic science research."
+                "zh-CN": "作为世界级数学家（提出陈-西蒙斯形式），他彻底改变了华尔街的交易方式。",
+                "en": "As a world-class mathematician (co-creator of Chern-Simons form), he revolutionized Wall Street trading."
               }         
             },  
             { id: "vinod_khosla", name: "Vinod Khosla", 
