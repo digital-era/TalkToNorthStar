@@ -83,6 +83,20 @@
                 "en": "Victorian literature leader, used novels for social reform."
               } 
             },
+           { id: "victor_hugo", name: "Victor Hugo",
+                contribution: {
+                "zh-CN": "著有《悲惨世界》《巴黎圣母院》《世纪传说》，探讨社会正义、人类苦难与道德哲学。",
+                "en": "Authored Les Misérables, La Légende des siècles and The Hunchback of Notre-Dame, explored social justice, human suffering, and moral philosophy."
+                },
+                field: {
+                "zh-CN": "小说、诗歌、戏剧。",
+                "en": "Novel, Poetry, Drama."
+                },
+                remarks: {
+                "zh-CN": "法国浪漫主义运动领袖，推动文学与社会改革。",
+                "en": "Leader of French Romanticism, advanced literature and social reform."
+                }
+           },
            { id: "mikhail_sholokhov", name: "Mikhail Sholokhov",
              contribution: {
                 "zh-CN": "著有《静静的顿河》《被开垦的处女地》，描绘顿河哥萨克人在革命与内战中的命运，推动社会主义现实主义文学。",
