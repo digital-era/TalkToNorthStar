@@ -97,6 +97,20 @@
                 "en": "Demonstrated exceptional leadership during the 2008 financial crisis, considered a benchmark in the banking industry."
               } 
             },
+           { id: "james_simons", name: "James Simons", 
+              contribution: {
+                "zh-CN": "文艺复兴科技创始人，被誉为“量化之王”，利用复杂的数学模型和算法在大奖章基金创造了金融史上无与伦比的长期高回报。",
+                "en": "Founder of Renaissance Technologies, hailed as the 'Quant King,' utilized complex mathematical models and algorithms to generate unparalleled long-term returns in financial history through the Medallion Fund."
+              }, 
+              field: {
+                "zh-CN": "量化交易、对冲基金、应用数学。",
+                "en": "Quantitative Trading, Hedge Funds, Applied Mathematics."
+              }, 
+              remarks: {
+                "zh-CN": "作为世界级数学家（提出陈-西蒙斯形式），他彻底改变了华尔街的交易方式，并设立基金会致力于基础科学研究。",
+                "en": "As a world-class mathematician (co-creator of Chern-Simons form), he revolutionized Wall Street trading and established a foundation dedicated to basic science research."
+              }         
+            },  
             { id: "vinod_khosla", name: "Vinod Khosla", 
               contribution: {
                 "zh-CN": "Khosla Ventures创始人，投资支持多家AI与量子计算初创公司（如OpenAI早期投资），推动前沿技术商业化与可持续发展。",
@@ -110,7 +124,7 @@
                 "zh-CN": "作为技术投资领域的先驱，对AI与量子计算交叉领域的战略投资具有深远影响力。",
                 "en": "As a pioneer in tech investment, he has a profound impact on strategic investments at the intersection of AI and quantum computing."
               } 
-            },
+            },                
             { id: "cathie_wood", name: "Cathie Wood", 
               contribution: {
                 "zh-CN": "ARK Invest创始人，专注AI、区块链等创新投资，推动主动管理ETF普及。",
