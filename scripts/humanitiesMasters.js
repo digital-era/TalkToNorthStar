@@ -97,6 +97,37 @@
                 "en": "Leader of French Romanticism, advanced literature and social reform."
                 }
            },
+           { id: "romain_rolland",
+            name: "Romain Rolland",
+            contribution: {
+              "zh-CN": "创作《约翰·克里斯朵夫》，以音乐家传记式长河小说探索英雄生命与人类合一，著有《贝多芬传》等名人传，坚定反战与人道主义立场。",
+              "en": "Authored Jean-Christophe, an epic river-novel depicting heroic life and human unity through a musician’s biography; wrote celebrated lives including Beethoven; steadfast pacifist and humanist."
+            },
+            field: {
+              "zh-CN": "长河小说、传记文学、音乐评论、戏剧。",
+              "en": "River Novel, Biographical Literature, Music Criticism, Drama."
+            },
+            remarks: {
+              "zh-CN": "1915年诺贝尔文学奖得主，一战期间‘超于混战之上’的反战宣言代表20世纪知识分子良知，与甘地、托尔斯泰精神一脉相承。",
+              "en": "1915 Nobel Prize in Literature laureate; his WWI manifesto Above the Battle became the conscience of 20th-century intellectuals, spiritual heir to Tolstoy and Gandhi."
+            }
+           },
+          {
+            id: "stefan_zweig",
+            name: "Stefan Zweig",
+            contribution: {
+              "zh-CN": "创作《人类的群星闪耀时》《昨日的世界》，以历史瞬间与自传体裁书写人类命运与欧洲文明的兴衰；同时是《一个陌生女人的来信》《象棋的故事》等心理中篇小说大师。",
+              "en": "Authored The Tide of Fortune and The World of Yesterday, capturing decisive moments in history and the fall of European civilization through historical miniatures and memoir; master of psychological novellas such as Letter from an Unknown Woman and The Royal Game."
+            },
+            field: {
+              "zh-CN": "中短篇小说、心理传记、历史瞬间写作、自传。",
+              "en": "Novella, Psychological Biography, Historical Miniatures, Memoir."
+            },
+            remarks: {
+              "zh-CN": "20世纪上半叶德语最畅销作家，罗曼·罗兰精神继承者，以优雅文体与深刻同情心书写欧洲文明的兴衰，1942年流亡巴西自杀。",
+              "en": "Best-selling German-language writer of the early 20th century, spiritual successor to Romain Rolland; chronicled Europe’s rise and fall with elegance and empathy; died by suicide in Brazilian exile in 1942."
+          },
+          },
            { id: "mikhail_sholokhov", name: "Mikhail Sholokhov",
              contribution: {
                 "zh-CN": "著有《静静的顿河》《被开垦的处女地》，描绘顿河哥萨克人在革命与内战中的命运，推动社会主义现实主义文学。",
