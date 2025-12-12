@@ -100,8 +100,8 @@
            { id: "romain_rolland",
             name: "Romain Rolland",
             contribution: {
-              "zh-CN": "创作《约翰·克里斯朵夫》，以音乐家传记式长河小说探索英雄生命与人类合一，著有《贝多芬传》等名人传，坚定反战与人道主义立场。",
-              "en": "Authored Jean-Christophe, an epic river-novel depicting heroic life and human unity through a musician’s biography; wrote celebrated lives including Beethoven; steadfast pacifist and humanist."
+              "zh-CN": "创作《约翰·克里斯朵夫》，以音乐家传记式长河小说探索英雄生命与人类合一，著有《贝多芬传》等名人传。",
+              "en": "Authored Jean-Christophe, an epic river-novel depicting heroic life and human unity through a musician’s biography; wrote celebrated lives including Beethoven."
             },
             field: {
               "zh-CN": "长河小说、传记文学、音乐评论、戏剧。",
@@ -116,16 +116,16 @@
             id: "stefan_zweig",
             name: "Stefan Zweig",
             contribution: {
-              "zh-CN": "创作《人类的群星闪耀时》《昨日的世界》，以历史瞬间与自传体裁书写人类命运与欧洲文明的兴衰；同时是《一个陌生女人的来信》《象棋的故事》等心理中篇小说大师。",
-              "en": "Authored The Tide of Fortune and The World of Yesterday, capturing decisive moments in history and the fall of European civilization through historical miniatures and memoir; master of psychological novellas such as Letter from an Unknown Woman and The Royal Game."
+              "zh-CN": "创作《人类的群星闪耀时》《昨日的世界》，以历史瞬间与自传体裁书写人类命运与欧洲文明的兴衰。",
+              "en": "Authored The Tide of Fortune and The World of Yesterday, capturing decisive moments in history and the fall of European civilization through historical miniatures and memoir."
             },
             field: {
               "zh-CN": "中短篇小说、心理传记、历史瞬间写作、自传。",
               "en": "Novella, Psychological Biography, Historical Miniatures, Memoir."
             },
             remarks: {
-              "zh-CN": "20世纪上半叶德语最畅销作家，罗曼·罗兰精神继承者，以优雅文体与深刻同情心书写欧洲文明的兴衰，1942年流亡巴西自杀。",
-              "en": "Best-selling German-language writer of the early 20th century, spiritual successor to Romain Rolland; chronicled Europe’s rise and fall with elegance and empathy; died by suicide in Brazilian exile in 1942."
+              "zh-CN": "20世纪上半叶德语最畅销作家，以优雅文体与深刻同情心书写欧洲文明的兴衰。",
+              "en": "Best-selling German-language writer of the early 20th century, chronicled Europe’s rise and fall with elegance and empathy."
           },
           },
            { id: "mikhail_sholokhov", name: "Mikhail Sholokhov",
