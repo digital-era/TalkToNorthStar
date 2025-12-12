@@ -108,8 +108,8 @@
               "en": "River Novel, Biographical Literature, Music Criticism, Drama."
             },
             remarks: {
-              "zh-CN": "1915年诺贝尔文学奖得主，一战期间‘超于混战之上’的反战宣言代表20世纪知识分子良知，与甘地、托尔斯泰精神一脉相承。",
-              "en": "1915 Nobel Prize in Literature laureate; his WWI manifesto Above the Battle became the conscience of 20th-century intellectuals, spiritual heir to Tolstoy and Gandhi."
+              "zh-CN": "1915年诺贝尔文学奖得主，一战期间‘超于混战之上’的反战宣言代表20世纪知识分子良知。",
+              "en": "1915 Nobel Prize in Literature laureate; his WWI manifesto Above the Battle became the conscience of 20th-century intellectuals."
             }
            },
           {
