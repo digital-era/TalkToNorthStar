@@ -120,8 +120,8 @@
               "en": "Authored The Tide of Fortune and The World of Yesterday, capturing decisive moments in history and the fall of European civilization through historical miniatures and memoir."
             },
             field: {
-              "zh-CN": "中短篇小说、心理传记、历史瞬间写作、自传。",
-              "en": "Novella, Psychological Biography, Historical Miniatures, Memoir."
+              "zh-CN": "中短篇小说、心理传记、历史瞬间写作。",
+              "en": "Novella, Psychological Biography, Historical Miniatures."
             },
             remarks: {
               "zh-CN": "20世纪上半叶德语最畅销作家，以优雅文体与深刻同情心书写欧洲文明的兴衰。",
