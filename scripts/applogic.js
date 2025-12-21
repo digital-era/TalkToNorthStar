@@ -366,7 +366,6 @@ async function getAIResponse() {
         return;
     }
 
-    // Get current settings from UI (which should be populated by loadApiSettings)
     const apiBaseUrl = apiEndpointSelect.value;
     const apiKey = apiKeyInput.value;
     const model = apiModelSelect.value;
@@ -376,111 +375,83 @@ async function getAIResponse() {
     const getAIResponseButton = document.getElementById('getAIResponseButton');
     const loadingIndicator = document.getElementById('loadingIndicator');
 
-    if (!apiBaseUrl) {
-        alert(translations[currentLang].alertEnterApiUrl);
+    if (!apiBaseUrl || !apiKey || !model) {
+        alert("请确保 API 设置完整（接入点、Key、模型）");
         return;
     }
 
-    if (!apiKey) {
-        alert(translations[currentLang].alertEnterApiKey);
-        return;
+    // 1. 预设 Header
+    const headers = { 'Content-Type': 'application/json' };
+    const isGeminiModel = model.toLowerCase().includes("gemini");
+
+    // 2. 构造 URL
+    let fullApiUrl;
+    if (isGeminiModel) {
+        const baseUrl = apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl;
+        fullApiUrl = `${baseUrl}/v1beta/models/${model}:generateContent?key=${apiKey}`;
+    } else {
+        fullApiUrl = (apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl) + "/v1/chat/completions";
+        // 非 Gemini 模型需要在 Header 里传 Key
+        headers['Authorization'] = `Bearer ${apiKey}`;
     }
-    if (!model) {
-        alert(translations[currentLang].alertSelectModel); // Ensure this translation key exists
-        return;
+
+    // 3. 构造 Body
+    let requestBody;
+    if (isGeminiModel) {
+        requestBody = {
+            contents: [{ role: "user", parts: [{ text: promptText }] }],
+            generationConfig: { temperature: 0.7 }
+        };
+    } else {
+        requestBody = {
+            model: model,
+            messages: [{ role: "user", content: promptText }],
+            temperature: 0.7,
+        };
     }
 
-
-    let fullApiUrl = (apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl) + "/v1/chat/completions";
-
-    if(apiBaseUrl == "https://generativelanguage.googleapis.com") {
-        fullApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-    }
-
-    aiResponseTextElement.textContent = ''; // 使用 textContent 清空以防注入
+    // UI 状态更新
+    aiResponseTextElement.textContent = ''; 
     aiResponseArea.style.display = 'block';
     loadingIndicator.style.display = 'inline-block';
     getAIResponseButton.disabled = true;
-    let requestBody;
-
-    if (model.toLowerCase().includes("gpt") || model.toLowerCase().includes("deepseek")) {
-        requestBody = {
-            model: model,
-            messages: [ { role: "user", content: promptText } ],
-            use_web_search: true,  /*修改增加*/
-            temperature: 0.7,
-        };
-    } else if (model.toLowerCase().includes("gemini")) {
-        requestBody = {
-            contents: [ { role: "user", parts: [ { text: promptText } ] } ],
-            generationConfig: { temperature: 0.7 }
-        };
-    }
-
-    const headers = { 'Content-Type': 'application/json', };
-    if (!model.toLowerCase().includes("gemini"))  { headers['Authorization'] = `Bearer ${apiKey}`; }
-
-    let response;
-    let errorData;
-    let data;
 
     try {
-        response = await fetch(fullApiUrl, {
+        const response = await fetch(fullApiUrl, {
             method: 'POST',
             headers: headers,
             body: JSON.stringify(requestBody)
         });
 
         if (!response.ok) {
-            errorData = await response.json().catch(() => ({ detail: response.statusText }));
+            const errorData = await response.json().catch(() => ({ detail: response.statusText }));
             throw new Error(`API Error: ${response.status} - ${errorData.error?.message || errorData.detail || 'Unknown error'}`);
         }
-        data = await response.json();
+        
+        const data = await response.json();
 
-        if (model.toLowerCase().includes("gemini")) {
-            if (data.candidates && data.candidates.length > 0 &&
-                data.candidates[0].content && data.candidates[0].content.parts &&
-                data.candidates[0].content.parts.length > 0 && data.candidates[0].content.parts[0].text) {
-                
-                // --- MODIFICATION START ---
-                // 使用 innerHTML 以便AI回复中的换行符等格式能正确显示
+        if (isGeminiModel) {
+            if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
                 aiResponseTextElement.innerHTML = data.candidates[0].content.parts[0].text.trim();
-
-                // 添加此部分以渲染数学公式
-                if (window.MathJax) {
-                    MathJax.typesetPromise([aiResponseTextElement]).catch(function (err) {
-                        console.error('MathJax rendering error:', err);
-                    });
-                }
-                // --- MODIFICATION END ---
-
             } else {
-                aiResponseTextElement.textContent = translations[currentLang].apiNoValidResponse;
-                console.error("Unexpected API response structure for Gemini:", data);
+                throw new Error("Gemini 返回数据结构异常");
             }
-        } else { // For GPT, Deepseek, etc.
-            if (data.choices && data.choices.length > 0 && data.choices[0].message) {
-
-                // --- MODIFICATION START ---
-                // 使用 innerHTML 以便AI回复中的换行符等格式能正确显示
+        } else {
+            if (data.choices && data.choices[0]?.message?.content) {
                 aiResponseTextElement.innerHTML = data.choices[0].message.content.trim();
-                
-                // 添加此部分以渲染数学公式
-                if (window.MathJax) {
-                    MathJax.typesetPromise([aiResponseTextElement]).catch(function (err) {
-                        console.error('MathJax rendering error:', err);
-                    });
-                }
-                // --- MODIFICATION END ---
-
             } else {
-                aiResponseTextElement.textContent = translations[currentLang].apiNoValidResponse;
-                console.error("Unexpected API response structure:", data);
+                throw new Error("API 返回数据结构异常");
             }
         }
+
+        // 数学公式渲染
+        if (window.MathJax) {
+            MathJax.typesetPromise([aiResponseTextElement]).catch(err => console.error('MathJax error:', err));
+        }
+
     } catch (error) {
         console.error('Error calling API:', error);
-        aiResponseTextElement.textContent = `${translations[currentLang].apiErrorOccurred}${error.message}${translations[currentLang].apiErrorCheckConsole}`;
+        aiResponseTextElement.textContent = `发生错误: ${error.message}`;
     } finally {
         loadingIndicator.style.display = 'none';
         getAIResponseButton.disabled = false;
