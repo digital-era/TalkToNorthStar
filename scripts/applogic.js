@@ -368,7 +368,9 @@ async function getAIResponse() {
 
     const apiBaseUrl = apiEndpointSelect.value;
     const apiKey = apiKeyInput.value;
-    const model = apiModelSelect.value;
+     const modelWithSuffix = apiModelSelect.value; // 这是带后缀的名字，如 gemini-1.5-flash@proxy
+    // 【新增这一行】：去掉 @ 符号及其后面的内容，恢复成 Google 认识的真实名称
+    const model = modelWithSuffix.split('@')[0]; 
 
     const aiResponseArea = document.getElementById('ai-response-area');
     const aiResponseTextElement = document.getElementById('aiResponseText');
@@ -541,7 +543,7 @@ const endpointModelMap = {
     ],
     // 新增：你的自定义 Cloudflare Gemin代理接入点
     "https://api.aivibeinvest.com": [
-        { value: "gemini-2.5-flash", labelKey: "modelGeminiFlash" },
+        { value: "gemini-2.5-flash@proxy", labelKey: "modelGeminiFlash" },
     ],
     "https://generativelanguage.googleapis.com": [
         { value: "gemini-2.5-flash", labelKey: "modelGeminiFlash" }
