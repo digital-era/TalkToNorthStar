@@ -844,6 +844,17 @@
             .manifesto-modal p.conclusion {
                 font-size: 1em;
             }
+            /* --- 只需要在你的 480px 媒体查询里加上这一段 --- */
+            .manifesto-modal .modal-content {
+                width: 94%;          /* 显式设置宽度，留出左右边距 */
+                margin: 20px auto;   /* auto 确保左右绝对居中 */
+                padding: 15px;       /* 缩小内边距，防止撑开容器 */
+                box-sizing: border-box; /* 核心：让宽度包含内边距，防止向右溢出 */
+            }
+            .close-button {
+                right: 10px;         /* 确保按钮离边缘有距离 */
+                top: 5px;
+            }
             #immersiveModal h2 {
                 font-size: 1.0em;
             }
