@@ -623,7 +623,21 @@
             overflow-y: auto;
         }
         /* --- MODIFICATION END --- */
-
+       
+         /* 提示词区域的头部悬停效果 */
+        .collapsible-header:hover h4 {
+            color: var(--dark-accent);
+        }
+        
+        .collapsible-header:hover #prompt-toggle-icon {
+            color: var(--dark-accent);
+        }
+        
+        /* 箭头旋转动画类 */
+        .icon-rotated {
+            transform: rotate(180deg);
+        }
+     
         /* --- [新增] 统一输入框与答复框为小说阅读字体风格 --- */
         #userQuestion, 
         #generatedPromptText, 
@@ -635,7 +649,10 @@
             color: var(--dark-text-primary); /* 确保文字颜色为主要文字颜色 */
         }
         /* Make the prompt textarea taller */
+        /* 调整提示词文本框，确保在展开时显示正确 */
         #generatedPromptText {
+            width: 100%;
+            box-sizing: border-box;
             min-height: 200px; /* Increased height for better editing */
         }
         /* --- [新增] 结束 --- */
@@ -1001,10 +1018,15 @@
             </div>
 
             <div id="prompt-display-area" class="response-display" style="display:none;">
-                <h4 data-i18n-key="generatedPromptTitle">生成的 问题 (对选择北极星):</h4>
-                <!-- === MODIFICATION START === -->
-                <textarea id="generatedPromptText"></textarea>
-                <!-- === MODIFICATION END === -->
+                <!-- 头部：包含标题和旋转箭头 -->
+                <div class="collapsible-header" onclick="togglePromptCollapse()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                    <h4 data-i18n-key="generatedPromptTitle" style="margin: 0;">生成的 问题 (对选择北极星):</h4>
+                    <i id="prompt-toggle-icon" class="fas fa-chevron-down" style="transition: transform 0.3s ease; color: var(--dark-text-secondary);"></i>
+                </div>
+                <!-- 内容区：默认隐藏 -->
+                <div id="prompt-collapsible-content" style="display: none; margin-top: 15px;">
+                    <textarea id="generatedPromptText"></textarea>
+                </div>
             </div>
             
             <div id="ai-response-area" class="response-display" style="display:none;">
