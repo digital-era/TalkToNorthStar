@@ -482,6 +482,16 @@
                 "en": "Father of Chinese historiography, narrative shaped Asian historical writing."
               } 
             },
+            { id: "cao_xueqin", name: "曹雪芹 (Cao Xueqin)",
+                contribution: {
+                "zh-CN": "创作《红楼梦》，历经十年增删五次，描绘封建社会衰落与家族兴衰，探索人性、爱情与社会批判。",
+                "en": "Authored Dream of the Red Chamber, revised over ten years with five revisions, depicted the decline of feudal society and family fortunes, explored humanity, love, and social critique."
+                },
+                field: {
+                "zh-CN": "古典小说、诗歌、绘画。",
+                "en": "Classical Novel, Poetry, Painting."
+                }
+            },
             { id: "suetonius", name: "Suetonius", 
               contribution: {
                 "zh-CN": "撰写《罗马十二帝王传》，记录罗马皇帝生平，揭示权力与人性。",
