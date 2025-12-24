@@ -490,7 +490,11 @@
                 field: {
                 "zh-CN": "古典小说、诗歌、绘画。",
                 "en": "Classical Novel, Poetry, Painting."
-                }
+                },
+                remarks: {
+                "zh-CN": "清代文学巨匠，中国古典文学巅峰之作，推动红学研究与文化传承。",
+                "en": "Qing Dynasty literary master, pinnacle of Chinese classical literature, advanced Redology studies and cultural heritage."
+               }   
             },
             { id: "suetonius", name: "Suetonius", 
               contribution: {
