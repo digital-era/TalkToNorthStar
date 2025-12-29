@@ -138,5 +138,146 @@ const universeMasters = [
       "zh-CN": "观测宇宙学传奇人物，对星系物理与宇宙暗物质研究具有奠基性贡献。",
       "en": "Legendary figure in observational cosmology; foundational contributions to galaxy physics and cosmic dark matter research."
     }
+  },
+{ id: "jacques_yves_cousteau", name: "Jacques-Yves Cousteau",
+    contribution: {
+      "zh-CN": "共同发明Aqua-Lung水肺呼吸器，推动水下摄影与纪录片革命；领导Calypso号全球深海探险，提升公众海洋意识。",
+      "en": "Co-invented the Aqua-Lung scuba apparatus; pioneered underwater photography and documentary filmmaking; led global deep-sea expeditions aboard Calypso, greatly raising public ocean awareness."
+    },
+    field: {
+      "zh-CN": "海洋探索、水下技术、海洋保护。",
+      "en": "Ocean Exploration, Underwater Technology, Marine Conservation."
+    },
+    remarks: {
+      "zh-CN": "被誉为现代海洋探索与保护之父，其作品极大推动了全球海洋科普与环境保护运动。",
+      "en": "Regarded as the father of modern ocean exploration and conservation; his works significantly advanced global marine education and protection efforts."
+    }
+  },
+  { id: "sylvia_earle", name: "Sylvia Earle",
+    contribution: {
+      "zh-CN": "完成数千小时水下探索，创多项女性深潜纪录；前NOAA首席科学家，持续倡导海洋保护区建立。",
+      "en": "Completed thousands of hours of underwater exploration, set multiple women's deep-diving records; former NOAA Chief Scientist, advocates for marine protected areas."
+    },
+    field: {
+      "zh-CN": "海洋生物学、深海探索、海洋保护。",
+      "en": "Marine Biology, Deep-Sea Exploration, Ocean Conservation."
+    },
+    remarks: {
+      "zh-CN": "当代最具影响力的在世海洋学家，被称为'Her Deepness'，对深海生态与可持续性具有持久倡导作用。",
+      "en": "One of the most influential living oceanographers, known as 'Her Deepness'; enduring advocacy for deep-sea ecology and sustainability."
+    }
+  },
+  { id: "robert_ballard", name: "Robert Ballard",
+    contribution: {
+      "zh-CN": "发现泰坦尼克号残骸及多艘著名沉船；开创深海遥控潜水器（ROV）与水下考古技术，发现热液喷口生态系统。",
+      "en": "Discovered the Titanic wreck and multiple famous shipwrecks; pioneered deep-sea ROV technology and underwater archaeology; discovered hydrothermal vent ecosystems."
+    },
+    field: {
+      "zh-CN": "深海地质学、水下考古、热液喷口生物学。",
+      "en": "Deep-Sea Geology, Underwater Archaeology, Hydrothermal Vent Biology."
+    },
+    remarks: {
+      "zh-CN": "将深海探索与考古相结合，推动深海生态与地质研究的革命性进展。",
+      "en": "Combined deep-sea exploration with archaeology, driving revolutionary advances in deep-sea ecology and geology research."
+    }
+  },
+  { id: "john_murray", name: "John Murray",
+    contribution: {
+      "zh-CN": "领导HMS Challenger号远征（1872–1876），奠定现代海洋学基础，包括深海沉积、洋盆结构与珊瑚礁形成研究。",
+      "en": "Led the HMS Challenger Expedition (1872–1876); established the foundations of modern oceanography, including deep-sea sediments, ocean basin structure, and coral reef formation."
+    },
+    field: {
+      "zh-CN": "海洋学、深海沉积学、海洋地质。",
+      "en": "Oceanography, Deep-Sea Sedimentology, Marine Geology."
+    },
+    remarks: {
+      "zh-CN": "被视为'海洋学之父'，Challenger远征开创了系统性海洋科学调查时代。",
+      "en": "Regarded as the 'father of oceanography'; the Challenger Expedition initiated the era of systematic marine scientific investigation."
+    }
+  },
+  { id: "jacques_piccard_don_walsh", name: "Jacques Piccard & Don Walsh",
+    contribution: {
+      "zh-CN": "1960年驾驶Trieste号首次载人抵达马里亚纳海沟挑战者深渊（约10,916米），开创人类极端深海探测时代。",
+      "en": "In 1960, piloted the Trieste to the first manned descent to Challenger Deep in the Mariana Trench (~10,916 m); opened the era of human extreme deep-sea exploration."
+    },
+    field: {
+      "zh-CN": "极端深海技术、载人深潜器。",
+      "en": "Extreme Deep-Sea Technology, Manned Submersibles."
+    },
+    remarks: {
+      "zh-CN": "人类首次触及地球最深处，证明深海载人探索的可行性，对后续深渊任务具有里程碑意义。",
+      "en": "First human reach to Earth's deepest point; demonstrated feasibility of manned deep-sea exploration, a milestone for subsequent hadal missions."
+    }
+  },
+  { id: "james_cameron", name: "James Cameron",
+    contribution: {
+      "zh-CN": "2012年单人驾驶Deepsea Challenger号抵达挑战者深渊（10,898米），开发创新深潜器与3D水下摄影技术。",
+      "en": "In 2012, piloted the Deepsea Challenger solo to Challenger Deep (10,898 m); developed innovative submersibles and 3D underwater cinematography technology."
+    },
+    field: {
+      "zh-CN": "深海工程、极端深度探测、海洋纪录片。",
+      "en": "Deep-Sea Engineering, Extreme Depth Exploration, Ocean Documentary Filmmaking."
+    },
+    remarks: {
+      "zh-CN": "将深海探索与大众科普相结合，通过电影与技术创新提升全球对深海的关注度。",
+      "en": "Integrated deep-sea exploration with public education; elevated global awareness of the deep ocean through film and technological innovation."
+    }
+  },
+  { id: "william_beebe", name: "William Beebe",
+    contribution: {
+      "zh-CN": "1930年代使用Bathysphere进行首批深海载人观测，首次目击深渊生物。",
+      "en": "In the 1930s, conducted the first manned deep-sea observations using the Bathysphere; first scientist to observe abyssal life in situ."
+    },
+    field: {
+      "zh-CN": "深海生物学、早期深潜技术。",
+      "en": "Deep-Sea Biology, Early Deep-Diving Technology."
+    },
+    remarks: {
+      "zh-CN": "奠定深海生物学观测基础，开创人类直接目视深海生态的时代。",
+      "en": "Laid the foundation for deep-sea biological observation; inaugurated the era of direct human visual study of abyssal ecosystems."
+    }
+  },
+  { id: "marie_tharp", name: "Marie Tharp",
+    contribution: {
+      "zh-CN": "与Bruce Heezen合作绘制首张大西洋海底地形图，发现中洋脊裂谷与海底扩张证据，支持板块构造理论。",
+      "en": "Collaborated with Bruce Heezen to produce the first scientific map of the Atlantic Ocean floor; discovered the Mid-Atlantic Ridge rift valley and evidence of seafloor spreading, supporting plate tectonics theory."
+    },
+    field: {
+      "zh-CN": "海洋制图、海底地质、板块构造。",
+      "en": "Ocean Cartography, Seafloor Geology, Plate Tectonics."
+    },
+    remarks: {
+      "zh-CN": "女性海洋学先驱，其地图工作引发地质学革命，推动对地球内部动态的现代理解。",
+      "en": "Pioneering female oceanographer; her maps triggered a revolution in geology, advancing modern understanding of Earth's internal dynamics."
+    }
+  },
+  { id: "matthew_fontaine_maury", name: "Matthew Fontaine Maury",
+    contribution: {
+      "zh-CN": "绘制首张系统海洋洋流与风图，出版《海洋物理地理》，奠定现代航海与海洋学基础。",
+      "en": "Created the first systematic charts of ocean currents and winds; published 'The Physical Geography of the Sea'; established foundations for modern navigation and oceanography."
+    },
+    field: {
+      "zh-CN": "物理海洋学、海洋气象、航海图。",
+      "en": "Physical Oceanography, Marine Meteorology, Navigational Charts."
+    },
+    remarks: {
+      "zh-CN": "被誉为'现代海洋学之父'，其工作极大提升了海洋航行效率与科学认知。",
+      "en": "Known as the 'father of modern oceanography'; his work greatly improved marine navigation efficiency and scientific understanding."
+    }
+  },
+  { id: "wallace_smith_broecker", name: "Wallace Smith Broecker",
+    contribution: {
+      "zh-CN": "提出'海洋传送带'理论，揭示深海环流与全球气候的密切关系，对海洋碳循环研究具有奠基性影响。",
+      "en": "Proposed the 'ocean conveyor belt' theory; revealed the close relationship between deep-sea circulation and global climate; foundational influence on ocean carbon cycle research."
+    },
+    field: {
+      "zh-CN": "气候海洋学、深海环流、碳循环。",
+      "en": "Climate Oceanography, Deep-Sea Circulation, Carbon Cycle."
+    },
+    remarks: {
+      "zh-CN": "其理论深刻影响全球气候变化模型与深海动力学研究。",
+      "en": "His theories profoundly influenced global climate change models and deep-sea dynamics research."
+    }
   }
+];
 ];
