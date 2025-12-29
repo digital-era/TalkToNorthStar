@@ -1,9 +1,10 @@
         const allData = {
             ai: aiMasters,
             quantum: QuantumMasters,
-            finance: financeMasters,
+            universe: universeMasters,
             humanities: humanitiesMasters,
-            art: artMasters,
+            art: artMasters,                
+            finance: financeMasters,
             sport: sportMasters,
             chinaEntrepreneurs: chinaEntrepreneurs
         };
