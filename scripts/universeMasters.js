@@ -1,5 +1,5 @@
 const universeMasters = [
-  { id: "galileo_galilei", name: "Galileo Galilei",
+  { id: "galileo_galilei", name: "Galileo Galilei (伽利略·伽利莱)",
     contribution: {
       "zh-CN": "首位系统使用望远镜进行天文观测，发现木星卫星、金星相位、太阳黑子等，为日心说提供直接观测证据。",
       "en": "First to systematically use the telescope for astronomical observations; discovered Jupiter's moons, phases of Venus, sunspots, providing direct evidence for heliocentrism."
@@ -13,7 +13,7 @@ const universeMasters = [
       "en": "Marked the transition of astronomy from philosophical speculation to empirical science, establishing the foundation of modern observational astronomy."
     }
   },
-  { id: "johannes_kepler", name: "Johannes Kepler",
+  { id: "johannes_kepler", name: "Johannes Kepler (约翰内斯·开普勒)",
     contribution: {
       "zh-CN": "制定行星运动三定律（椭圆轨道、面积定律、周期定律），取代古老圆周运动模型。",
       "en": "Formulated the three laws of planetary motion (elliptical orbits, area law, harmonic law), replacing ancient circular motion models."
@@ -27,7 +27,7 @@ const universeMasters = [
       "en": "Transformed astronomy from geometric description to physical laws, laying the mathematical foundation for Newton's law of universal gravitation."
     }
   },
-  { id: "isaac_newton", name: "Isaac Newton",
+  { id: "isaac_newton", name: "Isaac Newton (艾萨克·牛顿)",
     contribution: {
       "zh-CN": "建立万有引力定律与运动三大定律，首次从物理原理统一解释天体运动。",
       "en": "Established the law of universal gravitation and three laws of motion, first unifying explanation of celestial motion from physical principles."
@@ -41,7 +41,7 @@ const universeMasters = [
       "en": "Placed astronomy on a solid mathematical-physical framework; contributions extend beyond astronomy, founding classical mechanics."
     }
   },
-  { id: "nicolaus_copernicus", name: "Nicolaus Copernicus",
+  { id: "nicolaus_copernicus", name: "Nicolaus Copernicus (尼古拉·哥白尼)",
     contribution: {
       "zh-CN": "提出日心说（《天体运行论》），挑战千年地心说传统。",
       "en": "Proposed the heliocentric model (De revolutionibus orbium coelestium), challenging the millennium-old geocentric tradition."
@@ -55,7 +55,7 @@ const universeMasters = [
       "en": "Triggered the Scientific Revolution; regarded as the starting point of modern astronomical thought, nearly all subsequent major discoveries built upon it."
     }
   },
-  { id: "edwin_hubble", name: "Edwin Hubble",
+  { id: "edwin_hubble", name: "Edwin Hubble (埃德温·哈勃)",
     contribution: {
       "zh-CN": "证明存在银河系外星系，发现宇宙膨胀（哈勃定律），奠定现代大爆炸宇宙学基础。",
       "en": "Proved the existence of galaxies beyond the Milky Way; discovered cosmic expansion (Hubble's law), establishing the foundation of modern Big Bang cosmology."
@@ -69,7 +69,7 @@ const universeMasters = [
       "en": "Expanded humanity's view of the universe from a single Milky Way to a dynamic, multi-galaxy cosmos."
     }
   },
-  { id: "tycho_brahe", name: "Tycho Brahe",
+  { id: "tycho_brahe", name: "Tycho Brahe (第谷·布拉赫)",
     contribution: {
       "zh-CN": "望远镜发明前进行史上最精密裸眼观测，积累高精度行星位置数据。",
       "en": "Conducted the most precise naked-eye observations in history before the telescope; accumulated high-precision planetary position data."
@@ -83,7 +83,7 @@ const universeMasters = [
       "en": "Observational data directly enabled Kepler's laws; regarded as the pinnacle of pre-telescope observational astronomy."
     }
   },
-  { id: "william_herschel", name: "William Herschel",
+  { id: "william_herschel", name: "William Herschel (威廉·赫歇尔)",
     contribution: {
       "zh-CN": "发现天王星、红外辐射，首次系统研究星系结构与银河系形状。",
       "en": "Discovered Uranus and infrared radiation; first systematic study of galactic structure and the shape of the Milky Way."
@@ -97,7 +97,7 @@ const universeMasters = [
       "en": "Pioneered stellar astronomy and deep-sky surveying, advancing understanding of structures beyond the Milky Way."
     }
   },
-  { id: "roger_penrose", name: "Roger Penrose",
+  { id: "roger_penrose", name: "Roger Penrose (罗杰·彭罗斯)",
     contribution: {
       "zh-CN": "证明黑洞形成是广义相对论的稳健预测，提出循环共形宇宙学（CCC），2020年诺贝尔物理学奖得主。",
       "en": "Proved black hole formation is a robust prediction of general relativity; proposed Conformal Cyclic Cosmology (CCC); 2020 Nobel Prize in Physics laureate."
@@ -111,7 +111,7 @@ const universeMasters = [
       "en": "One of the greatest living theoretical astronomers; revolutionary contributions to black holes and the overall structure of the universe."
     }
   },
-  { id: "adam_riess", name: "Adam Riess",
+  { id: "adam_riess", name: "Adam Riess (亚当·里斯)",
     contribution: {
       "zh-CN": "通过Ia型超新星观测发现宇宙加速膨胀（暗能量证据），2011年诺贝尔物理学奖得主，目前领导Hubble常数精密测量。",
       "en": "Discovered the accelerating expansion of the universe via Type Ia supernovae (evidence for dark energy); 2011 Nobel Prize in Physics laureate; currently leads precision measurements of the Hubble constant."
@@ -125,7 +125,7 @@ const universeMasters = [
       "en": "At the forefront of the largest contemporary cosmological controversy (Hubble tension)."
     }
   },
-  { id: "sandra_faber", name: "Sandra Faber",
+  { id: "sandra_faber", name: "Sandra Faber (桑德拉·法伯)",
     contribution: {
       "zh-CN": "提出Faber-Jackson关系等星系尺度律，推动冷暗物质模型与ΛCDM标准宇宙模型形成，2020年代仍具深远影响。",
       "en": "Proposed the Faber-Jackson relation and other galaxy scaling laws; advanced cold dark matter models and the ΛCDM standard cosmological model; enduring influence into the 2020s."
@@ -139,7 +139,7 @@ const universeMasters = [
       "en": "Legendary figure in observational cosmology; foundational contributions to galaxy physics and cosmic dark matter research."
     }
   },
-{ id: "jacques_yves_cousteau", name: "Jacques-Yves Cousteau",
+  { id: "jacques_yves_cousteau", name: "Jacques-Yves Cousteau (雅克-伊夫·库斯托)",
     contribution: {
       "zh-CN": "共同发明Aqua-Lung水肺呼吸器，推动水下摄影与纪录片革命；领导Calypso号全球深海探险，提升公众海洋意识。",
       "en": "Co-invented the Aqua-Lung scuba apparatus; pioneered underwater photography and documentary filmmaking; led global deep-sea expeditions aboard Calypso, greatly raising public ocean awareness."
@@ -153,7 +153,7 @@ const universeMasters = [
       "en": "Regarded as the father of modern ocean exploration and conservation; his works significantly advanced global marine education and protection efforts."
     }
   },
-  { id: "sylvia_earle", name: "Sylvia Earle",
+  { id: "sylvia_earle", name: "Sylvia Earle (西尔维娅·厄尔)",
     contribution: {
       "zh-CN": "完成数千小时水下探索，创多项女性深潜纪录；前NOAA首席科学家，持续倡导海洋保护区建立。",
       "en": "Completed thousands of hours of underwater exploration, set multiple women's deep-diving records; former NOAA Chief Scientist, advocates for marine protected areas."
@@ -167,7 +167,7 @@ const universeMasters = [
       "en": "One of the most influential living oceanographers, known as 'Her Deepness'; enduring advocacy for deep-sea ecology and sustainability."
     }
   },
-  { id: "robert_ballard", name: "Robert Ballard",
+  { id: "robert_ballard", name: "Robert Ballard (罗伯特·巴拉德)",
     contribution: {
       "zh-CN": "发现泰坦尼克号残骸及多艘著名沉船；开创深海遥控潜水器（ROV）与水下考古技术，发现热液喷口生态系统。",
       "en": "Discovered the Titanic wreck and multiple famous shipwrecks; pioneered deep-sea ROV technology and underwater archaeology; discovered hydrothermal vent ecosystems."
@@ -181,7 +181,7 @@ const universeMasters = [
       "en": "Combined deep-sea exploration with archaeology, driving revolutionary advances in deep-sea ecology and geology research."
     }
   },
-  { id: "john_murray", name: "John Murray",
+  { id: "john_murray", name: "John Murray (约翰·默里)",
     contribution: {
       "zh-CN": "领导HMS Challenger号远征（1872–1876），奠定现代海洋学基础，包括深海沉积、洋盆结构与珊瑚礁形成研究。",
       "en": "Led the HMS Challenger Expedition (1872–1876); established the foundations of modern oceanography, including deep-sea sediments, ocean basin structure, and coral reef formation."
@@ -195,7 +195,7 @@ const universeMasters = [
       "en": "Regarded as the 'father of oceanography'; the Challenger Expedition initiated the era of systematic marine scientific investigation."
     }
   },
-  { id: "jacques_piccard_don_walsh", name: "Jacques Piccard & Don Walsh",
+  { id: "jacques_piccard_don_walsh", name: "Jacques Piccard & Don Walsh (雅克·皮卡德 & 唐·沃尔什)",
     contribution: {
       "zh-CN": "1960年驾驶Trieste号首次载人抵达马里亚纳海沟挑战者深渊（约10,916米），开创人类极端深海探测时代。",
       "en": "In 1960, piloted the Trieste to the first manned descent to Challenger Deep in the Mariana Trench (~10,916 m); opened the era of human extreme deep-sea exploration."
@@ -209,7 +209,7 @@ const universeMasters = [
       "en": "First human reach to Earth's deepest point; demonstrated feasibility of manned deep-sea exploration, a milestone for subsequent hadal missions."
     }
   },
-  { id: "james_cameron", name: "James Cameron",
+  { id: "james_cameron", name: "James Cameron (詹姆斯·卡梅隆)",
     contribution: {
       "zh-CN": "2012年单人驾驶Deepsea Challenger号抵达挑战者深渊（10,898米），开发创新深潜器与3D水下摄影技术。",
       "en": "In 2012, piloted the Deepsea Challenger solo to Challenger Deep (10,898 m); developed innovative submersibles and 3D underwater cinematography technology."
@@ -223,7 +223,7 @@ const universeMasters = [
       "en": "Integrated deep-sea exploration with public education; elevated global awareness of the deep ocean through film and technological innovation."
     }
   },
-  { id: "william_beebe", name: "William Beebe",
+  { id: "william_beebe", name: "William Beebe (威廉·比比)",
     contribution: {
       "zh-CN": "1930年代使用Bathysphere进行首批深海载人观测，首次目击深渊生物。",
       "en": "In the 1930s, conducted the first manned deep-sea observations using the Bathysphere; first scientist to observe abyssal life in situ."
@@ -237,7 +237,7 @@ const universeMasters = [
       "en": "Laid the foundation for deep-sea biological observation; inaugurated the era of direct human visual study of abyssal ecosystems."
     }
   },
-  { id: "marie_tharp", name: "Marie Tharp",
+  { id: "marie_tharp", name: "Marie Tharp (玛丽·撒普)",
     contribution: {
       "zh-CN": "与Bruce Heezen合作绘制首张大西洋海底地形图，发现中洋脊裂谷与海底扩张证据，支持板块构造理论。",
       "en": "Collaborated with Bruce Heezen to produce the first scientific map of the Atlantic Ocean floor; discovered the Mid-Atlantic Ridge rift valley and evidence of seafloor spreading, supporting plate tectonics theory."
@@ -251,7 +251,7 @@ const universeMasters = [
       "en": "Pioneering female oceanographer; her maps triggered a revolution in geology, advancing modern understanding of Earth's internal dynamics."
     }
   },
-  { id: "matthew_fontaine_maury", name: "Matthew Fontaine Maury",
+  { id: "matthew_fontaine_maury", name: "Matthew Fontaine Maury (马修·方丹·莫里)",
     contribution: {
       "zh-CN": "绘制首张系统海洋洋流与风图，出版《海洋物理地理》，奠定现代航海与海洋学基础。",
       "en": "Created the first systematic charts of ocean currents and winds; published 'The Physical Geography of the Sea'; established foundations for modern navigation and oceanography."
@@ -265,7 +265,7 @@ const universeMasters = [
       "en": "Known as the 'father of modern oceanography'; his work greatly improved marine navigation efficiency and scientific understanding."
     }
   },
-  { id: "wallace_smith_broecker", name: "Wallace Smith Broecker",
+  { id: "wallace_smith_broecker", name: "Wallace Smith Broecker (华莱士·史密斯·布勒克)",
     contribution: {
       "zh-CN": "提出'海洋传送带'理论，揭示深海环流与全球气候的密切关系，对海洋碳循环研究具有奠基性影响。",
       "en": "Proposed the 'ocean conveyor belt' theory; revealed the close relationship between deep-sea circulation and global climate; foundational influence on ocean carbon cycle research."
@@ -279,7 +279,7 @@ const universeMasters = [
       "en": "His theories profoundly influenced global climate change models and deep-sea dynamics research."
     }
   },
-  { id: "antonie_van_leeuwenhoek", name: "Antonie van Leeuwenhoek",
+  { id: "antonie_van_leeuwenhoek", name: "Antonie van Leeuwenhoek (安东尼·范·列文虎克)",
     contribution: {
       "zh-CN": "首位使用自制显微镜观察并描述微生物（包括细菌、原生动物和精子），开创微生物世界的直接观测。",
       "en": "First to use homemade microscopes to observe and describe microorganisms (including bacteria, protozoa, and spermatozoa), pioneering direct observation of the microbial world."
@@ -293,7 +293,7 @@ const universeMasters = [
       "en": "Widely regarded as the 'father of microbiology'; his observations established the foundation for microbiology as an independent field."
     }
   },
-  { id: "louis_pasteur", name: "Louis Pasteur",
+  { id: "louis_pasteur", name: "Louis Pasteur (路易·巴斯德)",
     contribution: {
       "zh-CN": "确立胚芽说，发明巴氏消毒法与狂犬病疫苗，推翻自然发生说。",
       "en": "Established the germ theory of disease; invented pasteurization and the rabies vaccine; disproved spontaneous generation."
@@ -307,7 +307,7 @@ const universeMasters = [
       "en": "Laid the foundations of modern microbiology and immunology; his work revolutionized medicine and the food industry."
     }
   },
-  { id: "robert_koch", name: "Robert Koch",
+  { id: "robert_koch", name: "Robert Koch (罗伯特·科赫)",
     contribution: {
       "zh-CN": "确立科赫法则，首次分离结核杆菌与霍乱弧菌等病原菌。",
       "en": "Established Koch's postulates; first isolated the tuberculosis bacillus and cholera vibrio among other pathogens."
@@ -321,7 +321,7 @@ const universeMasters = [
       "en": "Known as the 'father of bacteriology'; 1905 Nobel Prize in Physiology or Medicine; his postulates remain a core standard in microbiology."
     }
   },
-  { id: "alexander_fleming", name: "Alexander Fleming",
+  { id: "alexander_fleming", name: "Alexander Fleming (亚历山大·弗莱明)",
     contribution: {
       "zh-CN": "1928年发现青霉素，开创抗生素时代。",
       "en": "Discovered penicillin in 1928, ushering in the antibiotic era."
@@ -335,7 +335,7 @@ const universeMasters = [
       "en": "1945 Nobel Prize in Physiology or Medicine; his discovery dramatically reduced mortality from bacterial infections."
     }
   },
-  { id: "martinus_willem_beijerinck", name: "Martinus Willem Beijerinck",
+  { id: "martinus_willem_beijerinck", name: "Martinus Willem Beijerinck (马丁努斯·威廉·贝杰林克)",
     contribution: {
       "zh-CN": "发现首例病毒（烟草花叶病毒），提出'病毒'概念，开创富集培养技术。",
       "en": "Discovered the first virus (tobacco mosaic virus); coined the concept of 'virus'; pioneered enrichment culture techniques."
@@ -349,7 +349,7 @@ const universeMasters = [
       "en": "His work established virology and microbial ecology; advanced understanding of non-cellular pathogens."
     }
   },
-  { id: "sergei_winogradsky", name: "Sergei Winogradsky",
+  { id: "sergei_winogradsky", name: "Sergei Winogradsky (谢尔盖·维诺格拉茨基)",
     contribution: {
       "zh-CN": "发现化学自养、硝化细菌与硫细菌，发明Winogradsky柱。",
       "en": "Discovered chemolithotrophy, nitrifying and sulfur bacteria; invented the Winogradsky column."
@@ -363,7 +363,7 @@ const universeMasters = [
       "en": "Established microbial mechanisms of nitrogen and sulfur cycles; profound influence on modern environmental microbiology."
     }
   },
-  { id: "selman_abraham_waksman", name: "Selman Abraham Waksman",
+  { id: "selman_abraham_waksman", name: "Selman Abraham Waksman (塞尔曼·亚伯拉罕·瓦克斯曼)",
     contribution: {
       "zh-CN": "发现链霉素及其他土壤抗生素，提出'抗生素'一词。",
       "en": "Discovered streptomycin and other soil antibiotics; coined the term 'antibiotic'."
@@ -377,7 +377,7 @@ const universeMasters = [
       "en": "1952 Nobel Prize in Physiology or Medicine; drove the industrialization of antibiotic production."
     }
   },
-  { id: "joshua_lederberg", name: "Joshua Lederberg",
+  { id: "joshua_lederberg", name: "Joshua Lederberg (乔舒亚·莱德伯格)",
     contribution: {
       "zh-CN": "发现细菌遗传重组与接合、转导现象，奠定细菌遗传学基础；1958年诺贝尔生理学或医学奖得主。",
       "en": "Discovered bacterial genetic recombination, conjugation, and transduction; established bacterial genetics; 1958 Nobel Prize in Physiology or Medicine laureate."
@@ -391,7 +391,7 @@ const universeMasters = [
       "en": "His discoveries made bacteria a key model for genetics; propelled the gene engineering and biotechnology revolution."
     }
   },
-  { id: "rita_r_colwell", name: "Rita R. Colwell",
+  { id: "rita_r_colwell", name: "Rita R. Colwell (丽塔·科尔韦尔)",
     contribution: {
       "zh-CN": "研究霍乱生态与Vibrio cholerae环境宿主，开发快速检测方法。",
       "en": "Studied cholera ecology and environmental reservoirs of Vibrio cholerae; developed rapid detection methods."
@@ -405,7 +405,7 @@ const universeMasters = [
       "en": "One of the most influential living microbiologists; former Director of the U.S. National Science Foundation."
     }
   },
-  { id: "didier_raoult", name: "Didier Raoult",
+  { id: "didier_raoult", name: "Didier Raoult (迪迪埃·拉乌尔)",
     contribution: {
       "zh-CN": "领导大规模微生物组与感染病研究，对立克次体与新兴感染病具有重要贡献。",
       "en": "Led large-scale microbiome and infectious disease research; major contributions to rickettsia and emerging infections."
