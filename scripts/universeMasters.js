@@ -278,5 +278,145 @@ const universeMasters = [
       "zh-CN": "其理论深刻影响全球气候变化模型与深海动力学研究。",
       "en": "His theories profoundly influenced global climate change models and deep-sea dynamics research."
     }
+  },
+  { id: "antonie_van_leeuwenhoek", name: "Antonie van Leeuwenhoek",
+    contribution: {
+      "zh-CN": "首位使用自制显微镜观察并描述微生物（包括细菌、原生动物和精子），开创微生物世界的直接观测。",
+      "en": "First to use homemade microscopes to observe and describe microorganisms (including bacteria, protozoa, and spermatozoa), pioneering direct observation of the microbial world."
+    },
+    field: {
+      "zh-CN": "显微镜技术、微生物发现。",
+      "en": "Microscopy, Microbial Discovery."
+    },
+    remarks: {
+      "zh-CN": "被公认为'微生物学之父'，其观察奠定了微生物作为独立研究领域的起点。",
+      "en": "Widely regarded as the 'father of microbiology'; his observations established the foundation for microbiology as an independent field."
+    }
+  },
+  { id: "louis_pasteur", name: "Louis Pasteur",
+    contribution: {
+      "zh-CN": "确立胚芽说，发明巴氏消毒法与狂犬病疫苗，推翻自然发生说。",
+      "en": "Established the germ theory of disease; invented pasteurization and the rabies vaccine; disproved spontaneous generation."
+    },
+    field: {
+      "zh-CN": "微生物病原学、免疫学、发酵科学。",
+      "en": "Microbial Pathogenesis, Immunology, Fermentation Science."
+    },
+    remarks: {
+      "zh-CN": "奠定现代微生物学与免疫学基础，其工作彻底改变了医学与食品工业。",
+      "en": "Laid the foundations of modern microbiology and immunology; his work revolutionized medicine and the food industry."
+    }
+  },
+  { id: "robert_koch", name: "Robert Koch",
+    contribution: {
+      "zh-CN": "确立科赫法则，首次分离结核杆菌与霍乱弧菌等病原菌。",
+      "en": "Established Koch's postulates; first isolated the tuberculosis bacillus and cholera vibrio among other pathogens."
+    },
+    field: {
+      "zh-CN": "细菌学、病原微生物鉴定。",
+      "en": "Bacteriology, Pathogen Identification."
+    },
+    remarks: {
+      "zh-CN": "被誉为'细菌学之父'，1905年诺贝尔生理学或医学奖得主，其方法论至今仍是微生物学核心标准。",
+      "en": "Known as the 'father of bacteriology'; 1905 Nobel Prize in Physiology or Medicine; his postulates remain a core standard in microbiology."
+    }
+  },
+  { id: "alexander_fleming", name: "Alexander Fleming",
+    contribution: {
+      "zh-CN": "1928年发现青霉素，开创抗生素时代。",
+      "en": "Discovered penicillin in 1928, ushering in the antibiotic era."
+    },
+    field: {
+      "zh-CN": "抗生素发现、感染病治疗。",
+      "en": "Antibiotic Discovery, Infectious Disease Treatment."
+    },
+    remarks: {
+      "zh-CN": "1945年诺贝尔生理学或医学奖得主，其发现极大降低了传染病死亡率。",
+      "en": "1945 Nobel Prize in Physiology or Medicine; his discovery dramatically reduced mortality from bacterial infections."
+    }
+  },
+  { id: "martinus_willem_beijerinck", name: "Martinus Willem Beijerinck",
+    contribution: {
+      "zh-CN": "发现首例病毒（烟草花叶病毒），提出'病毒'概念，开创富集培养技术。",
+      "en": "Discovered the first virus (tobacco mosaic virus); coined the concept of 'virus'; pioneered enrichment culture techniques."
+    },
+    field: {
+      "zh-CN": "病毒学、土壤微生物学。",
+      "en": "Virology, Soil Microbiology."
+    },
+    remarks: {
+      "zh-CN": "其工作奠定病毒学与微生物生态学基础，推动了非细胞病原体的认识。",
+      "en": "His work established virology and microbial ecology; advanced understanding of non-cellular pathogens."
+    }
+  },
+  { id: "sergei_winogradsky", name: "Sergei Winogradsky",
+    contribution: {
+      "zh-CN": "发现化学自养、硝化细菌与硫细菌，发明Winogradsky柱。",
+      "en": "Discovered chemolithotrophy, nitrifying and sulfur bacteria; invented the Winogradsky column."
+    },
+    field: {
+      "zh-CN": "微生物生态学、生物地球化学循环。",
+      "en": "Microbial Ecology, Biogeochemical Cycles."
+    },
+    remarks: {
+      "zh-CN": "奠定氮、硫循环微生物机制基础，对现代环境微生物学影响深远。",
+      "en": "Established microbial mechanisms of nitrogen and sulfur cycles; profound influence on modern environmental microbiology."
+    }
+  },
+  { id: "selman_abraham_waksman", name: "Selman Abraham Waksman",
+    contribution: {
+      "zh-CN": "发现链霉素及其他土壤抗生素，提出'抗生素'一词。",
+      "en": "Discovered streptomycin and other soil antibiotics; coined the term 'antibiotic'."
+    },
+    field: {
+      "zh-CN": "抗生素开发、土壤微生物学。",
+      "en": "Antibiotic Development, Soil Microbiology."
+    },
+    remarks: {
+      "zh-CN": "1952年诺贝尔生理学或医学奖得主，推动抗生素工业化生产。",
+      "en": "1952 Nobel Prize in Physiology or Medicine; drove the industrialization of antibiotic production."
+    }
+  },
+  { id: "joshua_lederberg", name: "Joshua Lederberg",
+    contribution: {
+      "zh-CN": "发现细菌遗传重组与接合、转导现象，奠定细菌遗传学基础；1958年诺贝尔生理学或医学奖得主。",
+      "en": "Discovered bacterial genetic recombination, conjugation, and transduction; established bacterial genetics; 1958 Nobel Prize in Physiology or Medicine laureate."
+    },
+    field: {
+      "zh-CN": "微生物遗传学、分子生物学。",
+      "en": "Microbial Genetics, Molecular Biology."
+    },
+    remarks: {
+      "zh-CN": "其工作将细菌作为遗传学模型，推动基因工程与生物技术革命。",
+      "en": "His discoveries made bacteria a key model for genetics; propelled the gene engineering and biotechnology revolution."
+    }
+  },
+  { id: "rita_r_colwell", name: "Rita R. Colwell",
+    contribution: {
+      "zh-CN": "研究霍乱生态与Vibrio cholerae环境宿主，开发快速检测方法。",
+      "en": "Studied cholera ecology and environmental reservoirs of Vibrio cholerae; developed rapid detection methods."
+    },
+    field: {
+      "zh-CN": "环境微生物学、传染病生态。",
+      "en": "Environmental Microbiology, Infectious Disease Ecology."
+    },
+    remarks: {
+      "zh-CN": "当代最具影响力的在世微生物学家之一，前美国国家科学基金会主任。",
+      "en": "One of the most influential living microbiologists; former Director of the U.S. National Science Foundation."
+    }
+  },
+  { id: "didier_raoult", name: "Didier Raoult",
+    contribution: {
+      "zh-CN": "领导大规模微生物组与感染病研究，对立克次体与新兴感染病具有重要贡献。",
+      "en": "Led large-scale microbiome and infectious disease research; major contributions to rickettsia and emerging infections."
+    },
+    field: {
+      "zh-CN": "临床微生物学、微生物组学。",
+      "en": "Clinical Microbiology, Microbiomics."
+    },
+    remarks: {
+      "zh-CN": "H指数极高，其研究推动了感染病诊断与治疗的现代方法。",
+      "en": "Extremely high H-index; his research advanced modern approaches to infectious disease diagnosis and treatment."
+    }
   }
 ];
