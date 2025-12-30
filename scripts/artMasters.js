@@ -436,7 +436,7 @@ const artMasters = [
     {id: "ennio_morricone",  name: "Ennio Morricone (恩尼奥·莫里康内)",
         contribution: {
         "zh-CN": "创作《黄金三镖客》《教会》《美国往事》配乐，以非传统乐器和旋律创新革新电影音乐。",
-        "en": "Composed The Good, the Bad and the Ugly, The Mission, The Hateful Eight scores, revolutionized film music with unconventional instrumentation and melodic innovation."
+        "en": "Composed The Good, the Bad and the Ugly, The Mission, Once Upon a Time in America, revolutionized film music with unconventional instrumentation and melodic innovation."
         },
         field: {
         "zh-CN": "电影配乐、管弦乐、实验音乐。",
