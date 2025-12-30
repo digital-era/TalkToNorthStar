@@ -433,6 +433,20 @@ const artMasters = [
         "en": "Contemporary sci-fi giant, advanced visual and narrative depth integration."
       }
     },
+    {id: "ennio_morricone",  name: "Ennio Morricone (恩尼奥·莫里康内)",
+        contribution: {
+        "zh-CN": "创作《黄金三镖客》《教会》《八恶人》配乐，以非传统乐器和旋律创新革新电影音乐。",
+        "en": "Composed The Good, the Bad and the Ugly, The Mission, The Hateful Eight scores, revolutionized film music with unconventional instrumentation and melodic innovation."
+        },
+        field: {
+        "zh-CN": "电影配乐、管弦乐、实验音乐。",
+        "en": "Film Score, Orchestral Music, Experimental Music."
+        },
+        remarks: {
+        "zh-CN": "20世纪和21世纪最伟大的电影作曲家之一，深刻影响全球流行文化和电影叙事。",
+        "en": "One of the greatest film composers of the 20th and 21st centuries, profoundly influenced global pop culture and cinematic storytelling."
+        }
+    },
     { id: "james_horner", name: "James Horner (詹姆斯·霍纳)",
       contribution: {
         "zh-CN": "创作《泰坦尼克号》《阿凡达》《勇敢的心》配乐，以宏大交响与民族乐器融合，开创现代史诗电影音乐典范。",
