@@ -126,69 +126,56 @@
             right: 20px; /* 保持与原代码一致 */
             display: flex; /* 改回 flex，因为按钮要水平对齐 */
             align-items: center;
-            gap: 15px; /* 按钮之间间距 */
+            gap: 12px; /* 稍微拉近一点间距 */
             z-index: 10;
         }
-        /* 修改：了解我们按钮样式，与其他按钮保持一致 */
-        .about-us-button {
-            color: var(--dark-text-secondary); /* 文本颜色 */
-            text-decoration: none;
-            font-size: 1rem;
-            transition: color 0.3s, border-color 0.3s, background-color 0.3s;
-            background-color: var(--dark-surface-light); /* 背景色 */
-            padding: 8px 15px;
-            border-radius: 5px;
-            border: 1px solid var(--dark-border); /* 边框 */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            cursor: pointer; /* 添加指针样式 */
-        }
-
-        .about-us-button:hover {
-            color: var(--dark-accent); /* 悬停时强调色 */
-            border-color: var(--dark-accent); /* 悬停时边框颜色 */
-            background-color: var(--dark-surface-light); /* 保持背景色不变或微调 */
-            transform: none; /* 移除原来的 translateY 效果 */
-        }
-    
-       .settings-link {
+        /* 统一右上角三个元素的样式：了解我们、设置、语言选择 */
+        .about-us-button, 
+        .settings-link, 
+        .language-selector {
             color: var(--dark-text-secondary);
             text-decoration: none;
-            font-size: 1rem;
-            transition: color 0.3s, border-color 0.3s, background-color 0.3s;
-            background-color: var(--dark-surface-light);
-            padding: 8px 15px;
-            border-radius: 5px;
-            border: 1px solid var(--dark-border);
+            font-size: 0.9rem;
+            background-color: rgba(255, 255, 255, 0.05); /* 极淡的透明背景 */
+            backdrop-filter: blur(4px); /* 磨砂玻璃效果 */
+            padding: 6px 16px; /* 调整内边距 */
+            border-radius: 50px; /* 胶囊圆角 */
+            border: 1px solid rgba(255, 255, 255, 0.15); /* 更柔和的边框 */
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            height: 36px; /* 强制统一高度 */
+            box-sizing: border-box;
         }
-        .settings-link:hover {
-            color: var(--dark-accent);
+     
+        /* 针对 Select 元素的特殊修正，去掉默认下拉箭头背景色 */
+        .language-selector {
+            appearance: none; /* 移除浏览器默认样式 */
+            -webkit-appearance: none;
+            padding-right: 30px; /* 为自定义箭头留空间 */
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23b0b0b0%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px top 50%;
+            background-size: 10px auto;
+        }
+        
+        .about-us-button:hover, 
+        .settings-link:hover, 
+        .language-selector:hover {
+            color: #fff;
             border-color: var(--dark-accent);
+            background-color: rgba(74, 144, 226, 0.15); /* 悬停微蓝 */
+            box-shadow: 0 0 10px rgba(74, 144, 226, 0.2); /* 悬停微发光 */
+            transform: translateY(-1px);
         }
+     
         .settings-link .fa-cog {
             margin-right: 6px;
-        }
-        
-         .language-selector {
-            padding: 8px;
-            background-color: var(--dark-input-bg);
-            color: var(--dark-text-primary);
-            border: 1px solid var(--dark-border);
-            border-radius: 5px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            box-sizing: border-box;
-            width: auto;
-        }
-        .language-selector:hover {
-            border-color: var(--dark-accent);
-        }
-        
+        }        
+     
         /* --- Modal Styles (No changes below this point) --- */
         .modal {
             display: none;
@@ -363,30 +350,35 @@
             flex-wrap: wrap;
         }
     
+        /* --- 替换原有的 .tab-button 相关样式 --- */
         .tab-button {
-            padding: 10px 20px;
+            padding: 8px 18px;
             cursor: pointer;
             border: none;
             background-color: transparent;
             color: var(--dark-text-secondary);
             font-size: 16px;
-            margin-right: 5px;
-            border-bottom: 2px solid transparent;
+            margin-right: 8px;
+            border-radius: 6px; /* 轻微圆角 */
+            position: relative; /* 用于定位下划线 */
             transition: all 0.3s ease;
-            margin-bottom: 5px;
         }
-    
+        
         .tab-button:hover {
-            background-color: var(--dark-surface-light);
+            background-color: rgba(255, 255, 255, 0.08); /* 悬停增加背景 */
             color: var(--dark-text-primary);
         }
-    
+        
         .tab-button.active {
-            border-bottom-color: var(--dark-accent);
-            font-weight: bold;
-            color: var(--dark-accent);
+            color: #fff; /* 选中亮白 */
+            font-weight: 600;
+            background-color: rgba(74, 144, 226, 0.1); /* 选中微蓝背景 */
+            /* 移除原来的 border-bottom，改用 box-shadow 或伪元素做发光条 */
+            border-bottom: none; 
+            box-shadow: inset 0 -2px 0 var(--dark-accent); /* 底部内发光条 */
+            text-shadow: 0 0 8px rgba(74, 144, 226, 0.6); /* 文字发光 */
         }
-    
+            
         .tab-content { display: none; }
         .tab-content.active { display: block; }
     
@@ -466,30 +458,36 @@
             margin-top: 10px;
         }
     
+        /* --- 替换原有的 .scroll-button 相关样式 --- */
         .scroll-button {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background-color: rgba(50, 50, 50, 0.8);
+            /* 玻璃拟态 */
+            background-color: rgba(30, 30, 30, 0.6);
+            backdrop-filter: blur(4px);
             color: var(--dark-text-primary);
-            border: 1px solid var(--dark-border);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            font-size: 20px;
+            width: 40px; /* 稍微加大一点 */
+            height: 40px;
+            font-size: 18px;
             font-weight: bold;
             cursor: pointer;
             z-index: 10;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background-color 0.3s, box-shadow 0.3s, width 0.3s, height 0.3s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
+        
         .scroll-button:hover {
             background-color: var(--dark-accent);
-            color: var(--dark-bg);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            color: #fff;
+            border-color: var(--dark-accent);
+            box-shadow: 0 0 15px var(--dark-accent); /* 强烈发光 */
+            transform: translateY(-50%) scale(1.1); /* 保持垂直居中并放大 */
         }
         .scroll-button:disabled {
             opacity: 0.5;
@@ -541,28 +539,61 @@
         }
     
         .interaction-area button {
-            padding: 10px 15px;
-            background-color: var(--dark-accent);
-            color: var(--dark-bg);
+            padding: 12px 24px;
+            /* 默认使用渐变背景 */
+            background: linear-gradient(135deg, #3a7bc8 0%, #4a90e2 100%);
+            color: #fff;
             border: none;
-            border-radius: 4px;
+            border-radius: 30px; /* 全圆角 (Pill shape) */
             cursor: pointer;
-            font-size: 0.95em;
-            transition: background-color 0.3s ease;
-            flex: 1 1 200px; /* 确保宽度一致性 */
-            box-sizing: border-box;
-            max-width: 250px; /* 增加一个最大宽度，防止按钮在宽屏上过长 */
-            text-align: center; /* 文本居中 */
-            display: flex; /* 让按钮内容（文本和loading）也使用flex布局 */
-            align-items: center; /* 垂直居中 */
-            justify-content: center; /* 水平居中 */
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            flex: 1 1 200px;
+            max-width: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* 投影增加层次 */
+            position: relative;
+            overflow: hidden;
         }
+        
+        /* 悬停效果：上浮 + 阴影加深 */
         .interaction-area button:hover {
-            background-color: var(--dark-accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+            background: linear-gradient(135deg, #4a90e2 0%, #6ab0ff 100%); /* 变亮 */
         }
+        
+        /* 针对“沉浸模式”按钮，做差异化处理（幽灵按钮风格），避免喧宾夺主 */
+        .interaction-area button#immersiveModeButton {
+            background: transparent;
+            border: 1px solid var(--dark-accent);
+            color: var(--dark-accent);
+            box-shadow: none;
+        }
+        .interaction-area button#immersiveModeButton:hover {
+            background: rgba(74, 144, 226, 0.1);
+            box-shadow: 0 0 15px rgba(74, 144, 226, 0.2);
+        }
+        
+        /* 针对“获取北极星回复”按钮，做强调处理（更亮的渐变） */
+        .interaction-area button#getAIResponseButton {
+            background: linear-gradient(135deg, #00DFD8 0%, #007cf0 100%); /* 青到蓝的渐变，呼应北极星主题 */
+            color: #000; /* 亮背景配深色字更易读 */
+            font-weight: 700;
+        }
+        .interaction-area button#getAIResponseButton:hover {
+            box-shadow: 0 6px 25px rgba(0, 223, 216, 0.5); /* 青色光晕 */
+        }
+        
         .interaction-area button:disabled {
-            background-color: #555;
-            color: #999;
+            background: #444;
+            color: #888;
+            transform: none;
+            box-shadow: none;
             cursor: not-allowed;
         }
         
