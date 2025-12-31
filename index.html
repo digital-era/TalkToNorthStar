@@ -343,40 +343,53 @@
             border-radius: 8px;
         }
     
+        /* 1. 标签栏容器 */
         .tabs {
             display: flex;
-            border-bottom: 2px solid var(--dark-accent);
-            margin-bottom: 20px;
             flex-wrap: wrap;
+            gap: 10px; /* 按钮之间的间距 */
+            /* 底部保留一条极淡的分割线，作为轨道 */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08); 
+            padding-bottom: 15px; /* 让按钮和分割线有点距离 */
+            margin-bottom: 25px;
         }
     
         /* --- 替换原有的 .tab-button 相关样式 --- */
+        /* 2. 标签按钮（默认状态） */
         .tab-button {
-            padding: 8px 18px;
+            padding: 8px 20px;
             cursor: pointer;
-            border: none;
-            background-color: transparent;
-            color: var(--dark-text-secondary);
-            font-size: 16px;
-            margin-right: 8px;
-            border-radius: 6px; /* 轻微圆角 */
-            position: relative; /* 用于定位下划线 */
+            background-color: transparent; /* 默认无背景 */
+            color: var(--dark-text-secondary); /* 默认灰色文字 */
+            font-size: 1rem;
+            font-weight: 500;
+            border: 1px solid transparent; /* 预留边框位置，防止切换时抖动 */
+            border-radius: 50px; /* 胶囊圆角 */
             transition: all 0.3s ease;
         }
         
+        /* 悬停状态 */
         .tab-button:hover {
-            background-color: rgba(255, 255, 255, 0.08); /* 悬停增加背景 */
-            color: var(--dark-text-primary);
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.05); /* 悬停时微微亮 */
         }
         
+        /* 3. 选中状态（关键修改） */
         .tab-button.active {
-            color: #fff; /* 选中亮白 */
+            color: #fff; /* 文字变白 */
             font-weight: 600;
-            background-color: rgba(74, 144, 226, 0.1); /* 选中微蓝背景 */
-            /* 移除原来的 border-bottom，改用 box-shadow 或伪元素做发光条 */
-            border-bottom: none; 
-            box-shadow: inset 0 -2px 0 var(--dark-accent); /* 底部内发光条 */
-            text-shadow: 0 0 8px rgba(74, 144, 226, 0.6); /* 文字发光 */
+            
+            /* 改动点：增加明显的渐变背景，不再是几乎看不见的透明色 */
+            background: linear-gradient(90deg, rgba(0, 223, 216, 0.15) 0%, rgba(74, 144, 226, 0.15) 100%);
+            
+            /* 改动点：增加边框，让轮廓清晰可见 */
+            border-color: var(--dark-accent);
+            
+            /* 改动点：增加整体微弱发光，而不是只有底部 */
+            box-shadow: 0 0 12px rgba(0, 223, 216, 0.15);
+            
+            /* 移除之前的底部下划线样式，让它看起来是一个整体的块 */
+            border-bottom: 1px solid var(--dark-accent); 
         }
             
         .tab-content { display: none; }
