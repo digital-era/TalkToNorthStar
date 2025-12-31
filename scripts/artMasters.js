@@ -435,7 +435,7 @@ const artMasters = [
         "zh-CN": "当代风格化导演，重塑对话与暴力美学。",
         "en": "Contemporary stylized director, reshaped dialogue and violence aesthetics."
       }
-    },
+    },    
     { id: "david_fincher", name: "David Fincher (大卫·芬奇)",
       contribution: {
         "zh-CN": "执导《七宗罪》《搏击俱乐部》，以心理惊悚片探索人性黑暗面。",
@@ -477,6 +477,20 @@ const artMasters = [
         "zh-CN": "20世纪和21世纪最伟大的电影作曲家之一，深刻影响全球流行文化和电影叙事。",
         "en": "One of the greatest film composers of the 20th and 21st centuries, profoundly influenced global pop culture and cinematic storytelling."
         }
+    },
+    { id: "hans_zimmer", name: "Hans Zimmer (汉斯·季默)",
+      contribution: {
+        "zh-CN": "创作《狮子王》《盗梦空间》《星际穿越》配乐，将电子合成器与宏大管弦乐结合，以极简律动和音色设计重塑商业大片听感。",
+        "en": "Composed The Lion King, Inception, Interstellar scores, reshaped blockbuster soundscapes by blending electronic synthesizers with grand orchestration, focusing on minimalist grooves and sound design."
+      },
+      field: {
+        "zh-CN": "电影配乐、电子管弦乐、极简主义。",
+        "en": "Film Score, Electronic Orchestral, Minimalism."
+      },
+      remarks: {
+        "zh-CN": "好莱坞配乐工业的变革者，开创“音墙”美学，是当代最具商业影响力和辨识度的作曲家。",
+        "en": "A revolutionist in the film scoring industry; pioneered the 'Wall of Sound' aesthetic and stands as the most commercially influential contemporary composer."
+      }
     },
     { id: "james_horner", name: "James Horner (詹姆斯·霍纳)",
       contribution: {
