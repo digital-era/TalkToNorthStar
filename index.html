@@ -122,44 +122,69 @@
     
         .top-right-controls {
             position: absolute;
-            top: 20px; /* 保持与原代码一致 */
-            right: 20px; /* 保持与原代码一致 */
-            display: flex; /* 改回 flex，因为按钮要水平对齐 */
+            top: 20px;
+            right: 20px;
+            display: flex;
             align-items: center;
-            gap: 12px; /* 稍微拉近一点间距 */
+            gap: 15px; /* 按钮间距 */
             z-index: 10;
         }
-        /* 统一右上角三个元素的样式：了解我们、设置、语言选择 */
-        .about-us-button, 
-        .settings-link, 
-        .language-selector {
+
+        /* --- 统一的圆形图标按钮样式 --- */
+        .icon-btn {
+            width: 40px;  /* 固定宽度 */
+            height: 40px; /* 固定高度，确保正圆 */
+            border-radius: 50%; /* 变成圆形 */
+            
+            background-color: rgba(255, 255, 255, 0.05); /* 极淡背景 */
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             color: var(--dark-text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            background-color: rgba(255, 255, 255, 0.05); /* 极淡的透明背景 */
-            backdrop-filter: blur(4px); /* 磨砂玻璃效果 */
-            padding: 6px 16px; /* 调整内边距 */
-            border-radius: 50px; /* 胶囊圆角 */
-            border: 1px solid rgba(255, 255, 255, 0.15); /* 更柔和的边框 */
+            
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
-            height: 36px; /* 强制统一高度 */
-            box-sizing: border-box;
+            text-decoration: none; /* 去掉链接下划线 */
+            font-size: 1.1rem; /* 图标稍微大一点 */
+            padding: 0; /* 移除内边距 */
+            position: relative; /* 为语言下拉框定位做准备 */
         }
-     
-        /* 针对 Select 元素的特殊修正，去掉默认下拉箭头背景色 */
-        .language-selector {
-            appearance: none; /* 移除浏览器默认样式 */
+        
+        /* 悬停效果 */
+        .icon-btn:hover {
+            color: #fff;
+            background-color: var(--dark-accent); /* 悬停变亮色 */
+            border-color: var(--dark-accent);
+            box-shadow: 0 0 15px var(--dark-accent); /* 发光 */
+            transform: rotate(15deg); /* 增加一点俏皮的旋转 */
+        }
+        
+        /* --- 语言选择器的特殊处理 (核心修改) --- */
+        .language-wrapper select {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0; /* 关键：完全透明，但仍然可以点击 */
+            cursor: pointer;
+            appearance: none; /* 移除默认样式 */
             -webkit-appearance: none;
-            padding-right: 30px; /* 为自定义箭头留空间 */
-            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23b0b0b0%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
-            background-repeat: no-repeat;
-            background-position: right 10px top 50%;
-            background-size: 10px auto;
+            z-index: 2; /* 确保在图标之上 */
+        }
+        
+        /* --- 修复下拉菜单看不清的问题 --- */
+        /* 这里强制设置下拉选项的背景色和文字颜色 */
+        #languageSelector {
+            color-scheme: dark; /* 告诉浏览器这是暗色控件，滚动条和箭头会自动变黑底 */
+        }
+        
+        #languageSelector option {
+            background-color: #1e1e1e; /* 下拉菜单背景：深灰 */
+            color: #f0f0f0;            /* 下拉菜单文字：亮白 */
+            padding: 10px;
         }
         
         .about-us-button:hover, 
@@ -938,19 +963,26 @@
             <img src="images/TalktoNorthStarIcon.png" alt="Talk to NorthStar Logo">
         </div>
         <div class="top-right-controls">
-            <!-- “了解我们”按钮现在在这里，并放在最左边 -->
-            <button class="about-us-button" onclick="openManifestoModal()">
+            <!-- 1. 了解我们：去掉文字 span，只留图标，增加 title 提示 -->
+            <button class="icon-btn" onclick="openManifestoModal()" title="了解我们">
                 <i class="fas fa-book-open"></i>                 
-                <span data-i18n-key="aboutBtnText">了解我们</span>
             </button>
-            <a href="#" onclick="openApiSettingsModal(event)" class="settings-link">
+        
+            <!-- 2. 设置：去掉文字 span，只留图标 -->
+            <a href="#" onclick="openApiSettingsModal(event)" class="icon-btn" title="设置">
                 <i class="fas fa-cog"></i>
-                <span data-i18n-key="settingsBtnText">设置</span>
             </a>
-            <select id="languageSelector" class="language-selector" onchange="setLanguage(this.value)">
-                <option value="zh-CN">简体中文</option>
-                <option value="en">English</option>
-            </select>
+        
+            <!-- 3. 语言：图标 + 透明下拉框组合 -->
+            <div class="icon-btn language-wrapper" title="切换语言">
+                <!-- 新增的语言图标 -->
+                <i class="fas fa-globe"></i>
+                <!-- 原有的 select，但移除了 visible class，通过 CSS 隐藏外观 -->
+                <select id="languageSelector" onchange="setLanguage(this.value)">
+                    <option value="zh-CN">简体中文</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
         </div>
         <!-- h1 保持原位，但会通过 margin-top 被向下推 -->
         <h1 data-i18n-key="headerTitleComplete" data-i18n-target="innerHTML">对话北极星</h1>
