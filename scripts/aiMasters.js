@@ -407,16 +407,16 @@ const aiMasters = [
     },
     {  id: "josh_woodward", name: "Josh Woodward (乔什·伍德沃德)",
       contribution: {
-        "zh-CN": "Google Labs副总裁兼Gemini应用负责人，推动NotebookLM等实验性AI产品爆款化，领导Gemini应用从研究向大规模消费级产品的快速转化，显著提升Google在生成式AI领域的用户规模与产品迭代速度。",
-        "en": "Vice President of Google Labs and head of the Gemini app, drove viral success of experimental AI products like NotebookLM, led rapid transformation of Gemini from research to large-scale consumer product, significantly expanding Google's generative AI user base and iteration speed."
+        "zh-CN": "Google Labs副总裁兼Gemini应用负责人，推动NotebookLM等实验性AI产品爆款化，领导Gemini应用快速产品化。",
+        "en": "Vice President of Google Labs and head of the Gemini app, drove viral success of experimental AI products like NotebookLM, led rapid productization of Gemini application。"
       },
       field: {
         "zh-CN": "人工智能（消费级AI产品、实验性AI应用、快速原型开发）。",
         "en": "Artificial Intelligence (Consumer AI Products, Experimental AI Applications, Rapid Prototyping)."
       },
       remarks: {
-        "zh-CN": "以极致速度与创业式文化著称，将DeepMind研究成果高效转化为用户可感知产品，被誉为Google内部最具执行力与受欢迎的产品领导者之一。",
-        "en": "Renowned for extreme velocity and startup-like culture, efficiently converting DeepMind research into tangible user products; widely regarded as one of Google's most effective and beloved product leaders."
+        "zh-CN": "以极致速度与创业式文化著称，将DeepMind研究成果高效转化为用户可感知产品。",
+        "en": "Renowned for extreme velocity and startup-like culture, efficiently converting DeepMind research into tangible user products."
       }
     },
     { id: "david_silver", name: "David Silver (大卫·西尔弗)",
