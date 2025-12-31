@@ -139,6 +139,21 @@ const artMasters = [
         "en": "Mexican art icon, feminist and nationalist pioneer."
       }
     },
+    {"id": "johann_sebastian_bach",
+      "name": "Johann Sebastian Bach (约翰内斯·塞巴斯蒂安·巴赫)",
+      "contribution": {
+        "zh-CN": "创作《平均律键盘曲集》《B小调弥撒》《马太受难曲》，以对位法与复调艺术奠定巴洛克音乐巅峰。",
+        "en": "Composed The Well-Tempered Clavier, Mass in B minor, St. Matthew Passion, established the pinnacle of Baroque music through counterpoint and polyphony."
+      },
+      "field": {
+        "zh-CN": "键盘音乐、宗教音乐、管弦乐、巴洛克音乐。",
+        "en": "Keyboard Music, Sacred Music, Orchestral Music, Baroque Music."
+      },
+      "remarks": {
+        "zh-CN": "西方音乐之父，对位大师，其作品影响古典音乐发展至深远。",
+        "en": "Father of Western music, master of counterpoint, whose works profoundly shaped the evolution of classical music."
+      }
+    },
     { id: "wolfgang_amadeus_mozart", name: "Wolfgang Amadeus Mozart (沃尔夫冈·阿马德乌斯·莫扎特)",
       contribution: {
         "zh-CN": "创作《魔笛》《安魂曲》，以钢琴协奏曲与歌剧革新古典音乐。",
@@ -179,6 +194,22 @@ const artMasters = [
       remarks: {
         "zh-CN": "浪漫派钢琴大师，影响现代钢琴演奏技艺。",
         "en": "Romantic piano master, shaped modern piano technique."
+      }
+    },
+    {
+      "id": "johannes_brahms",
+      "name": "Johannes Brahms (约翰内斯·勃拉姆斯)",
+      "contribution": {
+        "zh-CN": "创作四首交响曲《德意志安魂曲》《c小调第一交响曲》，融合古典结构与浪漫情感，延续贝多芬传统。",
+        "en": "Composed four symphonies, German Requiem, Symphony No. 1 in C minor, blended Classical structure with Romantic emotion, continuing Beethoven's tradition."
+      },
+      "field": {
+        "zh-CN": "交响乐、室内乐、钢琴音乐、浪漫主义音乐。",
+        "en": "Symphony, Chamber Music, Piano Music, Romantic Music."
+      },
+      "remarks": {
+        "zh-CN": "古典形式在浪漫时期的伟大继承者，作品严谨深刻，被誉为“三B”之一。",
+        "en": "Great heir of Classical forms in the Romantic era, rigorous and profound works, regarded as one of the 'Three Bs'."
       }
     },
     { id: "paul_rand", name: "Paul Rand (保罗·兰德)",
