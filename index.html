@@ -40,685 +40,474 @@
 
  <style>
         /* (CSS 部分保持不变) */
-        /* --- DARK THEME VARIABLES --- */
+        /* --- DARK THEME VARIABLES (微调色彩) --- */
         :root {
-            --dark-bg: #1e1e1e; /* 更深的背景 */
-            --dark-surface: #2a2a2a; /* 容器、卡片等表面 */
-            --dark-surface-light: #333333; /* 卡片等稍亮一点的表面 */
-            --dark-text-primary: #e0e0e0; /* 主要文字颜色 */
-            --dark-text-secondary: #b0b0b0; /* 次要文字颜色 */
-            --dark-border: #444444; /* 边框颜色 */
-            --dark-accent: #4a90e2; /* 强调色，蓝色 */
-            --dark-accent-hover: #3a7bc8; /* 强调色悬停 */
-            --dark-selected-bg: #004a8e; /* 选中项背景 */
-            --dark-field-text: #4a90e2; /* 领域文本颜色 (原绿色系66bb6a调整为蓝色，调整亮度) */
-            --dark-remarks-border: #00DFD8; /* 备注边框 (原黄色系#ffca28，修改为#00DFD8 Bright Cyan, 调整亮度 ) */
-            --dark-remarks-text: #bdbdbd; /* 备注文本 */
-            --dark-input-bg: #3a3a3a; /* 输入框背景 */
-            --dark-input-border: #555555; /* 输入框边框 */
-            --dark-pre-bg: #1c1c1c; /* pre标签背景 */
-            --dark-pre-border: #383838; /* pre标签边框 */
+            --dark-bg: #121212; /* 更深邃的黑 */
+            --dark-bg-gradient: radial-gradient(circle at 50% 0%, #2a2a2a 0%, #121212 80%); /* 新增：背景光晕 */
+            --dark-surface: rgba(40, 40, 40, 0.6); /* 半透明表面 */
+            --dark-surface-light: rgba(255, 255, 255, 0.05); /* 极淡的白色叠加 */
+            --dark-text-primary: #f0f0f0; 
+            --dark-text-secondary: #a0a0a0; 
+            --dark-border: rgba(255, 255, 255, 0.1); /* 更柔和的边框 */
+            --dark-accent: #00d2ff; /* 调整为更亮的青蓝色 */
+            --dark-accent-gradient: linear-gradient(135deg, #00d2ff 0%, #3a7bc8 100%); /* 新增：按钮渐变 */
+            --dark-accent-hover: #7928CA; 
+            --dark-selected-bg: rgba(0, 210, 255, 0.15); 
+            --dark-selected-border: #00d2ff;
+            --dark-field-text: #64b5f6; 
+            --dark-remarks-border: #00DFD8; 
+            --dark-remarks-text: #9e9e9e; 
+            --dark-input-bg: rgba(0, 0, 0, 0.3); 
+            --dark-input-border: rgba(255, 255, 255, 0.15); 
+            --dark-pre-bg: rgba(0, 0, 0, 0.4); 
+            --dark-pre-border: rgba(255, 255, 255, 0.1); 
             
-            /* --- [新增] 定义小说风格的字体变量 --- */
-            --font-family-novel: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+            --glass-blur: blur(12px); /* 磨砂效果 */
+            --box-shadow-card: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            
+            --font-family-novel: "Merriweather", "Georgia", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, serif; /* 优化阅读字体 */
         }
     
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', 'Segoe UI', sans-serif; /* 全局字体更现代 */
             margin: 0;
             padding: 0;
-            background-color: var(--dark-bg); /* DARK */
-            color: var(--dark-text-primary);   /* DARK */
-            line-height: 1.6;
+            background-color: var(--dark-bg);
+            background-image: var(--dark-bg-gradient); /* 应用背景渐变 */
+            background-attachment: fixed; /* 背景固定 */
+            color: var(--dark-text-primary);
+            line-height: 1.7;
+            min-height: 100vh;
         }
         
         /* --- Header & Controls --- */
         header {
             text-align: center;
-            padding: 20px 0; /* 保持原有的垂直内边距 */
+            padding: 20px 0;
             margin: 0 auto;
             position: relative;
             max-width: 1200px;
         }
         
-        /* --- Logo Styles --- */
         .logo-container {
             position: absolute;
-            top: 1px; /* 调整 Logo 的 top 值从20-》1，使其与按钮的底部对齐 */
-            left: 20px; /* 左侧距离 */
-            z-index: 20; /* 确保在其他内容之上 */
-            display: flex; /* 让logo内部的img居中 */
+            top: 15px;
+            left: 20px;
+            z-index: 20;
+            display: flex;
             align-items: center; 
             justify-content: center;
+            /* 增加 Logo 阴影 */
+            filter: drop-shadow(0 0 8px rgba(0, 223, 216, 0.3));
         }
         .logo-container img {
-            height: 70px;
+            height: 60px; /* 稍微调小一点更精致 */
             width: auto;
-            border-radius: 5px;
+            border-radius: 8px; /* 圆角加大 */
         }
         
-        /* 标题现在独立于 Logo 容器，并使用 h1 标签 */
         h1 {
             font-family: 'Poppins', sans-serif;
             text-align: center;
-            margin-top: 80px; /* 根据实际 Logo 和按钮高度调整，从100-》80 */
-            margin-bottom: 1px; /* 增加一点底部边距，与下方内容隔开，从20-》1 */
-            font-size: 2.4em;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            line-height: 1.3;
+            margin-top: 60px;
+            margin-bottom: 20px;
+            font-size: 2.8em; /* 字体加大 */
+            font-weight: 700;
+            letter-spacing: 1px;
+            line-height: 1.2;
             background: linear-gradient(
                 90deg,               
-                #00DFD8, /* 亮青色 */
-                #7928CA  /* 紫色 */
+                #00DFD8, 
+                #ffffff,
+                #7928CA  
             );
             background-size: 200% auto;
             color: transparent;
             -webkit-background-clip: text;
             background-clip: text;
-            animation: colorWave 7s linear infinite;
-            -webkit-animation: colorWave 7s linear infinite;
+            animation: colorWave 5s linear infinite;
+            text-shadow: 0 0 30px rgba(0, 223, 216, 0.2); /* 增加文字发光 */
         }
     
         .top-right-controls {
             position: absolute;
-            top: 20px; /* 保持与原代码一致 */
-            right: 20px; /* 保持与原代码一致 */
-            display: flex; /* 改回 flex，因为按钮要水平对齐 */
+            top: 20px;
+            right: 20px;
+            display: flex;
             align-items: center;
-            gap: 15px; /* 按钮之间间距 */
+            gap: 12px;
             z-index: 10;
         }
-        /* 修改：了解我们按钮样式，与其他按钮保持一致 */
-        .about-us-button {
-            color: var(--dark-text-secondary); /* 文本颜色 */
-            text-decoration: none;
-            font-size: 1rem;
-            transition: color 0.3s, border-color 0.3s, background-color 0.3s;
-            background-color: var(--dark-surface-light); /* 背景色 */
-            padding: 8px 15px;
-            border-radius: 5px;
-            border: 1px solid var(--dark-border); /* 边框 */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            cursor: pointer; /* 添加指针样式 */
-        }
-
-        .about-us-button:hover {
-            color: var(--dark-accent); /* 悬停时强调色 */
-            border-color: var(--dark-accent); /* 悬停时边框颜色 */
-            background-color: var(--dark-surface-light); /* 保持背景色不变或微调 */
-            transform: none; /* 移除原来的 translateY 效果 */
-        }
-    
-       .settings-link {
+        
+        /* 统一右上角按钮样式 */
+        .about-us-button, .settings-link, .language-selector {
             color: var(--dark-text-secondary);
             text-decoration: none;
-            font-size: 1rem;
-            transition: color 0.3s, border-color 0.3s, background-color 0.3s;
-            background-color: var(--dark-surface-light);
-            padding: 8px 15px;
-            border-radius: 5px;
-            border: 1px solid var(--dark-border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .settings-link:hover {
-            color: var(--dark-accent);
-            border-color: var(--dark-accent);
-        }
-        .settings-link .fa-cog {
-            margin-right: 6px;
-        }
-        
-         .language-selector {
-            padding: 8px;
-            background-color: var(--dark-input-bg);
-            color: var(--dark-text-primary);
-            border: 1px solid var(--dark-border);
-            border-radius: 5px;
             font-size: 0.9rem;
-            cursor: pointer;
-            box-sizing: border-box;
-            width: auto;
-        }
-        .language-selector:hover {
-            border-color: var(--dark-accent);
-        }
-        
-        /* --- Modal Styles (No changes below this point) --- */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0; top: 0;
-            width: 100%; height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.7);
-            animation: fadeIn 0.3s;
-        }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    
-        .modal-content {
-            background-color: var(--dark-surface);
-            margin: 15% auto;
-            padding: 30px;
+            transition: all 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.05); /* 极淡背景 */
+            backdrop-filter: blur(5px);
+            padding: 8px 16px;
+            border-radius: 20px; /* 胶囊形状 */
             border: 1px solid var(--dark-border);
-            width: 90%;
-            max-width: 500px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            position: relative;
-        }
-        /* 新增：了解我们模态框的特定样式 */
-        .manifesto-modal .modal-content {
-            max-width: 700px; /* 宣言模态框可以更宽 */
-            margin: 8% auto; /* 稍微向上移动，并居中 */
-            background-color: var(--dark-surface-light); /* 稍亮的背景 */
-            border: 1px solid var(--dark-border); /* 修改边框颜色 */
-        }
-        .manifesto-modal .manifesto-text {
-            font-family: var(--font-family-novel); /* 使用小说风格字体 */
-            color: var(--dark-text-primary);
-            font-size: 1.1em;
-            line-height: 1.8;
-            padding: 10px;
-            max-height: 70vh; /* 限制高度并允许滚动 */
-            overflow-y: auto;
-            text-align: justify; /* 两端对齐 */
-        }
-        .manifesto-modal h2 {
-            font-family: 'Poppins', sans-serif;
-            color: var(--dark-accent);
-            text-align: center;
-            margin-bottom: 25px;
-            font-size: 1.8em;
-            letter-spacing: 0.8px;
-            line-height: 1.4;
-            background: linear-gradient(
-                90deg,               
-                #00DFD8, /* 亮青色 */
-                #7928CA  /* 紫色 */
-            );
-            background-size: 200% auto;
-            color: transparent;
-            -webkit-background-clip: text;
-            background-clip: text;
-            animation: colorWave 7s linear infinite;
-            -webkit-animation: colorWave 7s linear infinite;
-        }
-        .manifesto-modal p {
-            margin-bottom: 1.2em;
-        }
-        .manifesto-modal p.conclusion {
-            text-align: center;
-            font-style: italic;
-            font-weight: bold;
-            color: var(--dark-remarks-border); /* 使用备注边框的颜色作为强调 */
-            margin-top: 30px;
-            font-size: 1.2em;
-        }
-
-         .modal-section-title {
-            font-family: 'Poppins', sans-serif;
-            color: var(--dark-accent); /* 固定为强调蓝色 */
-            font-size: 1.1em;
-            margin: 20px 0 10px 0;
-            letter-spacing: 0.5px;
-            /* 移除渐变相关属性 */
-            font-weight: bold;
-            display: block;
-        }
-        .close-button {
-            color: var(--dark-text-secondary);
-            position: absolute;
-            top: 0px; 
-            right: 5px;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        .close-button:hover { color: var(--dark-text-primary); }
-    
-        .modal h2 {
-            margin-top: 0;
-            margin-bottom: 25px;
-            color: var(--dark-accent);
-            display: flex;
-            align-items: center;
-        }
-        .modal h2 .fa-cog {
-            margin-right: 12px;
-        }
-    
-        .settings-form .form-group {
-            margin-bottom: 20px;
-        }
-        .settings-form label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: var(--dark-text-primary);
-        }
-        .settings-form select, .settings-form input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            background-color: var(--dark-input-bg);
-            border: 1px solid var(--dark-input-border);
-            border-radius: 4px;
-            color: var(--dark-text-primary);
-            font-size: 1rem;
-            box-sizing: border-box;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-        .settings-form select:focus, .settings-form input[type="password"]:focus {
-            outline: none;
-            border-color: var(--dark-accent);
-            box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.3);
-        }
-    
-        .settings-form .save-btn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 4px;
-            color: #ffffff;
-            background-color: var(--dark-accent);
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-        }
-        .settings-form .save-btn:hover {
-            background-color: var(--dark-accent-hover);
+            cursor: pointer;
         }
     
-        @keyframes colorWave {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
+        .about-us-button:hover, .settings-link:hover, .language-selector:hover {
+            color: #fff;
+            border-color: var(--dark-accent);
+            background-color: rgba(0, 210, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.2); /* 悬停发光 */
         }
-    
+        
+        /* --- Container (卡片容器) --- */
         .container {
             width: 90%;
             max-width: 1200px;
-            margin: 20px auto;
-            padding: 20px;
+            margin: 20px auto 40px auto;
+            padding: 30px;
             background-color: var(--dark-surface);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
+            backdrop-filter: var(--glass-blur); /* 核心：磨砂玻璃 */
+            -webkit-backdrop-filter: var(--glass-blur);
+            box-shadow: var(--box-shadow-card);
+            border-radius: 16px; /* 更大的圆角 */
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
     
+        /* --- Tabs (标签页) --- */
         .tabs {
             display: flex;
-            border-bottom: 2px solid var(--dark-accent);
-            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 25px;
             flex-wrap: wrap;
+            padding-bottom: 5px;
+            gap: 10px;
         }
     
         .tab-button {
-            padding: 10px 20px;
+            padding: 8px 16px;
             cursor: pointer;
             border: none;
             background-color: transparent;
             color: var(--dark-text-secondary);
-            font-size: 16px;
-            margin-right: 5px;
-            border-bottom: 2px solid transparent;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: 8px;
             transition: all 0.3s ease;
-            margin-bottom: 5px;
+            position: relative;
         }
     
         .tab-button:hover {
-            background-color: var(--dark-surface-light);
             color: var(--dark-text-primary);
+            background-color: rgba(255, 255, 255, 0.05);
         }
     
         .tab-button.active {
-            border-bottom-color: var(--dark-accent);
-            font-weight: bold;
-            color: var(--dark-accent);
+            color: var(--dark-bg);
+            background: var(--dark-accent-gradient); /* 选中变为渐变色块 */
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
         }
-    
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
     
         .tab-content h2 {
-            color: var(--dark-accent);
-            margin-top: 0;
-            margin-bottom: 15px;
-            font-size: 1.5em;
+            color: var(--dark-text-primary);
+            margin-top: 10px;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            font-weight: 300; /* 细字体更有质感 */
+            letter-spacing: 0.5px;
+            border-left: 4px solid var(--dark-accent);
+            padding-left: 15px;
         }
     
+        /* --- Leader Grid (人物卡片) --- */
         .leader-scroll-container {
             position: relative;
-            margin-bottom: 20px;
-            padding: 0 40px;
+            margin-bottom: 30px;
+            padding: 0 50px; /* 给左右按钮留空间 */
         }
     
         .leader-grid {
             display: flex;
             overflow-x: auto;
-            overflow-y: hidden;
-            padding: 10px 0;
-            gap: 20px;
-            border-radius: 4px;
+            padding: 15px 5px; /* 上下留空间给阴影 */
+            gap: 25px;
             scroll-behavior: smooth;
-            -ms-overflow-style: none;
             scrollbar-width: none;
         }
         .leader-grid::-webkit-scrollbar { display: none; }
     
         .leader-card {
             border: 1px solid var(--dark-border);
-            border-radius: 8px;
-            padding: 15px;
-            background-color: var(--dark-surface-light);
+            border-radius: 12px;
+            padding: 20px;
+            background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%); /* 微妙渐变 */
             color: var(--dark-text-primary);
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            flex: 0 0 300px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 弹性动画 */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            flex: 0 0 280px;
             min-height: 280px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            position: relative;
+            overflow: hidden;
         }
     
-        .leader-card:hover, .leader-card.selected {
+        .leader-card:hover {
             border-color: var(--dark-accent);
-            box-shadow: 0 4px 10px rgba(0, 149, 255, 0.3);
-            transform: translateY(-3px);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 210, 255, 0.15);
+            background: rgba(255, 255, 255, 0.05);
         }
+    
         .leader-card.selected {
-                background-color: var(--dark-selected-bg);
+            background-color: var(--dark-selected-bg);
+            border: 1px solid var(--dark-selected-border);
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.2) inset; /* 内发光 */
         }
     
         .leader-card h3 {
             margin-top: 0;
-            color: var(--dark-accent);
-            font-size: 1.1em;
+            color: #fff;
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 10px;
         }
     
         .leader-card p {
             font-size: 0.9em;
-            margin-bottom: 8px;
-            color: var(--dark-text-secondary);
-            flex-grow: 1;
+            color: #ccc;
+            line-height: 1.5;
         }
+        
         .leader-card .field {
-            font-style: italic;
-            color: var(--dark-field-text);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.85em;
+            color: var(--dark-accent);
             margin-top: auto;
+            font-weight: 500;
+            opacity: 0.9;
         }
+        
         .leader-card .remarks {
             font-size: 0.8em;
             color: var(--dark-remarks-text);
-            border-left: 3px solid var(--dark-remarks-border);
+            border-left: 2px solid var(--dark-remarks-border);
             padding-left: 10px;
-            margin-top: 10px;
+            margin-top: 15px;
+            background: rgba(0,0,0,0.2);
+            padding: 8px;
+            border-radius: 0 4px 4px 0;
         }
     
         .scroll-button {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: rgba(50, 50, 50, 0.8);
+            background-color: rgba(30, 30, 30, 0.8);
+            backdrop-filter: blur(4px);
             color: var(--dark-text-primary);
             border: 1px solid var(--dark-border);
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.3s, box-shadow 0.3s, width 0.3s, height 0.3s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            border-radius: 50%; /* 纯圆 */
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         .scroll-button:hover {
             background-color: var(--dark-accent);
-            color: var(--dark-bg);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            color: #fff;
+            transform: translateY(-50%) scale(1.1);
+            border-color: var(--dark-accent);
         }
-        .scroll-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .scroll-button.left { left: 0px; }
-        .scroll-button.right { right: 0px; }
     
+        /* --- Interaction Area (交互区) --- */
         .interaction-area {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid var(--dark-border);
-        }
-    
-        .interaction-area h2 {
-            color: var(--dark-accent);
-            margin-top: 0;
-            font-size: 1.5em;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
         
-        /* Shared styles for textareas */
-        .interaction-area textarea {
-            width: 100%;
-            box-sizing: border-box;
-            min-height: 80px;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid var(--dark-input-border);
-            margin-bottom: 15px;
-            font-size: 1em;
-            background-color: var(--dark-input-bg);
-            color: var(--dark-text-primary);
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-            line-height: 1.5;
-        }
-
-        .interaction-area textarea::placeholder {
-            color: var(--dark-text-secondary);
-        }
-    
-        .interaction-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-            justify-content: center; /* 让按钮在容器中居中 */
-        }
-    
-        .interaction-area button {
-            padding: 10px 15px;
-            background-color: var(--dark-accent);
-            color: var(--dark-bg);
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.95em;
-            transition: background-color 0.3s ease;
-            flex: 1 1 200px; /* 确保宽度一致性 */
-            box-sizing: border-box;
-            max-width: 250px; /* 增加一个最大宽度，防止按钮在宽屏上过长 */
-            text-align: center; /* 文本居中 */
-            display: flex; /* 让按钮内容（文本和loading）也使用flex布局 */
-            align-items: center; /* 垂直居中 */
-            justify-content: center; /* 水平居中 */
-        }
-        .interaction-area button:hover {
-            background-color: var(--dark-accent-hover);
-        }
-        .interaction-area button:disabled {
-            background-color: #555;
-            color: #999;
-            cursor: not-allowed;
-        }
-        
-        /* --- 修改开始：调整选中北极星信息的样式支持 Flex 布局 --- */
         #selected-leader-info {
-            margin-bottom: 15px;
-            padding: 10px;
-            background-color: var(--dark-surface-light);
-            border-radius: 4px;
-            font-weight: bold;
+            margin-bottom: 20px;
+            padding: 12px 20px;
+            background: rgba(0, 223, 216, 0.05); /* 极淡青色背景 */
+            border-radius: 8px;
+            border: 1px solid rgba(0, 223, 216, 0.2);
             color: var(--dark-text-primary);
-            /* 新增 Flex 布局以实现左右对齐 */
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-
-        /* 新增：右侧拷贝小图标的样式 */
-        .copy-leader-btn {
-            cursor: pointer;
-            color: var(--dark-text-secondary);
-            font-size: 1.1em;
-            padding: 5px;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-        }
-        .copy-leader-btn:hover {
-            color: var(--dark-accent);
-            background-color: rgba(255, 255, 255, 0.1);
-            transform: scale(1.1);
-        }
-        /* --- 修改结束 --- */
     
-        .response-display {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: var(--dark-surface);
-            border: 1px solid var(--dark-border);
-            border-radius: 4px;
-        }
-        .response-display h4 {
-            margin-top:0;
-            color: var(--dark-text-primary);
-        }
-        
-        /* --- MODIFICATION START: Styles for aiResponseText (was pre) --- */
-        #aiResponseText {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            background-color: var(--dark-pre-bg);
-            padding: 10px;
-            border: 1px solid var(--dark-pre-border);
-            border-radius: 4px;
-            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-            font-size: 0.9em;
-            color: var(--dark-text-secondary);
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        /* --- MODIFICATION END --- */
-       
-         /* 提示词区域的头部悬停效果 */
-        .collapsible-header:hover h4 {
-            color: var(--dark-accent);
-        }
-        
-        .collapsible-header:hover #prompt-toggle-icon {
-            color: var(--dark-accent);
-        }
-        
-        /* 箭头旋转动画类 */
-        .icon-rotated {
-            transform: rotate(180deg);
-        }
-     
-        /* --- [新增] 统一输入框与答复框为小说阅读字体风格 --- */
-        #userQuestion, 
-        #generatedPromptText, 
-        #aiResponseText {
-            font-family: var(--font-family-novel);
-            font-size: 1.05rem; /* 稍大字体 */
-            line-height: 1.7;   /* 更宽松的行高 */
-            text-align: justify;/* 两端对齐 */
-            color: var(--dark-text-primary); /* 确保文字颜色为主要文字颜色 */
-        }
-        /* Make the prompt textarea taller */
-        /* 调整提示词文本框，确保在展开时显示正确 */
-        #generatedPromptText {
+        /* 文本输入框优化 */
+        .interaction-area textarea {
             width: 100%;
             box-sizing: border-box;
-            min-height: 200px; /* Increased height for better editing */
-        }
-        /* --- [新增] 结束 --- */
-
-        /* 覆盖 Manifesto 模式对 H2 的特殊处理 */
-        #immersiveModal h2 {
-            font-family: 'Poppins', sans-serif;
-            color: var(--dark-accent);
-            /* 继承渐变，但调整为字体大小和对齐 */
-            font-size: 1.8em; /* H2 保持比 H3/H4 稍大，但用通用样式 */
-            text-align: center; /* 保持居中 */
-            margin: 0 0 25px 0; /* 恢复标题居中边距 */
-            letter-spacing: 0.8px; 
-            /* 渐变效果已在 .manifesto-modal h2 定义，无需重复 */
-        }
-        
-        /* 覆盖 Manifesto 模式的正文和 Blockquote 样式，使其更像标准特性列表 */
-        #immersiveModal .manifesto-text p {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            text-align: left; 
-            line-height: 1.6; 
-            font-size: 1.05rem; /* 保持与输入框等一致 */
-        }
-        
-        #immersiveModal .manifesto-text blockquote {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            font-size: 1em; 
-            line-height: 1.6; 
-            text-align: left; 
-            border-left: 4px solid var(--dark-accent); 
-            padding: 10px 15px; 
-            margin: 15px 0 25px 0; 
-            color: var(--dark-text-primary); /* === 修改为纯白色（主文本颜色） === */
-            background-color: var(--dark-surface); 
-            border-radius: 0 4px 4px 0; 
-        }
-        
-        /* 确保 manifesto-text 区域也恢复标准字体和对齐 */
-        #immersiveModal .manifesto-text {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            text-align: left;
+            min-height: 100px;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--dark-input-border);
+            border-bottom: 2px solid var(--dark-input-border); /* 底部边框加粗 */
+            margin-bottom: 20px;
             font-size: 1.05rem;
-        }
-
-        .loading-spinner {
-            border: 4px solid #555;
-            border-top: 4px solid var(--dark-accent);
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            margin-left: 10px;
-            vertical-align: middle;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            background-color: var(--dark-input-bg);
+            color: #fff;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
         }
     
-        footer {
-            text-align: left;
-            padding: 20px 50px;
-            background: rgba(0, 0, 0, 0.5);
+        .interaction-area textarea:focus {
+            outline: none;
+            border-bottom-color: var(--dark-accent);
+            background-color: rgba(0,0,0,0.5);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3), 0 5px 15px rgba(0,0,0,0.1);
         }
     
+        /* 按钮优化 */
+        .interaction-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+    
+        .interaction-area button {
+            padding: 12px 25px;
+            background: var(--dark-surface-light); /* 默认半透明 */
+            color: var(--dark-text-primary);
+            border: 1px solid var(--dark-border);
+            border-radius: 30px; /* 大圆角 */
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            flex: 1 1 auto;
+            max-width: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+    
+        /* 主要操作按钮使用渐变 */
+        .interaction-area button#getAIResponseButton {
+            background: var(--dark-accent-gradient);
+            border: none;
+            color: #000; /* 文字反色 */
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
+        }
+    
+        .interaction-area button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+        
+        .interaction-area button#getAIResponseButton:hover {
+            box-shadow: 0 6px 25px rgba(0, 210, 255, 0.5);
+        }
+    
+        /* 回复区域优化 */
+        .response-display {
+            margin-top: 25px;
+            padding: 25px;
+            background-color: rgba(20, 20, 20, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            position: relative;
+        }
+        
+        /* 左侧装饰条 */
+        .response-display::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 20px;
+            bottom: 20px;
+            width: 3px;
+            background: var(--dark-accent);
+            border-radius: 0 3px 3px 0;
+            box-shadow: 0 0 10px var(--dark-accent);
+        }
+    
+        .response-display h4 {
+            margin-top: 0;
+            color: var(--dark-accent);
+            font-size: 1.1em;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+    
+        #aiResponseText, #generatedPromptText {
+            font-family: var(--font-family-novel); /* 使用优化后的阅读字体 */
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #e0e0e0;
+            background: transparent;
+            border: none;
+            padding: 0;
+            max-height: 500px;
+        }
+    
+        /* --- Modal Styles (模态框优化) --- */
+        .modal {
+            background-color: rgba(0,0,0,0.85); /* 背景更黑 */
+            backdrop-filter: blur(5px);
+        }
+    
+        .modal-content {
+            background: #1e1e1e;
+            border: 1px solid var(--dark-border);
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+    
+        /* 模态框内的输入框 */
+        .settings-form select, .settings-form input[type="password"] {
+            background-color: rgba(0,0,0,0.3);
+            border: 1px solid #444;
+            border-radius: 6px;
+            color: #fff;
+        }
+    
+        .settings-form .save-btn {
+            background: var(--dark-accent-gradient);
+            border-radius: 6px;
+            color: #000;
+            font-weight: bold;
+        }
+    
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #444; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--dark-accent); 
+        }
+    
+        @keyframes colorWave {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
         /* 媒体查询，在小屏幕上调整布局 */
         @media (max-width: 768px) {
              header {
