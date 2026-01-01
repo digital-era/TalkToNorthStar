@@ -698,15 +698,32 @@
         /* --- 修改开始：调整选中北极星信息的样式支持 Flex 布局 --- */
         #selected-leader-info {
             margin-bottom: 15px;
-            padding: 10px;
-            background-color: var(--dark-surface-light);
-            border-radius: 4px;
-            font-weight: bold;
-            color: var(--dark-text-primary);
-            /* 新增 Flex 布局以实现左右对齐 */
+            padding: 12px 10px; /* 稍微增加一点高度 */    
+            /* === 修改背景：极淡的青色渐变，像一道光束 === */
+            background: linear-gradient(90deg, rgba(0, 223, 216, 0.08) 0%, rgba(0, 0, 0, 0) 80%);
+            
+            /* === 修改边框：只保留左侧和底部，更有设计感 === */
+            border-radius: 0 4px 4px 0;
+            border-left: 3px solid var(--dark-accent); /* 左侧亮条 */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            
+            /* 文字颜色调整 */
+            color: var(--dark-text-secondary); /* 标签文字稍微暗一点 */
+            font-size: 0.95em;
+            
+            /* Flex 布局保持不变 */
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+        /* 让名字本身更亮 */
+        #selectedLeaderName {
+            color: #fff;
+            font-weight: bold;
+            font-family: 'Playfair Display', serif; /* 名字可以用艺术字体 */
+            margin-left: 5px;
+            font-size: 1.1em;
+            text-shadow: 0 0 10px rgba(0, 223, 216, 0.3); /* 名字微发光 */
         }
 
         /* 新增：右侧拷贝小图标的样式 */
@@ -726,15 +743,52 @@
         /* --- 修改结束 --- */
     
         .response-display {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: var(--dark-surface);
-            border: 1px solid var(--dark-border);
-            border-radius: 4px;
+            margin-top: 25px; /* 增加一点间距 */
+            padding: 0; /* 移除内边距，因为我们要把背景去掉了 */
+            
+            /* === 核心修改：去掉实心背景和边框 === */
+            background-color: transparent; 
+            border: none;
+            border-radius: 0;
         }
-        .response-display h4 {
-            margin-top:0;
-            color: var(--dark-text-primary);
+     
+        ./* 标题样式优化：变成高亮的青色标题 */
+        .response-display h4, 
+        .collapsible-header h4 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            
+            /* 颜色改为主题强调色 */
+            color: var(--dark-accent); 
+            
+            font-family: 'Poppins', sans-serif; /* 使用英文字体库 */
+            font-weight: 600;
+            font-size: 1.1em;
+            letter-spacing: 0.5px;
+            
+            /* 增加一个底部的发光线条 */
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(0, 223, 216, 0.2);
+            display: flex; /* 如果有图标，保证对齐 */
+            align-items: center;
+        }
+        
+        /* 针对 "生成的 问题" 的折叠头部的特殊微调 */
+        .collapsible-header {
+            cursor: pointer;
+            /* 给可点击区域加一点内边距，方便点击 */
+            padding: 5px 0; 
+            transition: opacity 0.3s;
+        }
+        .collapsible-header:hover {
+            opacity: 0.8;
+        }     
+        .collapsible-header:hover #prompt-toggle-icon {
+            color: var(--dark-accent);
+        }        
+        /* 箭头旋转动画类 */
+        .icon-rotated {
+            transform: rotate(180deg);
         }
         
         /* --- MODIFICATION START: Styles for aiResponseText (was pre) --- */
@@ -754,20 +808,6 @@
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
         }
         /* --- MODIFICATION END --- */
-       
-         /* 提示词区域的头部悬停效果 */
-        .collapsible-header:hover h4 {
-            color: var(--dark-accent);
-        }
-        
-        .collapsible-header:hover #prompt-toggle-icon {
-            color: var(--dark-accent);
-        }
-        
-        /* 箭头旋转动画类 */
-        .icon-rotated {
-            transform: rotate(180deg);
-        }
      
         /* --- [新增] 统一输入框与答复框为小说阅读字体风格 --- */
         #userQuestion, 
