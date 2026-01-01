@@ -1093,8 +1093,32 @@
             .tab-button { font-size: 11px; padding: 4px 4px; margin-right: 2px; margin-bottom: 3px; min-width: 30px;}
             
             .leader-scroll-container { padding: 0 28px; }
-            .leader-grid{ gap: 12px; }
-            .leader-card { flex: 0 0 78vw; min-height: auto; padding: 10px; }
+            /* 1. 调整轨道内边距：减小左右留白 */
+            .leader-grid { 
+                display: flex;
+                overflow-x: auto;
+                gap: 15px;
+                
+                /* === 修改点 === */
+                /* 上下保持 25px (防止星星被切) */
+                /* 左右改为 10px (原来是 30px，改小一点，把空间留给卡片) */
+                padding: 25px 10px; 
+                
+                /* 配合上面的 10px，保证滑动吸附对齐 */
+                scroll-padding-left: 10px; 
+            }
+    
+            /* 2. 增大卡片宽度：让它更宽，占满大部分屏幕 */
+            .leader-card { 
+                /* === 修改点 === */
+                /* 原来是 74vw，改为 85vw */
+                /* 85vw 意味着卡片占据屏幕宽度的 85%，看起来很大气，且旁边还能露出一点点下一张卡片 */
+                flex: 0 0 85vw; 
+                
+                min-height: auto; 
+                padding: 15px; 
+                position: relative;
+            }         
             .leader-card h3 { font-size: 1em; }
             .leader-card p { font-size: 0.82em; }
             .leader-card .remarks { font-size: 0.75em; }
