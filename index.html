@@ -936,18 +936,17 @@
 
             .container { width: 95%; padding: 10px; margin-top: 0px; }
             .tab-content h2, .interaction-area h2 { font-size: 0.9em; margin-bottom: 10px; }
-            /*.tab-button { font-size: 11px; padding: 6px 4px; margin-right: 2px; margin-bottom: 3px; }*/            
-            /* 1. 修改容器，由 Flex 改为 Grid */
+            /*.tab-button { font-size: 11px; padding: 6px 4px; margin-right: 2px; margin-bottom: 3px; }*/   
+            /* 1. 布局改为 Flex 自动换行，解决英文超长问题 */
             .tabs {
-                display: grid; /* 启用网格布局 */
-                grid-template-columns: repeat(9, 1fr); /* 强制一行 9 个，宽度平分 */
-                gap: 4px; /* 按钮之间的间距 */
-                justify-content: stretch; /* 拉伸占满容器 */
+                display: flex;          /* 恢复弹性布局 */
+                flex-wrap: wrap;        /* 关键：允许自动换行 */
+                justify-content: center;/* 按钮整体居中对齐 */
+                gap: 8px;               /* 按钮之间的间距 */
                 margin-bottom: 10px;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.08);
                 padding-bottom: 10px;
             }
-            
             /* 2. 修改按钮样式 */
             .tab-button {
                 width: 100%; /* 占满网格单元格 */
