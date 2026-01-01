@@ -453,12 +453,25 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
     
-        .tab-content h2 {
+        /* === 桌面端：调整标题字体和大小 === */
+        .tab-content h2, 
+        .interaction-area h2 {
             color: var(--dark-accent);
             margin-top: 0;
-            margin-bottom: 15px;
-            font-size: 1.5em;
+            margin-bottom: 20px; /* 稍微增加下边距 */
+            
+            /* 1. 修改字体：Playfair Display + 马善政 */
+            font-family: 'Playfair Display', 'Ma Shan Zheng', serif;
+            
+            /* 2. 修改桌面端大小：从 1.5em 减小到 1.3em，更精致 */
+            font-size: 1.3em; 
+            
+            font-weight: 600;
+            letter-spacing: 1px; /* 增加字间距，更有艺术感 */
         }
+     
+    
+        
     
         .leader-scroll-container {
             position: relative;
@@ -653,12 +666,6 @@
             margin-top: 20px;
             padding-top: 20px;
             border-top: 1px solid var(--dark-border);
-        }
-    
-        .interaction-area h2 {
-            color: var(--dark-accent);
-            margin-top: 0;
-            font-size: 1.5em;
         }
         
         /* Shared styles for textareas */
@@ -1004,7 +1011,20 @@
             .container { width: 92%; padding: 15px; margin-top: 0px; }
             .tabs { justify-content: flex-start; margin-bottom: 15px; }
             .tab-button { padding: 5px 14px; font-size: 11px; margin-right: 4px; margin-bottom: 4px; min-width: 30px; }
-            .tab-content h2, .interaction-area h2 { font-size: 0.9em; margin-bottom: 12px; }
+            /* === 手机端：增大标题字号 === */
+            .tab-content h2, 
+            .interaction-area h2 { 
+                /* 原来是 0.9em，现在调大到 1.2em */
+                font-size: 1.2em; 
+                
+                margin-bottom: 15px; 
+                
+                /* 确保手机上也继承艺术字体 */
+                font-family: 'Playfair Display', 'Ma Shan Zheng', serif;
+                
+                /* 稍微居中或者保持左对齐，看您喜好，这里建议保持默认左对齐但加点左间距 */
+                padding-left: 2px;
+            }
             .leader-scroll-container { padding: 0 35px; }
             .leader-grid { gap: 15px; }
             .leader-card { flex: 0 0 250px; min-height: 260px; padding: 12px; }
