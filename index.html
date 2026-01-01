@@ -469,9 +469,6 @@
             font-weight: 600;
             letter-spacing: 1px; /* 增加字间距，更有艺术感 */
         }
-     
-    
-        
     
         .leader-scroll-container {
             position: relative;
@@ -764,37 +761,41 @@
             box-shadow: none;
             cursor: not-allowed;
         }    
-    
-         /* === 在原代码下方添加这段，专门覆盖第1个按钮的样式 === */
+     
+        /* === 在原代码下方添加这段，专门覆盖第1个按钮的样式 === */
+            .interaction-buttons {
+            display: flex;
+            gap: 15px; /* 增加按钮之间的间距，让它们呼吸 */
+            margin-bottom: 15px;
+            flex-wrap: wrap; /* 允许换行 */
+            justify-content: center; 
+        }
+     
         /* 1. 覆盖默认状态 */
         /* 使用 :first-child 或 :nth-child(1) 精准选中第一个按钮 */
         .interaction-buttons button:first-child {
-            /* 覆盖背景：改为半透明玻璃 */
-            background: rgba(74, 144, 226, 0.1) !important; 
+            /* 背景：增加一点蓝色倾向，不再那么灰暗，提升活跃度 */
+            background: rgba(74, 144, 226, 0.15) !important; 
             
-            /* 覆盖边框：加上细边框 */
-            border: 1px solid rgba(74, 144, 226, 0.3) !important;
+            /* 边框：稍微亮一点，增加精致感 */
+            border: 1px solid rgba(74, 144, 226, 0.5) !important;
             
-            /* 调整文字颜色 */
-            color: #d0d0d0;
+            /* 文字：纯白，更清晰 */
+            color: #ffffff !important;
             
-            /* 覆盖阴影：改为内发光 */
-            box-shadow: inset 0 0 10px rgba(74, 144, 226, 0.05) !important;
+            /* 阴影：增加一点微弱的蓝光，让它看起来是“通电”的 */
+            box-shadow: 0 0 10px rgba(74, 144, 226, 0.1), inset 0 0 5px rgba(255, 255, 255, 0.05) !important;
+            
+            /* 保持字体粗细，防止显得太弱 */
+            font-weight: 600;
         }
         
-        /* 2. 覆盖悬停状态 (重要！否则鼠标放上去会变回实心蓝) */
+        /* 2. 覆盖悬停状态 */
         .interaction-buttons button:first-child:hover {
-            /* 悬停时背景稍微变亮，但保持透明感 */
-            background: rgba(74, 144, 226, 0.25) !important;
-            
-            /* 边框变亮 */
-            border-color: rgba(74, 144, 226, 0.8) !important;
-            
-            /* 外发光 */
-            box-shadow: 0 0 15px rgba(74, 144, 226, 0.2) !important;
-            
-            color: #fff;
-            transform: translateY(-2px); /* 保持上浮动画 */
+            background: rgba(74, 144, 226, 0.3) !important; /* 悬停变更亮 */
+            border-color: #4a90e2 !important;
+            box-shadow: 0 0 15px rgba(74, 144, 226, 0.3) !important;
+            transform: translateY(-2px);
         }
             
         /* --- 修改开始：调整选中北极星信息的样式支持 Flex 布局 --- */
