@@ -114,7 +114,7 @@
             font-family: 'Playfair Display', 'Ma Shan Zheng', cursive, serif; 
             /* --- 修改结束 --- */
             text-align: center;
-            margin-top: 40px; /* 根据实际 Logo 和按钮高度调整，从100-》80 */
+            margin-top: 30px; /* 根据实际 Logo 和按钮高度调整，从100-》30 */
             margin-bottom: 5px; /* 标题底部留一点空间 */
             font-size: 2.8em;  /* 稍微加大一点字号，因为毛笔字在视觉上通常比黑体显小 */
             font-weight: 400; /* 毛笔字体自带粗细，设为 400 即可，不用 600 */
@@ -408,14 +408,14 @@
             gap: 10px; /* 按钮之间的间距 */
             /* 底部保留一条极淡的分割线，作为轨道 */
             border-bottom: 1px solid rgba(255, 255, 255, 0.08); 
-            padding-bottom: 15px; /* 让按钮和分割线有点距离 */
-            margin-bottom: 25px;
+            padding-bottom: 8px; /* 让按钮和分割线有点距离 */
+            margin-bottom: 15px;
         }
     
         /* --- 替换原有的 .tab-button 相关样式 --- */
         /* 2. 标签按钮（默认状态） */
         .tab-button {
-            padding: 8px 20px;
+            padding: 5px 20px;
             cursor: pointer;
             background-color: transparent; /* 默认无背景 */
             color: var(--dark-text-secondary); /* 默认灰色文字 */
@@ -863,7 +863,7 @@
             body { line-height: 1.55; }
             .container { width: 92%; padding: 15px; margin-top: 0px; }
             .tabs { justify-content: flex-start; margin-bottom: 15px; }
-            .tab-button { padding: 9px 14px; font-size: 11px; margin-right: 4px; margin-bottom: 4px; min-width: 30px; }
+            .tab-button { padding: 5px 14px; font-size: 11px; margin-right: 4px; margin-bottom: 4px; min-width: 30px; }
             .tab-content h2, .interaction-area h2 { font-size: 0.9em; margin-bottom: 12px; }
             .leader-scroll-container { padding: 0 35px; }
             .leader-grid { gap: 15px; }
@@ -950,7 +950,7 @@
 
             .container { width: 95%; padding: 10px; margin-top: 0px; }
             .tab-content h2, .interaction-area h2 { font-size: 0.9em; margin-bottom: 10px; }
-            .tab-button { font-size: 11px; padding: 6px 4px; margin-right: 2px; margin-bottom: 3px; min-width: 30px;}
+            .tab-button { font-size: 11px; padding: 4px 4px; margin-right: 2px; margin-bottom: 3px; min-width: 30px;}
             
             .leader-scroll-container { padding: 0 28px; }
             .leader-grid{ gap: 12px; }
