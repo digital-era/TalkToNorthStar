@@ -904,7 +904,31 @@
 
             .container { width: 95%; padding: 10px; margin-top: 10px; }
             .tab-content h2, .interaction-area h2 { font-size: 0.9em; margin-bottom: 10px; }
-            .tab-button { font-size: 11px; padding: 6px 4px; margin-right: 2px; margin-bottom: 3px; }
+            /*.tab-button { font-size: 11px; padding: 6px 4px; margin-right: 2px; margin-bottom: 3px; }*/            
+            /* 1. 修改容器，由 Flex 改为 Grid */
+            .tabs {
+                display: grid; /* 启用网格布局 */
+                grid-template-columns: repeat(4, 1fr); /* 强制一行 9 个，宽度平分 */
+                gap: 4px; /* 按钮之间的间距 */
+                justify-content: stretch; /* 拉伸占满容器 */
+                margin-bottom: 10px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+                padding-bottom: 10px;
+            }
+            
+            /* 2. 修改按钮样式 */
+            .tab-button {
+                width: 100%; /* 占满网格单元格 */
+                font-size: 11px;
+                padding: 8px 0; /* 上下内边距8px，左右0（由width控制） */
+                margin: 0; /* 去掉 margin，由 gap 控制间距 */
+                text-align: center; /* 文字居中 */
+                display: flex;       /* 确保文字垂直居中 */
+                align-items: center;
+                justify-content: center;
+                box-sizing: border-box; /* 确保 padding 不会撑大盒子 */
+            }
+            
             .leader-scroll-container { padding: 0 28px; }
             .leader-grid{ gap: 12px; }
             .leader-card { flex: 0 0 78vw; min-height: auto; padding: 10px; }
