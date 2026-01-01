@@ -507,12 +507,80 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
         
-        /* 选中状态：明显的极光色背景 */
+        /* === 1. 选中卡片的样式升级 === */
         .leader-card.selected {
-            /* 使用渐变色表示选中，而不是死板的蓝色块 */
-            background: linear-gradient(145deg, rgba(0, 223, 216, 0.1) 0%, rgba(74, 144, 226, 0.1) 100%);
-            border-color: var(--dark-accent);
-            box-shadow: 0 0 15px rgba(0, 223, 216, 0.15); /* 微发光 */
+            /* 背景：从左上角(亮)到右下角(暗)的极光渐变，模拟光照 */
+            background: linear-gradient(
+                135deg, 
+                rgba(0, 223, 216, 0.15) 0%,   /* 左上角：亮青色，呼应北极星 */
+                rgba(30, 30, 30, 0.8) 60%,    /* 中间：过渡到深空灰 */
+                rgba(74, 144, 226, 0.05) 100% /* 右下角：微弱的蓝色 */
+            );
+            
+            /* 边框：高亮，青色，带一点点透明度 */
+            border-color: #00DFD8;
+            
+            /* 阴影：核心修改！增加外发光，让卡片“浮”起来，产生激活感 */
+            box-shadow: 
+                0 0 20px rgba(0, 223, 216, 0.2), /* 柔和的青色光晕 */
+                inset 0 0 15px rgba(0, 223, 216, 0.05); /* 内部的微弱反光 */
+                
+            /* 稍微放大一点点，体现层级 */
+            transform: scale(1.02) translateY(-3px);
+            
+            /* 确保定位基准，为了放置星星 */
+            position: relative; 
+            overflow: hidden; /* 防止光效溢出 */
+        }
+        
+        /* === 2. 右上角闪烁的星星 (使用伪元素，无需改HTML) === */
+        .leader-card.selected::after {
+            /* 使用 FontAwesome 的星星图标代码 */
+            content: "\f005"; 
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            
+            /* 位置：绝对定位在右上角 */
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            
+            /* 颜色：金色 (Gold) 或 亮青色 (Cyan)，推荐金色代表"选中/北极星" */
+            color: #FFD700; 
+            
+            /* 大小 */
+            font-size: 1.2rem;
+            
+            /* 添加阴影，让星星发光 */
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+            
+            /* 动画：应用闪烁动画 */
+            animation: starTwinkle 2s infinite ease-in-out;
+        }
+        
+        /* === 3. 定义星星闪烁动画 === */
+        @keyframes starTwinkle {
+            0% {
+                opacity: 0.6;
+                transform: scale(0.9) rotate(0deg);
+                text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.1) rotate(5deg);
+                text-shadow: 0 0 15px rgba(255, 215, 0, 1); /* 最亮时光晕变大 */
+            }
+            100% {
+                opacity: 0.6;
+                transform: scale(0.9) rotate(0deg);
+                text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+            }
+        }
+        
+        /* 适配：如果卡片被选中，里面的文字稍微变亮 */
+        .leader-card.selected h3 {
+            color: #00DFD8; /* 标题变青色 */
+            text-shadow: 0 0 5px rgba(0, 223, 216, 0.3);
         }
     
         .leader-card h3 {
