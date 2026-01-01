@@ -69,9 +69,17 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: var(--dark-bg); /* DARK */
             color: var(--dark-text-primary);   /* DARK */
             line-height: 1.6;
+            
+            /* === 修改背景 === */
+            background-color: #121212; /* 基础底色变更深 */
+            
+            /* 添加一个位于顶部中心的微弱极光背景，呼应北极星 */
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(0, 223, 216, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(121, 40, 202, 0.06) 0%, transparent 30%);
+            background-attachment: fixed; /* 滚动时背景固定 */
         }
         
         /* --- Header & Controls --- */
@@ -368,9 +376,29 @@
             max-width: 1200px;
             margin: 0 auto 20px auto;   /* 原来是 margin: 20px auto; 现在顶部改为 0，让它紧贴 Header */
             padding: 20px;
-            background-color: var(--dark-surface);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
+            
+             /* === 核心修改开始 === */    
+            /* 1. 背景：不再是纯实色，而是极低透明度的深色，透出一点背景 */
+            background: rgba(30, 30, 30, 0.6); 
+            
+            /* 2. 磨砂效果：这是高级感的来源 (兼容性写法) */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            
+            /* 3. 边框：改为极细的半透明白/青色，模拟玻璃边缘的反光 */
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 1px solid rgba(255, 255, 255, 0.12); /* 顶部稍微亮一点，模拟顶光 */
+            
+            /* 4. 圆角：稍微加大，更柔和 */
+            border-radius: 16px;
+            
+            /* 5. 阴影：加深阴影，增加悬浮感，并带有一点点青色的环境光晕 */
+            box-shadow: 
+                0 10px 40px rgba(0, 0, 0, 0.6),      /* 深邃的主阴影 */
+                0 0 0 1px rgba(0, 223, 216, 0.05);   /* 极微弱的青色轮廓光 */
+                
+            /* === 核心修改结束 === */
+            color: var(--dark-text-primary);
         }
     
         /* 1. 标签栏容器 */
