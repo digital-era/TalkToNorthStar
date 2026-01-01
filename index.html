@@ -480,14 +480,18 @@
         .leader-grid::-webkit-scrollbar { display: none; }
     
         .leader-card {
-            border: 1px solid var(--dark-border);
+            /* === 修改背景：由实心 #333333 改为半透明深色 === */
+            background: rgba(0, 0, 0, 0.2); /* 比容器更深一点，增加对比度 */            
+            /* === 修改边框：更细更淡 === */
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            
             border-radius: 8px;
             padding: 15px;
-            background-color: var(--dark-surface-light);
             color: var(--dark-text-primary);
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+             /* 调整阴影，不再那么生硬 */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             flex: 0 0 300px;
             min-height: 280px;
             display: flex;
@@ -495,13 +499,20 @@
             justify-content: space-between;
         }
     
-        .leader-card:hover, .leader-card.selected {
+       /* 悬停效果：轻微发亮 */
+        .leader-card:hover {
+            background: rgba(255, 255, 255, 0.05); /* 微微提亮 */
             border-color: var(--dark-accent);
-            box-shadow: 0 4px 10px rgba(0, 149, 255, 0.3);
             transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
+        
+        /* 选中状态：明显的极光色背景 */
         .leader-card.selected {
-                background-color: var(--dark-selected-bg);
+            /* 使用渐变色表示选中，而不是死板的蓝色块 */
+            background: linear-gradient(145deg, rgba(0, 223, 216, 0.1) 0%, rgba(74, 144, 226, 0.1) 100%);
+            border-color: var(--dark-accent);
+            box-shadow: 0 0 15px rgba(0, 223, 216, 0.15); /* 微发光 */
         }
     
         .leader-card h3 {
@@ -581,24 +592,40 @@
         
         /* Shared styles for textareas */
         .interaction-area textarea {
+            #generatedPromptText {
             width: 100%;
             box-sizing: border-box;
             min-height: 80px;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid var(--dark-input-border);
+            padding: 15px; /* 增加内边距 */
+            /* === 修改背景：深邃的凹陷感 === */
+            background-color: rgba(0, 0, 0, 0.25); 
+            
+            /* 边框：极细 */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+
+            /* 字体保持您之前改的小说风格 */
+            color: var(--dark-text-primary);
+            
+            /* 聚焦时：边框变亮，微弱光晕 */
+            transition: border-color 0.3s, box-shadow 0.3s;
             margin-bottom: 15px;
             font-size: 1em;
-            background-color: var(--dark-input-bg);
-            color: var(--dark-text-primary);
             white-space: pre-wrap;
             word-wrap: break-word;
             font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
             line-height: 1.5;
         }
-
+            
         .interaction-area textarea::placeholder {
             color: var(--dark-text-secondary);
+        }
+            
+        .interaction-area textarea:focus {
+            outline: none;
+            border-color: var(--dark-accent);
+            background-color: rgba(0, 0, 0, 0.4); /* 聚焦时背景更深，突出文字 */
+            box-shadow: 0 0 10px rgba(74, 144, 226, 0.15);
         }
     
         .interaction-buttons {
@@ -723,6 +750,8 @@
             color: var(--dark-text-secondary);
             max-height: 300px;
             overflow-y: auto;
+            /* 增加一个内部的顶部高光，增加立体感 */
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
         }
         /* --- MODIFICATION END --- */
        
