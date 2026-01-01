@@ -470,7 +470,10 @@
             display: flex;
             overflow-x: auto;
             overflow-y: hidden;
-            padding: 10px 0;
+            /* === 核心修改 === */
+            /* 原来是 padding: 10px 0; */
+            /* 改为：上下 20px (给上浮留空间)，左右 20px (给放大和光晕留空间) */
+            padding: 20px 20px; 
             gap: 20px;
             border-radius: 4px;
             scroll-behavior: smooth;
@@ -1136,7 +1139,30 @@
             #immersiveModal .manifesto-text blockquote {
                 font-size: 0.9em; /* 进一步调整段落和引用文本大小，与宣言模态框内容 (.manifesto-modal .manifesto-text) 保持一致 */
                 line-height: 1.5;
-            }            
+            } 
+            /* 隐藏左右翻页按钮 */
+            .scroll-button {
+                display: none; 
+            }
+            
+            /* 移除容器原本给按钮留的左右空隙，让内容能撑满屏幕宽度 */
+            .leader-scroll-container {
+                padding: 0; /* 原来是 0 28px，现在改为 0，充分利用屏幕宽度 */
+                margin-bottom: 20px;
+            }
+            .leader-grid {
+                display: flex;
+                overflow-x: auto;
+                gap: 15px; /* 卡片之间的间距 */
+                
+                /* === 核心修改 === */
+                /* 上下 25px：给上浮动画和星星留出顶部空间 */
+                /* 左右 30px：给第一张和最后一张卡片留出呼吸空间，防止星星贴边 */
+                padding: 25px 30px; 
+                
+                /* 优化滚动体验，让卡片对齐更舒服 */
+                scroll-padding-left: 30px; 
+            }
         }    
      
         /* === 全局滚动条美化 (Chrome, Edge, Safari) === */
@@ -1144,7 +1170,7 @@
         ::-webkit-scrollbar {
             width: 10px;     /* 纵向滚动条宽度 */
             height: 10px;    /* 横向滚动条高度 */
-        }
+        }     
         
         /* 2. 滚动条轨道 (Track)：设为透明或极淡的深色 */
         ::-webkit-scrollbar-track {
