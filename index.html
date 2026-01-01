@@ -591,7 +591,7 @@
         }
         
         /* Shared styles for textareas */
-        .interaction-area textarea {
+        .interaction-area textarea, 
             #generatedPromptText {
             width: 100%;
             box-sizing: border-box;
@@ -611,10 +611,10 @@
             transition: border-color 0.3s, box-shadow 0.3s;
             margin-bottom: 15px;
             font-size: 1em;
+                
+            /* 针对 generatedPromptText 的特殊处理整合在这里 *   
             white-space: pre-wrap;
             word-wrap: break-word;
-            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-            line-height: 1.5;
         }
             
         .interaction-area textarea::placeholder {
