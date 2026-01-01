@@ -260,9 +260,9 @@
             border-radius: 12px;
             
             /* 尺寸与位置 */
-            /* === 修改点：宽度由 800px 改为 680px === */
+            /* === 修改点：宽度由 800px 改为 600px === */
             /* 这样看起来更像一个竖长的卷轴或铭牌，不会太宽 */
-            max-width: 680px; 
+            max-width: 600px; 
             margin: 6% auto;  /* 距离顶部稍微远一点 */
             padding: 40px;    /* 增加内边距，更有呼吸感 */
             position: relative;
@@ -292,15 +292,15 @@
         /* 3. 正文：使用小说风格字体，提升阅读体验 */
         .manifesto-modal .manifesto-text {
             /* 
-               优先级逻辑：
-               1. 'Playfair Display': 遇到英文或数字时，使用这个高雅的西文衬线体。
-               2. 'Noto Serif SC': 你的链接中已包含。这是目前屏幕显示效果最好的中文衬线体，
+               优先级逻辑：              
+               1. 'Noto Serif SC': 你的链接中已包含。这是目前屏幕显示效果最好的中文衬线体，
                   也就是标准的“小说/书籍”字体，字形方正、边缘清晰，极具质感。
-               3. 'Songti SC': 针对 iOS/Mac 系统的原生宋体回退，效果很好。
-               4. 'Noto Serif CJK SC', 'Source Han Serif SC': 安卓系统的宋体回退。
+               2. 'Songti SC': 针对 iOS/Mac 系统的原生宋体回退，效果很好。
+               3. 'Noto Serif CJK SC', 'Source Han Serif SC': 安卓系统的宋体回退。
+               4. 'Playfair Display': 遇到英文或数字时，使用这个高雅的西文衬线体。
                5. serif: 兜底衬线体。
             */
-            font-family: 'Playfair Display', 'Noto Serif SC', 'Songti SC', 'Noto Serif CJK SC', 'Source Han Serif SC', serif;
+            font-family: 'Noto Serif SC', 'Songti SC', 'Noto Serif CJK SC', 'Source Han Serif SC', 'Playfair Display', serif;
             color: #e0e0e0;     /* 稍微柔和的白色 */
             font-size: 1.15em;  /* 字号稍微大一点 */
             line-height: 1.9;   /* 宽松的行高，更像是在读诗 */
