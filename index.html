@@ -9,9 +9,10 @@
     <!-- 引入 Google Font "Poppins" -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Ma+Shan+Zheng&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+    <!--link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet" -->
+    <!--link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet" -->
+    <!--link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Ma+Shan+Zheng&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet" -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
       var _hmt = _hmt || [];
@@ -259,7 +260,9 @@
             border-radius: 12px;
             
             /* 尺寸与位置 */
-            max-width: 800px; /* 稍微宽一点，阅读体验更好 */
+            /* === 修改点：宽度由 800px 改为 680px === */
+            /* 这样看起来更像一个竖长的卷轴或铭牌，不会太宽 */
+            max-width: 680px; 
             margin: 6% auto;  /* 距离顶部稍微远一点 */
             padding: 40px;    /* 增加内边距，更有呼吸感 */
             position: relative;
@@ -288,9 +291,16 @@
         
         /* 3. 正文：使用小说风格字体，提升阅读体验 */
         .manifesto-modal .manifesto-text {
-            /* 使用之前定义的衬线/小说字体变量，或者直接指定 */
-            font-family: 'ZCOOL XiaoWei', 'Segoe UI', serif; 
-            
+            /* 
+               优先级逻辑：
+               1. 'Playfair Display': 遇到英文或数字时，使用这个高雅的西文衬线体。
+               2. 'Noto Serif SC': 你的链接中已包含。这是目前屏幕显示效果最好的中文衬线体，
+                  也就是标准的“小说/书籍”字体，字形方正、边缘清晰，极具质感。
+               3. 'Songti SC': 针对 iOS/Mac 系统的原生宋体回退，效果很好。
+               4. 'Noto Serif CJK SC', 'Source Han Serif SC': 安卓系统的宋体回退。
+               5. serif: 兜底衬线体。
+            */
+            font-family: 'Playfair Display', 'Noto Serif SC', 'Songti SC', 'Noto Serif CJK SC', 'Source Han Serif SC', serif;
             color: #e0e0e0;     /* 稍微柔和的白色 */
             font-size: 1.15em;  /* 字号稍微大一点 */
             line-height: 1.9;   /* 宽松的行高，更像是在读诗 */
