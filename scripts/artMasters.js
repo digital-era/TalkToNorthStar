@@ -254,6 +254,20 @@ const artMasters = [
         "en": "Former Apple Chief Design Officer; minimalist interaction aesthetics defined 21st-century global digital interface standards."
       }
     },
+    { "id": "matias_duarte", "name": "Matias Duarte (马蒂亚斯·杜阿尔特)",
+      "contribution": {
+        "zh-CN": "缔造Material Design（材料设计）语言，引入物理光影与纸墨隐喻，重构安卓生态视觉并确立跨设备交互标准。",
+        "en": "Created Material Design language, introducing physical lighting and paper metaphors; reconstructed Android visual ecology and established cross-device interaction standards."
+      },
+      "field": {
+        "zh-CN": "材料设计系统、交互视觉语言。",
+        "en": "Material Design System, Interactive Visual Language."
+      },
+      "remarks": {
+        "zh-CN": "谷歌设计副总裁，以逻辑化美学终结安卓碎片化体验，其规范成为全球Web与App开发的通用视觉基石。",
+        "en": "Google VP of Design; unified Android fragmentation with logical aesthetics, his specifications became the universal visual cornerstone for global Web and App development."
+      }
+    },
     { id: "coco_chanel", name: "Coco Chanel (可可·香奈儿)",
       contribution: {
         "zh-CN": "发明小黑裙与香奈儿套装，解放女性着装，开创现代简约奢华美学。",
