@@ -1051,138 +1051,133 @@
             }
         }
     
-        @media (max-width: 480px) {
-            header {
-                padding-top: 10px;
-            }
-            .logo-container {
-                top: 10px;
-                left: 10px;
-            }
-            .logo-container img {
-                height: 45px;
-            }
-            h1 {
-                /* 调整更小屏幕的 h1 margin-top */
-                margin-top: 56px; /* 进一步调整，适应更小屏幕，从70-》56 */
-                font-size: 1.6em; /*1.8-》1.6*/
-                letter-spacing: 0px; /*0.1-》0*/
-                line-height: 1.2; 
-                text-wrap: balance; /* 新增此行 */
-            }
-            .top-right-controls { 
-                right: 10px; 
-                gap: 8px;
-            }
-            /* === 新增/修改：进一步减小按钮尺寸 === */
-            .icon-btn {
-                width: 30px;       /* 缩小到30px */
-                height: 30px;
-                font-size: 0.85rem;/* 图标调小适应容器 */
-                border-width: 0.5px; /* 边框也可以稍微变细一点点 */
-            }
-            .about-us-button {
-                font-size: 0.8rem; 
-                padding: 5px 10px;
-            }
-            .settings-link { font-size: 0.8rem; padding: 5px 10px;}
-            .language-selector { font-size: 0.75rem; padding: 6px; }
-
-            .container { width: 95%; padding: 10px; margin-top: 0px; }
-            .tab-content h2, .interaction-area h2 { font-size: 0.9em; margin-bottom: 10px; }
-            .tab-button { font-size: 11px; padding: 4px 4px; margin-right: 2px; margin-bottom: 3px; min-width: 30px;}
-            
-            .leader-scroll-container { padding: 0 28px; }
-            /* 1. 调整轨道内边距：减小左右留白 */
-            .leader-grid { 
-                display: flex;
-                overflow-x: auto;
-                gap: 15px;
-                
-                /* === 修改点 === */
-                /* 上下保持 25px (防止星星被切) */
-                /* 左右改为 10px (原来是 30px，改小一点，把空间留给卡片) */
-                padding: 25px 10px; 
-                
-                /* 配合上面的 10px，保证滑动吸附对齐 */
-                scroll-padding-left: 10px; 
-            }
+     /* 手机端小屏幕样式 (max-width: 480px) - 最终合并修复版 */
+    @media (max-width: 480px) {
+        /* --- 1. 头部与 Logo --- */
+        header {
+            padding-top: 10px;
+        }
+        .logo-container {
+            top: 10px;
+            left: 10px;
+        }
+        .logo-container img {
+            height: 45px;
+        }
+        h1 {
+            margin-top: 56px; 
+            font-size: 1.6em;
+            letter-spacing: 0px; 
+            line-height: 1.2; 
+            text-wrap: balance; 
+        }
+        .top-right-controls { 
+            right: 10px; 
+            gap: 8px;
+        }
     
-            /* 2. 增大卡片宽度：让它更宽，占满大部分屏幕 */
-            .leader-card { 
-                /* === 修改点 === */
-                /* 原来是 74vw，改为 85vw */
-                /* 85vw 意味着卡片占据屏幕宽度的 85%，看起来很大气，且旁边还能露出一点点下一张卡片 */
-                flex: 0 0 85vw; 
-                
-                min-height: auto; 
-                padding: 15px; 
-                position: relative;
-            }         
-            .leader-card h3 { font-size: 1em; }
-            .leader-card p { font-size: 0.82em; }
-            .leader-card .remarks { font-size: 0.75em; }
-            /*.scroll-button { width: 28px; height: 28px; font-size: 16px; }*/
-            /.scroll-button.left { left: 2px; }*/
-            /*.scroll-button.right { right: 2px; }*/
-            .interaction-area button { font-size: 0.88em; padding: 10px 12px; }
-            #selected-leader-info { font-size: 0.9em; padding: 8px; }
-            .interaction-area textarea { min-height: 65px; font-size: 0.9em; padding: 8px; }
-            .response-display { padding: 10px; }
-            #aiResponseText { font-size: 0.9em; padding: 8px; } /* MODIFIED: was pre */
+        /* --- 2. 顶部功能按钮 --- */
+        .icon-btn {
+            width: 30px;
+            height: 30px;
+            font-size: 0.85rem;
+            border-width: 0.5px;
+        }
+        .about-us-button { font-size: 0.8rem; padding: 5px 10px; }
+        .settings-link { font-size: 0.8rem; padding: 5px 10px;}
+        .language-selector { font-size: 0.75rem; padding: 6px; }
+    
+        /* --- 3. 容器与Tab --- */
+        .container { width: 95%; padding: 10px; margin-top: 0px; }
+        .tab-content h2, .interaction-area h2 { font-size: 0.9em; margin-bottom: 10px; }
+        
+        /* 补全 .tabs 的 Flex 属性，确保按钮能自动换行 */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap; /* 关键：防止英文挤出屏幕 */
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+    
+        .tab-button { 
+            font-size: 11px; 
+            padding: 4px 8px; /* 稍微增加一点横向点击范围 */
+            margin-right: 2px; 
+            margin-bottom: 3px; 
+            min-width: 30px;
+            flex: 0 0 auto; /* 防止被压缩 */
+        }
+    
+        /* --- 4. [核心修复] 卡片滚动区域 --- */
+        
+        /* 修复A: 隐藏左右翻页按钮 */
+        .scroll-button {
+            display: none !important; 
+        }
+        
+        /* 修复B: 移除容器原本的左右黑边 (原代码是 padding: 0 28px) */
+        .leader-scroll-container { 
+            padding: 0 !important; /* 改为0，释放屏幕宽度 */
+            margin-bottom: 20px;
+        }
+    
+        /* 修复C: 调整卡片轨道 padding */
+        .leader-grid { 
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
             
-            .manifesto-modal h2 {
-                font-size: 1.3em;
-            }
-            .manifesto-modal .manifesto-text {
-                font-size: 0.9em;
-                line-height: 1.6;
-            }
-            .manifesto-modal p.conclusion {
-                font-size: 1em;
-            }
-            /* --- 只需要在你的 480px 媒体查询里加上这一段 --- */
-            .manifesto-modal .modal-content {
-                width: 94%;          /* 显式设置宽度，留出左右边距 */
-                margin: 20px auto;   /* auto 确保左右绝对居中 */
-                padding: 15px;       /* 缩小内边距，防止撑开容器 */
-                box-sizing: border-box; /* 核心：让宽度包含内边距，防止向右溢出 */
-            }
-            .close-button {
-                right: 10px;         /* 确保按钮离边缘有距离 */
-                top: 5px;
-            }
-            #immersiveModal h2 {
-                font-size: 1.0em;
-            }
-            #immersiveModal .modal-section-title {
-                font-size: 1.0em; /* 进一步调整子标题 H3/H4 字体大小 */
-                margin: 12px 0 6px 0;
-            }
-            #immersiveModal .manifesto-text p,
-            #immersiveModal .manifesto-text blockquote {
-                font-size: 0.9em; /* 进一步调整段落和引用文本大小，与宣言模态框内容 (.manifesto-modal .manifesto-text) 保持一致 */
-                line-height: 1.5;
-            } 
-            /* 隐藏左右翻页按钮 */
-            .scroll-button {
-                display: none !important; 
-            }
+            /* 上下 25px：防止星星和光晕被切 */
+            /* 左右 10px：给卡片留出一点点呼吸感，但不要太宽导致被遮挡 */
+            padding: 25px 10px; 
             
-            .leader-grid {
-                display: flex;
-                overflow-x: auto;
-                gap: 15px; /* 卡片之间的间距 */
-                
-                /* === 核心修改 === */
-                /* 上下 25px：给上浮动画和星星留出顶部空间 */
-                /* 左右 30px：给第一张和最后一张卡片留出呼吸空间，防止星星贴边 */
-                padding: 25px 30px; 
-                
-                /* 优化滚动体验，让卡片对齐更舒服 */
-                scroll-padding-left: 30px; 
-            }
-        }    
+            scroll-padding-left: 10px; 
+        }
+    
+        /* 修复D: 增大卡片宽度 */
+        .leader-card { 
+            /* 85vw：占据屏幕 85% 宽度，视觉上更完整，两边黑边极小 */
+            flex: 0 0 85vw; 
+            min-height: auto; 
+            padding: 15px; 
+            position: relative; /* 确保星星定位正确 */
+        }
+        
+        .leader-card h3 { font-size: 1em; }
+        .leader-card p { font-size: 0.82em; }
+        .leader-card .remarks { font-size: 0.75em; }
+        
+        /* 针对手机微调星星位置 */
+        .leader-card.selected::after {
+            top: 8px;
+            right: 8px;
+        }
+    
+        /* --- 5. 交互区域与模态框 (保持原样) --- */
+        .interaction-area button { font-size: 0.88em; padding: 10px 12px; }
+        #selected-leader-info { font-size: 0.9em; padding: 8px; }
+        .interaction-area textarea { min-height: 65px; font-size: 0.9em; padding: 8px; }
+        .response-display { padding: 10px; }
+        #aiResponseText { font-size: 0.9em; padding: 8px; }
+        
+        .manifesto-modal h2 { font-size: 1.3em; }
+        .manifesto-modal .manifesto-text { font-size: 0.9em; line-height: 1.6; }
+        .manifesto-modal p.conclusion { font-size: 1em; }
+        
+        .manifesto-modal .modal-content {
+            width: 94%;          
+            margin: 20px auto;   
+            padding: 15px;       
+            box-sizing: border-box; 
+        }
+        .close-button { right: 10px; top: 5px; }
+        
+        #immersiveModal h2 { font-size: 1.0em; }
+        #immersiveModal .modal-section-title { font-size: 1.0em; margin: 12px 0 6px 0; }
+        #immersiveModal .manifesto-text p,
+        #immersiveModal .manifesto-text blockquote { font-size: 0.9em; line-height: 1.5; } 
+    }    
      
         /* === 全局滚动条美化 (Chrome, Edge, Safari) === */
         /* 1. 设置滚动条的整体尺寸 */
