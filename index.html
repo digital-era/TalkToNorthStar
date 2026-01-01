@@ -238,86 +238,114 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             position: relative;
         }
-        /* 新增：了解我们模态框的特定样式 */
+        /* === 宣言模态框：水晶铭牌风格 === */
+
+        /* 1. 模态框容器 (背景板) */
         .manifesto-modal .modal-content {
-            max-width: 700px; /* 宣言模态框可以更宽 */
-            margin: 8% auto; /* 稍微向上移动，并居中 */
-            background-color: var(--dark-surface-light); /* 稍亮的背景 */
-            border: 1px solid var(--dark-border); /* 修改边框颜色 */
+            /* 核心：深色高模糊的磨砂玻璃 */
+            background: rgba(25, 25, 25, 0.85); /* 透明度比主页稍低，保证文字阅读清晰 */
+            backdrop-filter: blur(20px);        /* 强模糊，屏蔽背后杂乱元素 */
+            -webkit-backdrop-filter: blur(20px);
+            
+            /* 边框：极细的半透明光环 */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.2); /* 顶部高光 */
+            
+            /* 阴影：深邃的投影 + 微弱的青色外发光 */
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.8), 
+                0 0 0 1px rgba(0, 223, 216, 0.1); 
+                
+            border-radius: 12px;
+            
+            /* 尺寸与位置 */
+            max-width: 800px; /* 稍微宽一点，阅读体验更好 */
+            margin: 6% auto;  /* 距离顶部稍微远一点 */
+            padding: 40px;    /* 增加内边距，更有呼吸感 */
+            position: relative;
         }
-        .manifesto-modal .manifesto-text {
-            font-family: var(--font-family-novel); /* 使用小说风格字体 */
-            color: var(--dark-text-primary);
-            font-size: 1.1em;
-            line-height: 1.8;
-            padding: 10px;
-            max-height: 70vh; /* 限制高度并允许滚动 */
-            overflow-y: auto;
-            text-align: justify; /* 两端对齐 */
-        }
+        
+        /* 2. 标题：使用艺术字体 (Playfair Display / 马善政) */
         .manifesto-modal h2 {
-            font-family: 'Poppins', sans-serif;
-            color: var(--dark-accent);
+            font-family: 'Playfair Display', 'Ma Shan Zheng', serif;
+            font-size: 2.2em;
             text-align: center;
-            margin-bottom: 25px;
-            font-size: 1.8em;
-            letter-spacing: 0.8px;
-            line-height: 1.4;
-            background: linear-gradient(
-                90deg,               
-                #00DFD8, /* 亮青色 */
-                #7928CA  /* 紫色 */
-            );
+            margin-bottom: 30px;
+            font-weight: 700;
+            
+            /* 使用您标志性的渐变色 */
+            background: linear-gradient(90deg, #00DFD8, #7928CA);
             background-size: 200% auto;
             color: transparent;
             -webkit-background-clip: text;
             background-clip: text;
+            
+            /* 增加文字发光，增加神圣感 */
+            filter: drop-shadow(0 0 5px rgba(0, 223, 216, 0.3));
+            
             animation: colorWave 7s linear infinite;
-            -webkit-animation: colorWave 7s linear infinite;
         }
+        
+        /* 3. 正文：使用小说风格字体，提升阅读体验 */
+        .manifesto-modal .manifesto-text {
+            /* 使用之前定义的衬线/小说字体变量，或者直接指定 */
+            font-family: 'ZCOOL XiaoWei', 'Segoe UI', serif; 
+            
+            color: #e0e0e0;     /* 稍微柔和的白色 */
+            font-size: 1.15em;  /* 字号稍微大一点 */
+            line-height: 1.9;   /* 宽松的行高，更像是在读诗 */
+            text-align: justify;/* 两端对齐 */
+            
+            padding: 0 10px;    /* 左右留白 */
+            max-height: 65vh;   /* 限制高度 */
+            overflow-y: auto;   /* 允许滚动 */
+        }
+        
+        /* 4. 段落间距 */
         .manifesto-modal p {
-            margin-bottom: 1.2em;
+            margin-bottom: 1.5em;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5); /* 增加文字立体感 */
         }
+        
+        /* 5. 结语：强调 */
         .manifesto-modal p.conclusion {
             text-align: center;
-            font-style: italic;
-            font-weight: bold;
-            color: var(--dark-remarks-border); /* 使用备注边框的颜色作为强调 */
-            margin-top: 30px;
-            font-size: 1.2em;
-        }
-
-         .modal-section-title {
-            font-family: 'Poppins', sans-serif;
-            color: var(--dark-accent); /* 固定为强调蓝色 */
-            font-size: 1.1em;
-            margin: 20px 0 10px 0;
-            letter-spacing: 0.5px;
-            /* 移除渐变相关属性 */
-            font-weight: bold;
-            display: block;
-        }
-        .close-button {
-            color: var(--dark-text-secondary);
-            position: absolute;
-            top: 0px; 
-            right: 5px;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        .close-button:hover { color: var(--dark-text-primary); }
-    
-        .modal h2 {
-            margin-top: 0;
-            margin-bottom: 25px;
+            font-style: normal; /* 中文不需要斜体 */
+            font-family: 'Ma Shan Zheng', cursive; /* 结语用毛笔字 */
+            font-size: 1.4em;
             color: var(--dark-accent);
-            display: flex;
-            align-items: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1); /* 顶部分割线 */
         }
-        .modal h2 .fa-cog {
-            margin-right: 12px;
+        
+        /* 6. 关闭按钮优化 */
+        .close-button {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 32px;
+            top: 15px;
+            right: 20px;
+            transition: all 0.3s;
+        }
+        .close-button:hover {
+            color: var(--dark-accent); /* 悬停变青色 */
+            transform: rotate(90deg);  /* 旋转动效 */
+        }
+        
+        /* --- 滚动条美化 (确保模态框内的滚动条也是深色的) --- */
+        .manifesto-text::-webkit-scrollbar {
+            width: 6px;
+        }
+        .manifesto-text::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.2);
+            border-radius: 3px;
+        }
+        .manifesto-text::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+        }
+        .manifesto-text::-webkit-scrollbar-thumb:hover {
+            background: var(--dark-accent);
         }
     
         .settings-form .form-group {
