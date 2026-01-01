@@ -1098,9 +1098,9 @@
             .leader-card h3 { font-size: 1em; }
             .leader-card p { font-size: 0.82em; }
             .leader-card .remarks { font-size: 0.75em; }
-            .scroll-button { width: 28px; height: 28px; font-size: 16px; }
-            .scroll-button.left { left: 2px; }
-            .scroll-button.right { right: 2px; }
+            /*.scroll-button { width: 28px; height: 28px; font-size: 16px; }*/
+            /.scroll-button.left { left: 2px; }*/
+            /*.scroll-button.right { right: 2px; }*/
             .interaction-area button { font-size: 0.88em; padding: 10px 12px; }
             #selected-leader-info { font-size: 0.9em; padding: 8px; }
             .interaction-area textarea { min-height: 65px; font-size: 0.9em; padding: 8px; }
@@ -1142,14 +1142,9 @@
             } 
             /* 隐藏左右翻页按钮 */
             .scroll-button {
-                display: none; 
+                display: none !important; 
             }
             
-            /* 移除容器原本给按钮留的左右空隙，让内容能撑满屏幕宽度 */
-            .leader-scroll-container {
-                padding: 0; /* 原来是 0 28px，现在改为 0，充分利用屏幕宽度 */
-                margin-bottom: 20px;
-            }
             .leader-grid {
                 display: flex;
                 overflow-x: auto;
