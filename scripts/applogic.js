@@ -795,3 +795,41 @@ document.addEventListener('DOMContentLoaded', () => {
     // Populate leaders after language is set and settings are loaded
     populateLeaders();
 });
+
+/* --- 音乐播放控制逻辑 --- */
+// 1. 主按钮点击：播放/暂停指定音乐
+function toggleMusic(btnElement) {
+    var audio = document.getElementById("bgMusic");
+    
+    // 检查 audio 元素是否存在
+    if (!audio) return;
+
+    if (audio.paused) {
+        audio.play().then(() => {
+            // 播放成功，添加旋转动画类
+            btnElement.classList.add("music-playing");
+        }).catch(error => {
+            console.error("播放失败 (可能是浏览器策略限制自动播放):", error);
+        });
+    } else {
+        audio.pause();
+        // 暂停，移除旋转动画类
+        btnElement.classList.remove("music-playing");
+    }
+}
+
+// 2. 小标记点击：随机播放 (未来功能)
+function playRandomMusic(event) {
+    // 关键：阻止事件冒泡！
+    // 这样点击小圆点时，不会触发父级按钮的 toggleMusic
+    event.stopPropagation(); 
+    
+    console.log("未来功能：随机播放触发");
+    
+    // 这里留作未来扩展：
+    // var songs = ['song1.mp3', 'song2.mp3', ...];
+    // var randomSong = songs[Math.floor(Math.random() * songs.length)];
+    // var audio = document.getElementById("bgMusic");
+    // audio.src = randomSong;
+    // audio.play();
+}
