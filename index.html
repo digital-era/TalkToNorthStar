@@ -1545,6 +1545,53 @@
             scrollbar-width: thin; /* 瘦身 */
             scrollbar-color: rgba(255, 255, 255, 0.15) transparent; /* 滑块颜色 轨道颜色 */
         }
+
+        /* --- 音乐播放器样式 --- */
+        /* 1. 音乐按钮容器 */
+        .music-wrapper {
+            position: relative; /* 为绝对定位的小标记做参照 */
+            overflow: visible;  /* 允许小标记超出圆圈边界 */
+        }        
+        /* 2. 随机播放小标记 (右上角的小圆点) */
+        .random-badge {
+            position: absolute;
+            top: -5px;   /*稍微突出圆圈顶部 */
+            right: -5px; /* 稍微突出圆圈右侧 */
+            width: 18px;
+            height: 18px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); /* 金色渐变 */
+            color: #000; /* 深色图标 */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px; /* 图标非常小 */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.3);
+            z-index: 5;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }        
+        .random-badge:hover {
+            transform: scale(1.2); /* 悬停微放大 */
+            background: #fff;      /* 悬停变白 */
+        }        
+        /* 3. 播放时的动画效果 */
+        .music-playing .main-music-icon {
+            animation: musicRotate 3s linear infinite; /* 图标旋转 */
+            color: var(--dark-accent); /* 变成主题色 */
+        }        
+        /* 音乐图标旋转动画 */
+        @keyframes musicRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }        
+        /* 手机端适配：防止小标记被切掉 */
+        @media (max-width: 480px) {
+            .top-right-controls {
+                padding-right: 5px; /* 给右侧留一点空间防止溢出 */
+            }
+        }
     </style>
 </head>
 <body>
@@ -1554,17 +1601,33 @@
             <img src="images/TalktoNorthStarIcon.png" alt="Talk to NorthStar Logo">
         </div>
         <div class="top-right-controls">
-            <!-- 1. 了解我们：去掉文字 span，只留图标，增加 title 提示 -->
+            <!-- 1. [新增] 音乐播放器 (移到第一位，即最左侧) -->
+            <!-- 注意：请确保 HansZimmer-Interstellar-ImperialOrchestra.mp3 文件存在，或修改为有效路径 -->
+            <div class="icon-btn music-wrapper" title="播放音乐" onclick="toggleMusic(this)">
+                <i class="fas fa-music main-music-icon"></i>
+                
+                <!-- 随机播放小标记 -->
+                <div class="random-badge" title="随机播放 (未来功能)" onclick="playRandomMusic(event)">
+                    <i class="fas fa-shuffle"></i>
+                </div>
+                
+                <!-- 音频控件 -->
+                <audio id="bgMusic" loop>
+                    <source src="HansZimmer-Interstellar-ImperialOrchestra.mp3" type="audio/mpeg">
+                </audio>
+            </div>
+            
+            <!-- 2. 了解我们：去掉文字 span，只留图标，增加 title 提示 -->
             <button class="icon-btn" onclick="openManifestoModal()" title="了解我们">
                 <i class="fas fa-circle-info"></i>                 
             </button>
         
-            <!-- 2. 设置：去掉文字 span，只留图标 -->
+            <!-- 3. 设置：去掉文字 span，只留图标 -->
             <a href="#" onclick="openApiSettingsModal(event)" class="icon-btn" title="设置">
                 <i class="fas fa-cog"></i>
             </a>
         
-            <!-- 3. 语言：图标 + 透明下拉框组合 -->
+            <!-- 4. 语言：图标 + 透明下拉框组合 -->
             <div class="icon-btn language-wrapper" title="切换语言">
                 <!-- 新增的语言图标 -->
                 <i class="fas fa-globe"></i>
