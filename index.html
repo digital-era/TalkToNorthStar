@@ -1555,27 +1555,40 @@
         /* 2. 随机播放小标记 (右上角的小圆点) */
         .random-badge {
             position: absolute;
-            top: -5px;   /*稍微突出圆圈顶部 */
-            right: -5px; /* 稍微突出圆圈右侧 */
+            top: -5px;
+            right: -5px;
             width: 18px;
             height: 18px;
-            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); /* 金色渐变 */
-            color: #000; /* 深色图标 */
+            
+            /* === 修改 1: 暂时隐藏 === */
+            /* === display: none;  /* <--- 加上这一行，图标就会消失 */=== */
+        
+            /* === 修改 2: 优化颜色 (未来启用时请使用下方样式，替代原来的金色渐变) === */
+            /* 原来的金色太亮，改为深色半透明风格，更显高级且不抢眼 */
+            background: rgba(255, 255, 255, 0.15); /* 低调的半透明白 */
+            backdrop-filter: blur(2px);            /* 磨砂感 */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.7);       /* 文字颜色柔和一点 */
+            /* ------------------------------------------------------- */
+        
             border-radius: 50%;
-            display: flex;
+            /* display: flex; <--- 未来启用时，记得把上面的 display: none 去掉，恢复这行 display: flex */
             align-items: center;
             justify-content: center;
-            font-size: 10px; /* 图标非常小 */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.3);
+            font-size: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
             z-index: 5;
             cursor: pointer;
-            transition: transform 0.2s;
-        }        
+            transition: all 0.2s;
+        }
+        
         .random-badge:hover {
-            transform: scale(1.2); /* 悬停微放大 */
-            background: #fff;      /* 悬停变白 */
-        }        
+            transform: scale(1.1);
+            /* 悬停时稍微亮一点，提示可点击 */
+            background: var(--dark-accent); 
+            color: #fff;
+            border-color: var(--dark-accent);
+        }
         /* 3. 播放时的动画效果 */
         .music-playing .main-music-icon {
             animation: musicRotate 3s linear infinite; /* 图标旋转 */
