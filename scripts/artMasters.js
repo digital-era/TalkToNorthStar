@@ -534,20 +534,6 @@ const artMasters = [
         "en": "One of the most acclaimed film composers, winner of 5 Oscars, enduring impact on global film scoring."
       }
     },
-    { id: "hans_zimmer", name: "Hans Zimmer (汉斯·季默)",
-      contribution: {
-        "zh-CN": "创作《盗梦空间》《黑暗骑士》《狮子王》《沙丘》配乐，将电子与传统乐器结合，创造沉浸式音乐体验。",
-        "en": "Composed Inception, The Dark Knight, The Lion King, Dune scores, blended electronic and traditional instruments for immersive experiences."
-      },
-      field: {
-        "zh-CN": "电影配乐、电子音乐、交响融合。",
-        "en": "Film Score, Electronic Music, Symphonic Fusion."
-      },
-      remarks: {
-        "zh-CN": "德国作曲家，获得4项奥斯卡奖，推动电影配乐技术进步，影响当代流行与游戏音乐。",
-        "en": "German composer, 4-time Oscar winner, advanced film scoring technology, influenced contemporary pop and game music."
-      }
-    },
     { id: "meryl_streep", name: "Meryl Streep (梅丽尔·斯特里普)",
       contribution: {
         "zh-CN": "出演《苏菲的选择》《穿普拉达的女王》，以多变角色展现演技深度。",
