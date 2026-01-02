@@ -221,7 +221,7 @@
                 "saveBtnText": "Save Setting",                    
                 "aboutBtnText": "About Us",    
                  // --- 新增宣言模态框的翻译 ---
-                "manifestoTitle": "《Talk to NorthStar》—Deep conversations, at your fingertips.",
+                "manifestoTitle": "《Talk with North Stars》—Deep conversations, at your fingertips.",
                 "manifestoPara1": "Have you ever gazed at the stars, yearning to converse with the constellations?",
                 "manifestoPara2": "In the vast ocean of knowledge, we often feel lost, swept away by the deluge of information and troubled by superficial clamor. We chase fragmented pieces of knowledge, yet rarely have the opportunity to touch upon the profound thoughts that truly shaped human civilization.",
                 "manifestoPara3": "Leonardo da Vinci, Albert Einstein, Ernest Hemingway, Elon Musk... their excellence was not accidental, but stemmed from profound insights into how the world operates: the first principles of physics, the infinite possibilities of art, the brilliance and challenges of human nature. They understood systems, faced chaos, and every foresight and correction, like the North Star, guided them, ultimately shaping their era.",
