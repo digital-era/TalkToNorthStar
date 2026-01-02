@@ -995,6 +995,8 @@
             filter: drop-shadow(0 0 5px rgba(0, 223, 216, 0.3));
             
             animation: colorWave 7s linear infinite;
+            /* 6. 防干扰：确保没有普通文字阴影干扰发光效果 */
+            text-shadow: none; 
         }
         
         /* 3. 正文容器：复刻小说排版 */
