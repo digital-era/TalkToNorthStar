@@ -1064,6 +1064,187 @@
             padding-bottom: 8px;
         }
 
+
+        /* ===#apiSettingsModal (API设置) 样式重构，与整体保持一致=== */
+        /* 1. 容器：深色磨砂玻璃 + 呼吸感光晕 */
+        #apiSettingsModal .modal-content {
+            /* 背景：深色高模糊 */
+            background: rgba(25, 25, 25, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            
+            /* 边框：极细光环 */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            
+            /* 阴影 */
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.8), 
+                0 0 0 1px rgba(0, 223, 216, 0.1); 
+                
+            border-radius: 12px;
+            
+            /* 尺寸与布局 */
+            max-width: 500px; /* 设置不需要太宽，精致一点 */
+            margin: 3% auto;  /* 垂直位置 */
+            padding: 6px 40px 40px; /* 内部留白 */
+            position: relative;
+        }
+        
+        /* 2. 标题 H2：流光渐变艺术字 */
+        #apiSettingsModal h2 {
+            font-family: 'Playfair Display', 'Ma Shan Zheng', serif;
+            font-size: 1.5em; /* 设置里标题不需要太大 */
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 30px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            
+            /* 渐变流光 */
+            background: linear-gradient(90deg, #00DFD8, #7928CA);
+            background-size: 200% auto;
+            
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            
+            /* 发光滤镜 */
+            filter: drop-shadow(0 0 5px rgba(0, 223, 216, 0.4));
+            animation: colorWave 7s linear infinite;
+            
+            /* 确保图标也垂直居中 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        /* 让标题里的图标也能吃到渐变色 */
+        #apiSettingsModal h2 i {
+            background: inherit;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        /* 3. 表单标签：优雅的宋体/衬线体 */
+        #apiSettingsModal label {
+            font-family: 'Noto Serif SC', 'Playfair Display', serif;
+            font-size: 1.1em;
+            color: #d0d0d0; /* 稍微柔和的灰白 */
+            margin-bottom: 10px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        #apiSettingsModal label i {
+            color: var(--dark-accent); /* 图标用主题蓝/青色 */
+            width: 20px; /* 固定宽度保证对齐 */
+            text-align: center;
+        }
+        
+        /* 4. 输入框与下拉菜单：深邃凹陷感 */
+        #apiSettingsModal input[type="text"],
+        #apiSettingsModal input[type="password"],
+        #apiSettingsModal select {
+            width: 100%;
+            padding: 12px 15px;
+            box-sizing: border-box;
+            
+            /* 字体保持一致 */
+            font-family: 'Noto Serif SC', sans-serif; /* 输入内容用宋体也很有质感 */
+            font-size: 1rem;
+            color: #fff;
+            
+            /* 背景：半透明深色 */
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        
+        /* 聚焦状态：边框变青色，微弱发光 */
+        #apiSettingsModal input:focus,
+        #apiSettingsModal select:focus {
+            border-color: #00DFD8;
+            box-shadow: 0 0 10px rgba(0, 223, 216, 0.15);
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        /* 下拉菜单选项的样式 (浏览器兼容性有限，但在Chrome下有效) */
+        #apiSettingsModal select option {
+            background-color: #1e1e1e;
+            color: #fff;
+            padding: 10px;
+        }
+        
+        /* 5. 设为默认模型 (Checkbox) 区域 */
+        #apiSettingsModal .form-group:last-of-type label {
+            cursor: pointer;
+            transition: color 0.3s;
+            background: rgba(255,255,255,0.03); /* 给这一行加个淡淡的底色 */
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        #apiSettingsModal .form-group:last-of-type label:hover {
+            border-color: var(--dark-accent);
+            color: #fff;
+        }
+        #apiSettingsModal input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--dark-accent); /* 设置勾选颜色 */
+            cursor: pointer;
+        }
+        
+        /* 6. 保存按钮：青蓝渐变，药丸形状 */
+        #apiSettingsModal .save-btn {
+            width: 100%;
+            margin-top: 15px;
+            padding: 12px;
+            
+            /* 渐变背景 */
+            background: linear-gradient(135deg, #00DFD8 0%, #4a90e2 100%);
+            
+            color: #000; /* 亮背景配深色字 */
+            font-weight: 700;
+            font-size: 1.1em;
+            font-family: 'Playfair Display', sans-serif;
+            letter-spacing: 1px;
+            
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 223, 216, 0.3);
+            
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        #apiSettingsModal .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 223, 216, 0.5); /* 悬停更亮 */
+            filter: brightness(1.1);
+        }
+        
+        /* 7. 关闭按钮位置微调 */
+        #apiSettingsModal .close-button {
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: 300;
+            color: rgba(255,255,255,0.4);
+        }
+        #apiSettingsModal .close-button:hover {
+            color: #00DFD8;
+            transform: rotate(90deg);
+        }
+
         .loading-spinner {
             border: 4px solid #555;
             border-top: 4px solid var(--dark-accent);
