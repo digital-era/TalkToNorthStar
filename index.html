@@ -984,35 +984,34 @@
             
             font-weight: 700;
             
-            /* 渐变流光效果 */
+            /* 使用您标志性的渐变色 */
             background: linear-gradient(90deg, #00DFD8, #7928CA);
             background-size: 200% auto;
             color: transparent;
             -webkit-background-clip: text;
             background-clip: text;
             
-            /* 发光 */
+            /* 增加文字发光，增加神圣感 */
             filter: drop-shadow(0 0 5px rgba(0, 223, 216, 0.3));
+            
             animation: colorWave 7s linear infinite;
         }
         
         /* 3. 正文容器：复刻小说排版 */
         #immersiveModal .manifesto-text {
-            /* 字体栈：英文衬线 + 中文思源宋体 */
-            font-family: 'Playfair Display', 'Noto Serif SC', serif;
+            /*font-family: 'LXGW WenKai Screen', 'KaiTi', 'STKaiti', 'Playfair Display', serif;*/
+            font-family: 'Playfair Display', 'Ma Shan Zheng', serif;
             
             /* 关键：使用 300 字重，配合抗锯齿，实现“清冷”质感 */
-            font-weight: 300; 
             -webkit-font-smoothing: antialiased;
             
-            color: rgba(255, 255, 255, 0.85); /* 稍微降低纯白刺眼感 */
+            color: #e0e0e0;     /* 稍微柔和的白色 */
             font-size: 1.15em;
-            line-height: 2.0;   /* 大行高，呼吸感 */
-            letter-spacing: 0.08em; /* 增加字间距 */
+            line-height: 1.9;   /* 大行高，呼吸感 */
             text-align: justify;
             
             /* 滚动区域控制 */
-            padding: 0 5px; /* 稍微给滚动条留点位置 */
+            padding: 0 10px; /* 稍微给滚动条留点位置 */
             max-height: 65vh;
             overflow-y: auto;
             
@@ -1027,12 +1026,13 @@
             line-height: inherit;
             margin-bottom: 1.5em;
             text-align: justify;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5); /* 增加文字立体感 */
         }
         
         /* 5. 优化引用块 (Blockquote) - 使其更具文学感 */
         #immersiveModal .manifesto-text blockquote {
             /* 引用文字建议用楷体，与正文宋体区分，更有笔记感 */
-            font-family: 'LXGW WenKai Screen', 'KaiTi', 'STKaiti', serif; 
+            font-family: 'Ma Shan Zheng', cursive;
             
             font-size: 1.05em; 
             line-height: 1.8; 
