@@ -165,6 +165,8 @@
             font-size: 1.1rem; /* 图标稍微大一点 */
             padding: 0; /* 移除内边距 */
             position: relative; /* 为语言下拉框定位做准备 */
+            /* === 新增这行：防止被压缩 === */
+            flex-shrink: 0; 
         }
         
         /* 悬停效果 */
@@ -1560,8 +1562,8 @@
             width: 18px;
             height: 18px;
             
-            /* === 修改 1: 暂时隐藏 === */
-            /* === display: none;  /* <--- 加上这一行，图标就会消失 */=== */
+           /* === 修改 1: 暂时隐藏 (如需隐藏请取消下一行的注释) === */
+           /* display: none; */
         
             /* === 修改 2: 优化颜色 (未来启用时请使用下方样式，替代原来的金色渐变) === */
             /* 原来的金色太亮，改为深色半透明风格，更显高级且不抢眼 */
@@ -1601,8 +1603,29 @@
         }        
         /* 手机端适配：防止小标记被切掉 */
         @media (max-width: 480px) {
-            .top-right-controls {
-                padding-right: 5px; /* 给右侧留一点空间防止溢出 */
+             /* 1. 确保右上角控制区不换行、不压缩 */
+            .top-right-controls { 
+                right: 10px; 
+                gap: 8px;
+                flex-wrap: nowrap; /* 禁止换行 */
+                z-index: 100; /* 提高层级，防止被背景遮挡 */
+            }
+        
+            /* 2. 强制设定按钮尺寸和样式 */
+            .icon-btn {
+                width: 32px !important;  /* 稍微给大一点点触控面积 */
+                height: 32px !important;
+                font-size: 0.9rem !important; /* 字体大小适配 */
+                border-width: 1px !important; /* 边框清晰化 */
+                flex-shrink: 0 !important;    /* 核心：禁止压缩 */
+                display: flex !important;     /* 确保 Flex 居中生效 */
+                align-items: center;
+                justify-content: center;
+            }        
+            /* 3. 手机端取消 Hover 旋转特效 (防止点击后图标卡住) */
+            .icon-btn:hover {
+                transform: none !important; 
+                background-color: rgba(255, 255, 255, 0.05); /* 保持背景微亮，但不要旋转 */
             }
         }
     </style>
