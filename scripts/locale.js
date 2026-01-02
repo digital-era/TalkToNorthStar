@@ -99,7 +99,7 @@
                 "saveBtnText": "保存设置",
                 "aboutBtnText": "了解我们",    
                 // --- 新增宣言模态框的翻译 ---
-                "manifestoTitle": "《对话北极星》——一场与信念最深刻的对话",
+                "manifestoTitle": "《对话北极星》——让深度思想对话触手可及",                                                    
                 "manifestoPara1": "你，是否曾仰望星空，渴望与群星对话？",
                 "manifestoPara2": "在知识的浩瀚海洋中，我们时常感到迷茫，被信息的洪流裹挟，被表面的喧嚣困扰。我们追逐着零散的知识碎片，却鲜少有机会触及那些真正塑造人类文明的深刻思想。",
                 "manifestoPara3": "达·芬奇、爱因斯坦、海明威、马斯克……他们的卓越并非偶然，而是源于对世界运转的深刻洞察：物理的第一性原理、艺术的无限可能、人性的光辉与挑战。他们理解系统，面对混沌，每一次的远见与修正都如北极星般指引，最终塑造了他们的时代。",
@@ -111,9 +111,9 @@
                 "manifestoConclusion": "我们使命是以AI原生智慧，重燃探索与创意的火花——点亮你心中永恒的灯塔。",
 
                 "immersiveTitle": "《对话北极星》深度沉浸模式：以多模态旋律，重谱信念的乐章",
-                "immersiveCoreTitle": "【核心理念】",
+                "immersiveCoreTitle": "[核心理念]",
                 "immersiveCoreText": "文字，仅仅是思想的影子。真正的智慧信仰，流淌在声音的起伏中，凝结在岁月的深邃里，共振于环境的氛围间。我们将AI化作感官的笔触，为您重建那座失落的巴别塔。",
-                "immersiveFuncTitle": "【功能诗篇】",
+                "immersiveFuncTitle": "[功能诗篇]",
                 "immersiveFeat1Title": "初见 · 灵魂的底色",
                 "immersiveFeat1Desc": "<em>默认展现表征情感与思想内涵的视觉与听觉场域</em><br>当你点亮一位“北极星”，屏幕不再是平面的玻璃，而是一扇通往他精神世界的窗。<br>在你开口之前，海明威的雪茄烟雾已在哈瓦那的背景音中缭绕，达·芬奇画室的光影已洒满画布。我们要展现的，不仅仅是他们的形象，更是那段历史的<strong>氛围与体温</strong>。每一张背景图、每一段前奏曲，都是这位北极星灵魂底色的映照。",
                 "immersiveFeat2Title": "共振 · 随心流动的交响",
@@ -221,7 +221,7 @@
                 "saveBtnText": "Save Setting",                    
                 "aboutBtnText": "About Us",    
                  // --- 新增宣言模态框的翻译 ---
-                "manifestoTitle": "《Talk to NorthStar》—A Profound Dialogue with Belief",
+                "manifestoTitle": "《Talk to NorthStar》—Deep conversations, at your fingertips.",
                 "manifestoPara1": "Have you ever gazed at the stars, yearning to converse with the constellations?",
                 "manifestoPara2": "In the vast ocean of knowledge, we often feel lost, swept away by the deluge of information and troubled by superficial clamor. We chase fragmented pieces of knowledge, yet rarely have the opportunity to touch upon the profound thoughts that truly shaped human civilization.",
                 "manifestoPara3": "Leonardo da Vinci, Albert Einstein, Ernest Hemingway, Elon Musk... their excellence was not accidental, but stemmed from profound insights into how the world operates: the first principles of physics, the infinite possibilities of art, the brilliance and challenges of human nature. They understood systems, faced chaos, and every foresight and correction, like the North Star, guided them, ultimately shaping their era.",
@@ -233,9 +233,9 @@
                 "manifestoConclusion": "Our mission is to rekindle the spark of exploration and creativity with AI-native wisdom—Illuminate the eternal lighthouse in your heart.",
 
                 "immersiveTitle": "NorthStar Dialogue Immersive Mode: Recomposing the Melody of Belief",
-                "immersiveCoreTitle": "【Core Philosophy】",
+                "immersiveCoreTitle": "[Core Philosophy]",
                 "immersiveCoreText": "Words are merely shadows of thought. True wisdom flows in the undulations of sound, condenses in the depths of time, and resonates within the atmosphere. We use AI as sensory brushstrokes to rebuild that lost Tower of Babel for you.",
-                "immersiveFuncTitle": "【Functional Verses】",
+                "immersiveFuncTitle": "[Functional Verses]",
                 "immersiveFeat1Title": "First Sight · The Soul's Base Color",
                 "immersiveFeat1Desc": "<em>Default display of visual and auditory fields representing emotional and intellectual depth</em><br>When you light up a 'NorthStar', the screen is no longer flat glass, but a window into their spiritual world.<br>Before you speak, Hemingway's cigar smoke swirls in the background sounds of Havana; Da Vinci's studio light spills onto the canvas. We show not just their image, but the <strong>atmosphere and warmth</strong> of history. Every background image, every prelude, reflects the soul's base color of this NorthStar.",
                 "immersiveFeat2Title": "Resonance · A Symphony Flowing at Will",
