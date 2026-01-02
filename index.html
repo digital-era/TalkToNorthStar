@@ -971,44 +971,95 @@
         }
         /* --- [新增] 结束 --- */
 
-        /* 覆盖 Manifesto 模式对 H2 的特殊处理 */
+           /* 2. 标题 H2：复刻流光渐变艺术字 */
         #immersiveModal h2 {
-            font-family: 'Poppins', sans-serif;
-            color: var(--dark-accent);
-            /* 继承渐变，但调整为字体大小和对齐 */
-            font-size: 1.8em; /* H2 保持比 H3/H4 稍大，但用通用样式 */
-            text-align: center; /* 保持居中 */
-            margin: 0 0 25px 0; /* 恢复标题居中边距 */
-            letter-spacing: 0.8px; 
-            /* 渐变效果已在 .manifesto-modal h2 定义，无需重复 */
+            font-family: 'Playfair Display', 'Ma Shan Zheng', serif;
+            font-size: 2.2em;
+            text-align: center;
+            
+            /* 间距控制 */
+            margin-top: 6px;
+            margin-bottom: 25px;
+            line-height: 1.3;
+            
+            font-weight: 700;
+            
+            /* 渐变流光效果 */
+            background: linear-gradient(90deg, #00DFD8, #7928CA);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            
+            /* 发光 */
+            filter: drop-shadow(0 0 5px rgba(0, 223, 216, 0.3));
+            animation: colorWave 7s linear infinite;
         }
         
-        /* 覆盖 Manifesto 模式的正文和 Blockquote 样式，使其更像标准特性列表 */
-        #immersiveModal .manifesto-text p {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            text-align: left; 
-            line-height: 1.6; 
-            font-size: 1.05rem; /* 保持与输入框等一致 */
-        }
-        
-        #immersiveModal .manifesto-text blockquote {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            font-size: 1em; 
-            line-height: 1.6; 
-            text-align: left; 
-            border-left: 4px solid var(--dark-accent); 
-            padding: 10px 15px; 
-            margin: 15px 0 25px 0; 
-            color: var(--dark-text-primary); /* === 修改为纯白色（主文本颜色） === */
-            background-color: var(--dark-surface); 
-            border-radius: 0 4px 4px 0; 
-        }
-        
-        /* 确保 manifesto-text 区域也恢复标准字体和对齐 */
+        /* 3. 正文容器：复刻小说排版 */
         #immersiveModal .manifesto-text {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            text-align: left;
-            font-size: 1.05rem;
+            /* 字体栈：英文衬线 + 中文思源宋体 */
+            font-family: 'Playfair Display', 'Noto Serif SC', serif;
+            
+            /* 关键：使用 300 字重，配合抗锯齿，实现“清冷”质感 */
+            font-weight: 300; 
+            -webkit-font-smoothing: antialiased;
+            
+            color: rgba(255, 255, 255, 0.85); /* 稍微降低纯白刺眼感 */
+            font-size: 1.15em;
+            line-height: 2.0;   /* 大行高，呼吸感 */
+            letter-spacing: 0.08em; /* 增加字间距 */
+            text-align: justify;
+            
+            /* 滚动区域控制 */
+            padding: 0 5px; /* 稍微给滚动条留点位置 */
+            max-height: 65vh;
+            overflow-y: auto;
+            
+            /* 微弱文字阴影增加清晰度 */
+            text-shadow: 0 0 1px rgba(0,0,0,0.3);
+        }
+        
+        /* 4. 强制覆盖内部段落样式 (防止被之前的 Segoe UI 权重覆盖) */
+        #immersiveModal .manifesto-text p {
+            font-family: inherit; /* 继承上面的 Noto Serif SC */
+            font-size: inherit;
+            line-height: inherit;
+            margin-bottom: 1.5em;
+            text-align: justify;
+        }
+        
+        /* 5. 优化引用块 (Blockquote) - 使其更具文学感 */
+        #immersiveModal .manifesto-text blockquote {
+            /* 引用文字建议用楷体，与正文宋体区分，更有笔记感 */
+            font-family: 'LXGW WenKai Screen', 'KaiTi', 'STKaiti', serif; 
+            
+            font-size: 1.05em; 
+            line-height: 1.8; 
+            text-align: left; 
+            
+            /* 样式：透明背景 + 左侧亮条 */
+            background-color: rgba(255, 255, 255, 0.03); 
+            border-left: 3px solid var(--dark-accent); 
+            
+            padding: 15px 20px; 
+            margin: 20px 0; 
+            border-radius: 0 6px 6px 0;
+            color: #d0d0d0;
+        }
+        
+        /* 6. 优化内部小标题 (H3/H4) */
+        #immersiveModal .manifesto-text h3,
+        #immersiveModal .manifesto-text h4 {
+            font-family: 'Playfair Display', 'Noto Serif SC', serif;
+            color: var(--dark-accent);
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-weight: 400; /* 宋体标题不宜太粗 */
+            font-size: 1.3em;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 8px;
         }
 
         .loading-spinner {
