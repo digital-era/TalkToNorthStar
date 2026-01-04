@@ -122,6 +122,7 @@
       position: relative; /* 为语言下拉框定位做准备 */
       /* === 新增这行：防止被压缩 === */
       flex-shrink: 0; 
+      flex-grow: 0
   }
   
   /* 悬停效果 */
