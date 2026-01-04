@@ -74,18 +74,23 @@
                     <source src="music/HansZimmer-Interstellar-ImperialOrchestra.mp3" type="audio/mpeg">
                 </audio>
             </div>
+
+            <!-- 2. 开启沉浸阅读：只留图标，增加 title 提示 -->
+            <button class="icon-btn" onclick="openElegantMode()" title="开启沉浸阅读">
+                <i class="fas fa-wand-magic-sparkles"></i>
+            </button>
             
-            <!-- 2. 了解我们：去掉文字 span，只留图标，增加 title 提示 -->
+            <!-- 3. 了解我们：去掉文字 span，只留图标，增加 title 提示 -->
             <button class="icon-btn" onclick="openManifestoModal()" title="了解我们">
                 <i class="fas fa-circle-info"></i>                 
             </button>
         
-            <!-- 3. 设置：去掉文字 span，只留图标 -->
+            <!-- 4. 设置：去掉文字 span，只留图标 -->
             <a href="#" onclick="openApiSettingsModal(event)" class="icon-btn" title="设置">
                 <i class="fas fa-cog"></i>
             </a>
         
-            <!-- 4. 语言：图标 + 透明下拉框组合 -->
+            <!-- 5. 语言：图标 + 透明下拉框组合 -->
             <div class="icon-btn language-wrapper" title="切换语言">
                 <!-- 新增的语言图标 -->
                 <i class="fas fa-globe"></i>
@@ -228,14 +233,7 @@
             </div>
             
             <div id="ai-response-area" class="response-display" style="display:none;">
-                <!-- 修改了这里的 Header 结构，使用 Flex 布局放图标 -->
-                <div class="response-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 223, 216, 0.2); margin-bottom: 15px; padding-bottom: 8px;">
-                    <h4 data-i18n-key="aiResponseTitle" style="margin: 0; border: none; padding: 0;">AI 回复:</h4>
-                    <!-- [新增] 优雅阅读模式按钮 -->
-                    <button class="icon-btn elegant-btn" onclick="openElegantMode()" title="开启沉浸阅读">
-                        <i class="fas fa-wand-magic-sparkles"></i>
-                    </button>
-                </div>
+                <h4 data-i18n-key="aiResponseTitle">AI 回复:</h4>
                 <!-- *** MODIFICATION START: Changed <pre> to <div> *** -->
                 <div id="aiResponseText"></div>
                 <!-- *** MODIFICATION END *** -->
