@@ -465,29 +465,31 @@ async function getAIResponse() {
         }
         
         const data = await response.json();
-        // 用于存储原始 Markdown 文本的变量
+        // 【修正 1】先定义变量，确保用来存储原始文本
         let rawContent = "";
-
         if (isGeminiModel) {
             if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
-                aiResponseTextElement.innerHTML = data.candidates[0].content.parts[0].text.trim();
+                // 【修正 2】先赋值给变量，而不是直接操作 DOM
+                rawContent = data.candidates[0].content.parts[0].text.trim();
             } else {
                 throw new Error("Gemini 返回数据结构异常");
             }
         } else {
             if (data.choices && data.choices[0]?.message?.content) {
-                aiResponseTextElement.innerHTML = data.choices[0].message.content.trim();
+                // 【修正 2】同上
+                rawContent = data.choices[0].message.content.trim();
             } else {
                 throw new Error("API 返回数据结构异常");
             }
         }
 
-        // 【关键修改 1】将原始 Markdown 存入 data-raw 属性，供模态框读取
+        // 【修正 3】现在 rawContent 有值了，把它存入 dataset
         aiResponseTextElement.dataset.raw = rawContent;
 
-        // 【关键修改 2】主界面显示：如果主界面也想支持 Markdown，可以在这里也用 marked.parse(rawContent)
+        // 【修正 4】主界面显示：如果主界面也想支持 Markdown，可以在这里也用 marked.parse(rawContent)
         // 这里为了保持和你原逻辑一致（可能主界面只需要简单显示），我们保留直接赋值，或者简单的换行处理
-        // 建议：如果主界面也想好看，也可以变成 aiResponseTextElement.innerHTML = marked.parse(rawContent);        
+        // 建议：如果主界面也想好看，也可以变成 aiResponseTextElement.innerHTML = marked.parse(rawContent);    
+        aiResponseTextElement.innerHTML = rawContent.replace(/\n/g, "<br>");
 
         // 数学公式渲染
         if (window.MathJax) {
@@ -884,56 +886,79 @@ function renderMarkdownWithMath(rawText) {
     return restoreMath(html);
 }
 
+function parseMarkdownWithMath(rawText) {
+    if (!rawText) return "";
+
+    // 1. 存储公式的临时数组
+    const mathSegments = [];
+    
+    // 2. 保护公式：将 LaTeX 内容替换为占位符
+    // 匹配 $$...$$, \[...\], \(...\), $...$
+    const protectedText = rawText.replace(
+        /(\$\$[\s\S]*?\$\$|\\\[[\s\S]*?\\\]|\\\(.*?\\\)|(?<!\\)\$.*?(?<!\\)\$)/gm, 
+        (match) => {
+            mathSegments.push(match);
+            return `__MATH_PLACEHOLDER_${mathSegments.length - 1}__`;
+        }
+    );
+
+    // 3. Markdown 转换 (使用 marked.js)
+    let htmlContent = "";
+    if (typeof marked !== 'undefined') {
+        htmlContent = marked.parse(protectedText);
+    } else {
+        // 如果没有 marked 库，退化为简单换行
+        htmlContent = protectedText.replace(/\n/g, "<br>");
+    }
+
+    // 4. 还原公式：将占位符替换回原始 LaTeX
+    const finalHtml = htmlContent.replace(/__MATH_PLACEHOLDER_(\d+)__/g, (match, index) => {
+        return mathSegments[index];
+    });
+
+    return finalHtml;
+}
+
 function openElegantMode() {
-    // 1. 获取内容
+    // 1. 获取元素
     const userQuestion = document.getElementById('userQuestion').value;
     const aiResponseEl = document.getElementById('aiResponseText');
     
-    // 优先获取 data-raw 中的原始 Markdown，如果没有（比如旧内容），则回退到 innerText
-    let rawAiContent = aiResponseEl.dataset.raw || aiResponseEl.innerText;
+    // 【关键】必须从 dataset.raw 获取原始纯文本
+    // 如果 dataset.raw 为空（修正前的代码会导致为空），逻辑就无法进行
+    const rawAiContent = aiResponseEl.dataset.raw; 
 
     // 2. 校验
-    if (!rawAiContent || rawAiContent.trim() === "") {
-        alert("请先获取北极星的回复，才能开启沉浸阅读模式。");
-        return;
+    if (!rawAiContent) {
+        // 如果 raw 为空，说明还没生成，或者生成函数没保存 raw
+        // 尝试回退读取 innerText，但效果可能不好
+        if (aiResponseEl.innerText.trim() === "") {
+             alert("请先获取北极星的回复，才能开启沉浸阅读模式。");
+             return;
+        }
     }
 
-    // 3. 填充内容
+    // 3. 填充问题
     document.getElementById('elegantQuestionText').innerText = userQuestion || "（北极星指引）";
 
+    // 4. 填充答案 (使用保护函数)
     const elegantAnswerBox = document.getElementById('elegantAnswerText');
+    
+    // 这里传入原始文本，先保护公式，再转 MD，再恢复公式
+    elegantAnswerBox.innerHTML = parseMarkdownWithMath(rawAiContent || aiResponseEl.innerText);
 
-    // 【核心修复】使用“防误伤”转换函数
-    elegantAnswerBox.innerHTML = renderMarkdownWithMath(rawAiContent);
-
-    // 4. 显示模态框
+    // 5. 显示模态框
     const modal = document.getElementById('elegantModal');
     modal.style.display = 'block';
     modal.offsetHeight; // 强制重绘
     modal.classList.add('show');
-    
-    // 5. 阻断背景滚动
     document.body.style.overflow = 'hidden';
 
-    // 6. 【新增】模态框内的数学公式渲染
-    // 必须在模态框内容插入 DOM 后，再次调用 MathJax
-    // 必须用 typesetPromise 针对新插入的 HTML 进行渲染
+    // 6. 触发 MathJax 渲染
     if (window.MathJax) {
-        MathJax.typesetPromise([elegantAnswerBox]).then(() => {
-            console.log("沉浸模式公式渲染完成");
-        }).catch(err => console.error('MathJax error:', err));
+        // 针对模态框区域重新渲染
+        MathJax.typesetPromise([elegantAnswerBox]).catch(err => console.error('Modal MathJax error:', err));
     }
-}
-
-function closeElegantMode() {
-    const modal = document.getElementById('elegantModal');
-    modal.classList.remove('show');
-    
-    // 等待动画结束后隐藏
-    setTimeout(() => {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto'; // 恢复滚动
-    }, 400);
 }
 
 // 点击模态框背景关闭
