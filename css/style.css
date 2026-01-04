@@ -1701,7 +1701,7 @@
   #elegantQuestionText {
       font-family: 'Noto Serif SC', 'Playfair Display', serif; /* 宋体/衬线体 */
       font-style: italic;
-      color: #a0a0a0;
+      color: #e0e0e0;
       font-size: 1.1rem;
       line-height: 1.6;
       text-align: center;
@@ -1738,7 +1738,7 @@
       text-align: center;
       font-family: 'Cinzel', serif;
       font-size: 0.9rem;
-      color: rgba(255, 255, 255, 0.2);
+      color: rgba(255, 255, 255, 0.6);
   }
   
   /* === 移动端适配 === */
