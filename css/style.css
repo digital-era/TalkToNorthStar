@@ -105,6 +105,10 @@
       width: 40px;  /* 固定宽度 */
       height: 40px; /* 固定高度，确保正圆 */
       border-radius: 50%; /* 变成圆形 */
+      /* === 新增：PC端防止被拉伸的关键 === */
+      min-width: 40px;       /* 强制最小宽度 */
+      flex: 0 0 40px;        /* 强制 flex 占用空间 */
+      /* ================================ */
       
       background-color: rgba(255, 255, 255, 0.05); /* 极淡背景 */
       backdrop-filter: blur(4px);
@@ -1255,6 +1259,10 @@
       .icon-btn {
           width: 34px;       /* 电脑端是40px，这里缩小到34px */
           height: 34px;      /* 保持正圆 */
+          /* === 新增：PC端防止被拉伸的关键 === */
+          min-width: 34px;       /* 强制最小宽度 */
+          flex: 0 0 34px;        /* 强制 flex 占用空间 */
+          /* ================================ */
           font-size: 0.95rem;/* 图标也稍微调小 */
       }
       .about-us-button {
@@ -1571,6 +1579,10 @@
       .icon-btn {
           width: 32px !important;  /* 稍微给大一点点触控面积 */
           height: 32px !important;
+          /* === 新增：PC端防止被拉伸的关键 === */
+          min-width: 32px !important;;       /* 强制最小宽度 */
+          flex: 0 0 32px !important;;        /* 强制 flex 占用空间 */
+          /* ================================ */
           font-size: 0.9rem !important; /* 字体大小适配 */
           border-width: 1px !important; /* 边框清晰化 */
           flex-shrink: 0 !important;    /* 核心：禁止压缩 */
