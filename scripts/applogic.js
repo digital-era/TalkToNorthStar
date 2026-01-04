@@ -845,6 +845,45 @@ function playRandomMusic(event) {
 
 
 /* --- [新增] 优雅阅读模式逻辑 --- */
+// 【新增辅助函数】安全解析 Markdown，保护数学公式不被 marked.js 破坏
+function renderMarkdownWithMath(rawText) {
+    if (!rawText) return '';
+
+    // 1. 临时占位符数组
+    const mathBlocks = [];
+    
+    // 2. 正则匹配 LaTeX 公式：
+    // 匹配 $$...$$, \[...\], \(...\), $...$
+    // 注意：这就要求 AI 返回标准的 LaTeX 格式
+    const protectMath = (text) => {
+        return text.replace(/(\$\$[\s\S]*?\$\$|\\\[[\s\S]*?\\\]|\\\(.*?\\\)|(?<!\\)\$.*?(?<!\\)\$)/gm, (match) => {
+            mathBlocks.push(match); // 存入数组
+            return `__MATH_BLOCK_${mathBlocks.length - 1}__`; // 用占位符替换
+        });
+    };
+
+    // 3. 恢复公式
+    const restoreMath = (text) => {
+        return text.replace(/__MATH_BLOCK_(\d+)__/g, (match, index) => {
+            return mathBlocks[index];
+        });
+    };
+
+    // 4. 执行流程
+    let protectedText = protectMath(rawText);
+    
+    let html = '';
+    // 如果引入了 marked.js 则使用，否则简单换行
+    if (typeof marked !== 'undefined') {
+        html = marked.parse(protectedText);
+    } else {
+        html = protectedText.replace(/\n/g, '<br>');
+    }
+
+    // 5. 恢复公式并返回
+    return restoreMath(html);
+}
+
 function openElegantMode() {
     // 1. 获取内容
     const userQuestion = document.getElementById('userQuestion').value;
@@ -864,16 +903,8 @@ function openElegantMode() {
 
     const elegantAnswerBox = document.getElementById('elegantAnswerText');
 
-    // 【核心逻辑】Markdown 转换 + 格式化
-    if (typeof marked !== 'undefined') {
-        // 配置 marked (可选，防止 marked 错误转义数学符号中的下划线等)
-        // 简单的处理是将 Markdown 解析后的 HTML 放入
-        elegantAnswerBox.innerHTML = marked.parse(rawAiContent);
-    } else {
-        // 如果没引入库，回退到简单换行
-        console.warn("未检测到 marked.js，仅进行简单文本渲染");
-        elegantAnswerBox.innerHTML = rawAiContent.replace(/\n/g, "<br>");
-    }
+    // 【核心修复】使用“防误伤”转换函数
+    elegantAnswerBox.innerHTML = renderMarkdownWithMath(rawAiContent);
 
     // 4. 显示模态框
     const modal = document.getElementById('elegantModal');
@@ -886,9 +917,11 @@ function openElegantMode() {
 
     // 6. 【新增】模态框内的数学公式渲染
     // 必须在模态框内容插入 DOM 后，再次调用 MathJax
+    // 必须用 typesetPromise 针对新插入的 HTML 进行渲染
     if (window.MathJax) {
-        // 重置排版队列，确保针对新插入的 HTML 进行渲染
-        MathJax.typesetPromise([elegantAnswerBox]).catch(err => console.error('Modal MathJax error:', err));
+        MathJax.typesetPromise([elegantAnswerBox]).then(() => {
+            console.log("沉浸模式公式渲染完成");
+        }).catch(err => console.error('MathJax error:', err));
     }
 }
 
