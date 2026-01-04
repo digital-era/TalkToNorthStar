@@ -893,30 +893,43 @@ function parseMarkdownWithMath(rawText) {
     const mathSegments = [];
     
     // 2. 保护公式：将 LaTeX 内容替换为占位符
-    // 匹配 $$...$$, \[...\], \(...\), $...$
+    // 使用 @@ 而不是 __，避免被 marked 解析为粗体/斜体
     const protectedText = rawText.replace(
         /(\$\$[\s\S]*?\$\$|\\\[[\s\S]*?\\\]|\\\(.*?\\\)|(?<!\\)\$.*?(?<!\\)\$)/gm, 
         (match) => {
             mathSegments.push(match);
-            return `__MATH_PLACEHOLDER_${mathSegments.length - 1}__`;
+            // 【修改点1】使用 @@ 包裹，或者其他不会触发 Markdown 渲染的字符
+            return `@@MATH_PLACEHOLDER_${mathSegments.length - 1}@@`;
         }
     );
 
-    // 3. Markdown 转换 (使用 marked.js)
+    // 3. Markdown 转换
     let htmlContent = "";
     if (typeof marked !== 'undefined') {
         htmlContent = marked.parse(protectedText);
     } else {
-        // 如果没有 marked 库，退化为简单换行
         htmlContent = protectedText.replace(/\n/g, "<br>");
     }
 
-    // 4. 还原公式：将占位符替换回原始 LaTeX
-    const finalHtml = htmlContent.replace(/__MATH_PLACEHOLDER_(\d+)__/g, (match, index) => {
-        return mathSegments[index];
+    // 4. 还原公式
+    // 【修改点2】正则匹配 @@...@@
+    const finalHtml = htmlContent.replace(/@@MATH_PLACEHOLDER_(\d+)@@/g, (match, index) => {
+        // 【优化】防止公式中的 < > 等符号被浏览器当作 HTML 标签解析错误
+        // 如果你的公式里包含 a < b，直接 innerHTML 会出问题
+        return escapeHtml(mathSegments[index]); 
     });
 
     return finalHtml;
+}
+
+// 辅助函数：防止 LaTeX 中的 < 和 > 破坏 HTML 结构
+function escapeHtml(text) {
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 function openElegantMode() {
@@ -959,6 +972,17 @@ function openElegantMode() {
         // 针对模态框区域重新渲染
         MathJax.typesetPromise([elegantAnswerBox]).catch(err => console.error('Modal MathJax error:', err));
     }
+}
+
+function closeElegantMode() {
+    const modal = document.getElementById('elegantModal');
+    modal.classList.remove('show');
+    
+    // 等待动画结束后隐藏
+    setTimeout(() => {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto'; // 恢复滚动
+    }, 400);
 }
 
 // 点击模态框背景关闭
