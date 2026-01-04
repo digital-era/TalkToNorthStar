@@ -1731,6 +1731,20 @@
   #elegantAnswerText p { margin-bottom: 1.5em; }
   /* 强调重点 */
   #elegantAnswerText strong { color: var(--dark-accent); font-weight: 700; }
+
+  /* 确保公式过长时可以横向滚动，而不是撑乱布局 */
+  .elegant-content #elegantAnswerText {
+      overflow-x: auto; /* 允许横向滚动 */
+      line-height: 1.8; /* 增加行高，避免公式上下打架 */
+  }
+  
+  /* 针对 MathJax 生成的容器进行优化 */
+  mjx-container {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+      vertical-align: middle; 
+  }
   
   /* 10. 底部 Logo */
   .elegant-footer {
