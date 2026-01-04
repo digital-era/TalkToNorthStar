@@ -465,6 +465,8 @@ async function getAIResponse() {
         }
         
         const data = await response.json();
+        // 用于存储原始 Markdown 文本的变量
+        let rawContent = "";
 
         if (isGeminiModel) {
             if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
@@ -479,6 +481,13 @@ async function getAIResponse() {
                 throw new Error("API 返回数据结构异常");
             }
         }
+
+        // 【关键修改 1】将原始 Markdown 存入 data-raw 属性，供模态框读取
+        aiResponseTextElement.dataset.raw = rawContent;
+
+        // 【关键修改 2】主界面显示：如果主界面也想支持 Markdown，可以在这里也用 marked.parse(rawContent)
+        // 这里为了保持和你原逻辑一致（可能主界面只需要简单显示），我们保留直接赋值，或者简单的换行处理
+        // 建议：如果主界面也想好看，也可以变成 aiResponseTextElement.innerHTML = marked.parse(rawContent);        
 
         // 数学公式渲染
         if (window.MathJax) {
@@ -839,28 +848,48 @@ function playRandomMusic(event) {
 function openElegantMode() {
     // 1. 获取内容
     const userQuestion = document.getElementById('userQuestion').value;
-    const aiResponse = document.getElementById('aiResponseText').innerHTML; // 注意：这里用 innerHTML 保留格式
+    const aiResponseEl = document.getElementById('aiResponseText');
+    
+    // 优先获取 data-raw 中的原始 Markdown，如果没有（比如旧内容），则回退到 innerText
+    let rawAiContent = aiResponseEl.dataset.raw || aiResponseEl.innerText;
 
     // 2. 校验
-    if (!aiResponse || aiResponse.trim() === "") {
+    if (!rawAiContent || rawAiContent.trim() === "") {
         alert("请先获取北极星的回复，才能开启沉浸阅读模式。");
         return;
     }
 
     // 3. 填充内容
-    // 如果用户没填问题（比如直接生成的），显示默认文案
     document.getElementById('elegantQuestionText').innerText = userQuestion || "（北极星指引）";
-    document.getElementById('elegantAnswerText').innerHTML = aiResponse;
 
-    // 4. 显示模态框 (带动画)
+    const elegantAnswerBox = document.getElementById('elegantAnswerText');
+
+    // 【核心逻辑】Markdown 转换 + 格式化
+    if (typeof marked !== 'undefined') {
+        // 配置 marked (可选，防止 marked 错误转义数学符号中的下划线等)
+        // 简单的处理是将 Markdown 解析后的 HTML 放入
+        elegantAnswerBox.innerHTML = marked.parse(rawAiContent);
+    } else {
+        // 如果没引入库，回退到简单换行
+        console.warn("未检测到 marked.js，仅进行简单文本渲染");
+        elegantAnswerBox.innerHTML = rawAiContent.replace(/\n/g, "<br>");
+    }
+
+    // 4. 显示模态框
     const modal = document.getElementById('elegantModal');
     modal.style.display = 'block';
-    // 强制重绘以触发 transition
-    modal.offsetHeight; 
+    modal.offsetHeight; // 强制重绘
     modal.classList.add('show');
     
     // 5. 阻断背景滚动
     document.body.style.overflow = 'hidden';
+
+    // 6. 【新增】模态框内的数学公式渲染
+    // 必须在模态框内容插入 DOM 后，再次调用 MathJax
+    if (window.MathJax) {
+        // 重置排版队列，确保针对新插入的 HTML 进行渲染
+        MathJax.typesetPromise([elegantAnswerBox]).catch(err => console.error('Modal MathJax error:', err));
+    }
 }
 
 function closeElegantMode() {
