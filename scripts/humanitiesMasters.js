@@ -642,5 +642,20 @@ const humanitiesMasters = [
         "zh-CN": "商业与科技播客领域的翘楚，以详尽研究和专业分析为听众提供宝贵知识。",
         "en": "Leaders in business and tech podcasting, providing valuable knowledge to listeners through exhaustive research and professional analysis."
       }
+    },
+    {
+      id: "david_macaulay", name: "David Macaulay (大卫·麦考利)",
+      contribution: {
+        "zh-CN": "创作《大教堂》《城堡》《金字塔》系列及《万物运转的秘密》，以精湛插图详尽再现建筑与机械建造过程，普及工程与科技原理。",
+        "en": "Authored the Cathedral, Castle, Pyramid series and The Way Things Work, meticulously illustrated construction processes of architecture and machines, popularized engineering and scientific principles."
+      },
+      field: {
+        "zh-CN": "建筑插图、科普图画书、工程教育。",
+        "en": "Architectural Illustration, Educational Picture Books, Engineering Education."
+      },
+      remarks: {
+        "zh-CN": "当代最杰出的科普插画家之一，1991年获凯迪克金奖，2006年获麦克阿瑟天才奖，其作品以严谨细节与幽默视角影响全球数代读者对建筑与科技的认知。",
+        "en": "One of the most distinguished contemporary educational illustrators; recipient of the 1991 Caldecott Medal and 2006 MacArthur Fellowship; his works, with rigorous detail and wry humor, have shaped generations' understanding of architecture and technology worldwide."
+      }
     }
 ];
