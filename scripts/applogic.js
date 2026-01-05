@@ -1092,27 +1092,43 @@ function renderDialogueCanvas() {
         node.className = `thought-node ${isUser ? 'question-node' : 'answer-node'}`;
         node.id = `node-${index}`;
         
-        // 头部元数据
-        const metaHTML = `<div class="node-meta">
-            <i class="fas ${isUser ? 'fa-user' : 'fa-star'}"></i> 
-            ${item.leaderName}
-        </div>`;
-        
-        // 内容处理 (支持 Markdown/Math)
-        let contentHTML = '';
+        let innerHTML = '';
+
         if (isUser) {
-            contentHTML = item.text; // 用户问题通常是纯文本
+            // --- 用户节点布局 ---
+            innerHTML = `
+                <div class="user-avatar-mark"><i class="fas fa-user-astronaut"></i></div>
+                <div class="node-content user-handwriting">${item.text}</div>
+            `;
         } else {
-            // 使用现有的 renderMarkdownWithMath 函数
-            contentHTML = typeof parseMarkdownWithMath === 'function' 
+            // --- 北极星节点布局 (增强版) ---
+            // 处理 Markdown 内容
+            let contentHTML = typeof parseMarkdownWithMath === 'function' 
                 ? parseMarkdownWithMath(item.text) 
                 : item.text.replace(/\n/g, '<br>');
+
+            // 获取北极星信息
+            const info = item.leaderInfo || { name: 'Unknown', field: '', contribution: '' };
+
+            innerHTML = `
+                <div class="star-decoration-top"><i class="fas fa-star-of-life"></i></div>
+                <div class="leader-header">
+                    <div class="leader-name">${info.name}</div>
+                    <div class="leader-badges">
+                        <span class="badge-field">${info.field}</span>
+                    </div>
+                </div>
+                <div class="leader-contribution-hint" title="${info.contribution}">
+                    <i class="fas fa-quote-left"></i> ${info.contribution.substring(0, 30)}...
+                </div>
+                <div class="node-divider"></div>
+                <div class="node-content star-content">${contentHTML}</div>
+                <div class="star-decoration-bottom"><i class="fas fa-feather-alt"></i> North Star Insight</div>
+            `;
         }
         
-        node.innerHTML = metaHTML + `<div class="node-content">${contentHTML}</div>`;
-        
-        // 点击摘录功能
-        node.onclick = (e) => addToInspiration(e, item.text);
+        node.innerHTML = innerHTML;
+        node.onclick = (e) => addToInspiration(e, item.text); // 保持摘录功能
         
         container.appendChild(node);
     });
