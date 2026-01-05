@@ -496,24 +496,33 @@ async function getAIResponse() {
         aiResponseTextElement.innerHTML = rawContent.replace(/\n/g, "<br>");
         
          // --- [新增]画布保存到对话历史 ---
-         // 1. 保存用户问题
+        // 1. 获取纯净的用户问题 (不带Prompt指令)
+        const rawUserQuestion = document.getElementById('userQuestion').value.trim();
+    
+        // 2. 准备北极星的元数据 (防止当前没选人报错)
+        const leaderMeta = currentSelectedLeader ? {
+            name: currentSelectedLeader.name,
+            field: currentSelectedLeader.field[currentLang] || currentSelectedLeader.field['zh-CN'],
+            contribution: currentSelectedLeader.contribution[currentLang] || currentSelectedLeader.contribution['zh-CN']
+        } : { name: 'North Star', field: 'General AI', contribution: '' };
+    
+        // 3. 存入历史 - 用户提问
         conversationHistory.push({
             id: Date.now() + '_user',
             role: 'user',
-            text: promptText, // 或者 userQuestion
-            leaderName: currentSelectedLeader ? currentSelectedLeader.name : 'User',
+            text: rawUserQuestion || "（用户仅生成了提示词，未填写问题）", // 兜底
+            leaderInfo: null, // 用户不需要leader信息
             timestamp: new Date()
         });
         
-        // 2. 保存AI回答
+        // 4. 存入历史 - AI回答
         conversationHistory.push({
             id: Date.now() + '_ai',
             role: 'ai',
-            text: rawContent, // 保存Markdown源码
-            leaderName: currentSelectedLeader ? currentSelectedLeader.name : 'NorthStar',
+            text: rawContent, 
+            leaderInfo: leaderMeta, // 保存这一刻的北极星状态
             timestamp: new Date()
         });
-    
         // 如果画布当前是打开的，实时刷新
         if(isCanvasModeOpen) {
             renderDialogueCanvas();
