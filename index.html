@@ -81,18 +81,23 @@
             <button class="icon-btn" onclick="openElegantMode()" title="开启沉浸阅读">
                 <i class="fas fa-wand-magic-sparkles"></i>
             </button>
+
+            <!-- 3. 开启对话画布 -->
+            <button class="icon-btn" onclick="openDialogueCanvas()" title="对话画布：思想流淌">
+                <i class="fas fa-scroll"></i> <!-- 使用卷轴图标 -->
+            </button>
             
-            <!-- 3. 了解我们：去掉文字 span，只留图标，增加 title 提示 -->
+            <!-- 4. 了解我们：去掉文字 span，只留图标，增加 title 提示 -->
             <button class="icon-btn" onclick="openManifestoModal()" title="了解我们">
                 <i class="fas fa-circle-info"></i>                 
             </button>
         
-            <!-- 4. 设置：去掉文字 span，只留图标 -->
+            <!-- 5. 设置：去掉文字 span，只留图标 -->
             <a href="#" onclick="openApiSettingsModal(event)" class="icon-btn" title="设置">
                 <i class="fas fa-cog"></i>
             </a>
         
-            <!-- 5. 语言：图标 + 透明下拉框组合 -->
+            <!-- 6. 语言：图标 + 透明下拉框组合 -->
             <div class="icon-btn language-wrapper" title="切换语言">
                 <!-- 新增的语言图标 -->
                 <i class="fas fa-globe"></i>
@@ -401,6 +406,41 @@
     <footer>
         <p data-i18n-key="footerRight">© 2025 AI范式进化. 保留所有权利。</p>
     </footer>
+    
+    <!-- 对话画布模态框 -->
+    <div id="dialogueCanvasModal" class="canvas-modal">
+        <!-- 关闭按钮 -->
+        <button class="canvas-close-btn" onclick="closeDialogueCanvas()">
+            <i class="fas fa-times"></i>
+        </button>
+        
+        <!-- 顶部工具栏 -->
+        <div class="canvas-toolbar">
+            <span class="canvas-title">DIALOGUE CANVAS</span>
+            <button onclick="clearCanvasHistory()" title="清空画布"><i class="fas fa-eraser"></i></button>
+            <button onclick="toggleSidebar()" title="灵感手稿"><i class="fas fa-feather-alt"></i></button>
+        </div>
+    
+        <!-- 核心画布区域 -->
+        <div class="canvas-viewport" id="canvasViewport">
+            <!-- SVG层：用于绘制连接线，置于底层 -->
+            <svg id="thoughtTrailsSvg" class="thought-trails"></svg>
+            <!-- 内容层：存放对话节点 -->
+            <div id="thoughtStreamContent" class="thought-stream"></div>
+        </div>
+    
+        <!-- 右侧：灵感手稿/留白区域 -->
+        <div id="inspirationSidebar" class="inspiration-sidebar open">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-pen-fancy"></i> 灵感手稿</h3>
+                <p>拖拽或点击左侧关键概念至此...</p>
+            </div>
+            <div id="notesContainer" class="notes-container" contenteditable="true" data-placeholder="在这里记录你的顿悟...">
+                <!-- 用户笔记将在这里 -->
+            </div>
+        </div>
+    </div>
+    
     <script>
         // --- 宣言模态框控制逻辑 (与您提供的示例脚本一致) ---
         const manifestoModal = document.getElementById('manifestoModal');
@@ -433,5 +473,6 @@
         });      
 
     </script>
+    
 </body>
 </html>
