@@ -2,6 +2,10 @@ let currentSelectedLeader = null;
 let currentSelectedLeaderCategory = '';
 let currentGeneratedPrompt = '';
 
+// --- [新增] 对话画布相关全局变量 ---
+let conversationHistory = []; // 存储 {role, text, leaderName, timestamp}
+let isCanvasModeOpen = false;
+
 // --- NEW: Modal Control ---
 const apiSettingsModal = document.getElementById('apiSettingsModal');
 const apiEndpointSelect = document.getElementById('apiEndpoint'); // Changed ID to match HTML
@@ -490,7 +494,31 @@ async function getAIResponse() {
         // 这里为了保持和你原逻辑一致（可能主界面只需要简单显示），我们保留直接赋值，或者简单的换行处理
         // 建议：如果主界面也想好看，也可以变成 aiResponseTextElement.innerHTML = marked.parse(rawContent);    
         aiResponseTextElement.innerHTML = rawContent.replace(/\n/g, "<br>");
-
+        
+         // --- [新增]画布保存到对话历史 ---
+         // 1. 保存用户问题
+        conversationHistory.push({
+            id: Date.now() + '_user',
+            role: 'user',
+            text: promptText, // 或者 userQuestion
+            leaderName: currentSelectedLeader ? currentSelectedLeader.name : 'User',
+            timestamp: new Date()
+        });
+        
+        // 2. 保存AI回答
+        conversationHistory.push({
+            id: Date.now() + '_ai',
+            role: 'ai',
+            text: rawContent, // 保存Markdown源码
+            leaderName: currentSelectedLeader ? currentSelectedLeader.name : 'NorthStar',
+            timestamp: new Date()
+        });
+    
+        // 如果画布当前是打开的，实时刷新
+        if(isCanvasModeOpen) {
+            renderDialogueCanvas();
+        }
+        
         // 数学公式渲染
         if (window.MathJax) {
             MathJax.typesetPromise([aiResponseTextElement]).catch(err => console.error('MathJax error:', err));
@@ -992,4 +1020,181 @@ document.getElementById('elegantModal').addEventListener('click', function(e) {
     if (e.target === this) {
         closeElegantMode();
     }
+});
+
+
+/* --- 对话画布逻辑 (Dialogue Canvas Logic) --- */
+function openDialogueCanvas() {
+    isCanvasModeOpen = true;
+    const modal = document.getElementById('dialogueCanvasModal');
+    modal.style.display = 'block';
+    
+    // 延时一点渲染，确保DOM可见
+    setTimeout(() => {
+        modal.style.opacity = '1';
+        renderDialogueCanvas();
+    }, 10);
+    
+    document.body.style.overflow = 'hidden'; // 锁定主页滚动
+}
+
+function closeDialogueCanvas() {
+    isCanvasModeOpen = false;
+    const modal = document.getElementById('dialogueCanvasModal');
+    modal.style.opacity = '0';
+    setTimeout(() => {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }, 500);
+}
+
+function clearCanvasHistory() {
+    if(confirm("确定要清空画布上的思想轨迹吗？这不会影响主界面的对话。")) {
+        conversationHistory = [];
+        renderDialogueCanvas();
+    }
+}
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('inspirationSidebar');
+    sidebar.classList.toggle('open');
+}
+
+// 核心渲染函数：将历史记录转化为视觉流
+function renderDialogueCanvas() {
+    const container = document.getElementById('thoughtStreamContent');
+    const svgEl = document.getElementById('thoughtTrailsSvg');
+    container.innerHTML = '';
+    
+    // 如果没有历史
+    if (conversationHistory.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#888; margin-top:100px; font-family:'Ma Shan Zheng'">
+            暂无思想轨迹...<br>请先在主界面与北极星对话。
+        </div>`;
+        svgEl.innerHTML = ''; // 清空连线
+        return;
+    }
+
+    // 1. 渲染节点卡片
+    conversationHistory.forEach((item, index) => {
+        const node = document.createElement('div');
+        const isUser = item.role === 'user';
+        
+        node.className = `thought-node ${isUser ? 'question-node' : 'answer-node'}`;
+        node.id = `node-${index}`;
+        
+        // 头部元数据
+        const metaHTML = `<div class="node-meta">
+            <i class="fas ${isUser ? 'fa-user' : 'fa-star'}"></i> 
+            ${item.leaderName}
+        </div>`;
+        
+        // 内容处理 (支持 Markdown/Math)
+        let contentHTML = '';
+        if (isUser) {
+            contentHTML = item.text; // 用户问题通常是纯文本
+        } else {
+            // 使用现有的 renderMarkdownWithMath 函数
+            contentHTML = typeof parseMarkdownWithMath === 'function' 
+                ? parseMarkdownWithMath(item.text) 
+                : item.text.replace(/\n/g, '<br>');
+        }
+        
+        node.innerHTML = metaHTML + `<div class="node-content">${contentHTML}</div>`;
+        
+        // 点击摘录功能
+        node.onclick = (e) => addToInspiration(e, item.text);
+        
+        container.appendChild(node);
+    });
+
+    // 渲染后处理 MathJax
+    if (window.MathJax) {
+        MathJax.typesetPromise([container]).catch(err => {});
+    }
+
+    // 2. 绘制 SVG 连接线 (思想轨迹)
+    // 需要等待DOM布局完成后计算坐标
+    setTimeout(drawConnections, 300);
+}
+
+function drawConnections() {
+    const container = document.getElementById('thoughtStreamContent');
+    const svgEl = document.getElementById('thoughtTrailsSvg');
+    const nodes = container.querySelectorAll('.thought-node');
+    
+    // 调整SVG高度以匹配内容
+    svgEl.style.height = container.scrollHeight + 'px';
+    svgEl.innerHTML = ''; // 清除旧线
+
+    if (nodes.length < 2) return;
+
+    let pathD = '';
+    
+    // 遍历节点，连接 i 和 i+1
+    for (let i = 0; i < nodes.length - 1; i++) {
+        const current = nodes[i];
+        const next = nodes[i+1];
+        
+        // 获取相对坐标
+        const currentRect = current.getBoundingClientRect();
+        const nextRect = next.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect(); // 视口容器
+        
+        // 计算相对于 SVG 容器 (container) 的坐标
+        // 注意：因为 container 是 scrollable，这里需要加上 scrollTop 
+        // 但更简单的是利用 offsetTop/Left，因为 thought-node 是 relative 到 container 的
+        
+        const startX = current.offsetLeft + (current.offsetWidth / 2);
+        const startY = current.offsetTop + current.offsetHeight;
+        
+        const endX = next.offsetLeft + (next.offsetWidth / 2);
+        const endY = next.offsetTop;
+        
+        // 贝塞尔曲线控制点 (S型)
+        const controlY = (endY - startY) / 2;
+        
+        // 绘制路径 M(起点) C(控制点1) (控制点2) (终点)
+        // 路径颜色根据是 User->AI 还是 AI->User 变化
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", `M ${startX} ${startY} C ${startX} ${startY + controlY}, ${endX} ${endY - controlY}, ${endX} ${endY}`);
+        path.setAttribute("class", "trail-path");
+        
+        svgEl.appendChild(path);
+    }
+}
+
+// 将内容添加到手稿区
+function addToInspiration(event, text) {
+    // 阻止 MathJax 点击或其他默认行为
+    if(event) event.stopPropagation();
+    
+    const notesDiv = document.getElementById('notesContainer');
+    
+    // 创建一个新的笔记块
+    const noteBlock = document.createElement('div');
+    noteBlock.style.marginBottom = "15px";
+    noteBlock.style.padding = "5px";
+    noteBlock.style.borderLeft = "2px solid #8b5a2b";
+    noteBlock.style.backgroundColor = "rgba(139, 90, 43, 0.05)";
+    
+    // 只截取前100字作为引用，防止太长
+    const snippet = text.length > 150 ? text.substring(0, 150) + "..." : text;
+    noteBlock.innerText = `"${snippet}"`;
+    
+    notesDiv.appendChild(noteBlock);
+    
+    // 打开侧边栏
+    const sidebar = document.getElementById('inspirationSidebar');
+    if(!sidebar.classList.contains('open')) {
+        sidebar.classList.add('open');
+    }
+    
+    // 滚动到底部
+    notesDiv.scrollTop = notesDiv.scrollHeight;
+}
+
+// 监听窗口大小变化重绘连线
+window.addEventListener('resize', () => {
+    if(isCanvasModeOpen) drawConnections();
 });
