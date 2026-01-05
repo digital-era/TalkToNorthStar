@@ -152,5 +152,19 @@ const chinaEntrepreneurs = [
                 "zh-CN": "京东2024年服务超7亿用户，引领零售科技融合。",
                 "en": "JD.com served over 700 million users in 2024, leading the integration of retail and technology."
               } 
+            },
+            {id: "yu_kai",  name: "余凯 (Kai Yu)",
+              contribution: {
+                "zh-CN": "地平线机器人（Horizon Robotics）创始人兼首席执行官，国际知名机器学习专家，推动中国边缘人工智能计算平台发展，领导征程系列车规级芯片及高阶智能驾驶解决方案，实现中国乘用车智驾芯片规模量产。",
+                "en": "Founder and CEO of Horizon Robotics, internationally renowned machine learning expert, drives the development of China's edge AI computing platform, leads the Journey series automotive-grade chips and high-level intelligent driving solutions, achieving large-scale mass production of intelligent driving chips in Chinese passenger vehicles."
+              },
+              field: {
+                "zh-CN": "人工智能、自动驾驶、边缘计算、机器人时代计算基础设施。",
+                "en": "Artificial Intelligence, Autonomous Driving, Edge Computing, Computing Infrastructure for the Robotics Era."
+              },
+              remarks: {
+                "zh-CN": "2024年10月带领地平线香港上市，2025年征程系列计算方案累计出货量突破1000万套，成为国内首家达成该里程碑的智驾科技企业, 推动高阶智驾普惠化。",
+                "en": "Led Horizon Robotics to list in Hong Kong in October 2024; in 2025, the Journey series computing solutions exceeded 10 million cumulative shipments, making Horizon the first intelligent driving tech company in China to reach this milestone; promotes inclusive high-level intelligent driving."
+              }
             }
         ];
