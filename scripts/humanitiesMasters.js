@@ -654,8 +654,8 @@ const humanitiesMasters = [
         "en": "Architectural Illustration, Educational Picture Books, Engineering Education."
       },
       remarks: {
-        "zh-CN": "当代最杰出的科普插画家之一，1991年获凯迪克金奖，2006年获麦克阿瑟天才奖，其作品以严谨细节与幽默视角影响全球数代读者对建筑与科技的认知。",
-        "en": "One of the most distinguished contemporary educational illustrators; recipient of the 1991 Caldecott Medal and 2006 MacArthur Fellowship; his works, with rigorous detail and wry humor, have shaped generations' understanding of architecture and technology worldwide."
+        "zh-CN": "当代最杰出的科普插画家之一，2006年获麦克阿瑟天才奖，其作品以严谨细节与幽默视角影响全球数代读者对建筑与科技的认知。",
+        "en": "One of the most distinguished contemporary educational illustrators; recipient of the 2006 MacArthur Fellowship; his works, with rigorous detail and wry humor, have shaped generations' understanding of architecture and technology worldwide."
       }
     }
 ];
