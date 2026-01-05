@@ -1781,3 +1781,202 @@
       }
   }
   /* ===END [新增] Begin 优雅阅读模式 (Celestial Manuscript Mode) === */
+
+
+/* --- 对话画布 (Dialogue Canvas) 样式 --- */
+/* 模态框容器：全屏覆盖 */
+.canvas-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+    background-color: #f4ecd8; /* 羊皮纸底色 */
+    /* 背景纹理：模拟纸张颗粒感 */
+    background-image: 
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.1'/%3E%3C/svg%3E"),
+        radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.1) 100%);
+    overflow: hidden;
+    font-family: 'Noto Serif SC', 'Cinzel', serif;
+    transition: opacity 0.5s ease;
+}
+
+/* 核心视口 */
+.canvas-viewport {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto; /* 允许垂直滚动 */
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    padding-bottom: 100px;
+}
+
+/* SVG 轨迹层 */
+.thought-trails {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; /* JS会动态调整高度 */
+    pointer-events: none; /* 确保不阻挡点击 */
+    z-index: 0;
+}
+
+/* 轨迹线样式 */
+.trail-path {
+    fill: none;
+    stroke: rgba(60, 47, 47, 0.15); /* 淡淡的墨色 */
+    stroke-width: 2px;
+    stroke-dasharray: 10; /* 虚线效果 */
+    animation: dashDraw 60s linear infinite;
+}
+
+@keyframes dashDraw {
+    to { stroke-dashoffset: 1000; }
+}
+
+/* 思想流内容层 */
+.thought-stream {
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 80px 20px;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 60px; /* 节点间距 */
+}
+
+/* 单个节点 (Question or Answer) */
+.thought-node {
+    position: relative;
+    max-width: 45%;
+    padding: 20px 30px;
+    border-radius: 4px;
+    /* 晕涂法效果：柔和的阴影 */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    opacity: 0; /* 初始隐藏，JS控制淡入 */
+    animation: sfumatoFadeIn 1s forwards ease-out;
+}
+
+@keyframes sfumatoFadeIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.thought-node:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+}
+
+/* 问题节点：偏左，模拟手写字迹 */
+.thought-node.question-node {
+    align-self: flex-start;
+    background: rgba(255, 255, 255, 0.6);
+    border-left: 3px solid #8b5a2b; /* 铜色边框 */
+    font-family: 'Ma Shan Zheng', cursive; /* 手写体 */
+    font-size: 1.2rem;
+    color: #4a4a4a;
+}
+
+/* 回答节点：偏右，结构化排版 */
+.thought-node.answer-node {
+    align-self: flex-end;
+    background: rgba(255, 255, 255, 0.85);
+    border-right: 3px solid #2c3e50; /* 深墨色边框 */
+    font-family: 'Noto Serif SC', serif;
+    color: #2c3e50;
+    backdrop-filter: blur(5px);
+}
+
+.node-meta {
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Cinzel', serif;
+}
+
+/* 右侧：灵感手稿区 */
+.inspiration-sidebar {
+    position: fixed;
+    right: -320px; /* 默认隐藏 */
+    top: 0;
+    width: 300px;
+    height: 100%;
+    background: #fdfbf7;
+    border-left: 1px solid rgba(0,0,0,0.1);
+    box-shadow: -5px 0 20px rgba(0,0,0,0.05);
+    z-index: 2;
+    transition: right 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.inspiration-sidebar.open {
+    right: 0;
+}
+
+.sidebar-header {
+    padding: 20px;
+    background: rgba(139, 90, 43, 0.1);
+    border-bottom: 1px double rgba(139, 90, 43, 0.3);
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    color: #8b5a2b;
+    font-family: 'Ma Shan Zheng', cursive;
+}
+
+.notes-container {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    font-family: 'Ma Shan Zheng', cursive; /* 笔记也用手写体 */
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #555;
+    outline: none;
+    /* 横线背景 */
+    background-image: linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+    background-size: 100% 2em; /* 行高 */
+}
+
+/* 工具栏和按钮 */
+.canvas-close-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #555;
+    z-index: 3;
+}
+
+.canvas-toolbar {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    z-index: 3;
+}
+
+.canvas-title {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #333;
+    letter-spacing: 3px;
+}
