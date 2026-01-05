@@ -1783,8 +1783,9 @@
   /* ===END [新增] Begin 优雅阅读模式 (Celestial Manuscript Mode) === */
 
 
-/* --- 对话画布 (Dialogue Canvas) 样式 --- */
-/* 模态框容器：全屏覆盖 */
+/* --- 对话画布 (Dialogue Canvas) v2.0 重制版 --- */
+
+/* 1. 模态框容器：深邃宇宙背景 */
 .canvas-modal {
     display: none;
     position: fixed;
@@ -1793,190 +1794,278 @@
     width: 100%;
     height: 100%;
     z-index: 2000;
-    background-color: #f4ecd8; /* 羊皮纸底色 */
-    /* 背景纹理：模拟纸张颗粒感 */
-    background-image: 
-        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.1'/%3E%3C/svg%3E"),
-        radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.1) 100%);
-    overflow: hidden;
+    /* 核心背景：深蓝渐变 + 噪点 */
+    background: radial-gradient(circle at 50% 30%, #1a2a3a 0%, #0d1218 100%);
     font-family: 'Noto Serif SC', 'Cinzel', serif;
     transition: opacity 0.5s ease;
 }
 
-/* 核心视口 */
+/* 添加繁星背景图 (可选，如果只是纯色渐变也可以) */
+.canvas-modal::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-image: url("https://www.transparenttextures.com/patterns/stardust.png"); /* 一个轻量级星尘纹理 */
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+/* 2. 核心视口 */
 .canvas-viewport {
     position: relative;
     width: 100%;
     height: 100%;
-    overflow-y: auto; /* 允许垂直滚动 */
+    overflow-y: auto;
     overflow-x: hidden;
     scroll-behavior: smooth;
-    padding-bottom: 100px;
+    padding-bottom: 150px; /* 底部留白 */
+    perspective: 1000px; /* 增加3D透视感 */
 }
 
-/* SVG 轨迹层 */
+/* 3. 连线层：金色星轨 */
 .thought-trails {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%; /* JS会动态调整高度 */
-    pointer-events: none; /* 确保不阻挡点击 */
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
     z-index: 0;
+    filter: drop-shadow(0 0 5px rgba(197, 160, 89, 0.5)); /* 发光效果 */
 }
 
-/* 轨迹线样式 */
 .trail-path {
     fill: none;
-    stroke: rgba(60, 47, 47, 0.15); /* 淡淡的墨色 */
-    stroke-width: 2px;
-    stroke-dasharray: 10; /* 虚线效果 */
-    animation: dashDraw 60s linear infinite;
+    stroke: #c5a059; /* 金色 */
+    stroke-width: 1.5px;
+    opacity: 0.6;
+    /* 不再是虚线，而是像星图连线一样的实线 */
 }
 
-@keyframes dashDraw {
-    to { stroke-dashoffset: 1000; }
-}
-
-/* 思想流内容层 */
+/* 4. 节点流容器 */
 .thought-stream {
     position: relative;
-    max-width: 1000px;
+    max-width: 1100px; /* 更宽一点 */
     margin: 0 auto;
-    padding: 80px 20px;
+    padding: 100px 40px;
     z-index: 1;
     display: flex;
     flex-direction: column;
-    gap: 60px; /* 节点间距 */
+    gap: 80px;
 }
 
-/* 单个节点 (Question or Answer) */
+/* 5. 通用节点卡片样式 */
 .thought-node {
     position: relative;
-    max-width: 45%;
-    padding: 20px 30px;
-    border-radius: 4px;
-    /* 晕涂法效果：柔和的阴影 */
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    max-width: 48%;
+    padding: 0; /* 内部布局负责padding */
+    border-radius: 2px;
     cursor: pointer;
-    opacity: 0; /* 初始隐藏，JS控制淡入 */
-    animation: sfumatoFadeIn 1s forwards ease-out;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    animation: floatIn 0.8s ease-out forwards;
+    opacity: 0;
 }
 
-@keyframes sfumatoFadeIn {
-    from { opacity: 0; transform: translateY(20px) scale(0.95); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+@keyframes floatIn {
+    from { opacity: 0; transform: translateY(30px) rotateX(5deg); }
+    to { opacity: 1; transform: translateY(0) rotateX(0); }
 }
 
+/* 悬停效果：轻微上浮 + 发光增强 */
 .thought-node:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    z-index: 10;
 }
 
-/* 问题节点：偏左，模拟手写字迹 */
+/* --- 用户提问卡片：极简便签风格 --- */
 .thought-node.question-node {
     align-self: flex-start;
-    background: rgba(255, 255, 255, 0.6);
-    border-left: 3px solid #8b5a2b; /* 铜色边框 */
-    font-family: 'Ma Shan Zheng', cursive; /* 手写体 */
-    font-size: 1.2rem;
-    color: #4a4a4a;
+    background: rgba(255, 255, 255, 0.1); /* 半透明玻璃感 */
+    border-left: 4px solid #fff;
+    backdrop-filter: blur(10px);
+    padding: 20px 25px;
+    color: #fff;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    border-radius: 0 10px 10px 0;
 }
 
-/* 回答节点：偏右，结构化排版 */
+.question-node .user-avatar-mark {
+    position: absolute;
+    left: -20px;
+    top: -15px;
+    width: 40px;
+    height: 40px;
+    background: #fff;
+    color: #0d1218;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.user-handwriting {
+    font-family: 'Ma Shan Zheng', cursive; /* 手写体 */
+    font-size: 1.4rem;
+    line-height: 1.6;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* --- 北极星回答卡片：古典羊皮纸风格 --- */
 .thought-node.answer-node {
     align-self: flex-end;
-    background: rgba(255, 255, 255, 0.85);
-    border-right: 3px solid #2c3e50; /* 深墨色边框 */
-    font-family: 'Noto Serif SC', serif;
-    color: #2c3e50;
-    backdrop-filter: blur(5px);
+    /* 羊皮纸背景色 */
+    background: #f4ecd8; 
+    color: #2c1e12;
+    /* 复杂的阴影模拟纸张厚度 */
+    box-shadow: 
+        0 2px 5px rgba(0,0,0,0.1),
+        0 15px 40px rgba(0,0,0,0.4),
+        inset 0 0 60px rgba(139, 90, 43, 0.1); /* 内发光旧纸感 */
+    border: 1px solid rgba(139, 90, 43, 0.3);
+    padding: 30px 40px;
+    /* 装饰性边角 */
+    clip-path: polygon(
+        0% 0%, 100% 0%, 
+        100% 95%, 95% 100%, 
+        0% 100%
+    );
 }
 
-.node-meta {
-    font-size: 0.8rem;
-    color: #888;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-family: 'Cinzel', serif;
+.thought-node.answer-node:hover {
+    box-shadow: 
+        0 20px 50px rgba(197, 160, 89, 0.2), /* 金色光晕 */
+        inset 0 0 20px rgba(139, 90, 43, 0.2);
 }
 
-/* 右侧：灵感手稿区 */
-.inspiration-sidebar {
-    position: fixed;
-    right: -320px; /* 默认隐藏 */
-    top: 0;
-    width: 300px;
-    height: 100%;
-    background: #fdfbf7;
-    border-left: 1px solid rgba(0,0,0,0.1);
-    box-shadow: -5px 0 20px rgba(0,0,0,0.05);
-    z-index: 2;
-    transition: right 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+/* 北极星卡片内部元素 */
+.star-decoration-top {
+    text-align: center;
+    color: #8b5a2b;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    opacity: 0.7;
+}
+
+.leader-header {
     display: flex;
     flex-direction: column;
-}
-
-.inspiration-sidebar.open {
-    right: 0;
-}
-
-.sidebar-header {
-    padding: 20px;
-    background: rgba(139, 90, 43, 0.1);
-    border-bottom: 1px double rgba(139, 90, 43, 0.3);
-}
-
-.sidebar-header h3 {
-    margin: 0;
-    color: #8b5a2b;
-    font-family: 'Ma Shan Zheng', cursive;
-}
-
-.notes-container {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    font-family: 'Ma Shan Zheng', cursive; /* 笔记也用手写体 */
-    font-size: 1.1rem;
-    line-height: 1.8;
-    color: #555;
-    outline: none;
-    /* 横线背景 */
-    background-image: linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
-    background-size: 100% 2em; /* 行高 */
-}
-
-/* 工具栏和按钮 */
-.canvas-close-btn {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: #555;
-    z-index: 3;
-}
-
-.canvas-toolbar {
-    position: absolute;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 20px;
     align-items: center;
-    z-index: 3;
+    margin-bottom: 10px;
 }
 
-.canvas-title {
+.leader-name {
     font-family: 'Cinzel', serif;
     font-weight: 700;
-    font-size: 1.2rem;
-    color: #333;
-    letter-spacing: 3px;
+    font-size: 1.5rem;
+    color: #3e2723;
+    letter-spacing: 2px;
+    text-transform: uppercase;
 }
+
+.leader-badges {
+    margin-top: 5px;
+}
+
+.badge-field {
+    font-size: 0.75rem;
+    background: #3e2723;
+    color: #d7ccc8;
+    padding: 2px 8px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.leader-contribution-hint {
+    font-size: 0.9rem;
+    color: #6d4c41;
+    font-style: italic;
+    text-align: center;
+    opacity: 0.8;
+    margin-bottom: 15px;
+    font-family: 'Playfair Display', serif;
+}
+
+.node-divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, #8b5a2b, transparent);
+    margin: 15px 0 20px 0;
+    opacity: 0.4;
+}
+
+.star-content {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #1a1a1a;
+    text-align: justify;
+}
+
+.star-decoration-bottom {
+    margin-top: 25px;
+    text-align: right;
+    font-size: 0.8rem;
+    color: #8b5a2b;
+    font-family: 'Cinzel', serif;
+    opacity: 0.6;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+/* 6. 右侧侧边栏 (保持不变或微调颜色) */
+.inspiration-sidebar {
+    background: #fdfbf7;
+    box-shadow: -5px 0 30px rgba(0,0,0,0.5);
+}
+
+/* 7. 顶部工具栏适配深色背景 */
+.canvas-title {
+    color: #c5a059; /* 金色文字 */
+    text-shadow: 0 0 10px rgba(197, 160, 89, 0.4);
+}
+
+.canvas-toolbar button {
+    color: #c5a059;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(197, 160, 89, 0.3);
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.canvas-toolbar button:hover {
+    background: #c5a059;
+    color: #0d1218;
+}
+
+.canvas-close-btn {
+    color: #fff;
+    opacity: 0.7;
+}
+.canvas-close-btn:hover {
+    opacity: 1;
+    transform: rotate(90deg);
+}
+
+/* 适配移动端 */
+@media (max-width: 768px) {
+    .thought-stream {
+        padding: 60px 20px;
+        gap: 50px;
+    }
+    .thought-node {
+        max-width: 90%;
+    }
+    .thought-node.question-node {
+        align-self: center;
+        margin-right: auto;
+        border-radius: 10px;
+    }
+    .thought-node.answer-node {
+        align-self: center;
+        margin-left: auto;
+    }
+}
+
