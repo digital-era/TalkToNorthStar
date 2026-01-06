@@ -1057,7 +1057,7 @@ function closeDialogueCanvas() {
     }, 500);
 }
 
-
+function clearCanvasHistory() {
     // 1. 判断是否有内容可清空
     if (!conversationHistory || conversationHistory.length === 0) {
         alert("画布已经是空的了。");
