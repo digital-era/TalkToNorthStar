@@ -1787,7 +1787,7 @@
 
 /* 1. 模态框容器：深邃宇宙背景 */
 .canvas-modal {
-    /* display: none; */ /* 调试时暂时注释 */
+    display: none;   /* 调试时暂时注释 */
     position: fixed;
     top: 0;
     left: 0;
