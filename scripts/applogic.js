@@ -1057,10 +1057,23 @@ function closeDialogueCanvas() {
     }, 500);
 }
 
-function clearCanvasHistory() {
-    if(confirm("确定要清空画布上的思想轨迹吗？这不会影响主界面的对话。")) {
-        conversationHistory = [];
-        renderDialogueCanvas();
+
+    // 1. 判断是否有内容可清空
+    if (!conversationHistory || conversationHistory.length === 0) {
+        alert("画布已经是空的了。");
+        return;
+    }
+
+    // 2. 弹出确认框
+    const isConfirmed = confirm("⚠️ 高风险操作\n\n您确定要清空整个画布吗？\n此操作将移除所有当前的思维节点且无法恢复。\n(主界面的对话记录不会受影响)");
+
+    // 3. 用户点击“确定”后执行
+    if (isConfirmed) {
+        conversationHistory = []; // 清空数组
+        renderDialogueCanvas();   // 重绘界面
+        
+        // 可选：给个轻提示
+        // alert("画布已清空"); 
     }
 }
 
@@ -1069,22 +1082,20 @@ function toggleSidebar() {
     sidebar.classList.toggle('open');
 }
 
-// 核心渲染函数：将历史记录转化为视觉流
+/* --- 核心渲染函数 (renderDialogueCanvas) --- */
 function renderDialogueCanvas() {
     const container = document.getElementById('thoughtStreamContent');
     const svgEl = document.getElementById('thoughtTrailsSvg');
     container.innerHTML = '';
     
-    // 如果没有历史
     if (conversationHistory.length === 0) {
         container.innerHTML = `<div style="text-align:center; color:#888; margin-top:100px; font-family:'Ma Shan Zheng'">
             暂无思想轨迹...<br>请先在主界面与北极星对话。
         </div>`;
-        svgEl.innerHTML = ''; // 清空连线
+        svgEl.innerHTML = ''; 
         return;
     }
 
-    // 1. 渲染节点卡片
     conversationHistory.forEach((item, index) => {
         const node = document.createElement('div');
         const isUser = item.role === 'user';
@@ -1092,25 +1103,31 @@ function renderDialogueCanvas() {
         node.className = `thought-node ${isUser ? 'question-node' : 'answer-node'}`;
         node.id = `node-${index}`;
         
-        let innerHTML = '';
+        // --- 新增：删除按钮 ---
+        // 注意：onclick 绑定了 deleteNode 并传入 index
+        const deleteBtnHTML = `
+            <button class="node-delete-btn" onclick="deleteNode(event, ${index})" title="删除此节点">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+
+        let contentHTML = '';
 
         if (isUser) {
-            // --- 用户节点布局 ---
-            innerHTML = `
+            contentHTML = `
+                ${deleteBtnHTML} <!-- 插入删除按钮 -->
                 <div class="user-avatar-mark"><i class="fas fa-user-astronaut"></i></div>
                 <div class="node-content user-handwriting">${item.text}</div>
             `;
         } else {
-            // --- 北极星节点布局 (增强版) ---
-            // 处理 Markdown 内容
-            let contentHTML = typeof parseMarkdownWithMath === 'function' 
+            let processedText = typeof parseMarkdownWithMath === 'function' 
                 ? parseMarkdownWithMath(item.text) 
                 : item.text.replace(/\n/g, '<br>');
 
-            // 获取北极星信息
             const info = item.leaderInfo || { name: 'Unknown', field: '', contribution: '' };
 
-            innerHTML = `
+            contentHTML = `
+                ${deleteBtnHTML} <!-- 插入删除按钮 -->
                 <div class="star-decoration-top"><i class="fas fa-star-of-life"></i></div>
                 <div class="leader-header">
                     <div class="leader-name">${info.name}</div>
@@ -1122,26 +1139,24 @@ function renderDialogueCanvas() {
                     <i class="fas fa-quote-left"></i> ${info.contribution.substring(0, 30)}...
                 </div>
                 <div class="node-divider"></div>
-                <div class="node-content star-content">${contentHTML}</div>
+                <div class="node-content star-content">${processedText}</div>
                 <div class="star-decoration-bottom"><i class="fas fa-feather-alt"></i> North Star Insight</div>
             `;
         }
         
-        node.innerHTML = innerHTML;
-        node.onclick = (e) => addToInspiration(e, item.text); // 保持摘录功能
+        node.innerHTML = contentHTML;
+        node.onclick = (e) => addToInspiration(e, item.text); 
         
         container.appendChild(node);
     });
 
-    // 渲染后处理 MathJax
     if (window.MathJax) {
         MathJax.typesetPromise([container]).catch(err => {});
     }
 
-    // 2. 绘制 SVG 连接线 (思想轨迹)
-    // 需要等待DOM布局完成后计算坐标
     setTimeout(drawConnections, 300);
 }
+
 
 function drawConnections() {
     const container = document.getElementById('thoughtStreamContent');
@@ -1223,3 +1238,117 @@ function addToInspiration(event, text) {
 window.addEventListener('resize', () => {
     if(isCanvasModeOpen) drawConnections();
 });
+
+* --- 新增功能逻辑 --- */
+
+// 1. 删除单个节点功能
+function deleteNode(event, index) {
+    // 1. 阻止事件冒泡 (非常重要)
+    // 防止点击删除按钮时，同时触发底下的“点击摘录到灵感手稿”功能
+    if (event) {
+        event.stopPropagation();
+    }
+    
+    // 2. 弹出确认框
+    const isConfirmed = confirm("🗑️ 确认删除\n\n您确定要移除这个对话节点吗？\n删除后，画布上的连线将自动重新连接。");
+
+    // 3. 用户点击“确定”后执行
+    if (isConfirmed) {
+        // 从数组中删除指定索引的元素
+        conversationHistory.splice(index, 1);
+        
+        // 重新渲染画布 (这会自动更新SVG连线)
+        renderDialogueCanvas();
+    }
+}
+
+// 2. 导出为 Markdown
+function exportToMD() {
+    if (conversationHistory.length === 0) {
+        alert("画布为空，无法导出。");
+        return;
+    }
+
+    let mdContent = "# Dialogue Canvas Export\n\n";
+    const timestamp = new Date().toLocaleString();
+    mdContent += `> Exported on: ${timestamp}\n\n---\n\n`;
+
+    conversationHistory.forEach((item, index) => {
+        const role = item.role === 'user' ? "User" : (item.leaderInfo?.name || "North Star");
+        const text = item.text.replace(/\n/g, '\n> '); // 引用格式化
+        
+        mdContent += `### ${role}:\n${text}\n\n`;
+    });
+
+    // 创建 Blob 并下载
+    const blob = new Blob([mdContent], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `canvas_export_${new Date().getTime()}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// 3. 导出为 PDF
+async function exportToPDF() {
+    const element = document.getElementById('thoughtStreamContent'); // 截取核心内容区
+    const svgEl = document.getElementById('thoughtTrailsSvg');
+    
+    if (conversationHistory.length === 0) {
+        alert("画布为空，无法导出。");
+        return;
+    }
+
+    // 显示加载提示（可选）
+    const originalCursor = document.body.style.cursor;
+    document.body.style.cursor = 'wait';
+
+    try {
+        // 使用 html2canvas 截图
+        // scale: 2 可以提高清晰度
+        // useCORS: true 允许加载跨域图片（如果有头像）
+        const canvas = await html2canvas(element, {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: '#ffffff', // 确保背景是白色的
+            ignoreElements: (node) => {
+                // 导出时不包含删除按钮
+                return node.classList && node.classList.contains('node-delete-btn');
+            }
+        });
+
+        const imgData = canvas.toDataURL('image/png');
+        
+        // 初始化 jsPDF
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        
+        const imgWidth = 210; // A4 宽度 mm
+        const pageHeight = 297; // A4 高度 mm
+        const imgHeight = canvas.height * imgWidth / canvas.width;
+        let heightLeft = imgHeight;
+        let position = 0;
+
+        // 处理长图分页逻辑
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        while (heightLeft >= 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+        }
+
+        pdf.save(`canvas_export_${new Date().getTime()}.pdf`);
+        
+    } catch (error) {
+        console.error("PDF Export Error:", error);
+        alert("导出PDF失败，请检查控制台错误。");
+    } finally {
+        document.body.style.cursor = originalCursor;
+    }
+}
