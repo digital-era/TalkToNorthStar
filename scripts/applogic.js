@@ -1303,29 +1303,26 @@ async function exportToPDF() {
         return;
     }
 
-    // 显示等待状态
+    // 1. 设置鼠标等待状态
     const originalCursor = document.body.style.cursor;
     document.body.style.cursor = 'wait';
 
-    // 1. 创建临时容器 (保持原有逻辑)
+    // 2. 创建离屏容器 (关键：用移出屏幕代替 hidden，解决白屏问题)
     const printDiv = document.createElement('div');
     printDiv.style.position = 'absolute';
-    printDiv.style.top = '0'; // 临时改为0以便计算位置，但放在层级最下或透明
-    printDiv.style.left = '0';
-    printDiv.style.zIndex = '-9999';
-    printDiv.style.width = '595px'; // A4 宽度
+    printDiv.style.left = '-10000px'; // 移出视口
+    printDiv.style.top = '0px';
+    printDiv.style.width = '595px';   // A4 宽度 (72dpi 标准)
     printDiv.style.backgroundColor = '#ffffff';
-    printDiv.style.padding = '40px'; 
-    printDiv.style.fontFamily = '"Helvetica Neue", Helvetica, Arial, sans-serif';
+    printDiv.style.padding = '40px';  // 这里的 padding 是页面的左右内边距
+    printDiv.style.fontFamily = '"Helvetica Neue", Helvetica, Arial, "Microsoft Yahei", sans-serif';
     printDiv.style.color = '#333';
-    
-    // 关键：为了防止 html2canvas 截图不完整，先让它在文档流中可见但不可视
-    printDiv.style.visibility = 'hidden'; 
+    printDiv.style.zIndex = '-1';     // 确保不遮挡现有页面
 
-    // 2. 构建 HTML (增加 class 标记以便后续查找位置)
+    // 3. 构建 HTML 内容
     let contentHtml = `
         <h2 style="text-align:center; color:#333; border-bottom:2px solid #ddd; padding-bottom:15px; margin-bottom:20px;">
-            对话北极星 (Talk with North Stars)
+            对话记录
         </h2>
         <div style="font-size: 12px; color: #888; text-align: right; margin-bottom: 30px;">
             导出时间: ${new Date().toLocaleString()}
@@ -1334,22 +1331,23 @@ async function exportToPDF() {
 
     conversationHistory.forEach((item) => {
         const isUser = item.role === 'user';
-        const nameColor = isUser ? '#2980b9' : '#d35400'; 
-        const nameText = isUser ? 'User (提问)' : (item.leaderInfo?.name || 'North Star');
+        const nameColor = isUser ? '#2980b9' : '#d35400';
+        const nameText = isUser ? 'User (提问)' : (item.leaderInfo?.name || 'Assistant');
         const bgColor = isUser ? '#f0f7fb' : '#fff5eb';
         
+        // 简单处理换行，如有 markdown 解析器可在此调用
         let textContent = item.text.replace(/\n/g, '<br>');
         if (!isUser && typeof parseMarkdownWithMath === 'function') {
             try { textContent = parseMarkdownWithMath(item.text); } catch(e) {}
         }
 
-        // 给每个对话块添加 class="pdf-node"
+        // 注意：这里给每个对话块加了 class="pdf-node"，用于后续计算切割位置
         contentHtml += `
-            <div class="pdf-node" style="margin-bottom: 25px;">
-                <div style="font-weight: bold; color: ${nameColor}; margin-bottom: 8px; font-size: 14px;">
+            <div class="pdf-node" style="margin-bottom: 20px;">
+                <div style="font-weight: bold; color: ${nameColor}; margin-bottom: 5px; font-size: 14px;">
                     ${nameText}:
                 </div>
-                <div style="background: ${bgColor}; padding: 15px; border-radius: 8px; line-height: 1.6; font-size: 14px; border: 1px solid #eee;">
+                <div style="background: ${bgColor}; padding: 12px; border-radius: 8px; line-height: 1.6; font-size: 14px; border: 1px solid #eee; text-align: justify;">
                     ${textContent}
                 </div>
             </div>
@@ -1360,105 +1358,121 @@ async function exportToPDF() {
     document.body.appendChild(printDiv);
 
     try {
-        // 3. 获取所有对话节点的位置信息 (用于智能分页)
-        // 注意：这里获取的是并未缩放的 DOM 坐标
-        const nodeElements = printDiv.querySelectorAll('.pdf-node');
-        const nodePositions = [];
-        nodeElements.forEach(el => {
-            // 我们记录每个节点的“顶部”位置，作为安全的切割点
-            nodePositions.push(el.offsetTop);
-            // 也可以记录底部+margin作为切割点
-            nodePositions.push(el.offsetTop + el.offsetHeight + 25); 
-        });
-        // 排序并去重
-        const safeCuts = [...new Set(nodePositions)].sort((a, b) => a - b);
+        // 可选：给一点点渲染时间，防止图片或字体未加载完
+        await new Promise(resolve => setTimeout(resolve, 100));
 
-        // 4. 生成完整长图 Canvas
-        const scale = 2; // 提高清晰度
+        // 4. 计算所有“安全切割点” (Smart Slicing 核心)
+        // 我们不希望切断文字，所以只允许在 div 之间切割
+        const nodeElements = printDiv.querySelectorAll('.pdf-node');
+        const safeCuts = []; 
+        
+        nodeElements.forEach(el => {
+            // 获取该元素相对于 printDiv 顶部的距离
+            const top = el.offsetTop;
+            const bottom = top + el.offsetHeight;
+            
+            // 策略：允许在每个对话框的“上边缘”和“下边缘+margin”处切割
+            // 加上 margin-bottom 的一半作为松弛空间
+            safeCuts.push(top); 
+            safeCuts.push(bottom + 10); 
+        });
+        
+        // 排序去重
+        const sortedCuts = [...new Set(safeCuts)].sort((a, b) => a - b);
+
+        // 5. 生成高清长图
+        const scale = 2; // 2倍图提高清晰度
         const canvas = await html2canvas(printDiv, {
             scale: scale,
             useCORS: true,
             logging: false,
-            backgroundColor: '#ffffff'
+            backgroundColor: '#ffffff',
+            height: printDiv.scrollHeight, 
+            windowHeight: printDiv.scrollHeight
         });
 
-        // 5. 智能分页逻辑
+        // 6. PDF 分页逻辑
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
         
         const pdfWidth = 210; 
         const pdfHeight = 297; 
-        // 计算一页 PDF 对应多少 Canvas 像素高度
+        
+        // 转换：一页 PDF 等于多少 Canvas 像素？
         const pageHeightInCanvas = (canvas.width / pdfWidth) * pdfHeight;
         
-        let renderedHeight = 0; // 已渲染到 PDF 的 Canvas 高度
+        let renderedHeight = 0; // 已经渲染到了 Canvas 的哪个高度
         const totalHeight = canvas.height;
 
         while (renderedHeight < totalHeight) {
-            // 5.1 确定当前页的预期切割点
+            // 6.1 预测下一页切在哪里
             let proposedCut = renderedHeight + pageHeightInCanvas;
             
-            // 如果预期切割点超过总高度，就切到底
             if (proposedCut >= totalHeight) {
+                // 如果剩余内容不足一页，直接切到底
                 proposedCut = totalHeight;
             } else {
-                // 5.2 寻找最佳切割点 (Smart Slicing)
-                // 目标：在 renderedHeight 和 proposedCut 之间，找一个最大的 safeCut
-                // 这样可以把跨页的内容整个推到下一页去
+                // 6.2 智能修正：寻找最近的“安全切割点”
+                // 我们要在 renderedHeight 和 proposedCut 之间，找一个最大的 safeCut
+                // 这样能保证这一页尽可能填满，同时不切断文字
                 
                 let bestCut = -1;
                 
-                // 将 DOM 坐标转换为 Canvas 坐标 (乘以 scale)
-                for (let cut of safeCuts) {
-                    const canvasCut = cut * scale;
-                    // 我们希望切割点在当前页范围内，且尽量靠后（填满页面）
-                    if (canvasCut > renderedHeight && canvasCut < proposedCut) {
-                        bestCut = canvasCut;
+                // 遍历我们之前计算好的 DOM 节点位置
+                for (let cutDom of sortedCuts) {
+                    const cutCanvas = cutDom * scale; // 记得乘以缩放倍数
+                    
+                    if (cutCanvas > renderedHeight && cutCanvas < proposedCut) {
+                        bestCut = cutCanvas;
                     }
                 }
 
-                // 如果找到了安全的切割点（位于两个对话框之间），就用它
-                // 否则（比如一个对话框超级长，超过一页），只能被迫在 proposedCut 处硬切
+                // 如果找到了安全点，就用安全点；没找到（说明单个对话框太长超过一页），只能硬切
                 if (bestCut !== -1) {
                     proposedCut = bestCut;
                 }
             }
 
-            // 5.3 在临时 Canvas 上截取这一段
+            // 6.3 截取图片
             const sliceHeight = proposedCut - renderedHeight;
+            
+            // 创建临时 Canvas 存放这一页的内容
             const sliceCanvas = document.createElement('canvas');
             sliceCanvas.width = canvas.width;
             sliceCanvas.height = sliceHeight;
             
             const ctx = sliceCanvas.getContext('2d');
-            // drawImage 参数: 源图, 源X, 源Y, 源宽, 源高, 目标X, 目标Y, 目标宽, 目标高
+            // 参数：源图，源X，源Y，源宽，源高，目标X，目标Y，目标宽，目标高
             ctx.drawImage(canvas, 0, renderedHeight, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
             
-            // 5.4 将截取的部分添加到 PDF
-            const imgData = sliceCanvas.toDataURL('image/jpeg', 1.0);
+            // 6.4 添加到 PDF
+            const imgData = sliceCanvas.toDataURL('image/jpeg', 0.95); // 0.95 质量
             
-            // 如果不是第一页，先添加新页
             if (renderedHeight > 0) {
                 pdf.addPage();
             }
             
-            // 计算在 PDF 页面中的显示高度
-            // 保持宽高比：imgHeightInPdf = (Canvas切片高 * PDF页宽) / Canvas宽
+            // 计算图片在 PDF 里的实际高度 (保持宽高比)
             const imgHeightInPdf = (sliceHeight * pdfWidth) / canvas.width;
             
+            // 渲染图片：如果 imgHeightInPdf 小于 pdfHeight，底部自然留白
             pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, imgHeightInPdf);
 
-            // 5.5 更新进度
+            // 6.5 更新进度
             renderedHeight = proposedCut;
         }
 
-        pdf.save(`dialogue_export_${new Date().getTime()}.pdf`);
+        // 7. 保存文件
+        pdf.save(`Dialogue_${new Date().toISOString().slice(0,10)}.pdf`);
 
     } catch (error) {
-        console.error("PDF Export Error:", error);
-        alert("导出 PDF 遇到问题，请检查控制台。");
+        console.error("PDF Export Failed:", error);
+        alert("导出 PDF 失败，建议打开控制台查看详情。");
     } finally {
-        document.body.removeChild(printDiv);
+        // 8. 清理现场
+        if (printDiv && printDiv.parentNode) {
+            printDiv.parentNode.removeChild(printDiv);
+        }
         document.body.style.cursor = originalCursor;
     }
 }
