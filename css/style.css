@@ -1787,28 +1787,73 @@
 
 /* 1. 模态框容器：深邃宇宙背景 */
 .canvas-modal {
-    display: none;
+    /* [调试模式] 暂时注释掉 display: none，确保你能立刻看到效果 */
+    /* display: none; */ 
+    
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw; /* 改用 vw/vh 确保全屏 */
+    height: 100vh;
     z-index: 2000;
-    /* 核心背景：深蓝渐变 + 噪点 */
-    background: radial-gradient(circle at 50% 30%, #1a2a3a 0%, #0d1218 100%);
+    
+    /* 核心背景：深蓝渐变 (加深了颜色以突显星星) */
+    background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+    
     font-family: 'Noto Serif SC', 'Cinzel', serif;
     transition: opacity 0.5s ease;
 }
 
-/* 添加繁星背景图 (可选，如果只是纯色渐变也可以) */
+/* 2. [核心修改] 纯 CSS 生成星空 (无需外部图片，稳定显示) */
 .canvas-modal::before {
     content: "";
     position: absolute;
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
+    
+    /* 
+       原理：使用三个不同大小的径向渐变层叠，模拟远近不同的星星 
+       如果你觉得星星太密，可以调整 background-size 的数值（变大 = 星星变稀疏）
+    */
+    background-image: 
+        radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 40px 70px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 50px 160px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 130px 80px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 160px 120px, rgba(255,255,255,0.8), rgba(0,0,0,0));
+    
+    background-repeat: repeat;
+    background-size: 200px 200px; /* 控制星星循环的区块大小 */
+    
+    opacity: 0.6; /* 星星整体亮度 */
+    pointer-events: none;
+    z-index: -1; /* 确保在内容之下 */
+    
+    /* 可选：增加缓慢的星空浮动效果 */
+    animation: starMove 100s linear infinite;
+}
+
+/* 增加一个更细微的尘埃层，增加层次感 */
+.canvas-modal::after {
+    content: "";
+    position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    background-image: url("https://www.transparenttextures.com/patterns/stardust.png"); /* 一个轻量级星尘纹理 */
+    background-image: radial-gradient(1px 1px at 10px 10px, rgba(255,255,255,0.3), rgba(0,0,0,0));
+    background-size: 50px 50px;
     opacity: 0.3;
     pointer-events: none;
+    z-index: -1;
 }
+
+/* 星空缓慢移动动画 */
+@keyframes starMove {
+    from { transform: translateY(0); }
+    to { transform: translateY(-200px); }
+}
+
 
 /* 2. 核心视口 */
 .canvas-viewport {
