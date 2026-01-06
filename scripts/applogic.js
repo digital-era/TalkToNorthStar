@@ -1206,31 +1206,40 @@ function drawConnections() {
 
 // 将内容添加到手稿区
 function addToInspiration(event, text) {
-    // 阻止 MathJax 点击或其他默认行为
     if(event) event.stopPropagation();
-    
-    const notesDiv = document.getElementById('notesContainer');
-    
-    // 创建一个新的笔记块
-    const noteBlock = document.createElement('div');
-    noteBlock.style.marginBottom = "15px";
-    noteBlock.style.padding = "5px";
-    noteBlock.style.borderLeft = "2px solid #8b5a2b";
-    noteBlock.style.backgroundColor = "rgba(139, 90, 43, 0.05)";
-    
-    // 只截取前100字作为引用，防止太长
-    const snippet = text.length > 150 ? text.substring(0, 150) + "..." : text;
-    noteBlock.innerText = `"${snippet}"`;
-    
-    notesDiv.appendChild(noteBlock);
-    
-    // 打开侧边栏
+
     const sidebar = document.getElementById('inspirationSidebar');
+    const notesDiv = document.getElementById('notesContainer');
+
+    // 1. 确保侧边栏滑出
     if(!sidebar.classList.contains('open')) {
         sidebar.classList.add('open');
     }
+
+    // 2. 创建精美的笔记块
+    const noteBlock = document.createElement('div');
+    noteBlock.className = 'inspiration-note-block'; // 对应上面的CSS
+    noteBlock.contentEditable = "false"; // 建议设为 false，防止用户不小心把格式删乱了，用户可以在块外面打字
     
-    // 滚动到底部
+    // 截取文本
+    const snippet = text.length > 100 ? text.substring(0, 100) + "..." : text;
+    noteBlock.innerText = snippet;
+    
+    // 3. 处理 contenteditable 的插入逻辑
+    // 如果容器是空的（显示placeholder），先清空内容
+    if (notesDiv.innerText.trim() === "") {
+        notesDiv.innerHTML = "";
+    }
+    
+    // 插入笔记块
+    notesDiv.appendChild(noteBlock);
+    
+    // 4. 插入一个换行符，方便用户在引用后面打字
+    const spacer = document.createElement('div');
+    spacer.innerHTML = "<br>";
+    notesDiv.appendChild(spacer);
+
+    // 5. 滚动到底部
     notesDiv.scrollTop = notesDiv.scrollHeight;
 }
 
