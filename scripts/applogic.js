@@ -1322,7 +1322,7 @@ async function exportToPDF() {
     // 2. 构建纯净的问答 HTML 内容
     let contentHtml = `
         <h2 style="text-align:center; color:#333; border-bottom:2px solid #ddd; padding-bottom:15px; margin-bottom:20px;">
-            对话记录
+            对话北极星 (Talk with North Stars)
         </h2>
         <div style="font-size: 12px; color: #888; text-align: right; margin-bottom: 30px;">
             导出时间: ${new Date().toLocaleString()}
@@ -1333,7 +1333,7 @@ async function exportToPDF() {
         const isUser = item.role === 'user';
         // 简单的样式区分
         const nameColor = isUser ? '#2980b9' : '#d35400'; 
-        const nameText = isUser ? 'ME (提问)' : (item.leaderInfo?.name || 'North Star');
+        const nameText = isUser ? 'User (提问)' : (item.leaderInfo?.name || 'North Star');
         const bgColor = isUser ? '#f0f7fb' : '#fff5eb';
         
         // 处理文本换行
