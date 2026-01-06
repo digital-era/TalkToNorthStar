@@ -1239,7 +1239,7 @@ window.addEventListener('resize', () => {
     if(isCanvasModeOpen) drawConnections();
 });
 
-* --- 新增功能逻辑 --- */
+/* --- 新增功能逻辑 --- */
 
 // 1. 删除单个节点功能
 function deleteNode(event, index) {
