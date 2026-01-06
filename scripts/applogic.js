@@ -1270,7 +1270,9 @@ function exportToMD() {
     }
 
     let mdContent = "# Dialogue Canvas Export\n\n";
-    const timestamp = new Date().toLocaleString();
+    
+    const timestamp = new Date().toLocaleString('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit',hour12: false})};
+
     mdContent += `> Exported on: ${timestamp}\n\n---\n\n`;
 
     conversationHistory.forEach((item, index) => {
@@ -1322,10 +1324,10 @@ async function exportToPDF() {
     // 3. 构建 HTML 内容
     let contentHtml = `
         <h2 style="text-align:center; color:#333; border-bottom:2px solid #ddd; padding-bottom:15px; margin-bottom:20px;">
-            对话记录
+            对话北极星 (Talk with North Stars)
         </h2>
         <div style="font-size: 12px; color: #888; text-align: right; margin-bottom: 30px;">
-            导出时间: ${new Date().toLocaleString()}
+            导出时间: ${new Date().toLocaleString('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit',hour12: false})}
         </div>
     `;
 
