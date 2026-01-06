@@ -1292,38 +1292,86 @@ function exportToMD() {
     URL.revokeObjectURL(url);
 }
 
-// 3. 导出为 PDF
+/* 
+ * 3. 简化版导出 PDF 
+ * 逻辑：创建一个临时的、干净的 HTML 列表（仅包含问答文字），
+ * 然后对其截图生成 PDF。不包含 SVG 连线和画布特效。
+ */
 async function exportToPDF() {
-    const element = document.getElementById('thoughtStreamContent'); // 截取核心内容区
-    const svgEl = document.getElementById('thoughtTrailsSvg');
-    
-    if (conversationHistory.length === 0) {
-        alert("画布为空，无法导出。");
+    if (!conversationHistory || conversationHistory.length === 0) {
+        alert("没有可导出的内容。");
         return;
     }
 
-    // 显示加载提示（可选）
+    // 显示等待状态
     const originalCursor = document.body.style.cursor;
     document.body.style.cursor = 'wait';
 
+    // 1. 创建一个临时的“打印容器”，模拟 A4 纸宽度的排版
+    const printDiv = document.createElement('div');
+    printDiv.style.position = 'absolute';
+    printDiv.style.top = '-9999px'; // 移出屏幕不可见
+    printDiv.style.left = '-9999px';
+    printDiv.style.width = '595px';  // A4 标准像素宽度 (72dpi)
+    printDiv.style.backgroundColor = '#ffffff';
+    printDiv.style.padding = '40px'; // 页边距
+    printDiv.style.fontFamily = '"Helvetica Neue", Helvetica, Arial, "Microsoft Yahei", sans-serif';
+    printDiv.style.color = '#333';
+    printDiv.style.zIndex = '-1';
+
+    // 2. 构建纯净的问答 HTML 内容
+    let contentHtml = `
+        <h2 style="text-align:center; color:#333; border-bottom:2px solid #ddd; padding-bottom:15px; margin-bottom:20px;">
+            对话记录
+        </h2>
+        <div style="font-size: 12px; color: #888; text-align: right; margin-bottom: 30px;">
+            导出时间: ${new Date().toLocaleString()}
+        </div>
+    `;
+
+    conversationHistory.forEach((item, index) => {
+        const isUser = item.role === 'user';
+        // 简单的样式区分
+        const nameColor = isUser ? '#2980b9' : '#d35400'; 
+        const nameText = isUser ? 'ME (提问)' : (item.leaderInfo?.name || 'North Star');
+        const bgColor = isUser ? '#f0f7fb' : '#fff5eb';
+        
+        // 处理文本换行
+        let textContent = item.text.replace(/\n/g, '<br>');
+        
+        // 如果有 markdown 解析器可以使用，没有就用普通文本
+        if (!isUser && typeof parseMarkdownWithMath === 'function') {
+            try { textContent = parseMarkdownWithMath(item.text); } catch(e) {}
+        }
+
+        contentHtml += `
+            <div style="margin-bottom: 25px; page-break-inside: avoid;">
+                <div style="font-weight: bold; color: ${nameColor}; margin-bottom: 8px; font-size: 14px;">
+                    ${nameText}:
+                </div>
+                <div style="background: ${bgColor}; padding: 15px; border-radius: 8px; line-height: 1.6; font-size: 14px; border: 1px solid #eee;">
+                    ${textContent}
+                </div>
+            </div>
+        `;
+    });
+
+    printDiv.innerHTML = contentHtml;
+    document.body.appendChild(printDiv);
+
     try {
-        // 使用 html2canvas 截图
-        // scale: 2 可以提高清晰度
-        // useCORS: true 允许加载跨域图片（如果有头像）
-        const canvas = await html2canvas(element, {
-            scale: 2,
+        // 3. 对这个干净的容器进行截图
+        const canvas = await html2canvas(printDiv, {
+            scale: 2, // 2倍清晰度
             useCORS: true,
-            backgroundColor: '#ffffff', // 确保背景是白色的
-            ignoreElements: (node) => {
-                // 导出时不包含删除按钮
-                return node.classList && node.classList.contains('node-delete-btn');
-            }
+            logging: false,
+            backgroundColor: '#ffffff'
         });
 
-        const imgData = canvas.toDataURL('image/png');
-        
-        // 初始化 jsPDF
+        // 4. 生成 PDF
+        const imgData = canvas.toDataURL('image/jpeg', 1.0);
         const { jsPDF } = window.jspdf;
+        // a4 纸张，纵向
         const pdf = new jsPDF('p', 'mm', 'a4');
         
         const imgWidth = 210; // A4 宽度 mm
@@ -1332,23 +1380,25 @@ async function exportToPDF() {
         let heightLeft = imgHeight;
         let position = 0;
 
-        // 处理长图分页逻辑
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
         heightLeft -= pageHeight;
 
+        // 处理长内容分页
         while (heightLeft >= 0) {
             position = heightLeft - imgHeight;
             pdf.addPage();
-            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
             heightLeft -= pageHeight;
         }
 
-        pdf.save(`canvas_export_${new Date().getTime()}.pdf`);
-        
+        pdf.save(`dialogue_export_${new Date().getTime()}.pdf`);
+
     } catch (error) {
-        console.error("PDF Export Error:", error);
-        alert("导出PDF失败，请检查控制台错误。");
+        console.error("Simple PDF Export Error:", error);
+        alert("导出 PDF 遇到问题，请检查控制台。");
     } finally {
+        // 5. 清理现场
+        document.body.removeChild(printDiv);
         document.body.style.cursor = originalCursor;
     }
 }
