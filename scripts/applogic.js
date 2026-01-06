@@ -1271,7 +1271,7 @@ function exportToMD() {
 
     let mdContent = "# Dialogue Canvas Export\n\n";
     
-    const timestamp = new Date().toLocaleString('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit',hour12: false})};
+    const timestamp = new Date().toLocaleString('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit',hour12: false});
 
     mdContent += `> Exported on: ${timestamp}\n\n---\n\n`;
 
