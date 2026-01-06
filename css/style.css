@@ -1910,31 +1910,68 @@
     text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
-/* --- 北极星回答卡片：古典羊皮纸风格 --- */
+/* --- 北极星回答卡片：古典羊皮纸风格 (修复版) --- */
 .thought-node.answer-node {
     align-self: flex-end;
-    /* 羊皮纸背景色 */
     background: #f4ecd8; 
     color: #2c1e12;
-    /* 复杂的阴影模拟纸张厚度 */
+    
+    /* 1. [核心修复] 移除原来的 clip-path (这个是造成切角生硬的元凶) */
+    clip-path: none !important; 
+    
+    /* 2. 使用圆角：左上、右上、左下为小圆角，右下角为大圆角(模拟卷起) */
+    border-radius: 4px 4px 4px 50px; 
+    
+    /* 3. 优化阴影：增加层次感 */
     box-shadow: 
-        0 2px 5px rgba(0,0,0,0.1),
-        0 15px 40px rgba(0,0,0,0.4),
-        inset 0 0 60px rgba(139, 90, 43, 0.1); /* 内发光旧纸感 */
-    border: 1px solid rgba(139, 90, 43, 0.3);
+        0 2px 5px rgba(0,0,0,0.05),       /* 基础阴影 */
+        0 15px 30px rgba(0,0,0,0.2),      /* 远距离投影 */
+        inset 0 0 60px rgba(139, 90, 43, 0.1); /* 纸张旧感内发光 */
+        
+    border: 1px solid rgba(139, 90, 43, 0.2);
     padding: 30px 40px;
-    /* 装饰性边角 */
-    clip-path: polygon(
-        0% 0%, 100% 0%, 
-        100% 95%, 95% 100%, 
-        0% 100%
-    );
+    position: relative; /* 为伪元素定位做准备 */
 }
 
+/* 4. [核心修复] 新增：使用伪元素模拟右下角的“卷起阴影”，增加立体感 */
+.thought-node.answer-node::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 40px;
+    height: 40px;
+    z-index: -1; /* 放在纸张下面 */
+    
+    /* 这是一个柔和的投影，模拟纸角翘起 */
+    box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.4); 
+    
+    /* 配合父元素的大圆角，形成翘起感 */
+    transform: skew(15deg) rotate(5deg);
+    border-radius: 50%;
+}
+
+/* 5. [核心修复] 新增：模拟纸张卷起背面的高光（可选，增加精致度） */
+.thought-node.answer-node::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 50px;
+    height: 50px;
+    
+    /* 线性渐变模拟纸张卷曲的折痕光影 */
+    background: linear-gradient(135deg, transparent 45%, rgba(0,0,0,0.05) 50%, rgba(255,255,255,0.3) 100%);
+    border-radius: 0 0 4px 50px;
+    pointer-events: none;
+}
+
+/* 保持原来的悬停高亮 */
 .thought-node.answer-node:hover {
     box-shadow: 
-        0 20px 50px rgba(197, 160, 89, 0.2), /* 金色光晕 */
-        inset 0 0 20px rgba(139, 90, 43, 0.2);
+        0 20px 50px rgba(197, 160, 89, 0.15),
+        inset 0 0 20px rgba(139, 90, 43, 0.1);
+    transform: translateY(-2px); /* 悬停轻微上浮 */
 }
 
 /* 北极星卡片内部元素 */
@@ -2025,6 +2062,7 @@
     text-shadow: 0 0 10px rgba(197, 160, 89, 0.4);
 }
 
+/* 默认按钮样式 (如果有其他按钮需要) */
 .canvas-toolbar button {
     color: #c5a059;
     background: rgba(255,255,255,0.05);
@@ -2040,14 +2078,34 @@
     color: #0d1218;
 }
 
+/* === [核心修复] 关闭按钮样式重写 === */
+/* 确保覆盖之前的通用 button 样式，去除背景和边框 */
+.canvas-toolbar .canvas-close-btn,
 .canvas-close-btn {
-    color: #fff;
-    opacity: 0.7;
+    background: transparent !important; /* 核心：去除灰色背景 */
+    border: none !important;            /* 去除边框 */
+    box-shadow: none !important;        /* 去除阴影框 */
+    color: rgba(255, 255, 255, 0.4);    /* 默认颜色调暗，不刺眼 */
+    font-size: 2rem;                    /* 图标大一点 */
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 100;
 }
+
+/* 悬停效果：旋转 + 变亮 + 微弱光晕 */
+.canvas-toolbar .canvas-close-btn:hover,
 .canvas-close-btn:hover {
-    opacity: 1;
-    transform: rotate(90deg);
+    background: rgba(255, 255, 255, 0.05) !important; /* 悬停时极淡的背景 */
+    color: var(--dark-accent, #c5a059); /* 悬停变金色或主题色 */
+    transform: rotate(90deg) scale(1.1); /* 优雅旋转 */
+    text-shadow: 0 0 10px rgba(197, 160, 89, 0.5); /* 文字发光 */
 }
+
 
 /* 适配移动端 */
 @media (max-width: 768px) {
@@ -2068,4 +2126,3 @@
         margin-left: auto;
     }
 }
-
