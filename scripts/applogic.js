@@ -1340,65 +1340,75 @@ function exportToMD() {
  * 然后对其截图生成 PDF。不包含 SVG 连线和画布特效。
  */
 /**
- * 最终修正版：对话导出 PDF
- * 修复：尾部文字截断、公式模糊、公式显示不全
- * 策略：整体优先分页 + 4倍超采样 + 渲染缓冲
+ * 最终完整版：对话导出 PDF (North Star Insight)
+ * ------------------------------------------------
+ * 集成特性：
+ * 1. 优雅的暗色毛玻璃加载遮罩 (Dark Theme Compatible)
+ * 2. 彻底修复列表编号重复 (1. 2. 3. 自动识别)
+ * 3. 智能防截断分页 (优先整块绘制，放不下再换页)
+ * 4. 视觉升级：背景加深、卡片暖黄、正文17px大字号
+ * 5. 4倍高清采样，确保公式像矢量图一样清晰
  */
 async function exportToPDF() {
-    // --- 0. 环境检查 ---
+    // --- 0. 基础检查 ---
     if (!conversationHistory || conversationHistory.length === 0) {
         alert("没有可导出的内容。");
         return;
     }
     if (typeof window.jspdf === 'undefined' || typeof html2canvas === 'undefined') {
-        alert("缺少必要组件 (jspdf 或 html2canvas)，无法导出。");
+        alert("缺少必要组件 (jspdf 或 html2canvas)，请检查引入。");
         return;
     }
 
-    // --- 1. 核心配置 ---
+    // --- 1. 全局配置 (Style & Layout) ---
     const CONFIG = {
         // A4 纸张参数 (mm)
         A4_W: 210, 
         A4_H: 297,
-        MARGIN_TOP: 20,
-        MARGIN_BOT: 20, // 底部留白，防切脚
-        MARGIN_X: 20,
+        MARGIN_TOP: 22,
+        MARGIN_BOT: 30,     // 【加大】底部留白，防止页脚拥挤
+        MARGIN_X: 18,
         
-        // 【关键修复 1】: 采样率提升至 4，解决公式模糊
-        SCALE: 4,           
+        // 渲染核心
+        SCALE: 4,           // 【高清】4倍采样，解决公式模糊
+        STAGE_WIDTH: 760,   // 渲染容器宽度，越窄文字在PDF中越大
         
-        // 渲染容器宽度：适当调小以防止公式右侧溢出
-        STAGE_WIDTH: 750,   
-        
-        // 样式
-        BG_COLOR: "#faf9f5", // 护眼暖白
+        // 视觉配色
+        PAGE_BG: "#fcf8e3", // 【加深】页面大背景 (更暖的米色)
+        CARD_BG: "#fff5cd", // 【加深】AI对话框背景 (明显的暖黄色，区分度高)
         TEXT_COLOR: "#2b2b2b",
-        FONT_STACK: "'Georgia', 'SimSun', 'Songti SC', serif",
+        
+        // 字体栈 (优先衬线体，营造学术感)
+        FONT_STACK: "'Georgia', 'SimSun', 'Songti SC', 'STKaiti', serif",
     };
 
     const CONTENT_W = CONFIG.A4_W - (CONFIG.MARGIN_X * 2);
-    // 有效绘制高度限制
-    const PAGE_H_LIMIT = CONFIG.A4_H - CONFIG.MARGIN_BOT;
-    // 页面实际可用高度 (不算页眉)
-    const PAGE_CONTENT_H = PAGE_H_LIMIT - CONFIG.MARGIN_TOP;
+    // 定义安全底线：页面高度 - 底部边距
+    const PAGE_SAFE_BOTTOM = CONFIG.A4_H - CONFIG.MARGIN_BOT;
+    // 单页最大内容高度 (用于判断是否需要强行切分)
+    const MAX_CONTENT_H = PAGE_SAFE_BOTTOM - CONFIG.MARGIN_TOP;
 
-    // --- 2. Markdown 解析器 ---
+    // --- 2. Markdown 解析器 (修复编号重复 + 样式增强) ---
     function parseMarkdown(text) {
         if (!text) return '';
         let html = text
-            // 标题
-            .replace(/^# (.*$)/gim, '<h1 style="font-size:22px; font-weight:bold; border-bottom:2px solid #444; margin:20px 0 15px; padding-bottom:8px;">$1</h1>')
-            .replace(/^## (.*$)/gim, '<h2 style="font-size:18px; font-weight:bold; margin:18px 0 10px; border-left:4px solid #8d6e63; padding-left:10px; color:#333;">$1</h2>')
-            .replace(/^### (.*$)/gim, '<h3 style="font-size:16px; font-weight:bold; margin:15px 0 8px; color:#555;">$1</h3>')
-            // 粗体/斜体/代码
-            .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#000;">$1</strong>')
+            // 标题 (加大字号，增加间距)
+            .replace(/^# (.*$)/gim, '<h1 style="font-size:26px; font-weight:bold; border-bottom:3px solid #5d4037; margin:28px 0 18px; padding-bottom:10px; color:#3e2723;">$1</h1>')
+            .replace(/^## (.*$)/gim, '<h2 style="font-size:22px; font-weight:bold; margin:24px 0 14px; border-left:6px solid #d84315; padding-left:15px; color:#333;">$1</h2>')
+            .replace(/^### (.*$)/gim, '<h3 style="font-size:19px; font-weight:bold; margin:18px 0 10px; color:#555;">$1</h3>')
+            
+            // 粗体/斜体/行内代码
+            .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#000; font-weight:900;">$1</strong>')
             .replace(/\*(.*?)\*/g, '<em>$1</em>')
-            .replace(/`(.*?)`/g, '<span style="background:#e8e8e8; padding:2px 5px; border-radius:3px; font-family:monospace; font-size:0.9em; color:#d35400;">$1</span>')
-            // 列表 (增加行高防止拥挤)
-            .replace(/^\s*-\s+(.*$)/gim, '<div style="margin-left:20px; text-indent:-15px; margin-bottom:6px; line-height:1.8;">• $1</div>')
-            .replace(/^\s*\d+\.\s+(.*$)/gim, '<div style="margin-left:20px; text-indent:-15px; margin-bottom:6px; line-height:1.8;">1. $1</div>')
+            .replace(/`(.*?)`/g, '<span style="background:rgba(0,0,0,0.06); padding:2px 6px; border-radius:4px; font-family:monospace; font-size:0.95em; color:#bf360c; border:1px solid rgba(0,0,0,0.1);">$1</span>')
+            
+            // 【核心修复】列表编号：捕获真实数字 $1，不再硬编码为 1.
+            .replace(/^\s*(\d+)\.\s+(.*$)/gim, '<div style="margin-left:28px; text-indent:-20px; margin-bottom:10px; line-height:1.8;"><span style="font-weight:bold; color:#d84315; margin-right:5px;">$1.</span>$2</div>')
+            // 无序列表
+            .replace(/^\s*-\s+(.*$)/gim, '<div style="margin-left:28px; text-indent:-15px; margin-bottom:10px; line-height:1.8;"><span style="color:#d84315;">•</span> $1</div>')
+            
             // 分割线
-            .replace(/^\s*---\s*$/gim, '<hr style="border:0; border-top:1px dashed #bbb; margin:25px 0;">')
+            .replace(/^\s*---\s*$/gim, '<hr style="border:0; border-top:1px dashed #a1887f; margin:35px 0;">')
             // 换行
             .replace(/\n/g, '<br>');
         return html;
@@ -1407,24 +1417,42 @@ async function exportToPDF() {
     // --- 3. UI 初始化 ---
     const originalCursor = document.body.style.cursor;
     document.body.style.cursor = 'wait';
-    window.scrollTo(0, 0); 
+    window.scrollTo(0, 0); // 强制回顶，防止截图偏移
 
-    // 3.1 遮罩
+    // 3.1 【暗色优雅遮罩】(Dark Glassmorphism)
     const mask = document.createElement('div');
     mask.style.cssText = `
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: #ffffff; z-index: 999999;
+        background: radial-gradient(circle at center, rgba(40,40,45,0.95) 0%, rgba(10,10,12,0.99) 100%);
+        backdrop-filter: blur(10px); 
+        z-index: 999999;
         display: flex; flex-direction: column; justify-content: center; align-items: center;
-        font-family: sans-serif;
+        font-family: ${CONFIG.FONT_STACK};
+        color: #e0c38c; opacity: 0; transition: opacity 0.5s ease;
     `;
+    
     mask.innerHTML = `
-        <div style="font-size:20px; color:#333; margin-bottom:15px; font-weight:bold;">正在高清渲染 PDF...</div>
-        <div style="width:300px; height:6px; background:#f0f0f0; border-radius:3px; overflow:hidden;">
-            <div id="pdf-bar" style="width:0%; height:100%; background:#27ae60; transition:width 0.2s;"></div>
+        <div style="text-align: center; padding: 40px; border: 1px solid rgba(224, 195, 140, 0.1); border-radius: 16px; background: rgba(255,255,255,0.02); box-shadow: 0 20px 50px rgba(0,0,0,0.6);">
+            <div style="font-size: 36px; margin-bottom: 20px; animation: pulseStar 2s infinite ease-in-out; color: #e0c38c;">✦</div>
+            <div style="font-size: 22px; letter-spacing: 3px; font-weight: bold; margin-bottom: 30px; color: #e0c38c; font-family: 'Songti SC', serif;">
+                思想轨迹 · 导出中
+            </div>
+            <div style="width: 300px; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; margin: 0 auto; overflow: hidden;">
+                <div id="pdf-bar" style="width: 0%; height: 100%; background: #e0c38c; box-shadow: 0 0 15px rgba(224, 195, 140, 0.6); transition: width 0.3s ease;"></div>
+            </div>
+            <div id="pdf-txt" style="font-size: 13px; color: #8d8d8d; margin-top: 20px; letter-spacing: 1px;">准备画板...</div>
         </div>
-        <div id="pdf-txt" style="font-size:12px; color:#7f8c8d; margin-top:10px;">准备中...</div>
+        <style>
+            @keyframes pulseStar {
+                0% { opacity: 0.5; transform: scale(0.9); text-shadow: 0 0 0px rgba(224,195,140,0); }
+                50% { opacity: 1; transform: scale(1.1); text-shadow: 0 0 20px rgba(224,195,140,0.8); }
+                100% { opacity: 0.5; transform: scale(0.9); text-shadow: 0 0 0px rgba(224,195,140,0); }
+            }
+        </style>
     `;
     document.body.appendChild(mask);
+    // 触发淡入动画
+    requestAnimationFrame(() => { mask.style.opacity = '1'; });
 
     const setProgress = (p, txt) => {
         const pct = Math.floor(p * 100);
@@ -1434,18 +1462,18 @@ async function exportToPDF() {
         if (t) t.innerText = txt || `${pct}%`;
     };
 
-    // 3.2 离屏渲染容器
+    // 3.2 离屏渲染舞台 (Stage)
     const stage = document.createElement('div');
     stage.id = 'pdf-stage';
     stage.style.cssText = `
         position: absolute; top: 0; left: 0;
         width: ${CONFIG.STAGE_WIDTH}px;
         min-height: 100px;
-        background: ${CONFIG.BG_COLOR}; 
+        background: ${CONFIG.PAGE_BG}; 
         font-family: ${CONFIG.FONT_STACK};
         color: ${CONFIG.TEXT_COLOR};
-        line-height: 1.8; /* 增加行距，提高阅读性 */
-        padding: 40px;    /* 内边距，防止公式贴边 */
+        line-height: 1.85; /* 增加行距 */
+        padding: 50px;     /* 增加内边距 */
         box-sizing: border-box;
         z-index: -1000; 
         visibility: visible; 
@@ -1459,16 +1487,16 @@ async function exportToPDF() {
         const pdf = new jsPDF('p', 'mm', 'a4');
         let cursorY = CONFIG.MARGIN_TOP; 
 
-        // --- 辅助：超长图切割 (仅用于单条内容超过整页的情况) ---
+        // --- 辅助：长图切割绘制 (仅用于单节点超长的情况) ---
         const addSplittedImage = (canvas, contentW, contentH_mm) => {
             const imgData = canvas.toDataURL('image/jpeg', 0.98);
             let remainingH = contentH_mm;
             let stitchedH = 0;
             
             while (remainingH > 0) {
-                const spaceOnPage = PAGE_H_LIMIT - cursorY;
+                const spaceOnPage = PAGE_SAFE_BOTTOM - cursorY;
                 
-                // 强制换页：如果剩余空间太小，不在底部强行画
+                // 空间太小则换页，避免切出一条细线
                 if (spaceOnPage < 30 && remainingH > 30) {
                     pdf.addPage();
                     cursorY = CONFIG.MARGIN_TOP;
@@ -1484,7 +1512,8 @@ async function exportToPDF() {
                 clipCv.width = canvas.width;
                 clipCv.height = srcH;
                 const ctx = clipCv.getContext('2d');
-                ctx.fillStyle = CONFIG.BG_COLOR;
+                // 填充背景，防止黑边
+                ctx.fillStyle = CONFIG.PAGE_BG;
                 ctx.fillRect(0,0, clipCv.width, clipCv.height);
                 ctx.drawImage(canvas, 0, srcY, canvas.width, srcH, 0, 0, clipCv.width, clipCv.height);
 
@@ -1502,28 +1531,28 @@ async function exportToPDF() {
             }
         };
 
-        // --- 4. 封面 ---
-        setProgress(0.05, "封面绘制");
+        // --- 4. 封面绘制 ---
+        setProgress(0.05, "绘制封面");
         stage.innerHTML = `
-            <div style="min-height: 500px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding-top:120px;">
-                <div style="font-size:42px; font-weight:bold; letter-spacing:4px; color:#2c3e50; margin-bottom:20px; font-family: 'Songti SC', serif;">对话 · 北极星</div>
-                <div style="width:50px; height:3px; background:#8d6e63; margin-bottom:30px;"></div>
-                <div style="font-size:18px; color:#5d4037;">North Star Insight</div>
-                <div style="font-size:14px; color:#999; margin-top:10px;">${new Date().toLocaleDateString()}</div>
+            <div style="min-height: 600px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding-top:100px;">
+                <div style="font-size:52px; font-weight:bold; letter-spacing:8px; color:#3e2723; margin-bottom:25px; font-family: 'Songti SC', serif;">对话录</div>
+                <div style="width:80px; height:5px; background:#d84315; margin-bottom:45px;"></div>
+                <div style="font-size:24px; color:#5d4037; font-weight:bold;">North Star Insight</div>
+                <div style="font-size:16px; color:#8d6e63; margin-top:20px;">${new Date().toLocaleDateString()}</div>
             </div>
         `;
-        // 缓冲
+        // 渲染缓冲
         await new Promise(r => setTimeout(r, 200));
 
         const titleCanvas = await html2canvas(stage, { 
-            scale: CONFIG.SCALE, useCORS: true, scrollY: 0, backgroundColor: CONFIG.BG_COLOR
+            scale: CONFIG.SCALE, useCORS: true, scrollY: 0, backgroundColor: CONFIG.PAGE_BG
         });
         const titleH = (titleCanvas.height * CONTENT_W) / titleCanvas.width;
         pdf.addImage(titleCanvas.toDataURL('image/jpeg', 0.95), 'JPEG', CONFIG.MARGIN_X, CONFIG.MARGIN_TOP, CONTENT_W, titleH);
         pdf.addPage();
         cursorY = CONFIG.MARGIN_TOP;
 
-        // --- 5. 逐个渲染节点 ---
+        // --- 5. 内容循环渲染 ---
         const total = conversationHistory.length;
         
         for (let i = 0; i < total; i++) {
@@ -1534,27 +1563,37 @@ async function exportToPDF() {
             const textHtml = parseMarkdown(item.text);
             let nodeHtml = '';
 
+            // 【样式升级】正文加大到 17px
             if (isUser) {
-                // 用户气泡
                 nodeHtml = `
                     <div style="width:100%; display:flex; justify-content:flex-end; padding:15px 0;">
-                        <div style="max-width:85%; background:#e8e8e8; border-radius:12px 2px 12px 12px; padding:15px 25px; box-shadow: 1px 1px 3px rgba(0,0,0,0.05);">
-                            <div style="font-size:15px; color:#333; font-family: sans-serif; line-height:1.6; text-align:left;">${textHtml}</div>
+                        <div style="max-width:85%; background:#e0e0e0; border-radius:12px 2px 12px 12px; padding:20px 30px; box-shadow: 2px 2px 6px rgba(0,0,0,0.08);">
+                            <div style="font-size:17px; color:#222; font-family: sans-serif; line-height:1.6; text-align:left;">
+                                ${textHtml}
+                            </div>
                         </div>
                     </div>`;
             } else {
-                // AI 卡片
                 const info = item.leaderInfo || { name: 'North Star', field: 'Assistant' };
+                // 【背景升级】使用更深的暖黄色 CARD_BG
                 nodeHtml = `
-                    <div style="width:100%; padding:20px 0;">
-                        <div style="display:flex; align-items:center; margin-bottom:15px; border-bottom:1px solid #d7ccc8; padding-bottom:8px;">
-                            <span style="font-size:20px; font-weight:bold; color:#bf360c; font-family: 'Georgia', serif;">${info.name}</span>
-                            <span style="margin-left:12px; font-size:12px; background:#efebe9; color:#5d4037; padding:3px 8px; border-radius:4px;">${info.field}</span>
+                    <div style="width:100%; padding:25px 0;">
+                        <div style="background:${CONFIG.CARD_BG}; border:1px solid #e6dcb0; border-radius:10px; padding:30px 40px; box-shadow: 0 4px 15px rgba(62, 39, 35, 0.05);">
+                            
+                            <!-- Header -->
+                            <div style="display:flex; align-items:center; margin-bottom:20px; padding-bottom:12px; border-bottom:1px solid #d7ccc8;">
+                                <span style="font-size:24px; font-weight:bold; color:#bf360c; font-family: 'Georgia', serif;">${info.name}</span>
+                                <span style="margin-left:15px; font-size:13px; background:#fff3e0; color:#e65100; padding:4px 12px; border-radius:12px; border:1px solid #ffcc80; font-weight:bold;">${info.field}</span>
+                            </div>
+                            
+                            <!-- Body (17px Font) -->
+                            <div style="font-size:17px; text-align:justify; color:#2b2b2b; line-height:1.9;">
+                                ${textHtml}
+                            </div>
+                            
+                            <!-- Footer -->
+                            <div style="text-align:center; margin-top:30px; color:#a1887f; font-size:15px;">~ ❖ ~</div>
                         </div>
-                        <div style="font-size:15px; text-align:justify; color:#2b2b2b; line-height:1.8;">
-                            ${textHtml}
-                        </div>
-                        <div style="text-align:center; margin-top:20px; color:#ccc; font-size:16px;">~ ❖ ~</div>
                     </div>
                 `;
             }
@@ -1564,14 +1603,10 @@ async function exportToPDF() {
             // MathJax 渲染
             if (window.MathJax) {
                 await MathJax.typesetPromise([stage]);
-                // 【关键修复 2】: 增加 300ms 缓冲，等待公式 SVG 完全绘制
-                await new Promise(r => setTimeout(r, 300));
-            } else {
-                // 即便没有 MathJax，也稍微等一下图片加载
-                await new Promise(r => setTimeout(r, 50));
+                await new Promise(r => setTimeout(r, 300)); // 必要的渲染等待
             }
             
-            // 图片加载检查
+            // 图片等待
             const imgs = stage.querySelectorAll('img');
             await Promise.all(Array.from(imgs).map(img => {
                 if (img.complete) return Promise.resolve();
@@ -1580,32 +1615,32 @@ async function exportToPDF() {
 
             // 截图
             const nodeCanvas = await html2canvas(stage, {
-                scale: CONFIG.SCALE, // 4倍高清
+                scale: CONFIG.SCALE,
                 useCORS: true,
                 scrollY: 0,
-                backgroundColor: null 
+                backgroundColor: null // 透明，以便融入页面背景
             });
 
             const nodeImgH = (nodeCanvas.height * CONTENT_W) / nodeCanvas.width;
             
-            // --- 【关键修复 3】: 智能防切断分页策略 ---
+            // --- 智能分页逻辑 ---
             
-            // 情况 A: 当前页剩余空间足够 -> 直接画
-            if (cursorY + nodeImgH <= PAGE_H_LIMIT) {
+            // 1. 如果当前页放得下
+            if (cursorY + nodeImgH <= PAGE_SAFE_BOTTOM) {
                 pdf.addImage(nodeCanvas.toDataURL('image/png'), 'PNG', CONFIG.MARGIN_X, cursorY, CONTENT_W, nodeImgH);
                 cursorY += nodeImgH;
             } 
-            // 情况 B: 当前页放不下，但【一整页能放下】 -> 强制换新页画 (防止切断文字)
-            else if (nodeImgH < PAGE_CONTENT_H) {
+            // 2. 如果放不下，但下一页能完整放下 -> 强制换页 (防截断)
+            else if (nodeImgH < MAX_CONTENT_H) {
                 pdf.addPage();
                 cursorY = CONFIG.MARGIN_TOP;
                 pdf.addImage(nodeCanvas.toDataURL('image/png'), 'PNG', CONFIG.MARGIN_X, cursorY, CONTENT_W, nodeImgH);
                 cursorY += nodeImgH;
             }
-            // 情况 C: 节点非常长 (超过一整页) -> 只能切割
+            // 3. 实在太长 -> 切割
             else {
-                // 如果当前页剩下的空间已经很少了 (< 4cm)，先换页，让大切割从头开始，比较美观
-                if ((PAGE_H_LIMIT - cursorY) < 40) {
+                // 如果当前页剩的太少，先换页，让大切割从新页面顶部开始
+                if ((PAGE_SAFE_BOTTOM - cursorY) < 40) {
                     pdf.addPage();
                     cursorY = CONFIG.MARGIN_TOP;
                 }
@@ -1614,25 +1649,31 @@ async function exportToPDF() {
         }
 
         // --- 6. 页码 ---
-        setProgress(0.99, "生成页码");
+        setProgress(0.99, "标记页码");
         const pageCount = pdf.internal.getNumberOfPages();
         for (let i = 1; i <= pageCount; i++) {
             pdf.setPage(i);
-            pdf.setFontSize(9);
-            pdf.setTextColor(150);
+            pdf.setFontSize(10);
+            pdf.setTextColor(100);
             pdf.text(`- ${i} / ${pageCount} -`, CONFIG.A4_W / 2, CONFIG.A4_H - 12, { align: 'center' });
         }
 
-        pdf.save(`NorthStar_Chat_${Date.now()}.pdf`);
+        // --- 7. 完成 ---
+        setProgress(1, "保存文件...");
+        pdf.save(`NorthStar_Insight_${Date.now()}.pdf`);
 
     } catch (err) {
-        console.error(err);
+        console.error("Export Error:", err);
         alert("导出出错: " + err.message);
     } finally {
-        if(mask) mask.remove();
+        if(mask) {
+            mask.style.opacity = '0';
+            setTimeout(() => mask.remove(), 500);
+        }
         if(stage) stage.remove();
         document.body.style.cursor = originalCursor;
     }
 }
+
 
 
