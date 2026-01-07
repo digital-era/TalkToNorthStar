@@ -1340,27 +1340,31 @@ function exportToMD() {
  * 然后对其截图生成 PDF。不包含 SVG 连线和画布特效。
  */
 async function exportToPDF() {
+    // 1. 基础校验
     if (!conversationHistory || conversationHistory.length === 0) {
         alert("没有可导出的内容。");
         return;
     }
 
+    // 2. 锁定界面状态
     const originalCursor = document.body.style.cursor;
     document.body.style.cursor = 'wait';
+    const originalScrollPos = window.scrollY; // 记录滚动位置
 
-    // 1. 创建离屏容器
+    // 3. 创建离屏容器 (关键修正：移回视口内，但用 z-index 隐藏)
     const printDiv = document.createElement('div');
     printDiv.style.position = 'absolute';
-    printDiv.style.left = '-10000px'; 
     printDiv.style.top = '0px';
-    printDiv.style.width = '650px'; //稍微加宽一点，让排版更舒展
+    printDiv.style.left = '0px'; 
+    printDiv.style.width = '650px';   // 稍微宽一点，阅读体验更好
     printDiv.style.backgroundColor = '#ffffff';
     printDiv.style.padding = '40px 50px'; 
     printDiv.style.fontFamily = '"Helvetica Neue", Helvetica, Arial, "Microsoft Yahei", sans-serif';
     printDiv.style.color = '#333';
-    printDiv.style.zIndex = '-1';     
+    printDiv.style.zIndex = '-9999';  // 放在主界面最底层，用户看不见，但浏览器会渲染
+    printDiv.style.visibility = 'visible'; 
 
-    // 2. 构建 HTML 内容头部
+    // 4. 构建 HTML 头部
     let contentHtml = `
         <div style="text-align:center; margin-bottom: 40px;">
             <h2 style="color:#2c3e50; font-size: 24px; margin-bottom:10px; font-weight:700;">
@@ -1376,21 +1380,20 @@ async function exportToPDF() {
         </div>
     `;
 
-    // 3. 遍历历史记录构建节点
+    // 5. 遍历并构建对话节点
     conversationHistory.forEach((item, index) => {
         const isUser = item.role === 'user';
         
-        // --- 文本处理 (Markdown/LaTeX) ---
+        // 文本预处理 (Markdown/LaTeX)
         let textContent = item.text.replace(/\n/g, '<br>');
         if (!isUser && typeof parseMarkdownWithMath === 'function') {
             try { textContent = parseMarkdownWithMath(item.text); } catch(e) {}
         }
 
         if (isUser) {
-            // ==================== 用户部分 (保持原有逻辑 + 你的关联人物小卡片) ====================
-            
-            // 查找关联的下一个人（用于显示 User 问题卡片底部的关联提示）
+            // === 用户部分：包含关联人物小卡片 ===
             let extraInfoHtml = '';
+            // 向后看一条，寻找关联的北极星人物
             const nextItem = conversationHistory[index + 1];
             if (nextItem && nextItem.role !== 'user' && nextItem.leaderInfo) {
                 const info = nextItem.leaderInfo;
@@ -1405,30 +1408,22 @@ async function exportToPDF() {
                 `;
             }
 
-            // 用户气泡样式
             contentHtml += `
                 <div class="pdf-node" style="margin-bottom: 30px; display: flex; flex-direction: column; align-items: flex-end;">
                     <div style="font-weight: bold; color: #2980b9; margin-bottom: 8px; font-size: 15px; width: 100%; text-align: right;">
                         <span style="background: #eef7fc; padding: 4px 10px; border-radius: 15px;">User (提问)</span>
                     </div>
                     <div style="background: #f0f7fb; padding: 15px 20px; border-radius: 12px 0 12px 12px; line-height: 1.6; font-size: 14px; border: 1px solid #dbe9f1; text-align: justify; box-shadow: 0 2px 5px rgba(0,0,0,0.03); max-width: 90%;">
-                        <div style="font-family: 'Indie Flower', 'KaiTi', cursive; font-weight: bold; color: #34495e;">${item.text}</div> <!-- 模拟手写字体样式 -->
+                        <div style="font-family: 'Indie Flower', 'KaiTi', cursive; font-weight: bold; color: #34495e;">${item.text}</div>
                         ${extraInfoHtml}
                     </div>
                 </div>
             `;
-
         } else {
-            // ==================== 北极星部分 (修改为画布精致样式) ====================
-            
+            // === AI部分：复刻画布样式 ===
             const info = item.leaderInfo || { name: 'Unknown', field: '', contribution: '' };
-
-            // 这里的样式尽可能模拟了 renderDialogueCanvas 中的 CSS 效果
-            // 比如 .star-decoration-top, .leader-header 等
             contentHtml += `
                 <div class="pdf-node" style="margin-bottom: 40px; margin-top: 10px; position: relative;">
-                    
-                    <!-- 模拟画布卡片容器 -->
                     <div style="
                         border: 1px solid #ecd0b7; 
                         background: #fffdf9; 
@@ -1437,13 +1432,12 @@ async function exportToPDF() {
                         box-shadow: 0 4px 15px rgba(211, 84, 0, 0.08);
                         overflow: hidden;
                     ">
-                        
-                        <!-- 顶部装饰星号 -->
+                        <!-- 顶部星星 -->
                         <div style="text-align: center; color: #e67e22; font-size: 14px; margin-top: 10px; opacity: 0.7;">
                             <i class="fas fa-star-of-life"></i>
                         </div>
-
-                        <!-- 头部：名字与领域 -->
+                        
+                        <!-- 姓名与头衔 -->
                         <div style="text-align: center; padding: 5px 20px;">
                             <div style="font-size: 20px; font-weight: bold; color: #d35400; font-family: 'Ma Shan Zheng', cursive, sans-serif; letter-spacing: 1px;">
                                 ${info.name}
@@ -1464,7 +1458,7 @@ async function exportToPDF() {
                             </div>
                         </div>
 
-                        <!-- 贡献引用区 -->
+                        <!-- 引用区域 -->
                         <div style="
                             background: #fff8e1; 
                             color: #8d6e63; 
@@ -1483,7 +1477,7 @@ async function exportToPDF() {
                         <!-- 分割线 -->
                         <div style="height: 1px; background: linear-gradient(to right, transparent, #e0e0e0, transparent); margin: 15px 40px;"></div>
 
-                        <!-- 核心回答内容 -->
+                        <!-- 核心回答 -->
                         <div style="
                             padding: 0 30px 20px 30px; 
                             color: #2c3e50; 
@@ -1495,7 +1489,7 @@ async function exportToPDF() {
                             ${textContent}
                         </div>
 
-                        <!-- 底部装饰 -->
+                        <!-- 底部装饰条 -->
                         <div style="
                             background: #fdf2e9; 
                             padding: 6px; 
@@ -1514,36 +1508,53 @@ async function exportToPDF() {
         }
     });
 
+    // 6. 插入DOM
     printDiv.innerHTML = contentHtml;
     document.body.appendChild(printDiv);
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 300)); // 稍等渲染，特别是字体
+        // 等待渲染，特别是字体加载
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // 如果使用了 MathJax，可以在这里触发一次渲染 (可选)
+        if (window.MathJax) {
+            try { await MathJax.typesetPromise([printDiv]); } catch (e) {}
+        }
 
-        // --- 智能切割逻辑 (Smart Slicing) ---
+        // 7. 获取真实尺寸 (避免 0 宽高的关键)
+        const totalWidth = printDiv.offsetWidth;
+        const totalHeight = printDiv.offsetHeight;
+
+        // 8. 智能切割点计算
         const nodeElements = printDiv.querySelectorAll('.pdf-node');
         const safeCuts = []; 
-        
         nodeElements.forEach(el => {
             const top = el.offsetTop;
             const bottom = top + el.offsetHeight;
-            // 允许在节点之间的空白处切割
             safeCuts.push(top - 10); 
             safeCuts.push(bottom + 10); 
         });
-        
         const sortedCuts = [...new Set(safeCuts)].sort((a, b) => a - b);
 
-        const scale = 2; 
+        const scale = 2; // 高清倍率
+        
+        // 9. 执行截图 (配置增强)
         const canvas = await html2canvas(printDiv, {
             scale: scale,
             useCORS: true,
             logging: false,
             backgroundColor: '#ffffff',
-            height: printDiv.scrollHeight, 
-            windowHeight: printDiv.scrollHeight
+            width: totalWidth,      // 显式指定宽
+            height: totalHeight,    // 显式指定高
+            windowWidth: totalWidth,
+            windowHeight: totalHeight,
+            x: 0,                   // 强制坐标
+            y: 0,
+            scrollX: 0,
+            scrollY: 0
         });
 
+        // 10. PDF 分页生成
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
         
@@ -1552,31 +1563,31 @@ async function exportToPDF() {
         const pageHeightInCanvas = (canvas.width / pdfWidth) * pdfHeight;
         
         let renderedHeight = 0; 
-        const totalHeight = canvas.height;
+        const canvasHeight = canvas.height;
 
-        while (renderedHeight < totalHeight) {
+        while (renderedHeight < canvasHeight) {
             let proposedCut = renderedHeight + pageHeightInCanvas;
             
-            if (proposedCut >= totalHeight) {
-                proposedCut = totalHeight;
+            if (proposedCut >= canvasHeight) {
+                proposedCut = canvasHeight;
             } else {
+                // 寻找最佳切割点
                 let bestCut = -1;
-                // 寻找最近的“安全切割点”，避免切断卡片
                 for (let cutDom of sortedCuts) {
                     const cutCanvas = cutDom * scale; 
-                    // 在页面底部向上寻找最近的安全点（比如留出10%的缓冲）
                     if (cutCanvas > renderedHeight && cutCanvas < proposedCut) {
                         bestCut = cutCanvas;
                     }
                 }
-                
-                // 如果找到了切割点，且切割点不要离页面底部太远（防止一页只有一点点内容）
-                if (bestCut !== -1 && (proposedCut - bestCut) < (pageHeightInCanvas * 0.3)) {
+                // 仅当切割点合理时采纳
+                if (bestCut !== -1 && (proposedCut - bestCut) < (pageHeightInCanvas * 0.4)) {
                     proposedCut = bestCut;
                 }
             }
 
             const sliceHeight = proposedCut - renderedHeight;
+            if (sliceHeight <= 0) break; // 防止死循环
+
             const sliceCanvas = document.createElement('canvas');
             sliceCanvas.width = canvas.width;
             sliceCanvas.height = sliceHeight;
@@ -1596,15 +1607,18 @@ async function exportToPDF() {
             renderedHeight = proposedCut;
         }
 
+        // 11. 下载
         pdf.save(`${getExportFileName()}.pdf`);
 
     } catch (error) {
         console.error("PDF Export Failed:", error);
-        alert("导出 PDF 失败，建议打开控制台查看详情。");
+        alert("导出 PDF 失败，请检查控制台日志。");
     } finally {
+        // 12. 清理
         if (printDiv && printDiv.parentNode) {
             printDiv.parentNode.removeChild(printDiv);
         }
         document.body.style.cursor = originalCursor;
+        window.scrollTo(0, originalScrollPos); // 恢复滚动
     }
 }
