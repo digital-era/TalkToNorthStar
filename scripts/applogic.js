@@ -1351,357 +1351,317 @@ async function exportToPDF() {
     document.body.style.overflow = 'hidden';
 
     try {
-        // 1. 创建一个临时容器来渲染PDF内容
-        const pdfContainer = document.createElement('div');
-        pdfContainer.id = 'pdf-export-container';
-        
-        // 使用柔和的浅色背景
-        pdfContainer.style.cssText = `
-            position: fixed;
-            top: -9999px;
+        // 1. 创建离屏渲染容器
+        const renderContainer = document.createElement('div');
+        renderContainer.id = 'pdf-render-container';
+        renderContainer.style.cssText = `
+            position: absolute;
+            top: 0;
             left: 0;
-            width: 700px;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 40px 50px;
+            width: 800px;
+            background: #f5f7fa;
             font-family: 'Helvetica Neue', Helvetica, Arial, 'Microsoft Yahei', sans-serif;
             color: #333;
-            z-index: -9999;
             opacity: 0;
             pointer-events: none;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
         `;
 
-        // 2. 构建PDF标题（柔和风格）
-        const titleHtml = `
-            <div style="text-align:center; margin-bottom: 50px; padding: 30px; 
-                    background: white; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08);">
-                <div style="color: #6c757d; font-size: 14px; letter-spacing: 2px; margin-bottom: 10px;">
-                    <i class="fas fa-star"></i> 思维轨迹记录 <i class="fas fa-star"></i>
-                </div>
-                <h1 style="color:#2c3e50; font-size: 32px; margin-bottom: 15px; font-weight: 700;">
-                    对话北极星
-                </h1>
-                <div style="font-size: 18px; color: #7f8c8d; font-style: italic; margin-bottom: 20px;">
-                    Dialogue with North Stars
-                </div>
-                <div style="width: 80px; height: 3px; background: linear-gradient(to right, #3498db, #9b59b6); 
-                        margin: 20px auto; border-radius: 1.5px;"></div>
-                <div style="display: flex; justify-content: center; align-items: center; margin-top: 25px;">
-                    <div style="background: #f1f8ff; padding: 10px 25px; border-radius: 20px; 
-                            border: 1px solid #e3f2fd; display: inline-flex; align-items: center;">
-                        <i class="fas fa-calendar-alt" style="color: #3498db; margin-right: 8px;"></i>
-                        <span style="color: #2c3e50; font-size: 14px;">${new Date().toLocaleString()}</span>
-                        <span style="margin: 0 15px; color: #bdc3c7;">|</span>
-                        <i class="fas fa-comments" style="color: #e74c3c; margin-right: 8px;"></i>
-                        <span style="color: #2c3e50; font-size: 14px;">${conversationHistory.length} 次对话</span>
+        // 2. 创建渲染函数（基于画布渲染逻辑）
+        const renderPDFContent = () => {
+            let html = '';
+            
+            // 2.1 添加文档标题
+            html += `
+                <div style="text-align:center; margin-bottom: 60px; padding: 50px 0 30px; 
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                        color: white; border-radius: 0 0 20px 20px;">
+                    <h1 style="font-size: 36px; font-weight: 800; margin-bottom: 15px; 
+                            text-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+                        对话北极星思维轨迹
+                    </h1>
+                    <div style="font-size: 18px; opacity: 0.9; margin-bottom: 20px; font-style: italic;">
+                        Talk with North Stars · Insight Stream
+                    </div>
+                    <div style="width: 80px; height: 3px; background: white; margin: 20px auto; opacity: 0.7;"></div>
+                    <div style="margin-top: 25px; font-size: 14px; opacity: 0.8;">
+                        <i class="fas fa-calendar-alt"></i> ${new Date().toLocaleString()}
+                        <span style="margin: 0 15px;">|</span>
+                        <i class="fas fa-comments"></i> ${conversationHistory.length} 次对话
                     </div>
                 </div>
-            </div>
-        `;
+            `;
 
-        let contentHtml = titleHtml;
-
-        // 3. 渲染对话内容（使用浅色背景避免html2canvas问题）
-        conversationHistory.forEach((item, index) => {
-            const isUser = item.role === 'user';
-            
-            if (isUser) {
-                // 用户提问节点 - 柔和蓝色调
-                let extraInfoHtml = '';
-                const nextItem = conversationHistory[index + 1];
-                if (nextItem && nextItem.role !== 'user' && nextItem.leaderInfo) {
-                    const info = nextItem.leaderInfo;
-                    extraInfoHtml = `
-                        <div style="margin-top: 15px; padding-top: 12px; border-top: 1px dashed #d1e7ff; 
-                                font-size: 13px; color: #555;">
-                            <div style="display: flex; align-items: center; margin-bottom: 5px;">
-                                <span style="color: #3498db; margin-right: 6px;">🧩</span>
-                                <span style="font-weight:bold; color: #2c3e50;">关联人物：${info.name}</span>
+            // 2.2 渲染对话内容（基于画布样式）
+            conversationHistory.forEach((item, index) => {
+                const isUser = item.role === 'user';
+                
+                if (isUser) {
+                    // 用户提问 - 保持手写风格
+                    html += `
+                        <div class="pdf-user-node" style="margin: 0 20px 50px 20px; page-break-inside: avoid;">
+                            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                                <div style="background: #3498db; color: white; padding: 8px 25px; 
+                                        border-radius: 20px; font-weight: bold; font-size: 14px;">
+                                    <i class="fas fa-user-astronaut" style="margin-right: 8px;"></i> 用户提问
+                                </div>
                             </div>
-                            <div style="color: #7f8c8d; font-size: 12px; padding-left: 20px;">
-                                "${info.contribution.substring(0, 50)}${info.contribution.length > 50 ? '...' : ''}"
+                            <div style="display: flex; justify-content: flex-end;">
+                                <div style="max-width: 85%; background: #e3f2fd; padding: 25px 30px; 
+                                        border-radius: 20px 5px 20px 20px; border: 2px solid #bbdefb;
+                                        box-shadow: 0 5px 15px rgba(52, 152, 219, 0.1);">
+                                    <div style="font-family: 'Indie Flower', 'KaiTi', cursive; 
+                                            font-size: 16px; line-height: 1.8; color: #2c3e50;">
+                                        ${item.text.replace(/\n/g, '<br>')}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // AI回答 - 保持精致样式
+                    const info = item.leaderInfo || { name: 'Unknown', field: '', contribution: '' };
+                    
+                    // 处理Markdown和公式
+                    let processedText = item.text;
+                    if (typeof parseMarkdownWithMath === 'function') {
+                        try {
+                            processedText = parseMarkdownWithMath(item.text);
+                        } catch(e) {
+                            console.warn("Markdown解析失败:", e);
+                            processedText = item.text.replace(/\n/g, '<br>');
+                        }
+                    } else {
+                        processedText = item.text.replace(/\n/g, '<br>');
+                    }
+
+                    html += `
+                        <div class="pdf-ai-node" style="margin: 0 20px 60px 20px; page-break-inside: avoid;">
+                            <div style="background: white; border-radius: 20px; overflow: hidden;
+                                    box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid #e0e0e0;">
+                                
+                                <!-- 顶部装饰 -->
+                                <div style="background: linear-gradient(90deg, #ff9966, #ff5e62); 
+                                        height: 6px; width: 100%;"></div>
+                                
+                                <!-- 人物信息 -->
+                                <div style="text-align: center; padding: 30px 40px 20px;">
+                                    <div style="font-size: 26px; font-weight: bold; color: #d35400; 
+                                            margin-bottom: 10px; font-family: 'Ma Shan Zheng', cursive;">
+                                        ${info.name}
+                                    </div>
+                                    <div style="display: inline-block; background: #fff5e6; 
+                                            color: #d35400; padding: 8px 25px; border-radius: 25px;
+                                            font-size: 14px; border: 1px solid #ffcc99;">
+                                        <i class="fas fa-award" style="margin-right: 8px;"></i> ${info.field}
+                                    </div>
+                                </div>
+                                
+                                <!-- 贡献引语 -->
+                                <div style="background: #fffaf0; margin: 20px 35px; padding: 25px; 
+                                        border-radius: 12px; border-left: 4px solid #ffcc33;">
+                                    <div style="color: #8d6e63; font-style: italic; line-height: 1.6; font-size: 15px;">
+                                        <i class="fas fa-quote-left" style="color: #ffa726; margin-right: 10px;"></i>
+                                        ${info.contribution}
+                                    </div>
+                                </div>
+                                
+                                <!-- 分隔线 -->
+                                <div style="height: 2px; background: linear-gradient(to right, #ffcc33, #ff9966); 
+                                        margin: 20px 40px; opacity: 0.5;"></div>
+                                
+                                <!-- 主要内容 -->
+                                <div style="padding: 0 40px 35px; color: #2c3e50; line-height: 1.8; 
+                                        font-size: 15px; text-align: justify;">
+                                    ${processedText}
+                                </div>
+                                
+                                <!-- 底部装饰 -->
+                                <div style="background: #f9f9f9; padding: 15px 40px; border-top: 1px solid #eee;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div style="color: #7f8c8d; font-size: 13px;">
+                                            <i class="fas fa-hashtag"></i> 节点 ${index + 1}
+                                        </div>
+                                        <div style="color: #e67e22; font-weight: bold; font-size: 14px;">
+                                            <i class="fas fa-star" style="margin-right: 8px;"></i>
+                                            北极星智慧
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     `;
                 }
+            });
 
-                contentHtml += `
-                    <div class="pdf-node" style="margin-bottom: 40px; page-break-inside: avoid;">
-                        <div style="display: flex; flex-direction: column; align-items: flex-end;">
-                            <div style="margin-bottom: 10px; font-size: 14px; color: #3498db; font-weight: bold;">
-                                <i class="fas fa-user" style="margin-right: 8px;"></i>用户提问
-                            </div>
-                            <div style="background: linear-gradient(135deg, #f0f7ff, #e3f2fd); 
-                                    padding: 25px 30px; border-radius: 15px 5px 15px 15px; 
-                                    border-left: 4px solid #3498db; max-width: 90%;
-                                    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.1);">
-                                <div style="font-family: 'Indie Flower', 'KaiTi', cursive; 
-                                        color: #2c3e50; line-height: 1.8; font-size: 15px;">
-                                    ${item.text.replace(/\n/g, '<br>')}
-                                </div>
-                                ${extraInfoHtml}
-                            </div>
-                        </div>
+            // 2.3 添加文档页脚
+            html += `
+                <div style="margin: 40px 20px 0; padding: 30px; text-align: center; 
+                        background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+                    <div style="font-size: 18px; color: #3498db; margin-bottom: 15px;">
+                        <i class="fas fa-brain" style="margin-right: 10px;"></i>思想轨迹完整记录
                     </div>
-                `;
-            } else {
-                // AI回答节点 - 柔和橙色调（避免复杂背景）
-                const info = item.leaderInfo || { name: 'Unknown', field: '', contribution: '' };
-                
-                // 处理文本
-                let processedText = item.text;
-                if (typeof parseMarkdownWithMath === 'function') {
-                    try {
-                        processedText = parseMarkdownWithMath(item.text);
-                        
-                        // 清理可能引起问题的样式
-                        processedText = processedText.replace(
-                            /style\s*=\s*["'][^"']*background[^"']*["']/gi, 
-                            ''
-                        );
-                        processedText = processedText.replace(
-                            /style\s*=\s*["'][^"']*gradient[^"']*["']/gi, 
-                            ''
-                        );
-                    } catch(e) {
-                        console.warn("Markdown解析失败:", e);
-                        processedText = item.text.replace(/\n/g, '<br>');
-                    }
-                } else {
-                    processedText = item.text.replace(/\n/g, '<br>');
-                }
-
-                contentHtml += `
-                    <div class="pdf-node" style="margin-bottom: 60px; page-break-inside: avoid; position: relative;">
-                        <div style="background: white; border-radius: 15px; padding: 0; 
-                                box-shadow: 0 8px 25px rgba(0,0,0,0.08); overflow: hidden;
-                                border: 1px solid #f0f0f0;">
-                            
-                            <!-- 顶部装饰条（简单颜色，避免渐变） -->
-                            <div style="background: #ffa726; height: 6px; width: 100%;"></div>
-                            
-                            <!-- 人物信息区域 -->
-                            <div style="padding: 30px 40px 20px 40px; text-align: center;">
-                                <div style="font-size: 24px; font-weight: bold; color: #d35400; 
-                                        margin-bottom: 10px; font-family: 'Ma Shan Zheng', cursive;">
-                                    ${info.name}
-                                </div>
-                                <div style="background: #fff5e6; color: #d35400; padding: 6px 20px; 
-                                        border-radius: 20px; display: inline-block; font-size: 13px;">
-                                    <i class="fas fa-graduation-cap" style="margin-right: 6px;"></i>
-                                    ${info.field}
-                                </div>
-                            </div>
-                            
-                            <!-- 贡献引语 -->
-                            <div style="background: #fff9e6; margin: 0 30px 25px 30px; padding: 20px; 
-                                    border-radius: 10px; border-left: 4px solid #ffcc33;">
-                                <div style="color: #8d6e63; font-style: italic; line-height: 1.6;">
-                                    <i class="fas fa-quote-left" style="color: #ffa726; margin-right: 8px;"></i>
-                                    ${info.contribution}
-                                </div>
-                            </div>
-                            
-                            <!-- 分隔线 -->
-                            <div style="height: 1px; background: #eee; margin: 0 40px 30px 40px;"></div>
-                            
-                            <!-- 内容区域 -->
-                            <div style="padding: 0 40px 35px 40px; color: #2c3e50; line-height: 1.8; 
-                                    font-size: 15px; text-align: justify;" class="markdown-content">
-                                ${processedText}
-                            </div>
-                            
-                            <!-- 页脚 -->
-                            <div style="background: #f9f9f9; padding: 15px 40px; border-top: 1px solid #eee;">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <div style="color: #7f8c8d; font-size: 12px;">
-                                        节点 ${index + 1}
-                                    </div>
-                                    <div style="color: #e67e22; font-weight: bold; font-size: 13px;">
-                                        <i class="fas fa-star" style="margin-right: 6px;"></i>
-                                        北极星智慧
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div style="font-size: 14px; color: #7f8c8d; margin-bottom: 10px;">
+                        共 ${conversationHistory.length} 次对话交流
                     </div>
-                `;
-            }
-        });
-
-        // 4. 添加页脚
-        const footerHtml = `
-            <div style="margin-top: 70px; padding: 30px; background: white; border-radius: 15px;
-                    text-align: center; color: #666; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
-                <div style="font-size: 16px; color: #3498db; margin-bottom: 15px;">
-                    <i class="fas fa-brain"></i> 思想轨迹完整记录
+                    <div style="font-size: 12px; color: #95a5a6;">
+                        生成于 ${new Date().toLocaleString()} · 对话北极星系统
+                    </div>
                 </div>
-                <div style="font-size: 14px; color: #7f8c8d; margin-bottom: 10px;">
-                    共 ${conversationHistory.length} 次对话交流 · ${new Date().toLocaleString()}
-                </div>
-                <div style="font-size: 12px; color: #95a5a6; margin-top: 20px;">
-                    对话北极星系统 · 仅供个人学习交流使用
-                </div>
-            </div>
-        `;
+            `;
 
-        contentHtml += footerHtml;
-        pdfContainer.innerHTML = contentHtml;
-        document.body.appendChild(pdfContainer);
+            return html;
+        };
 
-        // 5. 等待渲染
+        // 3. 渲染内容到容器
+        renderContainer.innerHTML = renderPDFContent();
+        document.body.appendChild(renderContainer);
+
+        // 4. 等待渲染完成
         await new Promise(resolve => {
-            pdfContainer.getBoundingClientRect();
+            renderContainer.getBoundingClientRect();
             setTimeout(resolve, 1000);
         });
 
-        // 6. 处理MathJax（简化处理，避免复杂渲染）
+        // 5. 处理数学公式
         if (window.MathJax) {
             try {
-                await MathJax.typesetPromise([pdfContainer]);
+                await MathJax.typesetPromise([renderContainer]);
                 await new Promise(resolve => setTimeout(resolve, 800));
-                
-                // 再次清理数学公式的复杂样式
-                const mathElements = pdfContainer.querySelectorAll('.MathJax, .MJX-TEX');
-                mathElements.forEach(math => {
-                    math.style.display = 'inline-block';
-                    math.style.maxWidth = '100%';
-                    math.style.overflow = 'visible';
-                    math.style.background = 'transparent !important';
-                });
             } catch (e) {
                 console.warn("MathJax处理失败:", e);
             }
         }
 
-        // 7. 修复html2canvas错误的简化方法
-        const generatePDF = async (container) => {
+        // 6. 改进的PDF生成函数
+        const generatePDF = async () => {
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF('p', 'mm', 'a4');
             
+            // 页面尺寸和边距
             const pageWidth = 210;
             const pageHeight = 297;
             const margin = {
-                top: 25,
+                top: 25,      // 顶部边距（留出页眉空间）
                 right: 20,
-                bottom: 30, // 预留页脚空间
+                bottom: 30,   // 底部边距（留出页脚空间）
                 left: 20
             };
             
             const contentWidth = pageWidth - margin.left - margin.right;
-            const pageContentHeight = pageHeight - margin.top - margin.bottom - 10;
             
-            // 获取所有节点
-            const nodes = container.querySelectorAll('.pdf-node');
-            console.log(`开始PDF导出，共 ${nodes.length} 个节点`);
+            // 6.1 获取所有节点
+            const userNodes = renderContainer.querySelectorAll('.pdf-user-node');
+            const aiNodes = renderContainer.querySelectorAll('.pdf-ai-node');
+            const allNodes = [];
             
+            // 合并节点，保持顺序
+            userNodes.forEach(node => allNodes.push({ node, type: 'user' }));
+            aiNodes.forEach(node => allNodes.push({ node, type: 'ai' }));
+            
+            // 按原始顺序排序
+            allNodes.sort((a, b) => {
+                const aIndex = Array.from(renderContainer.children).indexOf(a.node);
+                const bIndex = Array.from(renderContainer.children).indexOf(b.node);
+                return aIndex - bIndex;
+            });
+            
+            // 6.2 分页处理
             let currentPageY = margin.top;
             let pageNumber = 1;
             
-            // 处理每个节点
-            for (let i = 0; i < nodes.length; i++) {
-                const node = nodes[i];
-                console.log(`处理节点 ${i + 1}/${nodes.length}`);
+            // 添加第一页的页眉
+            addPageHeader(pdf, pageNumber, margin, pageWidth);
+            
+            for (let i = 0; i < allNodes.length; i++) {
+                const { node, type } = allNodes[i];
+                
+                console.log(`处理节点 ${i + 1}/${allNodes.length} (${type})`);
                 
                 try {
-                    // 检查节点尺寸
+                    // 检查节点是否可见
                     const rect = node.getBoundingClientRect();
                     if (rect.width === 0 || rect.height === 0) {
                         console.warn(`节点 ${i+1} 尺寸为0，跳过`);
                         continue;
                     }
                     
-                    // 【关键修复】简化html2canvas配置，避免背景问题
-                    const nodeCanvas = await html2canvas(node, {
-                        scale: 1.5,
+                    // 截图节点
+                    const canvas = await html2canvas(node, {
+                        scale: 2, // 高分辨率确保公式清晰
                         useCORS: true,
-                        backgroundColor: null, // 使用透明背景
+                        backgroundColor: '#f5f7fa',
                         allowTaint: false,
-                        foreignObjectRendering: false, // 禁用foreignObject
-                        imageTimeout: 10000,
+                        foreignObjectRendering: false,
                         logging: false,
-                        width: Math.max(rect.width, 100), // 确保最小宽度
-                        height: Math.max(rect.height, 50), // 确保最小高度
-                        windowWidth: Math.max(rect.width, 100),
-                        windowHeight: Math.max(rect.height, 50),
+                        width: node.offsetWidth,
+                        height: node.offsetHeight,
+                        windowWidth: node.offsetWidth,
+                        windowHeight: node.offsetHeight,
                         onclone: function(clonedDoc, element) {
-                            // 清理所有可能引起问题的背景
-                            const allElements = element.querySelectorAll('*');
-                            allElements.forEach(el => {
-                                const style = window.getComputedStyle(el);
-                                
-                                // 移除背景图片
-                                if (style.backgroundImage && style.backgroundImage !== 'none') {
-                                    el.style.backgroundImage = 'none';
-                                }
-                                
-                                // 移除渐变背景，替换为纯色
-                                if (style.background && style.background.includes('gradient')) {
-                                    if (el.style.backgroundColor === 'transparent' || el.style.backgroundColor === '') {
-                                        el.style.backgroundColor = '#ffffff';
-                                    }
-                                }
-                                
-                                // 确保所有元素可见
-                                el.style.opacity = '1';
-                                el.style.visibility = 'visible';
-                            });
+                            // 简化样式，避免复杂背景
+                            element.style.background = '#f5f7fa';
+                            element.style.backgroundColor = '#f5f7fa';
                             
                             // 特别处理数学公式
                             const mathElements = element.querySelectorAll('.MathJax, .MJX-TEX');
                             mathElements.forEach(math => {
-                                math.style.background = 'transparent';
                                 math.style.display = 'inline-block';
+                                math.style.maxWidth = '100%';
+                                math.style.background = 'transparent';
                             });
                         }
                     });
                     
-                    // 检查canvas是否有效
-                    if (nodeCanvas.width === 0 || nodeCanvas.height === 0) {
+                    // 检查canvas有效性
+                    if (canvas.width === 0 || canvas.height === 0) {
                         console.warn(`节点 ${i+1} 截图失败，跳过`);
                         continue;
                     }
                     
                     // 计算在PDF中的高度
-                    const imgHeight = (nodeCanvas.height * contentWidth) / nodeCanvas.width;
+                    const imgHeight = (canvas.height * contentWidth) / canvas.width;
                     
-                    // 检查是否需要新页面（预留10mm空间）
-                    if (currentPageY + imgHeight > pageHeight - margin.bottom - 10) {
+                    // 检查是否需要新页面（预留20mm空间）
+                    const spaceNeeded = imgHeight + 10; // 节点高度 + 间距
+                    const spaceAvailable = pageHeight - margin.bottom - currentPageY - 20; // 预留20mm给页脚
+                    
+                    if (spaceNeeded > spaceAvailable) {
+                        // 开始新页面
                         pdf.addPage();
                         pageNumber++;
                         currentPageY = margin.top;
                         
-                        // 添加简单的页眉
-                        pdf.setFontSize(9);
-                        pdf.setTextColor(150, 150, 150);
-                        pdf.text('Dialogue with North Stars', margin.left, margin.top - 8);
+                        // 添加新页的页眉
+                        addPageHeader(pdf, pageNumber, margin, pageWidth);
                     }
                     
-                    // 添加到PDF
+                    // 添加到当前页
                     pdf.addImage(
-                        nodeCanvas.toDataURL('image/png', 1.0), // 使用PNG保留透明背景
-                        'PNG',
+                        canvas.toDataURL('image/jpeg', 0.95),
+                        'JPEG',
                         margin.left,
                         currentPageY,
                         contentWidth,
                         imgHeight
                     );
                     
-                    // 更新位置
+                    // 更新位置（增加间距）
                     currentPageY += imgHeight + 15;
                     
-                    console.log(`节点 ${i+1} 成功添加到第 ${pageNumber} 页`);
+                    console.log(`节点 ${i+1} 添加到第 ${pageNumber} 页，高度: ${imgHeight.toFixed(1)}mm`);
                     
-                } catch (nodeError) {
-                    console.error(`节点 ${i+1} 处理失败:`, nodeError);
+                } catch (error) {
+                    console.error(`节点 ${i+1} 处理失败:`, error);
                     // 继续处理下一个节点
                 }
             }
             
-            // 添加页码（使用英文避免乱码）
+            // 6.3 添加页码（使用英文避免乱码）
             const totalPages = pdf.getNumberOfPages();
             for (let i = 1; i <= totalPages; i++) {
                 pdf.setPage(i);
+                
+                // 页码
                 pdf.setFontSize(9);
                 pdf.setTextColor(150, 150, 150);
                 pdf.text(
@@ -1709,15 +1669,43 @@ async function exportToPDF() {
                     pageWidth - margin.right,
                     pageHeight - 10
                 );
+                
+                // 页脚装饰线
+                pdf.setDrawColor(200, 200, 200);
+                pdf.setLineWidth(0.3);
+                pdf.line(
+                    margin.left,
+                    pageHeight - margin.bottom + 5,
+                    pageWidth - margin.right,
+                    pageHeight - margin.bottom + 5
+                );
             }
             
             return pdf;
         };
         
-        // 8. 生成并保存PDF
-        console.log("开始生成PDF...");
-        const pdf = await generatePDF(pdfContainer);
+        // 辅助函数：添加页眉
+        const addPageHeader = (pdf, pageNumber, margin, pageWidth) => {
+            pdf.setFontSize(10);
+            pdf.setTextColor(100, 100, 100);
+            
+            // 左侧：文档标题
+            pdf.text('Dialogue with North Stars', margin.left, margin.top - 10);
+            
+            // 右侧：页码
+            pdf.text(`Page ${pageNumber}`, pageWidth - margin.right, margin.top - 10);
+            
+            // 装饰线
+            pdf.setDrawColor(230, 126, 34);
+            pdf.setLineWidth(0.5);
+            pdf.line(margin.left, margin.top - 5, pageWidth - margin.right, margin.top - 5);
+        };
         
+        // 7. 生成PDF
+        console.log("开始生成PDF...");
+        const pdf = await generatePDF();
+        
+        // 8. 保存文件
         const fileName = `${getExportFileName()}.pdf`;
         pdf.save(fileName);
         
@@ -1738,7 +1726,6 @@ async function exportToPDF() {
                 z-index: 10000;
                 font-family: -apple-system, sans-serif;
                 font-weight: 500;
-                font-size: 14px;
             `;
             successMsg.innerHTML = `
                 <div style="display: flex; align-items: center;">
@@ -1768,18 +1755,17 @@ async function exportToPDF() {
             errorMsg += "未知错误";
         }
         
-        // 如果是canvas相关错误，提供具体建议
-        if (error.message && error.message.includes('createPattern')) {
-            errorMsg += "\n\n可能原因：页面中存在不兼容的背景图像\n已尝试修复，请重试。";
+        if (error.message && error.message.includes('canvas')) {
+            errorMsg += "\n\n可能原因：页面中有无效元素\n建议刷新页面后重试";
         }
         
         alert(errorMsg);
         
     } finally {
         // 清理
-        const pdfContainer = document.getElementById('pdf-export-container');
-        if (pdfContainer && pdfContainer.parentNode) {
-            pdfContainer.parentNode.removeChild(pdfContainer);
+        const container = document.getElementById('pdf-render-container');
+        if (container && container.parentNode) {
+            container.parentNode.removeChild(container);
         }
         
         document.body.style.cursor = originalCursor;
