@@ -1340,24 +1340,21 @@ function exportToMD() {
  * 然后对其截图生成 PDF。不包含 SVG 连线和画布特效。
  */
 async function exportToPDF() {
-    // 1. 基础校验
     if (!conversationHistory || conversationHistory.length === 0) {
         alert("没有可导出的内容。");
         return;
     }
 
-    // 2. 锁定界面状态
     const originalCursor = document.body.style.cursor;
     const originalOverflow = document.body.style.overflow;
     document.body.style.cursor = 'wait';
     document.body.style.overflow = 'hidden';
 
     try {
-        // 3. 创建临时的可见容器（在视口内）
+        // 创建临时容器
         const printDiv = document.createElement('div');
         printDiv.id = 'pdf-export-container';
         
-        // 【核心修复】使用 fixed 定位但在视口内可见
         printDiv.style.position = 'fixed';
         printDiv.style.top = '0';
         printDiv.style.left = '0';
@@ -1368,10 +1365,10 @@ async function exportToPDF() {
         printDiv.style.color = '#333';
         printDiv.style.zIndex = '999999';
         printDiv.style.boxShadow = '0 0 20px rgba(0,0,0,0.2)';
-        printDiv.style.opacity = '0'; // 初始不可见，但DOM存在
-        printDiv.style.pointerEvents = 'none'; // 防止交互
-        
-        // 4. 构建内容（保持原有逻辑）
+        printDiv.style.opacity = '0.99';
+        printDiv.style.pointerEvents = 'none';
+
+        // 构建内容
         let contentHtml = `
             <div style="text-align:center; margin-bottom: 40px;">
                 <h2 style="color:#2c3e50; font-size: 24px; margin-bottom:10px; font-weight:700;">
@@ -1387,126 +1384,154 @@ async function exportToPDF() {
             </div>
         `;
 
-    // 5. 遍历并构建对话节点 (逻辑保持不变)
-    conversationHistory.forEach((item, index) => {
-        const isUser = item.role === 'user';
-        let textContent = item.text.replace(/\n/g, '<br>');
-        if (!isUser && typeof parseMarkdownWithMath === 'function') {
-            try { textContent = parseMarkdownWithMath(item.text); } catch(e) {}
-        }
-
-        if (isUser) {
-            let extraInfoHtml = '';
-            const nextItem = conversationHistory[index + 1];
-            if (nextItem && nextItem.role !== 'user' && nextItem.leaderInfo) {
-                const info = nextItem.leaderInfo;
-                extraInfoHtml = `
-                    <div style="margin-top: 15px; border-top: 1px dashed #bcdaea; padding-top: 10px; font-size: 13px; color: #555; display:flex; align-items:center;">
-                        <span style="font-weight:bold; color: #2c3e50; margin-right:8px;">🧩 关联人物：${info.name}</span> 
-                        <span style="background:#eef6fa; color: #7f8c8d; font-size:11px; padding:2px 6px; border-radius:4px;">${info.field}</span>
+        // 构建对话内容（简化版，避免复杂背景）
+        conversationHistory.forEach((item, index) => {
+            const isUser = item.role === 'user';
+            
+            if (isUser) {
+                contentHtml += `
+                    <div style="margin-bottom: 30px; border-left: 4px solid #2980b9; padding-left: 15px;">
+                        <div style="font-weight: bold; color: #2980b9; margin-bottom: 5px; font-size: 14px;">
+                            用户提问
+                        </div>
+                        <div style="font-size: 14px; line-height: 1.6;">
+                            ${item.text.replace(/\n/g, '<br>')}
+                        </div>
                     </div>
-                    <div style="margin-top:6px; font-style:italic; color:#7f8c8d; font-size: 12px; padding-left: 20px;">
-                        "${info.contribution.substring(0, 50)}${info.contribution.length > 50 ? '...' : ''}"
+                `;
+            } else {
+                const info = item.leaderInfo || { name: 'Unknown', field: '', contribution: '' };
+                contentHtml += `
+                    <div style="margin-bottom: 40px; border: 1px solid #eee; border-radius: 8px; padding: 20px; background: #f9f9f9;">
+                        <div style="text-align: center; margin-bottom: 15px;">
+                            <div style="font-size: 18px; font-weight: bold; color: #d35400;">
+                                ${info.name}
+                            </div>
+                            <div style="color: #7f8c8d; font-size: 12px; margin-top: 5px;">
+                                ${info.field}
+                            </div>
+                        </div>
+                        <div style="color: #555; font-size: 13px; font-style: italic; margin-bottom: 15px; padding: 10px; background: #fff; border-radius: 4px;">
+                            ${info.contribution}
+                        </div>
+                        <div style="height: 1px; background: #eee; margin: 15px 0;"></div>
+                        <div style="font-size: 14px; line-height: 1.8; color: #333;">
+                            ${item.text.replace(/\n/g, '<br>')}
+                        </div>
                     </div>
                 `;
             }
-
-            contentHtml += `
-                <div class="pdf-node" style="margin-bottom: 30px; display: flex; flex-direction: column; align-items: flex-end;">
-                    <div style="font-weight: bold; color: #2980b9; margin-bottom: 8px; font-size: 15px; width: 100%; text-align: right;">
-                        <span style="background: #eef7fc; padding: 4px 10px; border-radius: 15px;">User (提问)</span>
-                    </div>
-                    <div style="background: #f0f7fb; padding: 15px 20px; border-radius: 12px 0 12px 12px; line-height: 1.6; font-size: 14px; border: 1px solid #dbe9f1; text-align: justify; box-shadow: 0 2px 5px rgba(0,0,0,0.03); max-width: 90%;">
-                        <div style="font-family: 'Indie Flower', 'KaiTi', cursive; font-weight: bold; color: #34495e;">${item.text}</div>
-                        ${extraInfoHtml}
-                    </div>
-                </div>
-            `;
-        } else {
-            const info = item.leaderInfo || { name: 'Unknown', field: '', contribution: '' };
-            contentHtml += `
-                <div class="pdf-node" style="margin-bottom: 40px; margin-top: 10px; position: relative;">
-                    <div style="border: 1px solid #ecd0b7; background: #fffdf9; border-radius: 12px; position: relative; box-shadow: 0 4px 15px rgba(211, 84, 0, 0.08); overflow: hidden;">
-                        <div style="text-align: center; color: #e67e22; font-size: 14px; margin-top: 10px; opacity: 0.7;"><i class="fas fa-star-of-life"></i></div>
-                        <div style="text-align: center; padding: 5px 20px;">
-                            <div style="font-size: 20px; font-weight: bold; color: #d35400; font-family: 'Ma Shan Zheng', cursive, sans-serif;">${info.name}</div>
-                            <div style="margin-top: 5px;"><span style="background: #fff5eb; color: #d35400; border: 1px solid #f5c6cb; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;">${info.field}</span></div>
-                        </div>
-                        <div style="background: #fff8e1; color: #8d6e63; font-size: 12px; padding: 10px 15px; margin: 15px 25px; border-radius: 6px; border-left: 3px solid #ffca28; font-style: italic; line-height: 1.4;">
-                            <i class="fas fa-quote-left" style="font-size: 10px; opacity: 0.6; margin-right: 5px;"></i> ${info.contribution}
-                        </div>
-                        <div style="height: 1px; background: linear-gradient(to right, transparent, #e0e0e0, transparent); margin: 15px 40px;"></div>
-                        <div style="padding: 0 30px 20px 30px; color: #2c3e50; line-height: 1.8; font-size: 14px; text-align: justify; font-family: -apple-system, sans-serif;">${textContent}</div>
-                        <div style="background: #fdf2e9; padding: 6px; text-align: right; font-size: 10px; color: #d35400; font-weight: bold; padding-right: 20px;"><i class="fas fa-feather-alt"></i> NORTH STAR INSIGHT</div>
-                    </div>
-                </div>
-            `;
-        }
-    });
-
-    // 6. 插入DOM
-    printDiv.innerHTML = contentHtml;
-        document.body.appendChild(printDiv);
-
-        // 5. 强制重新计算布局
-        await new Promise(resolve => {
-            // 先让元素可见以触发布局计算
-            printDiv.style.opacity = '1';
-            printDiv.getBoundingClientRect(); // 强制重排
-            
-            // 额外延时确保渲染完成
-            setTimeout(resolve, 500);
         });
 
-        // 6. 检查元素尺寸
-        const rect = printDiv.getBoundingClientRect();
-        if (rect.width === 0 || rect.height === 0) {
-            throw new Error('导出容器尺寸为0，无法生成PDF');
-        }
+        printDiv.innerHTML = contentHtml;
+        document.body.appendChild(printDiv);
 
-        // 7. 使用 html2canvas 截图（增加更多配置）
-        const canvas = await html2canvas(printDiv, {
-            scale: 2,
-            useCORS: true,
-            logging: true, // 开启日志便于调试
-            backgroundColor: '#ffffff',
-            width: rect.width,
-            height: rect.height,
-            x: 0,
-            y: 0,
-            // 尝试关闭背景图片渲染
-            imageTimeout: 0,
-            removeContainer: true,
-            onclone: function(clonedDoc) {
-                // 在克隆的文档中确保所有资源加载
-                const clonedDiv = clonedDoc.getElementById('pdf-export-container');
-                if (clonedDiv) {
-                    clonedDiv.style.opacity = '1';
+        // 等待渲染并确保所有图片加载完成
+        await new Promise(resolve => {
+            printDiv.getBoundingClientRect();
+            
+            const images = printDiv.getElementsByTagName('img');
+            if (images.length === 0) {
+                setTimeout(resolve, 500);
+                return;
+            }
+            
+            let loadedCount = 0;
+            const totalImages = images.length;
+            
+            for (let img of images) {
+                if (img.complete) {
+                    loadedCount++;
+                } else {
+                    img.onload = () => {
+                        loadedCount++;
+                        if (loadedCount === totalImages) {
+                            setTimeout(resolve, 300);
+                        }
+                    };
+                    img.onerror = () => {
+                        loadedCount++;
+                        if (loadedCount === totalImages) {
+                            setTimeout(resolve, 300);
+                        }
+                    };
+                }
+            }
+            
+            if (loadedCount === totalImages) {
+                setTimeout(resolve, 500);
+            }
+        });
+
+        // 清理所有尺寸为0的元素
+        const allElements = printDiv.querySelectorAll('*');
+        allElements.forEach(el => {
+            const rect = el.getBoundingClientRect();
+            if (rect.width === 0 || rect.height === 0) {
+                if (el.tagName === 'IMG' && (!el.src || el.src === '')) {
+                    el.style.display = 'none';
+                } else if (el.tagName === 'CANVAS') {
+                    el.style.display = 'none';
                 }
             }
         });
 
-        // 8. 生成PDF（保持原有逻辑）
+        // 检查容器尺寸
+        const rect = printDiv.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) {
+            printDiv.style.width = '650px';
+            printDiv.style.minHeight = '800px';
+            printDiv.getBoundingClientRect();
+        }
+
+        // 使用保守的html2canvas配置
+        const canvas = await html2canvas(printDiv, {
+            scale: 1.5,
+            useCORS: true,
+            logging: true,
+            backgroundColor: '#ffffff',
+            allowTaint: false,
+            foreignObjectRendering: false,
+            imageTimeout: 15000,
+            ignoreElements: (element) => {
+                const rect = element.getBoundingClientRect();
+                return rect.width === 0 || rect.height === 0;
+            },
+            onclone: function(clonedDoc, element) {
+                const clonedContainer = clonedDoc.getElementById('pdf-export-container');
+                if (clonedContainer) {
+                    const allElements = clonedContainer.querySelectorAll('*');
+                    allElements.forEach(el => {
+                        const bg = window.getComputedStyle(el).backgroundImage;
+                        if (bg && bg !== 'none') {
+                            el.style.backgroundImage = 'none';
+                            el.style.backgroundColor = '#ffffff';
+                        }
+                    });
+                }
+            }
+        });
+
+        // 生成PDF
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
-        
         const pdfWidth = 210;
         const pdfHeight = 297;
-        const imgWidth = pdfWidth;
-        const imgHeight = (canvas.height * pdfWidth) / canvas.width;
         
-        // 如果内容太长，分页处理
+        const imgWidth = pdfWidth - 20;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        
         let heightLeft = imgHeight;
-        let position = 0;
+        let position = 10;
         
-        pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pdfHeight;
+        pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 10, position, imgWidth, imgHeight);
+        heightLeft -= (pdfHeight - 20);
         
-        while (heightLeft >= 0) {
-            position = heightLeft - imgHeight;
+        while (heightLeft > 0) {
+            position = - (imgHeight - heightLeft - 10);
             pdf.addPage();
-            pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, position, imgWidth, imgHeight);
-            heightLeft -= pdfHeight;
+            pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 10, position, imgWidth, imgHeight);
+            heightLeft -= (pdfHeight - 20);
         }
         
         pdf.save(`${getExportFileName()}.pdf`);
@@ -1515,7 +1540,6 @@ async function exportToPDF() {
         console.error("PDF Export Failed:", error);
         alert("导出 PDF 失败: " + (error.message || "未知错误"));
     } finally {
-        // 9. 清理
         const printDiv = document.getElementById('pdf-export-container');
         if (printDiv && printDiv.parentNode) {
             printDiv.parentNode.removeChild(printDiv);
