@@ -1351,22 +1351,24 @@ async function exportToPDF() {
     document.body.style.overflow = 'hidden';
 
     try {
-        // 创建临时容器
+        // 创建临时容器 - 这次让它在视口内可见但不可交互
         const printDiv = document.createElement('div');
         printDiv.id = 'pdf-export-container';
         
-        // 固定在视口内，但不可见
         printDiv.style.position = 'fixed';
-        printDiv.style.top = '-9999px';
-        printDiv.style.left = '0';
+        printDiv.style.top = '10px';
+        printDiv.style.left = '10px';
         printDiv.style.width = '650px';
+        printDiv.style.maxHeight = 'calc(100vh - 20px)';
+        printDiv.style.overflow = 'auto';
         printDiv.style.backgroundColor = '#ffffff';
         printDiv.style.padding = '40px 50px';
         printDiv.style.fontFamily = '"Helvetica Neue", Helvetica, Arial, "Microsoft Yahei", sans-serif';
         printDiv.style.color = '#333';
-        printDiv.style.zIndex = '-9999';
-        printDiv.style.opacity = '0';
-        printDiv.style.pointerEvents = 'none';
+        printDiv.style.zIndex = '9999';
+        printDiv.style.boxShadow = '0 0 30px rgba(0,0,0,0.3)';
+        printDiv.style.opacity = '0.99';
+        printDiv.style.pointerEvents = 'none'; // 防止交互，但保持可见
 
         // 构建内容头部
         let contentHtml = `
@@ -1384,12 +1386,12 @@ async function exportToPDF() {
             </div>
         `;
 
-        // 为每个对话节点添加唯一ID，便于后续定位
+        // 遍历对话历史，构建内容
         conversationHistory.forEach((item, index) => {
             const isUser = item.role === 'user';
             
             if (isUser) {
-                // 用户提问部分 - 添加分页控制类
+                // 用户提问部分
                 let extraInfoHtml = '';
                 const nextItem = conversationHistory[index + 1];
                 if (nextItem && nextItem.role !== 'user' && nextItem.leaderInfo) {
@@ -1406,7 +1408,7 @@ async function exportToPDF() {
                 }
 
                 contentHtml += `
-                    <div id="pdf-node-${index}" class="pdf-node pdf-page-break-avoid" style="margin-bottom: 40px; display: flex; flex-direction: column; align-items: flex-end; page-break-inside: avoid;">
+                    <div class="pdf-node" style="margin-bottom: 40px; display: flex; flex-direction: column; align-items: flex-end;">
                         <div style="font-weight: bold; color: #2980b9; margin-bottom: 8px; font-size: 15px; width: 100%; text-align: right;">
                             <span style="background: #eef7fc; padding: 4px 10px; border-radius: 15px;">User (提问)</span>
                         </div>
@@ -1417,7 +1419,7 @@ async function exportToPDF() {
                     </div>
                 `;
             } else {
-                // AI回复部分 - 处理Markdown和数学公式
+                // AI回复部分
                 const info = item.leaderInfo || { name: 'Unknown', field: '', contribution: '' };
                 
                 // 处理文本：先尝试用parseMarkdownWithMath处理
@@ -1438,14 +1440,10 @@ async function exportToPDF() {
                     /style\s*=\s*["'][^"']*background[^"']*["']/gi, 
                     'style="background: transparent !important"'
                 );
-                processedText = processedText.replace(
-                    /style\s*=\s*["'][^"']*gradient[^"']*["']/gi, 
-                    'style="background: transparent !important"'
-                );
 
                 contentHtml += `
-                    <div id="pdf-node-${index}" class="pdf-node pdf-page-break-avoid" style="margin-bottom: 50px; margin-top: 10px; position: relative; page-break-inside: avoid; page-break-before: auto;">
-                        <div style="border: 1px solid #ecd0b7; background: linear-gradient(to bottom, #fffdf9, #fffaf0); border-radius: 15px; position: relative; box-shadow: 0 6px 20px rgba(211, 84, 0, 0.08); overflow: hidden; padding-bottom: 10px;">
+                    <div class="pdf-node" style="margin-bottom: 50px; margin-top: 10px; position: relative;">
+                        <div style="border: 1px solid #ecd0b7; background: #fffdf9; border-radius: 15px; position: relative; box-shadow: 0 6px 20px rgba(211, 84, 0, 0.08); overflow: hidden; padding-bottom: 10px;">
                             <div style="text-align: center; color: #e67e22; font-size: 16px; margin-top: 15px; opacity: 0.8;">
                                 <i class="fas fa-star-of-life"></i> ★ 北极星智慧 ★ <i class="fas fa-star-of-life"></i>
                             </div>
@@ -1454,7 +1452,7 @@ async function exportToPDF() {
                                     ${info.name}
                                 </div>
                                 <div style="margin-top: 8px;">
-                                    <span style="background: linear-gradient(135deg, #fff5eb, #ffe8cc); color: #d35400; border: 1px solid #f5c6cb; padding: 5px 15px; border-radius: 15px; font-size: 12px; font-weight: 600; letter-spacing: 1px;">
+                                    <span style="background: #fff5eb; color: #d35400; border: 1px solid #f5c6cb; padding: 5px 15px; border-radius: 15px; font-size: 12px; font-weight: 600; letter-spacing: 1px;">
                                         ${info.field}
                                     </span>
                                 </div>
@@ -1468,8 +1466,8 @@ async function exportToPDF() {
                             <div style="padding: 0 35px 25px 35px; color: #2c3e50; line-height: 1.8; font-size: 15px; text-align: justify; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;" class="markdown-content">
                                 ${processedText}
                             </div>
-                            <div style="background: linear-gradient(to right, #fdf2e9, #fffaf0); padding: 10px; text-align: right; font-size: 11px; color: #d35400; font-weight: bold; padding-right: 25px; border-top: 1px solid #ffeaa7;">
-                                <i class="fas fa-feather-alt"></i> NORTH STAR INSIGHT · 源自智慧星辰的光芒
+                            <div style="background: #fdf2e9; padding: 10px; text-align: right; font-size: 11px; color: #d35400; font-weight: bold; padding-right: 25px; border-top: 1px solid #ffeaa7;">
+                                <i class="fas fa-feather-alt"></i> NORTH STAR INSIGHT
                             </div>
                         </div>
                     </div>
@@ -1495,7 +1493,7 @@ async function exportToPDF() {
         // 等待渲染
         await new Promise(resolve => {
             printDiv.getBoundingClientRect(); // 强制重排
-            setTimeout(resolve, 800);
+            setTimeout(resolve, 1000); // 确保所有内容渲染完成
         });
 
         // 处理MathJax
@@ -1508,105 +1506,61 @@ async function exportToPDF() {
             }
         }
 
-        // 【关键修复】简化的分页算法 - 直接使用html2canvas分页
+        // 修复的分页方法：逐个节点截图，避免复杂的分页逻辑
         const generatePagedPDF = async (container) => {
             const { jsPDF } = window.jspdf;
+            
+            // 使用A4尺寸
             const pdf = new jsPDF('p', 'mm', 'a4');
+            const pageWidth = 210;
+            const pageHeight = 297;
+            const margin = 15; // 边距
             
-            const pageWidth = 210; // A4宽度mm
-            const pageHeight = 297; // A4高度mm
-            const margin = {
-                top: 20,
-                right: 20,
-                bottom: 25,
-                left: 20
-            };
+            let currentY = margin;
+            let pageNum = 1;
+            const totalNodes = container.querySelectorAll('.pdf-node').length;
             
-            const contentWidth = pageWidth - margin.left - margin.right;
-            
-            // 方法1：将整个内容作为一个长图，然后分页
-            const fullCanvas = await html2canvas(container, {
-                scale: 1.5, // 降低scale值，减少内存使用
-                useCORS: true,
-                backgroundColor: '#ffffff',
-                foreignObjectRendering: false,
-                imageTimeout: 30000,
-                logging: false,
-                width: 650, // 固定宽度
-                height: container.scrollHeight, // 实际高度
-                windowWidth: 650, // 视口宽度
-                windowHeight: container.scrollHeight // 视口高度
-            });
-            
-            // 计算图片在PDF中的尺寸
-            const canvasWidth = fullCanvas.width;
-            const canvasHeight = fullCanvas.height;
-            
-            // 计算缩放比例，使图片宽度适应PDF内容宽度
-            const scale = contentWidth / (650 / 25.4); // 将像素转换为毫米
-            const scaledHeight = (canvasHeight / canvasWidth) * contentWidth;
-            
-            // 分页切割图片
-            const pageContentHeight = pageHeight - margin.top - margin.bottom;
-            let currentY = 0;
-            let pageNumber = 1;
-            
-            while (currentY < scaledHeight) {
-                // 计算当前页的高度
-                const pageHeightInCanvas = Math.min(
-                    (pageContentHeight / scale) * (canvasWidth / contentWidth),
-                    canvasHeight - currentY * (canvasWidth / contentWidth)
-                );
+            // 逐个处理节点
+            for (let i = 0; i < totalNodes; i++) {
+                const node = container.querySelectorAll('.pdf-node')[i];
                 
-                // 创建切片canvas
-                const sliceCanvas = document.createElement('canvas');
-                sliceCanvas.width = canvasWidth;
-                sliceCanvas.height = pageHeightInCanvas;
+                // 截图当前节点
+                const nodeCanvas = await html2canvas(node, {
+                    scale: 1.5,
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    allowTaint: false,
+                    foreignObjectRendering: false,
+                    logging: false,
+                    width: node.offsetWidth,
+                    height: node.offsetHeight,
+                    windowWidth: node.offsetWidth,
+                    windowHeight: node.offsetHeight
+                });
                 
-                const ctx = sliceCanvas.getContext('2d');
-                const sourceY = currentY * (canvasWidth / contentWidth);
+                // 计算节点在PDF中的高度
+                const imgWidth = pageWidth - (margin * 2);
+                const imgHeight = (nodeCanvas.height * imgWidth) / nodeCanvas.width;
                 
-                // 绘制当前页的部分
-                ctx.drawImage(
-                    fullCanvas,
-                    0, sourceY,
-                    canvasWidth, pageHeightInCanvas,
-                    0, 0,
-                    canvasWidth, pageHeightInCanvas
-                );
-                
-                // 添加到PDF
-                if (pageNumber > 1) {
+                // 检查是否需要新页面
+                if (currentY + imgHeight > pageHeight - margin) {
                     pdf.addPage();
+                    pageNum++;
+                    currentY = margin;
                 }
                 
-                const imgData = sliceCanvas.toDataURL('image/jpeg', 0.95);
-                const imgHeightInPdf = pageHeightInCanvas * scale;
-                
-                pdf.addImage(imgData, 'JPEG', margin.left, margin.top, contentWidth, imgHeightInPdf);
-                
-                // 更新位置
-                currentY += pageContentHeight;
-                pageNumber++;
-            }
-            
-            // 添加页码
-            const totalPages = pdf.getNumberOfPages();
-            for (let i = 1; i <= totalPages; i++) {
-                pdf.setPage(i);
-                pdf.setFontSize(9);
-                pdf.setTextColor(150, 150, 150);
-                pdf.text(
-                    `第 ${i} 页 / 共 ${totalPages} 页`,
-                    pageWidth - margin.right,
-                    pageHeight - 10,
-                    { align: 'right' }
+                // 添加节点到当前页
+                pdf.addImage(
+                    nodeCanvas.toDataURL('image/jpeg', 0.95),
+                    'JPEG',
+                    margin,
+                    currentY,
+                    imgWidth,
+                    imgHeight
                 );
                 
-                // 添加页面装饰性页眉
-                pdf.setLineWidth(0.5);
-                pdf.setDrawColor(230, 126, 34);
-                pdf.line(margin.left, margin.top - 5, pageWidth - margin.right, margin.top - 5);
+                // 更新Y位置
+                currentY += imgHeight + 10; // 10mm的间距
             }
             
             return pdf;
@@ -1615,83 +1569,30 @@ async function exportToPDF() {
         // 生成PDF
         const pdf = await generatePagedPDF(printDiv);
         
+        // 【关键修复】添加英文页码，避免乱码
+        const totalPages = pdf.getNumberOfPages();
+        for (let i = 1; i <= totalPages; i++) {
+            pdf.setPage(i);
+            pdf.setFontSize(10);
+            pdf.setTextColor(100, 100, 100);
+            
+            // 使用英文页码，避免乱码
+            pdf.text(
+                `Page ${i} of ${totalPages}`,
+                pageWidth - 15,
+                287,
+                { align: 'right' }
+            );
+        }
+        
         // 保存文件
         pdf.save(`${getExportFileName()}.pdf`);
         
-        console.log("PDF导出成功，共" + pdf.getNumberOfPages() + "页");
-        
-        // 显示成功消息
-        setTimeout(() => {
-            const successMsg = document.createElement('div');
-            successMsg.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: #2ecc71;
-                color: white;
-                padding: 12px 24px;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-                z-index: 10000;
-                font-family: -apple-system, sans-serif;
-                font-weight: 500;
-                animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
-            `;
-            successMsg.innerHTML = `
-                <i class="fas fa-check-circle" style="margin-right: 8px;"></i>
-                PDF导出成功！共 ${pdf.getNumberOfPages()} 页
-            `;
-            document.body.appendChild(successMsg);
-            
-            // 添加CSS动画
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes slideIn {
-                    from {
-                        transform: translateX(100%);
-                        opacity: 0;
-                    }
-                    to {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
-                }
-                @keyframes fadeOut {
-                    from { opacity: 1; }
-                    to { opacity: 0; }
-                }
-            `;
-            document.head.appendChild(style);
-            
-            // 3秒后移除提示
-            setTimeout(() => {
-                if (successMsg.parentNode) {
-                    successMsg.parentNode.removeChild(successMsg);
-                }
-                if (style.parentNode) {
-                    style.parentNode.removeChild(style);
-                }
-            }, 3000);
-        }, 500);
+        console.log("PDF导出成功，共" + totalPages + "页");
 
     } catch (error) {
         console.error("PDF Export Failed:", error);
-        
-        let errorMsg = "导出 PDF 失败: ";
-        if (error.message) {
-            errorMsg += error.message;
-        } else {
-            errorMsg += "未知错误";
-        }
-        
-        // 详细错误提示
-        if (error.message && error.message.includes('canvas') && error.message.includes('0')) {
-            errorMsg += "\n\n可能原因：\n• 内容中有无效图片或元素\n• 浏览器内存不足\n• 内容太多，建议分批导出";
-        } else if (error.message && error.message.includes('null')) {
-            errorMsg += "\n\n元素查找失败，可能是DOM结构问题";
-        }
-        
-        alert(errorMsg);
+        alert("导出 PDF 失败: " + (error.message || "未知错误"));
         
     } finally {
         // 清理
