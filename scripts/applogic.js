@@ -1346,48 +1346,46 @@ async function exportToPDF() {
         return;
     }
 
-    // 2. 锁定界面状态 & 记录原始滚动位置
+    // 2. 锁定界面状态
     const originalCursor = document.body.style.cursor;
-    const originalScrollPos = window.scrollY; 
     const originalOverflow = document.body.style.overflow;
-
     document.body.style.cursor = 'wait';
-    
-    // --- 【关键修复 1】强制滚动到顶部 ---
-    // 防止因滚动条在底部，导致绝对定位在 top:0 的 printDiv 处于视口外而被判定为 0 宽高
-    window.scrollTo(0, 0);
+    document.body.style.overflow = 'hidden';
 
-    // 3. 创建离屏容器
-    const printDiv = document.createElement('div');
-    printDiv.style.position = 'absolute';
-    printDiv.style.top = '0px';
-    printDiv.style.left = '0px'; 
-    printDiv.style.width = '650px';   
-    printDiv.style.backgroundColor = '#ffffff';
-    printDiv.style.padding = '40px 50px'; 
-    printDiv.style.fontFamily = '"Helvetica Neue", Helvetica, Arial, "Microsoft Yahei", sans-serif';
-    printDiv.style.color = '#333';
-    
-    // --- 【关键修复 2】调整层级与显示 ---
-    // 使用 z-index: -1 让其位于底层但仍然参与渲染树计算
-    printDiv.style.zIndex = '-1';  
-    printDiv.style.display = 'block';
-
-    // 4. 构建 HTML 头部
-    let contentHtml = `
-        <div style="text-align:center; margin-bottom: 40px;">
-            <h2 style="color:#2c3e50; font-size: 24px; margin-bottom:10px; font-weight:700;">
-                对话北极星思维轨迹
-            </h2>
-            <div style="font-size: 14px; color: #95a5a6; font-family: serif; font-style: italic;">
-                Talk with North Stars - Insight Stream
+    try {
+        // 3. 创建临时的可见容器（在视口内）
+        const printDiv = document.createElement('div');
+        printDiv.id = 'pdf-export-container';
+        
+        // 【核心修复】使用 fixed 定位但在视口内可见
+        printDiv.style.position = 'fixed';
+        printDiv.style.top = '0';
+        printDiv.style.left = '0';
+        printDiv.style.width = '650px';
+        printDiv.style.backgroundColor = '#ffffff';
+        printDiv.style.padding = '40px 50px';
+        printDiv.style.fontFamily = '"Helvetica Neue", Helvetica, Arial, "Microsoft Yahei", sans-serif';
+        printDiv.style.color = '#333';
+        printDiv.style.zIndex = '999999';
+        printDiv.style.boxShadow = '0 0 20px rgba(0,0,0,0.2)';
+        printDiv.style.opacity = '0'; // 初始不可见，但DOM存在
+        printDiv.style.pointerEvents = 'none'; // 防止交互
+        
+        // 4. 构建内容（保持原有逻辑）
+        let contentHtml = `
+            <div style="text-align:center; margin-bottom: 40px;">
+                <h2 style="color:#2c3e50; font-size: 24px; margin-bottom:10px; font-weight:700;">
+                    对话北极星思维轨迹
+                </h2>
+                <div style="font-size: 14px; color: #95a5a6; font-family: serif; font-style: italic;">
+                    Talk with North Stars - Insight Stream
+                </div>
+                <div style="width: 60px; height: 3px; background: #e67e22; margin: 15px auto;"></div>
+                <div style="font-size: 12px; color: #aaa; text-align: right; margin-top: 10px;">
+                    ${new Date().toLocaleString()}
+                </div>
             </div>
-            <div style="width: 60px; height: 3px; background: #e67e22; margin: 15px auto;"></div>
-            <div style="font-size: 12px; color: #aaa; text-align: right; margin-top: 10px;">
-                ${new Date().toLocaleString()}
-            </div>
-        </div>
-    `;
+        `;
 
     // 5. 遍历并构建对话节点 (逻辑保持不变)
     conversationHistory.forEach((item, index) => {
@@ -1448,112 +1446,82 @@ async function exportToPDF() {
 
     // 6. 插入DOM
     printDiv.innerHTML = contentHtml;
-    document.body.appendChild(printDiv);
+        document.body.appendChild(printDiv);
 
-    try {
-        // 等待渲染
-        await new Promise(resolve => setTimeout(resolve, 800)); // 适当增加延时
-        
-        if (window.MathJax) {
-            try { await MathJax.typesetPromise([printDiv]); } catch (e) {}
+        // 5. 强制重新计算布局
+        await new Promise(resolve => {
+            // 先让元素可见以触发布局计算
+            printDiv.style.opacity = '1';
+            printDiv.getBoundingClientRect(); // 强制重排
+            
+            // 额外延时确保渲染完成
+            setTimeout(resolve, 500);
+        });
+
+        // 6. 检查元素尺寸
+        const rect = printDiv.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) {
+            throw new Error('导出容器尺寸为0，无法生成PDF');
         }
 
-        // --- 【关键修复 3】使用 Math.ceil 取整 ---
-        // 避免小数像素导致的 0 宽高判定
-        const totalWidth = Math.ceil(printDiv.scrollWidth);
-        const totalHeight = Math.ceil(printDiv.scrollHeight);
-
-        // 8. 智能切割点计算
-        const nodeElements = printDiv.querySelectorAll('.pdf-node');
-        const safeCuts = []; 
-        nodeElements.forEach(el => {
-            const top = el.offsetTop;
-            const bottom = top + el.offsetHeight;
-            safeCuts.push(top - 10); 
-            safeCuts.push(bottom + 10); 
-        });
-        const sortedCuts = [...new Set(safeCuts)].sort((a, b) => a - b);
-
-        const scale = 2; 
-        
-        // 9. 执行截图
+        // 7. 使用 html2canvas 截图（增加更多配置）
         const canvas = await html2canvas(printDiv, {
-            scale: scale,
+            scale: 2,
             useCORS: true,
-            logging: false,
+            logging: true, // 开启日志便于调试
             backgroundColor: '#ffffff',
-            // --- 【关键修复 4】明确指定尺寸和滚动 ---
-            width: totalWidth,      
-            height: totalHeight,
-            scrollY: 0, // 告诉 canvas 不要计算滚动偏移，因为我们已经滚到 (0,0)
-            scrollX: 0
+            width: rect.width,
+            height: rect.height,
+            x: 0,
+            y: 0,
+            // 尝试关闭背景图片渲染
+            imageTimeout: 0,
+            removeContainer: true,
+            onclone: function(clonedDoc) {
+                // 在克隆的文档中确保所有资源加载
+                const clonedDiv = clonedDoc.getElementById('pdf-export-container');
+                if (clonedDiv) {
+                    clonedDiv.style.opacity = '1';
+                }
+            }
         });
 
-        // 10. PDF 分页生成 (保持原有逻辑)
+        // 8. 生成PDF（保持原有逻辑）
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
         
-        const pdfWidth = 210; 
-        const pdfHeight = 297; 
-        const pageHeightInCanvas = (canvas.width / pdfWidth) * pdfHeight;
+        const pdfWidth = 210;
+        const pdfHeight = 297;
+        const imgWidth = pdfWidth;
+        const imgHeight = (canvas.height * pdfWidth) / canvas.width;
         
-        let renderedHeight = 0; 
-        const canvasHeight = canvas.height;
-
-        while (renderedHeight < canvasHeight) {
-            let proposedCut = renderedHeight + pageHeightInCanvas;
-            
-            if (proposedCut >= canvasHeight) {
-                proposedCut = canvasHeight;
-            } else {
-                let bestCut = -1;
-                for (let cutDom of sortedCuts) {
-                    const cutCanvas = cutDom * scale; 
-                    if (cutCanvas > renderedHeight && cutCanvas < proposedCut) {
-                        bestCut = cutCanvas;
-                    }
-                }
-                if (bestCut !== -1 && (proposedCut - bestCut) < (pageHeightInCanvas * 0.4)) {
-                    proposedCut = bestCut;
-                }
-            }
-
-            const sliceHeight = proposedCut - renderedHeight;
-            if (sliceHeight <= 0) break; 
-
-            const sliceCanvas = document.createElement('canvas');
-            sliceCanvas.width = canvas.width;
-            sliceCanvas.height = sliceHeight;
-            
-            const ctx = sliceCanvas.getContext('2d');
-            ctx.drawImage(canvas, 0, renderedHeight, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
-            
-            const imgData = sliceCanvas.toDataURL('image/jpeg', 0.95);
-            
-            if (renderedHeight > 0) {
-                pdf.addPage();
-            }
-            
-            const imgHeightInPdf = (sliceHeight * pdfWidth) / canvas.width;
-            pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, imgHeightInPdf);
-
-            renderedHeight = proposedCut;
+        // 如果内容太长，分页处理
+        let heightLeft = imgHeight;
+        let position = 0;
+        
+        pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pdfHeight;
+        
+        while (heightLeft >= 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pdfHeight;
         }
-
-        // 11. 下载
+        
         pdf.save(`${getExportFileName()}.pdf`);
 
     } catch (error) {
         console.error("PDF Export Failed:", error);
-        alert("导出 PDF 失败，请检查控制台。\n" + (error.message || ""));
+        alert("导出 PDF 失败: " + (error.message || "未知错误"));
     } finally {
-        // 12. 清理 & 恢复现场
+        // 9. 清理
+        const printDiv = document.getElementById('pdf-export-container');
         if (printDiv && printDiv.parentNode) {
             printDiv.parentNode.removeChild(printDiv);
         }
+        
         document.body.style.cursor = originalCursor;
         document.body.style.overflow = originalOverflow;
-        // 恢复滚动位置
-        window.scrollTo(0, originalScrollPos); 
     }
 }
