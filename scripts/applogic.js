@@ -1355,19 +1355,17 @@ async function exportToPDF() {
         const printDiv = document.createElement('div');
         printDiv.id = 'pdf-export-container';
         
+        // 固定在视口内，但不可见
         printDiv.style.position = 'fixed';
-        printDiv.style.top = '10px';
-        printDiv.style.left = '10px';
+        printDiv.style.top = '-9999px';
+        printDiv.style.left = '0';
         printDiv.style.width = '650px';
-        printDiv.style.maxHeight = 'calc(100vh - 20px)';
-        printDiv.style.overflow = 'auto';
         printDiv.style.backgroundColor = '#ffffff';
         printDiv.style.padding = '40px 50px';
         printDiv.style.fontFamily = '"Helvetica Neue", Helvetica, Arial, "Microsoft Yahei", sans-serif';
         printDiv.style.color = '#333';
-        printDiv.style.zIndex = '9999';
-        printDiv.style.boxShadow = '0 0 30px rgba(0,0,0,0.3)';
-        printDiv.style.opacity = '0.99';
+        printDiv.style.zIndex = '-9999';
+        printDiv.style.opacity = '0';
         printDiv.style.pointerEvents = 'none';
 
         // 构建内容头部
@@ -1386,7 +1384,7 @@ async function exportToPDF() {
             </div>
         `;
 
-        // 遍历对话历史，构建内容（保持原有的精美样式）
+        // 为每个对话节点添加唯一ID，便于后续定位
         conversationHistory.forEach((item, index) => {
             const isUser = item.role === 'user';
             
@@ -1408,7 +1406,7 @@ async function exportToPDF() {
                 }
 
                 contentHtml += `
-                    <div class="pdf-node" style="margin-bottom: 40px; display: flex; flex-direction: column; align-items: flex-end;">
+                    <div id="pdf-node-${index}" class="pdf-node" style="margin-bottom: 40px; display: flex; flex-direction: column; align-items: flex-end;">
                         <div style="font-weight: bold; color: #2980b9; margin-bottom: 8px; font-size: 15px; width: 100%; text-align: right;">
                             <span style="background: #eef7fc; padding: 4px 10px; border-radius: 15px;">User (提问)</span>
                         </div>
@@ -1442,7 +1440,7 @@ async function exportToPDF() {
                 );
 
                 contentHtml += `
-                    <div class="pdf-node" style="margin-bottom: 50px; margin-top: 10px; position: relative;">
+                    <div id="pdf-node-${index}" class="pdf-node" style="margin-bottom: 50px; margin-top: 10px; position: relative;">
                         <div style="border: 1px solid #ecd0b7; background: #fffdf9; border-radius: 15px; position: relative; box-shadow: 0 6px 20px rgba(211, 84, 0, 0.08); overflow: hidden; padding-bottom: 10px;">
                             <div style="text-align: center; color: #e67e22; font-size: 16px; margin-top: 15px; opacity: 0.8;">
                                 <i class="fas fa-star-of-life"></i> ★ 北极星智慧 ★ <i class="fas fa-star-of-life"></i>
@@ -1493,7 +1491,7 @@ async function exportToPDF() {
         // 等待渲染
         await new Promise(resolve => {
             printDiv.getBoundingClientRect(); // 强制重排
-            setTimeout(resolve, 1000); // 确保所有内容渲染完成
+            setTimeout(resolve, 800);
         });
 
         // 处理MathJax
@@ -1506,84 +1504,98 @@ async function exportToPDF() {
             }
         }
 
-        // 【关键修复】简化的PDF生成方法，避免复杂分页逻辑
+        // 【关键修复】分块截图方法 - 解决内容过长导致的截断问题
         const generatePagedPDF = async (container) => {
             const { jsPDF } = window.jspdf;
-            
-            // 使用A4尺寸
             const pdf = new jsPDF('p', 'mm', 'a4');
+            
             const pageWidth = 210; // A4宽度mm
             const pageHeight = 297; // A4高度mm
-            const margin = 15; // 边距
+            const margin = {
+                top: 20,
+                right: 20,
+                bottom: 25,
+                left: 20
+            };
             
-            let currentY = margin;
-            let pageNum = 1;
-            const totalNodes = container.querySelectorAll('.pdf-node').length;
+            const contentWidth = pageWidth - margin.left - margin.right;
+            const pageContentHeight = pageHeight - margin.top - margin.bottom;
             
-            console.log(`开始导出，共 ${totalNodes} 个节点`);
+            // 获取所有节点
+            const nodes = container.querySelectorAll('.pdf-node');
+            console.log(`开始导出，共 ${nodes.length} 个节点`);
             
-            // 逐个处理节点
-            for (let i = 0; i < totalNodes; i++) {
-                const node = container.querySelectorAll('.pdf-node')[i];
+            // 方法：逐个节点截图，确保每个节点都完整
+            for (let i = 0; i < nodes.length; i++) {
+                const node = nodes[i];
+                console.log(`处理第 ${i+1}/${nodes.length} 个节点`);
                 
-                console.log(`处理第 ${i+1} 个节点`);
-                
-                // 截图当前节点
-                const nodeCanvas = await html2canvas(node, {
-                    scale: 1.5,
-                    useCORS: true,
-                    backgroundColor: '#ffffff',
-                    allowTaint: false,
-                    foreignObjectRendering: false,
-                    logging: true, // 开启日志便于调试
-                    width: node.offsetWidth,
-                    height: node.offsetHeight,
-                    windowWidth: node.offsetWidth,
-                    windowHeight: node.offsetHeight,
-                    onclone: function(clonedDoc, element) {
-                        // 确保克隆的元素可见
-                        element.style.opacity = '1';
-                        element.style.visibility = 'visible';
+                try {
+                    // 截图当前节点
+                    const nodeCanvas = await html2canvas(node, {
+                        scale: 1.5,
+                        useCORS: true,
+                        backgroundColor: '#ffffff',
+                        allowTaint: false,
+                        foreignObjectRendering: false,
+                        logging: false,
+                        width: node.offsetWidth,
+                        height: node.offsetHeight,
+                        windowWidth: node.offsetWidth,
+                        windowHeight: node.offsetHeight,
+                        onclone: function(clonedDoc, element) {
+                            // 确保克隆的元素可见
+                            element.style.opacity = '1';
+                            element.style.visibility = 'visible';
+                        }
+                    });
+                    
+                    // 检查canvas是否有效
+                    if (nodeCanvas.width === 0 || nodeCanvas.height === 0) {
+                        console.warn(`节点 ${i+1} 截图失败，跳过`);
+                        continue;
                     }
-                });
-                
-                // 检查canvas是否有效
-                if (nodeCanvas.width === 0 || nodeCanvas.height === 0) {
-                    console.warn(`节点 ${i+1} 截图失败，跳过`);
-                    continue;
+                    
+                    // 计算节点在PDF中的高度
+                    const imgHeight = (nodeCanvas.height * contentWidth) / nodeCanvas.width;
+                    
+                    // 如果节点高度超过一页，需要分割
+                    if (imgHeight > pageContentHeight) {
+                        console.log(`节点 ${i+1} 高度 ${imgHeight.toFixed(1)}mm 超过页面，进行分割`);
+                        await splitLargeNode(pdf, node, i, margin, contentWidth, pageContentHeight);
+                    } else {
+                        // 检查是否需要新页面
+                        const currentPageInfo = getCurrentPageInfo(pdf, margin, pageHeight);
+                        if (currentPageInfo.currentY + imgHeight > pageHeight - margin.bottom) {
+                            pdf.addPage();
+                            console.log(`添加新页面，当前是第 ${pdf.getNumberOfPages()} 页`);
+                        }
+                        
+                        // 获取当前页的Y位置
+                        const currentPage = pdf.getNumberOfPages();
+                        pdf.setPage(currentPage);
+                        const currentY = (currentPage === 1) ? margin.top : margin.top;
+                        
+                        // 添加到PDF
+                        pdf.addImage(
+                            nodeCanvas.toDataURL('image/jpeg', 0.95),
+                            'JPEG',
+                            margin.left,
+                            currentY,
+                            contentWidth,
+                            imgHeight
+                        );
+                        
+                        console.log(`节点 ${i+1} 添加到第 ${currentPage} 页，高度: ${imgHeight.toFixed(1)}mm`);
+                    }
+                    
+                } catch (nodeError) {
+                    console.error(`节点 ${i+1} 处理失败:`, nodeError);
+                    // 继续处理下一个节点
                 }
-                
-                // 计算节点在PDF中的高度
-                const imgWidth = pageWidth - (margin * 2);
-                const imgHeight = (nodeCanvas.height * imgWidth) / nodeCanvas.width;
-                
-                console.log(`节点 ${i+1} 尺寸: ${imgWidth}x${imgHeight}mm`);
-                
-                // 检查是否需要新页面
-                if (currentY + imgHeight > pageHeight - margin) {
-                    console.log(`添加新页面，当前页已使用 ${currentY}mm，节点需要 ${imgHeight}mm`);
-                    pdf.addPage();
-                    pageNum++;
-                    currentY = margin;
-                }
-                
-                // 添加节点到当前页
-                pdf.addImage(
-                    nodeCanvas.toDataURL('image/jpeg', 0.95),
-                    'JPEG',
-                    margin,
-                    currentY,
-                    imgWidth,
-                    imgHeight
-                );
-                
-                // 更新Y位置
-                currentY += imgHeight + 10; // 10mm的间距
-                
-                console.log(`节点 ${i+1} 添加成功，当前Y位置: ${currentY}mm`);
             }
             
-            // 添加页码到每一页
+            // 添加页码
             const totalPages = pdf.getNumberOfPages();
             console.log(`共生成 ${totalPages} 页`);
             
@@ -1595,13 +1607,109 @@ async function exportToPDF() {
                 // 使用英文页码，避免乱码
                 pdf.text(
                     `Page ${i} of ${totalPages}`,
-                    pageWidth - margin,
-                    pageHeight - margin,
+                    pageWidth - margin.right,
+                    pageHeight - margin.bottom + 10,
                     { align: 'right' }
                 );
             }
             
             return pdf;
+        };
+        
+        // 辅助函数：获取当前页信息
+        const getCurrentPageInfo = (pdf, margin, pageHeight) => {
+            const currentPage = pdf.getNumberOfPages();
+            // 简化处理：假设每页从margin.top开始
+            return {
+                currentPage,
+                currentY: margin.top
+            };
+        };
+        
+        // 辅助函数：分割大节点
+        const splitLargeNode = async (pdf, node, nodeIndex, margin, contentWidth, pageContentHeight) => {
+            const nodeHeight = node.offsetHeight;
+            const pageHeightInPixels = (pageContentHeight * 96) / 25.4; // 将毫米转换为像素
+            
+            let currentOffset = 0;
+            let partNumber = 0;
+            
+            while (currentOffset < nodeHeight) {
+                partNumber++;
+                
+                // 计算当前部分的高度
+                const partHeight = Math.min(pageHeightInPixels, nodeHeight - currentOffset);
+                
+                // 创建临时容器来显示节点的这一部分
+                const partContainer = document.createElement('div');
+                partContainer.style.cssText = `
+                    position: absolute;
+                    top: -${currentOffset}px;
+                    left: 0;
+                    width: ${node.offsetWidth}px;
+                    height: ${partHeight}px;
+                    overflow: hidden;
+                `;
+                
+                const nodeClone = node.cloneNode(true);
+                partContainer.appendChild(nodeClone);
+                
+                // 将临时容器添加到body
+                const tempContainer = document.createElement('div');
+                tempContainer.style.cssText = `
+                    position: fixed;
+                    top: -9999px;
+                    left: 0;
+                    width: ${node.offsetWidth}px;
+                    height: ${partHeight}px;
+                    overflow: hidden;
+                `;
+                tempContainer.appendChild(partContainer);
+                document.body.appendChild(tempContainer);
+                
+                // 截图这一部分
+                const partCanvas = await html2canvas(tempContainer, {
+                    scale: 1.5,
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    allowTaint: false,
+                    foreignObjectRendering: false,
+                    logging: false,
+                    width: node.offsetWidth,
+                    height: partHeight,
+                    windowWidth: node.offsetWidth,
+                    windowHeight: partHeight
+                });
+                
+                // 清理临时容器
+                document.body.removeChild(tempContainer);
+                
+                // 计算在PDF中的高度
+                const imgHeight = (partCanvas.height * contentWidth) / partCanvas.width;
+                
+                // 如果需要新页面（除了第一部分）
+                if (partNumber > 1) {
+                    pdf.addPage();
+                }
+                
+                // 添加到PDF
+                const currentPage = pdf.getNumberOfPages();
+                pdf.setPage(currentPage);
+                
+                pdf.addImage(
+                    partCanvas.toDataURL('image/jpeg', 0.95),
+                    'JPEG',
+                    margin.left,
+                    margin.top,
+                    contentWidth,
+                    imgHeight
+                );
+                
+                console.log(`节点 ${nodeIndex+1} 第 ${partNumber} 部分添加到第 ${currentPage} 页`);
+                
+                // 更新偏移量
+                currentOffset += partHeight;
+            }
         };
         
         // 生成PDF
@@ -1613,36 +1721,6 @@ async function exportToPDF() {
         pdf.save(fileName);
         
         console.log(`PDF导出成功: ${fileName}，共${pdf.getNumberOfPages()}页`);
-
-        // 显示成功消息
-        setTimeout(() => {
-            const successMsg = document.createElement('div');
-            successMsg.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: #2ecc71;
-                color: white;
-                padding: 12px 24px;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-                z-index: 10000;
-                font-family: -apple-system, sans-serif;
-                font-weight: 500;
-            `;
-            successMsg.innerHTML = `
-                <i class="fas fa-check-circle" style="margin-right: 8px;"></i>
-                PDF导出成功！共 ${pdf.getNumberOfPages()} 页
-            `;
-            document.body.appendChild(successMsg);
-            
-            // 3秒后移除提示
-            setTimeout(() => {
-                if (successMsg.parentNode) {
-                    successMsg.parentNode.removeChild(successMsg);
-                }
-            }, 3000);
-        }, 500);
 
     } catch (error) {
         console.error("PDF Export Failed:", error);
