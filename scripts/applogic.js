@@ -1346,14 +1346,15 @@ async function exportToPDF() {
         return;
     }
 
-    // 2. 锁定界面状态 & 保存当前滚动位置
+    // 2. 锁定界面状态 & 记录原始滚动位置
     const originalCursor = document.body.style.cursor;
     const originalScrollPos = window.scrollY; 
     const originalOverflow = document.body.style.overflow;
 
     document.body.style.cursor = 'wait';
     
-    // --- 修复关键步骤1：强制滚动到顶部，防止坐标计算错位 ---
+    // --- 【关键修复 1】强制滚动到顶部 ---
+    // 防止因滚动条在底部，导致绝对定位在 top:0 的 printDiv 处于视口外而被判定为 0 宽高
     window.scrollTo(0, 0);
 
     // 3. 创建离屏容器
@@ -1367,8 +1368,8 @@ async function exportToPDF() {
     printDiv.style.fontFamily = '"Helvetica Neue", Helvetica, Arial, "Microsoft Yahei", sans-serif';
     printDiv.style.color = '#333';
     
-    // --- 修复关键步骤2：使用 z-index: -1 并在 Body 内，确保浏览器计算渲染树 ---
-    // 不要使用 visibility: hidden，否则 html2canvas 可能跳过渲染
+    // --- 【关键修复 2】调整层级与显示 ---
+    // 使用 z-index: -1 让其位于底层但仍然参与渲染树计算
     printDiv.style.zIndex = '-1';  
     printDiv.style.display = 'block';
 
@@ -1451,14 +1452,14 @@ async function exportToPDF() {
 
     try {
         // 等待渲染
-        await new Promise(resolve => setTimeout(resolve, 800)); // 稍微增加延时确保字体加载
+        await new Promise(resolve => setTimeout(resolve, 800)); // 适当增加延时
         
         if (window.MathJax) {
             try { await MathJax.typesetPromise([printDiv]); } catch (e) {}
         }
 
-        // --- 修复关键步骤3：确保宽高为整数 ---
-        // 使用 scrollWidth/scrollHeight 获取完整内容尺寸
+        // --- 【关键修复 3】使用 Math.ceil 取整 ---
+        // 避免小数像素导致的 0 宽高判定
         const totalWidth = Math.ceil(printDiv.scrollWidth);
         const totalHeight = Math.ceil(printDiv.scrollHeight);
 
@@ -1475,21 +1476,20 @@ async function exportToPDF() {
 
         const scale = 2; 
         
-        // 9. 执行截图 (配置修正)
+        // 9. 执行截图
         const canvas = await html2canvas(printDiv, {
             scale: scale,
             useCORS: true,
             logging: false,
             backgroundColor: '#ffffff',
-            // --- 修复关键步骤4：精简配置，移除强制的 x/y/windowWidth ---
-            // 只要我们 scroll 到了 (0,0)，html2canvas 默认行为通常是最准的
+            // --- 【关键修复 4】明确指定尺寸和滚动 ---
             width: totalWidth,      
             height: totalHeight,
-            scrollY: 0, // 明确告诉 html2canvas 不需要额外滚动
+            scrollY: 0, // 告诉 canvas 不要计算滚动偏移，因为我们已经滚到 (0,0)
             scrollX: 0
         });
 
-        // 10. PDF 分页生成 (逻辑保持不变)
+        // 10. PDF 分页生成 (保持原有逻辑)
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
         
@@ -1545,7 +1545,7 @@ async function exportToPDF() {
 
     } catch (error) {
         console.error("PDF Export Failed:", error);
-        alert("导出 PDF 失败：" + (error.message || "未知错误"));
+        alert("导出 PDF 失败，请检查控制台。\n" + (error.message || ""));
     } finally {
         // 12. 清理 & 恢复现场
         if (printDiv && printDiv.parentNode) {
