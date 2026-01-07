@@ -1562,6 +1562,25 @@
       animation: musicRotate 3s linear infinite; /* 图标旋转 */
       color: var(--dark-accent); /* 变成主题色 */
   }        
+  /* === 新增修复：强制修正播放时的背景色 === */
+  
+  /* 解释：同时适配 ".music-playing" 加在按钮本身 或 加在父容器上的情况 */
+  .icon-btn.music-playing, 
+  .music-wrapper.music-playing .icon-btn {
+      /* 关键：使用 !important 覆盖掉导致变蓝的默认样式 */
+      background: rgba(255, 255, 255, 0.05) !important; /* 保持低调的半透明背景 */      
+      /* 或者是完全透明，根据你的喜好选择下面这一行： */
+      /* background: transparent !important; */      
+      border-color: var(--dark-accent) !important;      /* 边框变成主题色 */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);          /* 可选：加一点柔和的阴影 */
+  }
+  
+  /* 确保图标颜色正确（这部分你已有，但建议确保优先级） */
+  .icon-btn.music-playing .main-music-icon,
+  .music-wrapper.music-playing .main-music-icon {
+      color: var(--dark-accent) !important;
+  }
+
   /* 音乐图标旋转动画 */
   @keyframes musicRotate {
       0% { transform: rotate(0deg); }
