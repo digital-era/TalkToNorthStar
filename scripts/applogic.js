@@ -1271,32 +1271,63 @@ function deleteNode(event, index) {
     }
 }
 
+/* --- 辅助函数：生成文件名时间戳 --- */
+function getExportFileName() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hour = String(now.getHours()).padStart(2, '0');
+    const minute = String(now.getMinutes()).padStart(2, '0');
+    const second = String(now.getSeconds()).padStart(2, '0');
+    
+    // 格式：TalkwithNorthStars20231027103000
+    return `TalkwithNorthStars${year}${month}${day}${hour}${minute}${second}`;
+}
+
 // 2. 导出为 Markdown
 function exportToMD() {
-    if (conversationHistory.length === 0) {
+    if (!conversationHistory || conversationHistory.length === 0) {
         alert("画布为空，无法导出。");
         return;
     }
 
     let mdContent = "# Dialogue Canvas Export\n\n";
-    
-    const timestamp = new Date().toLocaleString('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit',hour12: false});
-
+    const timestamp = new Date().toLocaleString();
     mdContent += `> Exported on: ${timestamp}\n\n---\n\n`;
 
     conversationHistory.forEach((item, index) => {
-        const role = item.role === 'user' ? "User" : (item.leaderInfo?.name || "North Star");
-        const text = item.text.replace(/\n/g, '\n> '); // 引用格式化
+        const isUser = item.role === 'user';
+        const roleName = isUser ? "User" : (item.leaderInfo?.name || "North Star");
         
-        mdContent += `### ${role}:\n${text}\n\n`;
+        // 引用格式化
+        let text = item.text.replace(/\n/g, '\n> '); 
+        
+        // --- 修改点：在 User 问题后增加北极星人物信息 ---
+        if (isUser) {
+            // 向后看一条
+            const nextItem = conversationHistory[index + 1];
+            if (nextItem && nextItem.role !== 'user' && nextItem.leaderInfo) {
+                const info = nextItem.leaderInfo;
+                // 追加信息到 User 的文本块中
+                text += `\n\n> **🧩 关联北极星人物**：${info.name}`;
+                text += `\n> - 领域：${info.field}`;
+                text += `\n> - 贡献：${info.contribution}`;
+            }
+        }
+
+        mdContent += `### ${roleName}:\n${text}\n\n`;
     });
 
     // 创建 Blob 并下载
-    const blob = new Blob([mdContent], { type: 'text/markdown' });
+    const blob = new Blob([mdContent], { type: 'text/markdown;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `canvas_export_${new Date().getTime()}.md`;
+    
+    // --- 修改点：统一文件名 ---
+    a.download = `${getExportFileName()}.md`;
+    
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -1314,45 +1345,62 @@ async function exportToPDF() {
         return;
     }
 
-    // 1. 设置鼠标等待状态
     const originalCursor = document.body.style.cursor;
     document.body.style.cursor = 'wait';
 
-    // 2. 创建离屏容器 (关键：用移出屏幕代替 hidden，解决白屏问题)
+    // 创建离屏容器
     const printDiv = document.createElement('div');
     printDiv.style.position = 'absolute';
-    printDiv.style.left = '-10000px'; // 移出视口
+    printDiv.style.left = '-10000px'; 
     printDiv.style.top = '0px';
-    printDiv.style.width = '595px';   // A4 宽度 (72dpi 标准)
+    printDiv.style.width = '595px';   
     printDiv.style.backgroundColor = '#ffffff';
-    printDiv.style.padding = '40px';  // 这里的 padding 是页面的左右内边距
+    printDiv.style.padding = '40px'; 
     printDiv.style.fontFamily = '"Helvetica Neue", Helvetica, Arial, "Microsoft Yahei", sans-serif';
     printDiv.style.color = '#333';
-    printDiv.style.zIndex = '-1';     // 确保不遮挡现有页面
+    printDiv.style.zIndex = '-1';     
 
-    // 3. 构建 HTML 内容
+    // 构建 HTML 内容
     let contentHtml = `
         <h2 style="text-align:center; color:#333; border-bottom:2px solid #ddd; padding-bottom:15px; margin-bottom:20px;">
             对话北极星 (Talk with North Stars)
         </h2>
         <div style="font-size: 12px; color: #888; text-align: right; margin-bottom: 30px;">
-            导出时间: ${new Date().toLocaleString('zh-CN', {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit',hour12: false})}
+            导出时间: ${new Date().toLocaleString()}
         </div>
     `;
 
-    conversationHistory.forEach((item) => {
+    conversationHistory.forEach((item, index) => {
         const isUser = item.role === 'user';
         const nameColor = isUser ? '#2980b9' : '#d35400';
         const nameText = isUser ? 'User (提问)' : (item.leaderInfo?.name || 'Assistant');
         const bgColor = isUser ? '#f0f7fb' : '#fff5eb';
         
-        // 简单处理换行，如有 markdown 解析器可在此调用
+        // 文本处理
         let textContent = item.text.replace(/\n/g, '<br>');
         if (!isUser && typeof parseMarkdownWithMath === 'function') {
             try { textContent = parseMarkdownWithMath(item.text); } catch(e) {}
         }
 
-        // 注意：这里给每个对话块加了 class="pdf-node"，用于后续计算切割位置
+        // --- 修改点：准备要插入的人物信息 HTML ---
+        let extraInfoHtml = '';
+        if (isUser) {
+            // 向后看一条
+            const nextItem = conversationHistory[index + 1];
+            if (nextItem && nextItem.role !== 'user' && nextItem.leaderInfo) {
+                const info = nextItem.leaderInfo;
+                // 构建精美的小卡片放在 User 问题后面
+                extraInfoHtml = `
+                    <div style="margin-top: 12px; border-top: 1px dashed #bcdaea; padding-top: 8px; font-size: 13px; color: #555;">
+                        <span style="font-weight:bold; color: #2c3e50;">🧩 关联人物：${info.name}</span> 
+                        <span style="color: #7f8c8d;"> | ${info.field}</span>
+                        <div style="margin-top:4px; font-style:italic; color:#666;">"${info.contribution}"</div>
+                    </div>
+                `;
+            }
+        }
+
+        // 构建节点
         contentHtml += `
             <div class="pdf-node" style="margin-bottom: 20px;">
                 <div style="font-weight: bold; color: ${nameColor}; margin-bottom: 5px; font-size: 14px;">
@@ -1360,6 +1408,7 @@ async function exportToPDF() {
                 </div>
                 <div style="background: ${bgColor}; padding: 12px; border-radius: 8px; line-height: 1.6; font-size: 14px; border: 1px solid #eee; text-align: justify;">
                     ${textContent}
+                    ${extraInfoHtml} <!-- 插入额外信息 -->
                 </div>
             </div>
         `;
@@ -1369,30 +1418,22 @@ async function exportToPDF() {
     document.body.appendChild(printDiv);
 
     try {
-        // 可选：给一点点渲染时间，防止图片或字体未加载完
         await new Promise(resolve => setTimeout(resolve, 100));
 
-        // 4. 计算所有“安全切割点” (Smart Slicing 核心)
-        // 我们不希望切断文字，所以只允许在 div 之间切割
+        // --- 以下为原版智能切割逻辑 (Smart Slicing)，保持原样 ---
         const nodeElements = printDiv.querySelectorAll('.pdf-node');
         const safeCuts = []; 
         
         nodeElements.forEach(el => {
-            // 获取该元素相对于 printDiv 顶部的距离
             const top = el.offsetTop;
             const bottom = top + el.offsetHeight;
-            
-            // 策略：允许在每个对话框的“上边缘”和“下边缘+margin”处切割
-            // 加上 margin-bottom 的一半作为松弛空间
             safeCuts.push(top); 
             safeCuts.push(bottom + 10); 
         });
         
-        // 排序去重
         const sortedCuts = [...new Set(safeCuts)].sort((a, b) => a - b);
 
-        // 5. 生成高清长图
-        const scale = 2; // 2倍图提高清晰度
+        const scale = 2; 
         const canvas = await html2canvas(printDiv, {
             scale: scale,
             useCORS: true,
@@ -1402,85 +1443,61 @@ async function exportToPDF() {
             windowHeight: printDiv.scrollHeight
         });
 
-        // 6. PDF 分页逻辑
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
         
         const pdfWidth = 210; 
         const pdfHeight = 297; 
-        
-        // 转换：一页 PDF 等于多少 Canvas 像素？
         const pageHeightInCanvas = (canvas.width / pdfWidth) * pdfHeight;
         
-        let renderedHeight = 0; // 已经渲染到了 Canvas 的哪个高度
+        let renderedHeight = 0; 
         const totalHeight = canvas.height;
 
         while (renderedHeight < totalHeight) {
-            // 6.1 预测下一页切在哪里
             let proposedCut = renderedHeight + pageHeightInCanvas;
             
             if (proposedCut >= totalHeight) {
-                // 如果剩余内容不足一页，直接切到底
                 proposedCut = totalHeight;
             } else {
-                // 6.2 智能修正：寻找最近的“安全切割点”
-                // 我们要在 renderedHeight 和 proposedCut 之间，找一个最大的 safeCut
-                // 这样能保证这一页尽可能填满，同时不切断文字
-                
                 let bestCut = -1;
-                
-                // 遍历我们之前计算好的 DOM 节点位置
                 for (let cutDom of sortedCuts) {
-                    const cutCanvas = cutDom * scale; // 记得乘以缩放倍数
-                    
+                    const cutCanvas = cutDom * scale; 
                     if (cutCanvas > renderedHeight && cutCanvas < proposedCut) {
                         bestCut = cutCanvas;
                     }
                 }
-
-                // 如果找到了安全点，就用安全点；没找到（说明单个对话框太长超过一页），只能硬切
                 if (bestCut !== -1) {
                     proposedCut = bestCut;
                 }
             }
 
-            // 6.3 截取图片
             const sliceHeight = proposedCut - renderedHeight;
-            
-            // 创建临时 Canvas 存放这一页的内容
             const sliceCanvas = document.createElement('canvas');
             sliceCanvas.width = canvas.width;
             sliceCanvas.height = sliceHeight;
             
             const ctx = sliceCanvas.getContext('2d');
-            // 参数：源图，源X，源Y，源宽，源高，目标X，目标Y，目标宽，目标高
             ctx.drawImage(canvas, 0, renderedHeight, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
             
-            // 6.4 添加到 PDF
-            const imgData = sliceCanvas.toDataURL('image/jpeg', 0.95); // 0.95 质量
+            const imgData = sliceCanvas.toDataURL('image/jpeg', 0.95);
             
             if (renderedHeight > 0) {
                 pdf.addPage();
             }
             
-            // 计算图片在 PDF 里的实际高度 (保持宽高比)
             const imgHeightInPdf = (sliceHeight * pdfWidth) / canvas.width;
-            
-            // 渲染图片：如果 imgHeightInPdf 小于 pdfHeight，底部自然留白
             pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, imgHeightInPdf);
 
-            // 6.5 更新进度
             renderedHeight = proposedCut;
         }
 
-        // 7. 保存文件
-        pdf.save(`Dialogue_${new Date().toISOString().slice(0,10)}.pdf`);
+        // --- 修改点：统一文件名 ---
+        pdf.save(`${getExportFileName()}.pdf`);
 
     } catch (error) {
         console.error("PDF Export Failed:", error);
         alert("导出 PDF 失败，建议打开控制台查看详情。");
     } finally {
-        // 8. 清理现场
         if (printDiv && printDiv.parentNode) {
             printDiv.parentNode.removeChild(printDiv);
         }
