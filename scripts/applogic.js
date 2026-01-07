@@ -1351,62 +1351,67 @@ async function exportToPDF() {
         return;
     }
 
-    // --- 配置参数 ---
+    // --- 1. 配置参数 (A4) ---
     const A4_WIDTH = 210; // mm
     const A4_HEIGHT = 297; // mm
     const MARGIN_TOP = 20;
-    const MARGIN_BOTTOM = 20;
+    const MARGIN_BOTTOM = 25; // 底部留白增加，避免贴底
     const MARGIN_SIDE = 15;
+    
+    // PDF 内容区域的实际宽度和高度限制
     const CONTENT_WIDTH = A4_WIDTH - (MARGIN_SIDE * 2);
-    const PAGE_HEIGHT_LIMIT = A4_HEIGHT - MARGIN_BOTTOM; // 换页的底线
+    const PAGE_HEIGHT_LIMIT = A4_HEIGHT - MARGIN_BOTTOM; 
 
-    // 1. 初始化 UI 和 遮罩
+    // 渲染参数
+    const RENDER_SCALE = 2; // 清晰度倍数
+    // 截图容器宽度建议比 CONTENT_WIDTH 大，以保证缩小到 PDF 时清晰
+    // 这里设为 800px 宽，生成 PDF 时会缩放到 CONTENT_WIDTH (约180mm)
+    const STAGE_WIDTH = 800; 
+    
+    // UI 初始化
     const originalCursor = document.body.style.cursor;
     document.body.style.cursor = 'wait';
 
-    // 创建一个全屏遮罩，避免用户看到绘制过程的“闪烁”
+    // --- 2. 创建遮罩 UI ---
     const loadingMask = document.createElement('div');
     loadingMask.id = 'pdf-loading-mask';
     loadingMask.style.cssText = `
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: #fff; z-index: 99999;
+        background: rgba(255, 255, 255, 0.95); z-index: 99999;
         display: flex; flex-direction: column; justify-content: center; align-items: center;
-        font-family: sans-serif;
+        font-family: sans-serif; backdrop-filter: blur(5px);
     `;
     loadingMask.innerHTML = `
-        <div style="font-size: 24px; color: #333; margin-bottom: 20px;">
-            <i class="fas fa-palette"></i> 正在绘制 PDF...
+        <div style="font-size: 24px; color: #2c3e50; margin-bottom: 20px; font-weight: bold;">
+            <i class="fas fa-print"></i> 正在生成 PDF
         </div>
-        <div style="width: 300px; height: 10px; background: #eee; border-radius: 5px; overflow: hidden;">
-            <div id="pdf-progress-bar" style="width: 0%; height: 100%; background: #3498db; transition: width 0.3s;"></div>
+        <div style="width: 320px; height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden;">
+            <div id="pdf-progress-bar" style="width: 0%; height: 100%; background: #3498db; transition: width 0.2s;"></div>
         </div>
-        <div id="pdf-progress-text" style="margin-top: 10px; color: #666; font-size: 14px;">初始化画布...</div>
+        <div id="pdf-progress-text" style="margin-top: 12px; color: #7f8c8d; font-size: 14px;">准备画布...</div>
     `;
     document.body.appendChild(loadingMask);
 
     const updateProgress = (current, total, text) => {
         const percent = Math.round((current / total) * 100);
-        document.getElementById('pdf-progress-bar').style.width = `${percent}%`;
-        document.getElementById('pdf-progress-text').innerText = `${text} (${percent}%)`;
+        const bar = document.getElementById('pdf-progress-bar');
+        const txt = document.getElementById('pdf-progress-text');
+        if(bar) bar.style.width = `${percent}%`;
+        if(txt) txt.innerText = `${text} (${percent}%)`;
     };
 
-    // 2. 创建一个“绘制工作台” (Staging Area)
-    // 必须是可见的，但被 mask 遮住。不能用 display:none 或 opacity:0，否则 html2canvas 截不到。
-    // 我们设定宽度为 2x A4 宽度 (约 1600px) 以保证高清截图，然后在 PDF 中缩放。
-    const RENDER_SCALE = 2; 
-    const STAGE_WIDTH = 800; // 像素宽度，对应 PDF 中的 CONTENT_WIDTH
-    
+    // --- 3. 创建“截图工作台” ---
+    // 关键修改：增加 padding，防止截图内容贴边
     const stagingArea = document.createElement('div');
     stagingArea.id = 'pdf-staging-area';
     stagingArea.style.cssText = `
-        position: absolute; 
-        top: 0; 
-        left: 0; 
+        position: absolute; top: 0; left: 0; 
         width: ${STAGE_WIDTH}px;
-        background: white;
+        min-height: 100px;
+        background: #ffffff;
         z-index: -1; 
-        padding: 0;
-        margin: 0;
+        padding: 30px; /* 【重要】给截图容器内部加内边距，解决重叠边缘问题 */
+        box-sizing: border-box;
         visibility: visible; 
     `;
     document.body.appendChild(stagingArea);
@@ -1415,234 +1420,200 @@ async function exportToPDF() {
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
         
-        // 核心变量：当前在 PDF 页面上的 Y 坐标
         let currentY = MARGIN_TOP;
 
-        // --- 辅助函数：将 HTML 渲染为图片并“印”到 PDF 上 ---
-        // 返回该元素在 PDF 中占据的高度 (mm)
-        async function drawHtmlToPDF(htmlString, isFullWidth = true) {
-            // 1. 将 HTML 放入工作台
+        /**
+         * 核心辅助函数：处理长图分页
+         * 它可以把一个很长的 Canvas 切割成多段，分别印在 PDF 的不同页面上
+         */
+        async function addLongImageToPDF(canvas, pdf, contentWidth) {
+            const imgWidthPx = canvas.width;
+            const imgHeightPx = canvas.height;
+            
+            // 算出图片在 PDF 里的总高度 (mm)
+            const totalPdfHeight = (imgHeightPx * contentWidth) / imgWidthPx;
+            
+            let remainingPdfHeight = totalPdfHeight;
+            let sourceY = 0; // 原始 Canvas 的裁剪起始 Y 坐标 (px)
+
+            while (remainingPdfHeight > 0) {
+                // 当前页还能画多少高度 (mm)
+                const spaceOnPage = PAGE_HEIGHT_LIMIT - currentY;
+                
+                // 如果剩余空间太小（比如小于 10mm），直接换页，不挤在底边
+                if (spaceOnPage < 10) {
+                    pdf.addPage();
+                    currentY = MARGIN_TOP;
+                    continue; // 重新计算循环
+                }
+
+                // 本次要绘制的高度 (mm)：取“剩余图片高度”和“当前页剩余空间”的较小值
+                const drawHeightPdf = Math.min(remainingPdfHeight, spaceOnPage);
+                
+                // 转换回 Canvas 的像素高度，用于裁剪
+                // 比例公式: drawHeightPx / imgHeightPx = drawHeightPdf / totalPdfHeight
+                const drawHeightPx = (drawHeightPdf / totalPdfHeight) * imgHeightPx;
+
+                // 创建临时 Canvas 裁剪出这一段
+                const cropCanvas = document.createElement('canvas');
+                cropCanvas.width = imgWidthPx;
+                cropCanvas.height = drawHeightPx;
+                const ctx = cropCanvas.getContext('2d');
+                
+                // 从原图中把对应部分画到临时 Canvas 上
+                ctx.drawImage(
+                    canvas, 
+                    0, sourceY, imgWidthPx, drawHeightPx, // Source: x, y, w, h
+                    0, 0, imgWidthPx, drawHeightPx        // Dest: x, y, w, h
+                );
+
+                const cropData = cropCanvas.toDataURL('image/png');
+
+                // 添加到 PDF
+                pdf.addImage(cropData, 'PNG', MARGIN_SIDE, currentY, contentWidth, drawHeightPdf);
+
+                // 更新游标
+                currentY += drawHeightPdf;
+                sourceY += drawHeightPx;
+                remainingPdfHeight -= drawHeightPdf;
+
+                // 如果还有剩余内容，说明本页画满了，需要换页
+                if (remainingPdfHeight > 0.1) { // 留一点容差
+                    pdf.addPage();
+                    currentY = MARGIN_TOP;
+                }
+            }
+        }
+
+        // --- 封装：渲染一段 HTML 并添加到 PDF ---
+        async function renderNodeToPDF(htmlString) {
             stagingArea.innerHTML = htmlString;
             
-            // 2. 处理 MathJax (如果有)
+            // 渲染数学公式
             if (window.MathJax) {
                 await MathJax.typesetPromise([stagingArea]);
             }
             
-            // 3. 等待图片加载 (如果有)
+            // 等待图片加载
             const images = stagingArea.querySelectorAll('img');
-            if (images.length > 0) {
-                await Promise.all(Array.from(images).map(img => {
-                    if (img.complete) return Promise.resolve();
-                    return new Promise(resolve => { img.onload = resolve; img.onerror = resolve; });
-                }));
-            }
+            await Promise.all(Array.from(images).map(img => {
+                if (img.complete) return Promise.resolve();
+                return new Promise(resolve => { img.onload = resolve; img.onerror = resolve; });
+            }));
 
-            // 4. 截图
+            // 生成截图
             const canvas = await html2canvas(stagingArea, {
                 scale: RENDER_SCALE,
                 useCORS: true,
                 logging: false,
-                backgroundColor: null // 透明背景
+                backgroundColor: null 
             });
 
-            const imgData = canvas.toDataURL('image/png');
+            // 调用切割逻辑添加到 PDF
+            await addLongImageToPDF(canvas, pdf, CONTENT_WIDTH);
             
-            // 5. 计算尺寸
-            // 像素 -> 毫米
-            const imgHeightPx = canvas.height / RENDER_SCALE; // 还原回 CSS 像素高度
-            // 按照 PDF 内容宽度进行缩放比例计算
-            const pdfImgHeight = (imgHeightPx * CONTENT_WIDTH) / STAGE_WIDTH;
-
-            // 6. 检查是否需要换页
-            if (currentY + pdfImgHeight > PAGE_HEIGHT_LIMIT) {
-                pdf.addPage();
-                currentY = MARGIN_TOP;
-            }
-
-            // 7. 绘制图片到 PDF
-            pdf.addImage(imgData, 'PNG', MARGIN_SIDE, currentY, CONTENT_WIDTH, pdfImgHeight);
-
-            // 8. 更新游标
-            currentY += pdfImgHeight;
-            
-            return pdfImgHeight;
+            // 节点之间加一点空隙
+            currentY += 5;
         }
 
-        // --- 阶段 1: 绘制标题页 ---
-        updateProgress(5, 100, "绘制标题...");
-        
+        // --- 阶段 1: 渲染标题 ---
+        updateProgress(5, 100, "生成封面...");
         const titleHTML = `
-            <div style="padding: 20px; text-align: center; border-bottom: 2px solid #3498db; margin-bottom: 20px;">
-                <div style="color: #2c3e50; font-size: 32px; font-weight: bold; font-family: 'Ma Shan Zheng', cursive, sans-serif;">
-                    对话北极星 · 思想轨迹
-                </div>
-                <div style="color: #7f8c8d; font-size: 14px; margin-top: 10px;">
-                    <i class="fas fa-clock"></i> ${new Date().toLocaleString()} &nbsp;|&nbsp; 
-                    <i class="fas fa-comments"></i> 共 ${conversationHistory.length} 个节点
+            <div style="text-align: center; border-bottom: 2px solid #3498db; padding-bottom: 15px;">
+                <h1 style="color: #2c3e50; font-family: sans-serif; margin-bottom: 10px;">对话北极星 · 存档</h1>
+                <div style="color: #7f8c8d; font-size: 12px;">
+                    导出时间：${new Date().toLocaleString()}
                 </div>
             </div>
         `;
-        // 印上标题
-        await drawHtmlToPDF(titleHTML);
-        currentY += 10; // 标题后加一点空隙
+        await renderNodeToPDF(titleHTML);
 
-        // --- 阶段 2: 逐个绘制节点 (参考 renderDialogueCanvas 的样式) ---
+        // --- 阶段 2: 循环渲染对话 ---
         const totalNodes = conversationHistory.length;
         
         for (let i = 0; i < totalNodes; i++) {
             const item = conversationHistory[i];
             const isUser = item.role === 'user';
             
-            updateProgress(10 + (i / totalNodes * 80), 100, `正在渲染节点 ${i + 1}/${totalNodes}`);
+            updateProgress(10 + (i / totalNodes * 85), 100, `处理节点 ${i + 1}/${totalNodes}`);
+
+            // 预处理文本：简单的换行转 BR，如果有 Markdown 解析器可在此处调用
+            let contentText = item.text.replace(/\n/g, '<br>');
 
             let nodeHTML = '';
             
-            // 下面直接复用了 Canvas 的 CSS 类名风格，并转为内联样式以保证 html2canvas 渲染正确
             if (isUser) {
-                // --- User Node 样式 ---
+                // --- 用户样式 (增加右侧 Margin 避免贴边) ---
                 nodeHTML = `
-                    <div style="width: 100%; box-sizing: border-box; padding: 10px 0; display: flex; justify-content: flex-end;">
+                    <div style="display: flex; justify-content: flex-end; width: 100%;">
                         <div style="max-width: 85%; position: relative;">
-                            <!-- 头像模拟 -->
-                            <div style="position: absolute; top: -10px; right: -10px; width: 30px; height: 30px; background: #3498db; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 2;">
-                                <i class="fas fa-user-astronaut"></i>
+                            <div style="background: #e3f2fd; border: 1px solid #bbdefb; border-radius: 15px 5px 15px 15px; padding: 15px 20px; color: #1565c0; font-family: sans-serif;">
+                                ${contentText}
                             </div>
-                            
-                            <!-- 气泡内容 -->
-                            <div style="background: #f0f7ff; border: 1px solid #cce5ff; border-radius: 15px 5px 15px 15px; padding: 20px 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-                                <div style="font-family: 'Indie Flower', 'KaiTi', cursive; color: #2c3e50; font-size: 16px; line-height: 1.6;">
-                                    ${item.text.replace(/\n/g, '<br>')}
-                                </div>
+                            <!-- 小箭头 -->
+                            <div style="position: absolute; top: 0; right: -8px; width: 0; height: 0; border-top: 10px solid #bbdefb; border-right: 10px solid transparent;"></div>
+                        </div>
+                        <div style="margin-left: 10px; width: 40px; text-align: center;">
+                            <div style="width: 36px; height: 36px; background: #2196f3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                                <span style="font-size:12px;">ME</span>
                             </div>
                         </div>
                     </div>
                 `;
             } else {
-                // --- AI Node 样式 (完全复刻 Canvas 样式) ---
-                const info = item.leaderInfo || { name: 'Unknown', field: '', contribution: '' };
-                
-                let processedText = item.text;
-                // 简单的 Markdown 处理 (如果你的环境里有 parseMarkdownWithMath 更好)
-                if (typeof parseMarkdownWithMath === 'function') {
-                    try { processedText = parseMarkdownWithMath(item.text); } catch(e) {}
-                } else {
-                    processedText = item.text.replace(/\n/g, '<br>');
-                }
-
+                // --- AI 样式 ---
+                const info = item.leaderInfo || { name: '北极星', field: 'AI Assistant' };
                 nodeHTML = `
-                    <div style="width: 100%; box-sizing: border-box; padding: 10px 0; display: flex; justify-content: flex-start;">
-                        <div style="width: 100%; background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); overflow: hidden; position: relative;">
-                            
-                            <!-- 顶部装饰星 -->
-                            <div style="position: absolute; top: 15px; right: 15px; color: #f1c40f; font-size: 14px; opacity: 0.8;">
-                                <i class="fas fa-star-of-life"></i>
+                    <div style="display: flex; justify-content: flex-start; width: 100%;">
+                        <div style="margin-right: 15px;">
+                             <div style="width: 40px; height: 40px; background: #ff9800; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                                星
                             </div>
-
-                            <!-- Header -->
-                            <div style="padding: 15px 20px; border-bottom: 1px solid #f0f0f0; background: linear-gradient(to right, #fff, #fbfbfb);">
-                                <div style="font-size: 18px; font-weight: bold; color: #d35400; font-family: 'Ma Shan Zheng', cursive;">
-                                    ${info.name}
-                                </div>
-                                <div style="margin-top: 5px;">
-                                    <span style="background: #fff3e0; color: #e67e22; font-size: 12px; padding: 3px 10px; border-radius: 12px; border: 1px solid #ffe0b2;">
-                                        ${info.field}
-                                    </span>
-                                </div>
+                        </div>
+                        <div style="width: 100%; max-width: 90%; background: #fff; border: 1px solid #ddd; border-radius: 5px 15px 15px 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow: hidden;">
+                            <div style="background: #fdfdfd; padding: 10px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: bold; color: #d35400;">${info.name}</span>
+                                <span style="font-size: 12px; background: #fff3e0; color: #ef6c00; padding: 2px 8px; border-radius: 10px;">${info.field || 'Assistant'}</span>
                             </div>
-
-                            <!-- 贡献引语区 -->
-                            <div style="background: #fffaf0; padding: 12px 20px; border-left: 3px solid #ffcc80; margin: 10px 20px;">
-                                <div style="font-size: 13px; color: #8d6e63; font-style: italic;">
-                                    <i class="fas fa-quote-left" style="margin-right: 5px;"></i>
-                                    ${info.contribution.substring(0, 60)}...
-                                </div>
-                            </div>
-
-                            <!-- 正文内容 -->
-                            <div style="padding: 10px 25px 25px 25px; color: #2c3e50; line-height: 1.8; font-size: 15px; text-align: justify;">
-                                ${processedText}
-                            </div>
-
-                            <!-- 底部 -->
-                            <div style="background: #f9f9f9; padding: 8px 20px; border-top: 1px solid #eee; text-align: right;">
-                                <span style="font-size: 12px; color: #bdc3c7;">
-                                    <i class="fas fa-feather-alt"></i> North Star Insight
-                                </span>
+                            <div style="padding: 20px; color: #333; line-height: 1.6; font-size: 14px; text-align: justify;">
+                                ${contentText}
                             </div>
                         </div>
                     </div>
                 `;
             }
 
-            // 绘制当前节点
-            await drawHtmlToPDF(nodeHTML);
-            
-            // 绘制节点之间的连接线 (模拟 Canvas 连线)
-            // 如果不是最后一个节点，画一个小竖线连接到下一个
-            if (i < totalNodes - 1) {
-                // 判断一下剩余空间是否够画连接线，不够就不画了，直接换页
-                if (currentY + 15 < PAGE_HEIGHT_LIMIT) {
-                    // 使用 jsPDF 原生画线，比截图清晰
-                    pdf.setDrawColor(200, 200, 200); // 浅灰色
-                    pdf.setLineWidth(0.5);
-                    // 虚线
-                    pdf.setLineDashPattern([2, 2], 0);
-                    
-                    // 计算线的 X 坐标：如果是 User，线稍微偏右；如果是 AI，线偏左
-                    // 简单起见，画在中间或者稍微偏左的位置作为“时间轴”
-                    const lineX = MARGIN_SIDE + 20; 
-                    
-                    pdf.line(lineX, currentY, lineX, currentY + 10);
-                    currentY += 10;
-                    
-                    pdf.setLineDashPattern([], 0); // 恢复实线
-                } else {
-                    // 如果快到底部了，增加一点间距即可，不画线了
-                    currentY += 10;
-                }
-            }
+            await renderNodeToPDF(nodeHTML);
         }
 
-        // --- 阶段 3: 添加页码 ---
-        updateProgress(95, 100, "添加页码...");
+        // --- 阶段 3: 页脚页码 ---
         const pageCount = pdf.internal.getNumberOfPages();
         for (let i = 1; i <= pageCount; i++) {
             pdf.setPage(i);
-            pdf.setFontSize(10);
+            pdf.setFontSize(9);
             pdf.setTextColor(150);
-            pdf.text(`- ${i} -`, A4_WIDTH / 2, A4_HEIGHT - 10, { align: 'center' });
+            // 放在最底端中央
+            pdf.text(`- ${i} / ${pageCount} -`, A4_WIDTH / 2, A4_HEIGHT - 10, { align: 'center' });
         }
 
-        // --- 完成导出 ---
+        // --- 保存 ---
         updateProgress(100, 100, "保存文件...");
-        pdf.save(`${getExportFileName()}.pdf`);
+        pdf.save(`北极星对话_${new Date().toISOString().slice(0,10)}.pdf`);
 
-        // 清理
-        setTimeout(() => {
-            if (loadingMask) document.body.removeChild(loadingMask);
-            if (stagingArea) document.body.removeChild(stagingArea);
-            document.body.style.cursor = originalCursor;
-            
-            // 成功提示
-            const successMsg = document.createElement('div');
-            successMsg.style.cssText = `
-                position: fixed; top: 20px; right: 20px; 
-                background: #2ecc71; color: white; padding: 15px 25px; 
-                border-radius: 5px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
-                z-index: 10000; font-family: sans-serif;
-            `;
-            successMsg.innerHTML = '<i class="fas fa-check-circle"></i> PDF 导出成功！';
-            document.body.appendChild(successMsg);
-            setTimeout(() => successMsg.remove(), 3000);
-        }, 500);
+        // 成功提示
+        const toast = document.createElement('div');
+        toast.innerText = 'PDF 导出成功';
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#4caf50;color:#fff;padding:10px 20px;border-radius:4px;z-index:100000;';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
 
-    } catch (error) {
-        console.error("PDF Export Failed:", error);
-        alert("导出失败: " + error.message);
-        // 出错清理
-        if (loadingMask && loadingMask.parentNode) loadingMask.remove();
-        if (stagingArea && stagingArea.parentNode) stagingArea.remove();
+    } catch (err) {
+        console.error(err);
+        alert("导出出错: " + err.message);
+    } finally {
+        // 清理现场
+        if (loadingMask) loadingMask.remove();
+        if (stagingArea) stagingArea.remove();
         document.body.style.cursor = originalCursor;
     }
 }
