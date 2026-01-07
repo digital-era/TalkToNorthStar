@@ -1355,22 +1355,22 @@ async function exportToPDF() {
         const printDiv = document.createElement('div');
         printDiv.id = 'pdf-export-container';
         
+        // 固定在视口内，但不可见
         printDiv.style.position = 'fixed';
-        printDiv.style.top = '0';
+        printDiv.style.top = '-9999px';
         printDiv.style.left = '0';
         printDiv.style.width = '650px';
         printDiv.style.backgroundColor = '#ffffff';
         printDiv.style.padding = '40px 50px';
         printDiv.style.fontFamily = '"Helvetica Neue", Helvetica, Arial, "Microsoft Yahei", sans-serif';
         printDiv.style.color = '#333';
-        printDiv.style.zIndex = '999999';
-        printDiv.style.boxShadow = '0 0 20px rgba(0,0,0,0.2)';
-        printDiv.style.opacity = '0.99';
+        printDiv.style.zIndex = '-9999';
+        printDiv.style.opacity = '0';
         printDiv.style.pointerEvents = 'none';
 
         // 构建内容头部
         let contentHtml = `
-            <div style="text-align:center; margin-bottom: 40px;">
+            <div style="text-align:center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 2px solid #f0f0f0;">
                 <h2 style="color:#2c3e50; font-size: 24px; margin-bottom:10px; font-weight:700;">
                     对话北极星思维轨迹
                 </h2>
@@ -1389,7 +1389,7 @@ async function exportToPDF() {
             const isUser = item.role === 'user';
             
             if (isUser) {
-                // 用户提问部分
+                // 用户提问部分 - 添加分页控制类
                 let extraInfoHtml = '';
                 const nextItem = conversationHistory[index + 1];
                 if (nextItem && nextItem.role !== 'user' && nextItem.leaderInfo) {
@@ -1406,18 +1406,18 @@ async function exportToPDF() {
                 }
 
                 contentHtml += `
-                    <div class="pdf-node" style="margin-bottom: 30px; display: flex; flex-direction: column; align-items: flex-end;">
+                    <div class="pdf-page-break-avoid" style="margin-bottom: 40px; display: flex; flex-direction: column; align-items: flex-end; page-break-inside: avoid;">
                         <div style="font-weight: bold; color: #2980b9; margin-bottom: 8px; font-size: 15px; width: 100%; text-align: right;">
                             <span style="background: #eef7fc; padding: 4px 10px; border-radius: 15px;">User (提问)</span>
                         </div>
-                        <div style="background: #f0f7fb; padding: 15px 20px; border-radius: 12px 0 12px 12px; line-height: 1.6; font-size: 14px; border: 1px solid #dbe9f1; text-align: justify; box-shadow: 0 2px 5px rgba(0,0,0,0.03); max-width: 90%;">
-                            <div style="font-family: 'Indie Flower', 'KaiTi', cursive; font-weight: bold; color: #34495e;">${item.text}</div>
+                        <div style="background: #f0f7fb; padding: 20px 25px; border-radius: 12px 0 12px 12px; line-height: 1.6; font-size: 14px; border: 1px solid #dbe9f1; text-align: justify; box-shadow: 0 2px 8px rgba(0,0,0,0.05); max-width: 90%; margin-bottom: 10px;">
+                            <div style="font-family: 'Indie Flower', 'KaiTi', cursive; font-weight: bold; color: #34495e; line-height: 1.8;">${item.text}</div>
                             ${extraInfoHtml}
                         </div>
                     </div>
                 `;
             } else {
-                // AI回复部分 - 关键修复：处理Markdown和数学公式
+                // AI回复部分 - 处理Markdown和数学公式
                 const info = item.leaderInfo || { name: 'Unknown', field: '', contribution: '' };
                 
                 // 处理文本：先尝试用parseMarkdownWithMath处理
@@ -1436,243 +1436,289 @@ async function exportToPDF() {
                 // 清理可能引起问题的CSS样式
                 processedText = processedText.replace(
                     /style\s*=\s*["'][^"']*background[^"']*["']/gi, 
-                    ''
+                    'style="background: transparent !important"'
                 );
                 processedText = processedText.replace(
                     /style\s*=\s*["'][^"']*gradient[^"']*["']/gi, 
-                    ''
+                    'style="background: transparent !important"'
                 );
 
                 contentHtml += `
-                    <div class="pdf-node" style="margin-bottom: 40px; margin-top: 10px; position: relative;">
-                        <div style="border: 1px solid #ecd0b7; background: #fffdf9; border-radius: 12px; position: relative; box-shadow: 0 4px 15px rgba(211, 84, 0, 0.08); overflow: hidden;">
-                            <div style="text-align: center; color: #e67e22; font-size: 14px; margin-top: 10px; opacity: 0.7;"><i class="fas fa-star-of-life"></i></div>
-                            <div style="text-align: center; padding: 5px 20px;">
-                                <div style="font-size: 20px; font-weight: bold; color: #d35400; font-family: 'Ma Shan Zheng', cursive, sans-serif;">${info.name}</div>
-                                <div style="margin-top: 5px;"><span style="background: #fff5eb; color: #d35400; border: 1px solid #f5c6cb; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;">${info.field}</span></div>
+                    <div class="pdf-page-break-avoid" style="margin-bottom: 50px; margin-top: 10px; position: relative; page-break-inside: avoid; page-break-before: auto;">
+                        <div style="border: 1px solid #ecd0b7; background: linear-gradient(to bottom, #fffdf9, #fffaf0); border-radius: 15px; position: relative; box-shadow: 0 6px 20px rgba(211, 84, 0, 0.08); overflow: hidden; padding-bottom: 10px;">
+                            <div style="text-align: center; color: #e67e22; font-size: 16px; margin-top: 15px; opacity: 0.8;">
+                                <i class="fas fa-star-of-life"></i> ★ 北极星智慧 ★ <i class="fas fa-star-of-life"></i>
                             </div>
-                            <div style="background: #fff8e1; color: #8d6e63; font-size: 12px; padding: 10px 15px; margin: 15px 25px; border-radius: 6px; border-left: 3px solid #ffca28; font-style: italic; line-height: 1.4;">
-                                <i class="fas fa-quote-left" style="font-size: 10px; opacity: 0.6; margin-right: 5px;"></i> ${info.contribution}
+                            <div style="text-align: center; padding: 10px 20px 5px 20px;">
+                                <div style="font-size: 22px; font-weight: bold; color: #d35400; font-family: 'Ma Shan Zheng', cursive, sans-serif; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">
+                                    ${info.name}
+                                </div>
+                                <div style="margin-top: 8px;">
+                                    <span style="background: linear-gradient(135deg, #fff5eb, #ffe8cc); color: #d35400; border: 1px solid #f5c6cb; padding: 5px 15px; border-radius: 15px; font-size: 12px; font-weight: 600; letter-spacing: 1px;">
+                                        ${info.field}
+                                    </span>
+                                </div>
                             </div>
-                            <div style="height: 1px; background: linear-gradient(to right, transparent, #e0e0e0, transparent); margin: 15px 40px;"></div>
-                            <div style="padding: 0 30px 20px 30px; color: #2c3e50; line-height: 1.8; font-size: 14px; text-align: justify; font-family: -apple-system, sans-serif;" class="markdown-content">
+                            <div style="background: #fff8e1; color: #8d6e63; font-size: 13px; padding: 15px 20px; margin: 20px 30px; border-radius: 8px; border-left: 4px solid #ffca28; font-style: italic; line-height: 1.5; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <i class="fas fa-quote-left" style="font-size: 12px; opacity: 0.7; margin-right: 8px;"></i> 
+                                ${info.contribution}
+                                <i class="fas fa-quote-right" style="font-size: 12px; opacity: 0.7; margin-left: 8px;"></i>
+                            </div>
+                            <div style="height: 2px; background: linear-gradient(to right, transparent, #e0a800 50%, transparent); margin: 20px 40px;"></div>
+                            <div style="padding: 0 35px 25px 35px; color: #2c3e50; line-height: 1.8; font-size: 15px; text-align: justify; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;" class="markdown-content">
                                 ${processedText}
                             </div>
-                            <div style="background: #fdf2e9; padding: 6px; text-align: right; font-size: 10px; color: #d35400; font-weight: bold; padding-right: 20px;"><i class="fas fa-feather-alt"></i> NORTH STAR INSIGHT</div>
+                            <div style="background: linear-gradient(to right, #fdf2e9, #fffaf0); padding: 10px; text-align: right; font-size: 11px; color: #d35400; font-weight: bold; padding-right: 25px; border-top: 1px solid #ffeaa7;">
+                                <i class="fas fa-feather-alt"></i> NORTH STAR INSIGHT · 源自智慧星辰的光芒
+                            </div>
                         </div>
                     </div>
                 `;
             }
         });
 
+        // 添加页脚
+        contentHtml += `
+            <div style="margin-top: 60px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; color: #95a5a6; font-size: 12px;">
+                <div style="margin-bottom: 10px;">
+                    <i class="fas fa-brain"></i> 思想轨迹完整记录 · ${conversationHistory.length} 次对话交流
+                </div>
+                <div>
+                    生成时间：${new Date().toLocaleString()} · 对话北极星系统
+                </div>
+            </div>
+        `;
+
         printDiv.innerHTML = contentHtml;
         document.body.appendChild(printDiv);
 
-        // 等待渲染并确保所有图片加载完成
+        // 等待渲染
         await new Promise(resolve => {
-            // 强制重新计算布局
-            printDiv.getBoundingClientRect();
-            
-            // 等待所有资源加载
-            const images = printDiv.getElementsByTagName('img');
-            const iframes = printDiv.getElementsByTagName('iframe');
-            const totalElements = images.length + iframes.length;
-            
-            if (totalElements === 0) {
-                setTimeout(resolve, 800);
-                return;
-            }
-            
-            let loadedCount = 0;
-            
-            const checkAllLoaded = () => {
-                loadedCount++;
-                if (loadedCount === totalElements) {
-                    setTimeout(resolve, 300);
-                }
-            };
-            
-            for (let img of images) {
-                if (img.complete) {
-                    checkAllLoaded();
-                } else {
-                    img.onload = checkAllLoaded;
-                    img.onerror = checkAllLoaded;
-                    // 设置超时
-                    setTimeout(() => {
-                        if (!img.complete) {
-                            img.style.display = 'none';
-                            checkAllLoaded();
-                        }
-                    }, 3000);
-                }
-            }
-            
-            for (let iframe of iframes) {
-                if (iframe.contentWindow && iframe.contentWindow.document.readyState === 'complete') {
-                    checkAllLoaded();
-                } else {
-                    iframe.onload = checkAllLoaded;
-                    iframe.onerror = checkAllLoaded;
-                }
-            }
-            
-            // 超时保护
-            setTimeout(resolve, 5000);
+            printDiv.getBoundingClientRect(); // 强制重排
+            setTimeout(resolve, 800);
         });
 
-        // 处理MathJax（如果存在）
+        // 处理MathJax
         if (window.MathJax) {
             try {
                 await MathJax.typesetPromise([printDiv]);
-                // MathJax处理后，可能需要等待渲染
                 await new Promise(resolve => setTimeout(resolve, 500));
             } catch (e) {
                 console.warn("MathJax处理失败:", e);
             }
         }
 
-        // 清理可能引起问题的元素
-        const cleanElements = () => {
-            // 隐藏所有尺寸为0的元素
-            const allElements = printDiv.querySelectorAll('*');
-            allElements.forEach(el => {
-                const rect = el.getBoundingClientRect();
-                const style = window.getComputedStyle(el);
+        // 智能分页算法
+        const generatePagedPDF = async (container) => {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            
+            const pageWidth = 210; // A4宽度mm
+            const pageHeight = 297; // A4高度mm
+            const margin = {
+                top: 20,
+                right: 20,
+                bottom: 25,
+                left: 20
+            };
+            
+            const contentWidth = pageWidth - margin.left - margin.right;
+            
+            // 获取所有需要避免分页的元素
+            const avoidBreakElements = container.querySelectorAll('.pdf-page-break-avoid');
+            const elementPositions = [];
+            
+            // 创建副本用于测量
+            const tempContainer = container.cloneNode(true);
+            tempContainer.style.visibility = 'hidden';
+            tempContainer.style.position = 'absolute';
+            tempContainer.style.top = '0';
+            tempContainer.style.left = '0';
+            document.body.appendChild(tempContainer);
+            
+            // 计算每个元素的位置和高度
+            let currentY = margin.top;
+            for (let element of avoidBreakElements) {
+                const tempElement = tempContainer.querySelector(`.pdf-page-break-avoid:nth-child(${Array.from(tempContainer.querySelectorAll('.pdf-page-break-avoid')).indexOf(element) + 1})`);
+                const elementHeight = (tempElement.offsetHeight / 96) * 25.4; // 像素转毫米
                 
-                // 隐藏尺寸为0且不重要的元素
-                if ((rect.width === 0 || rect.height === 0) && 
-                    el.tagName !== 'SCRIPT' && 
-                    el.tagName !== 'STYLE' &&
-                    style.display !== 'none') {
-                    el.style.display = 'none';
-                }
+                elementPositions.push({
+                    element: element,
+                    startY: currentY,
+                    height: elementHeight,
+                    endY: currentY + elementHeight
+                });
                 
-                // 清理空图片
-                if (el.tagName === 'IMG' && (!el.src || el.src === '')) {
-                    el.style.display = 'none';
-                }
-                
-                // 清理空canvas
-                if (el.tagName === 'CANVAS' && (!el.width || !el.height)) {
-                    el.style.display = 'none';
+                currentY += elementHeight + 20; // 元素高度 + 间距
+            }
+            
+            document.body.removeChild(tempContainer);
+            
+            // 分页处理
+            let currentPageY = margin.top;
+            let pageNumber = 1;
+            let currentCanvasY = 0;
+            
+            // 截图整个容器
+            const fullCanvas = await html2canvas(container, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                foreignObjectRendering: false,
+                imageTimeout: 20000,
+                logging: false,
+                onclone: function(clonedDoc) {
+                    // 移除分页控制样式，避免影响截图
+                    const clonedElements = clonedDoc.querySelectorAll('.pdf-page-break-avoid');
+                    clonedElements.forEach(el => {
+                        el.style.pageBreakInside = 'auto';
+                        el.style.pageBreakBefore = 'auto';
+                    });
                 }
             });
             
-            // 确保容器有最小尺寸
-            const rect = printDiv.getBoundingClientRect();
-            if (rect.height < 100) {
-                printDiv.style.minHeight = '800px';
-                printDiv.getBoundingClientRect(); // 强制重排
-            }
-        };
-        
-        cleanElements();
-
-        // 使用html2canvas截图，添加额外的安全配置
-        const canvas = await html2canvas(printDiv, {
-            scale: 1.5,
-            useCORS: true,
-            logging: true, // 开启日志便于调试
-            backgroundColor: '#ffffff',
-            allowTaint: true, // 允许taint canvas（如果需要外部图片）
-            foreignObjectRendering: false, // 禁用foreignObject，更稳定
-            imageTimeout: 30000, // 增加超时时间
-            removeContainer: true,
-            ignoreElements: (element) => {
-                // 忽略隐藏元素和尺寸为0的元素
-                const style = window.getComputedStyle(element);
-                if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') {
-                    return true;
+            // 计算缩放比例
+            const containerWidthPx = container.offsetWidth;
+            const containerWidthMm = (containerWidthPx / 96) * 25.4;
+            const scaleFactor = contentWidth / containerWidthMm;
+            
+            // 按元素分页
+            for (let i = 0; i < elementPositions.length; i++) {
+                const pos = elementPositions[i];
+                
+                // 检查元素是否能放在当前页
+                if (currentPageY + pos.height > pageHeight - margin.bottom) {
+                    // 不能放在当前页，创建新页
+                    pdf.addPage();
+                    pageNumber++;
+                    currentPageY = margin.top;
                 }
                 
-                const rect = element.getBoundingClientRect();
-                if (rect.width === 0 || rect.height === 0) {
-                    return true;
-                }
-                
-                return false;
-            },
-            onclone: function(clonedDoc, element) {
-                // 在克隆的文档中做最后清理
-                const clonedContainer = clonedDoc.getElementById('pdf-export-container');
-                if (clonedContainer) {
-                    // 移除所有可能引起问题的背景
-                    const allElements = clonedContainer.querySelectorAll('*');
-                    allElements.forEach(el => {
-                        const style = window.getComputedStyle(el);
-                        
-                        // 替换背景图片为纯色
-                        if (style.backgroundImage && style.backgroundImage !== 'none') {
-                            el.style.backgroundImage = 'none';
-                            // 根据原背景颜色设置纯色背景
-                            const bgColor = style.backgroundColor;
-                            if (bgColor === 'rgba(0, 0, 0, 0)' || bgColor === 'transparent') {
-                                el.style.backgroundColor = '#ffffff';
-                            }
+                // 如果元素高度超过一页，需要特殊处理
+                if (pos.height > pageHeight - margin.top - margin.bottom) {
+                    // 大元素分页：计算这个元素需要多少页
+                    const pagesForElement = Math.ceil(pos.height / (pageHeight - margin.top - margin.bottom));
+                    
+                    for (let page = 0; page < pagesForElement; page++) {
+                        if (page > 0) {
+                            pdf.addPage();
+                            pageNumber++;
                         }
                         
-                        // 确保所有元素可见
-                        if (style.opacity === '0') {
-                            el.style.opacity = '1';
-                        }
+                        const sliceStart = (page * (pageHeight - margin.top - margin.bottom)) / scaleFactor;
+                        const sliceHeight = Math.min(
+                            (pageHeight - margin.top - margin.bottom) / scaleFactor,
+                            (pos.height / scaleFactor) - sliceStart
+                        );
+                        
+                        // 创建切片canvas
+                        const sliceCanvas = document.createElement('canvas');
+                        sliceCanvas.width = fullCanvas.width;
+                        sliceCanvas.height = sliceHeight * 2; // 保持2倍缩放
+                        
+                        const ctx = sliceCanvas.getContext('2d');
+                        ctx.drawImage(
+                            fullCanvas,
+                            0, 
+                            currentCanvasY + sliceStart * 2, 
+                            fullCanvas.width, 
+                            sliceHeight * 2,
+                            0, 0, 
+                            sliceCanvas.width, 
+                            sliceCanvas.height
+                        );
+                        
+                        // 添加到PDF
+                        const imgData = sliceCanvas.toDataURL('image/jpeg', 0.95);
+                        const imgHeightInPdf = (sliceCanvas.height * contentWidth) / sliceCanvas.width;
+                        
+                        pdf.addImage(imgData, 'JPEG', margin.left, margin.top, contentWidth, imgHeightInPdf);
+                    }
+                    
+                    currentPageY = margin.top;
+                    currentCanvasY += pos.height * 2; // 更新canvas位置
+                } else {
+                    // 普通元素：可以放在一页内
+                    // 截图这个元素
+                    const elementCanvas = await html2canvas(pos.element, {
+                        scale: 2,
+                        useCORS: true,
+                        backgroundColor: '#ffffff',
+                        foreignObjectRendering: false,
+                        imageTimeout: 10000,
+                        logging: false
                     });
                     
-                    // 再次清理尺寸为0的元素
-                    const zeroSizeElements = clonedContainer.querySelectorAll('*');
-                    zeroSizeElements.forEach(el => {
-                        const rect = el.getBoundingClientRect();
-                        if (rect.width === 0 || rect.height === 0) {
-                            if (el.tagName !== 'SCRIPT' && el.tagName !== 'STYLE') {
-                                el.style.display = 'none';
-                            }
-                        }
-                    });
+                    const imgData = elementCanvas.toDataURL('image/jpeg', 0.95);
+                    const imgHeightInPdf = (elementCanvas.height * contentWidth) / elementCanvas.width;
+                    
+                    // 添加到PDF
+                    pdf.addImage(imgData, 'JPEG', margin.left, currentPageY, contentWidth, imgHeightInPdf);
+                    
+                    currentPageY += imgHeightInPdf + 10; // 更新当前页位置
+                    currentCanvasY += elementCanvas.height; // 更新canvas位置
                 }
             }
-        });
-
-        // 生成PDF
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const pdfWidth = 210;
-        const pdfHeight = 297;
-        
-        const imgWidth = pdfWidth - 20; // 左右留边距
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        
-        let heightLeft = imgHeight;
-        let position = 10; // 初始位置
-        
-        // 第一页
-        pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 10, position, imgWidth, imgHeight);
-        heightLeft -= (pdfHeight - 20);
-        
-        // 后续页面
-        let pageCount = 1;
-        while (heightLeft > 0) {
-            position = - (imgHeight - heightLeft - 10);
-            pdf.addPage();
-            pageCount++;
-            pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 10, position, imgWidth, imgHeight);
-            heightLeft -= (pdfHeight - 20);
             
-            // 防止无限循环
-            if (pageCount > 50) {
-                console.warn("PDF分页过多，强制结束");
-                break;
+            // 添加页码
+            const totalPages = pdf.getNumberOfPages();
+            for (let i = 1; i <= totalPages; i++) {
+                pdf.setPage(i);
+                pdf.setFontSize(9);
+                pdf.setTextColor(150, 150, 150);
+                pdf.text(
+                    `第 ${i} 页 / 共 ${totalPages} 页`,
+                    pageWidth - margin.right,
+                    pageHeight - 10,
+                    { align: 'right' }
+                );
             }
-        }
+            
+            return pdf;
+        };
         
+        // 生成PDF
+        const pdf = await generatePagedPDF(printDiv);
+        
+        // 保存文件
         pdf.save(`${getExportFileName()}.pdf`);
-
-        // 导出成功提示
-        console.log("PDF导出成功，共" + pageCount + "页");
+        
+        console.log("PDF导出成功，共" + pdf.getNumberOfPages() + "页");
+        
+        // 显示成功消息
+        setTimeout(() => {
+            const successMsg = document.createElement('div');
+            successMsg.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #2ecc71;
+                color: white;
+                padding: 12px 24px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                z-index: 10000;
+                font-family: -apple-system, sans-serif;
+                font-weight: 500;
+                animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
+            `;
+            successMsg.innerHTML = `
+                <i class="fas fa-check-circle" style="margin-right: 8px;"></i>
+                PDF导出成功！共 ${pdf.getNumberOfPages()} 页
+            `;
+            document.body.appendChild(successMsg);
+            
+            // 3秒后移除提示
+            setTimeout(() => {
+                if (successMsg.parentNode) {
+                    successMsg.parentNode.removeChild(successMsg);
+                }
+            }, 3000);
+        }, 500);
 
     } catch (error) {
         console.error("PDF Export Failed:", error);
         
-        // 更详细的错误信息
         let errorMsg = "导出 PDF 失败: ";
         if (error.message) {
             errorMsg += error.message;
@@ -1680,21 +1726,13 @@ async function exportToPDF() {
             errorMsg += "未知错误";
         }
         
-        // 如果是canvas相关错误，提供具体建议
+        // 详细错误提示
         if (error.message && error.message.includes('canvas') && error.message.includes('0')) {
-            errorMsg += "\n\n建议：\n1. 检查对话内容中是否有空图片或无效元素\n2. 尝试减少导出内容\n3. 刷新页面后重试";
+            errorMsg += "\n\n可能原因：\n• 内容中有无效图片或元素\n• 浏览器内存不足\n• 内容太多，建议分批导出";
         }
         
         alert(errorMsg);
         
-        // 如果是开发环境，记录更多调试信息
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            const printDiv = document.getElementById('pdf-export-container');
-            if (printDiv) {
-                console.log("导出容器内容:", printDiv.innerHTML);
-                console.log("导出容器尺寸:", printDiv.offsetWidth, "x", printDiv.offsetHeight);
-            }
-        }
     } finally {
         // 清理
         const printDiv = document.getElementById('pdf-export-container');
