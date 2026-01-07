@@ -1336,12 +1336,12 @@ function exportToMD() {
 
 
 /**
- * 最终稳定版：对话导出 PDF
+ * 最终完美版：对话导出 PDF
  * ------------------------------------------------
- * 修复：
- * 1. 回滚导致公式空白的图片转换逻辑，改用 SVG 属性强制注入
- * 2. 修复 Markdown 中 #### 标题和 --- 分割线不显示的问题
- * 3. 保持书籍通栏排版，无突兀边框
+ * 修复核心：
+ * 1. 【暴力转图】将所有 MathJax 公式强制转为 Base64 图片，彻底解决行内公式空白问题
+ * 2. 【对齐修正】精准复制行内公式的 vertical-align 属性，防止图片跟文字基线对不齐
+ * 3. 保持无框书籍排版风格
  */
 async function exportToPDF() {
     // --- 0. 基础检查 ---
@@ -1360,10 +1360,10 @@ async function exportToPDF() {
         MARGIN_TOP: 25, MARGIN_BOT: 30, MARGIN_X: 20,
         
         SCALE: 4,           // 4倍高清采样
-        STAGE_WIDTH: 780,   // 宽度适中，防止公式换行
+        STAGE_WIDTH: 780,   // 宽度
         
         // 书籍配色
-        PAGE_BG: "#fdf9f2", // 极淡的暖杏/米白色
+        PAGE_BG: "#fdf9f2", 
         TEXT_COLOR: "#222",
         
         FONT_STACK: "'Times New Roman', 'Songti SC', 'SimSun', serif",
@@ -1373,39 +1373,95 @@ async function exportToPDF() {
     const PAGE_SAFE_BOTTOM = CONFIG.A4_H - CONFIG.MARGIN_BOT;
     const MAX_CONTENT_H = PAGE_SAFE_BOTTOM - CONFIG.MARGIN_TOP;
 
-    // --- 2. Markdown 解析器 (增强版) ---
+    // --- 2. Markdown 解析器 ---
     function parseMarkdown(text) {
         if (!text) return '';
         let html = text
-            // 标题 H1 - H4
+            // 标题
             .replace(/^# (.*$)/gim, '<h1 style="font-size:24px; font-weight:bold; color:#d84315; margin:22px 0 15px; font-family:\'Songti SC\',serif;">$1</h1>')
             .replace(/^## (.*$)/gim, '<h2 style="font-size:20px; font-weight:bold; color:#333; margin:18px 0 10px; border-bottom:1px dashed #caa; padding-bottom:5px;">$1</h2>')
             .replace(/^### (.*$)/gim, '<h3 style="font-size:17px; font-weight:bold; color:#444; margin:15px 0 8px;">$1</h3>')
-            // 【修复】增加 H4 解析，加粗并加深颜色
             .replace(/^#### (.*$)/gim, '<h4 style="font-size:16px; font-weight:bold; color:#000; margin:12px 0 6px;">$1</h4>')
-            
             // 粗体
             .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#000;">$1</strong>')
-            
             // 列表
             .replace(/^\s*(\d+)\.\s+(.*$)/gim, '<div style="margin-left:2em; text-indent:-1.2em; margin-bottom:6px; line-height:1.6;"><span style="font-weight:bold; font-family:\'Times New Roman\'; margin-right:4px;">$1.</span>$2</div>')
             .replace(/^\s*-\s+(.*$)/gim, '<div style="margin-left:2em; text-indent:-1em; margin-bottom:6px; line-height:1.6;">• $1</div>')
-            
-            // 【修复】分割线 --- (支持前后可能有空格)
+            // 分割线
             .replace(/^\s*[-*_]{3,}\s*$/gim, '<div style="border-top:1px solid #d7ccc8; margin:25px 0; height:1px;"></div>')
-            
             // 换行
             .replace(/\n\n/g, '<div style="height:10px;"></div>') 
             .replace(/\n/g, '<br>');
         return html;
     }
 
-    // --- 3. UI 初始化 ---
+    // --- 3. 【核武器】SVG 转图片函数 (解决行内公式空白) ---
+    async function rasterizeMathJax(container) {
+        // 找到所有的 MathJax 容器 (mjx-container)
+        const mathNodes = Array.from(container.querySelectorAll('mjx-container'));
+        
+        if (mathNodes.length === 0) return;
+
+        // 使用 Promise.all 并行处理，提高速度
+        await Promise.all(mathNodes.map(async (node) => {
+            const svg = node.querySelector('svg');
+            if (!svg) return;
+
+            // 1. 获取几何信息 (Bounding Rect)
+            // 这步至关重要，它决定了行内公式在图片化后会不会变形
+            const rect = node.getBoundingClientRect();
+            const width = rect.width;
+            const height = rect.height;
+            
+            // 跳过未渲染的
+            if (width < 1 || height < 1) return;
+
+            // 2. 获取计算样式 (特别是 vertical-align)
+            // 行内公式通常有 vertical-align: -0.xxx ex，必须复制给图片
+            const computedStyle = window.getComputedStyle(node);
+            const vAlign = computedStyle.verticalAlign;
+            const color = computedStyle.color || '#000'; // 强制获取颜色
+
+            // 3. 序列化 SVG
+            // 必须显式设置 xmlns 和 fill，否则转图片后可能是黑块或透明
+            svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+            svg.style.color = color; 
+            svg.style.fill = 'currentColor'; // 确保颜色正确
+            
+            const xml = new XMLSerializer().serializeToString(svg);
+            
+            // 4. 转 Base64
+            const svg64 = btoa(unescape(encodeURIComponent(xml)));
+            const imgSrc = 'data:image/svg+xml;base64,' + svg64;
+
+            // 5. 创建 img 标签替换原节点
+            const img = new Image();
+            img.src = imgSrc;
+            img.style.width = `${width}px`;
+            img.style.height = `${height}px`;
+            img.style.verticalAlign = vAlign; // 【关键】对齐修复
+            img.style.display = 'inline-block';
+            
+            // 等待图片解码完成，防止截图闪烁
+            await new Promise(resolve => {
+                img.onload = resolve;
+                img.onerror = resolve;
+            });
+
+            // 6. DOM 替换
+            // 替换掉 mjx-container，直接放 img
+            if (node.parentNode) {
+                node.parentNode.replaceChild(img, node);
+            }
+        }));
+    }
+
+    // --- 4. UI 初始化 ---
     const originalCursor = document.body.style.cursor;
     document.body.style.cursor = 'wait';
     window.scrollTo(0, 0);
 
-    // 3.1 暗色遮罩
+    // 4.1 遮罩
     const mask = document.createElement('div');
     mask.style.cssText = `
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -1415,7 +1471,7 @@ async function exportToPDF() {
     `;
     mask.innerHTML = `
         <div style="font-size:32px; margin-bottom:20px; animation:pulse 2s infinite;">✦</div>
-        <div style="font-size:16px; letter-spacing:2px; margin-bottom:30px;">正在辑录 · 思想轨迹</div>
+        <div style="font-size:16px; letter-spacing:2px; margin-bottom:30px;">正在转换数学公式...</div>
         <div style="width:240px; height:2px; background:#444; border-radius:2px;"><div id="pdf-bar" style="width:0%; height:100%; background:#e0c38c; transition:width 0.2s;"></div></div>
         <div id="pdf-txt" style="font-size:12px; color:#888; margin-top:10px;">0%</div>
         <style>@keyframes pulse{0%{opacity:0.5}50%{opacity:1}100%{opacity:0.5}}</style>
@@ -1428,7 +1484,7 @@ async function exportToPDF() {
         document.getElementById('pdf-txt').innerText = t || pct+"%";
     };
 
-    // 3.2 渲染舞台
+    // 4.2 渲染舞台
     const stage = document.createElement('div');
     stage.id = 'pdf-stage';
     stage.style.cssText = `
@@ -1478,7 +1534,7 @@ async function exportToPDF() {
             }
         };
 
-        // --- 4. 封面 ---
+        // --- 5. 封面 ---
         setProgress(0.05, "封面");
         stage.innerHTML = `
             <div style="min-height:600px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
@@ -1494,12 +1550,12 @@ async function exportToPDF() {
         pdf.addImage(titleCanvas.toDataURL('image/jpeg', 0.95), 'JPEG', CONFIG.MARGIN_X, CONFIG.MARGIN_TOP, CONTENT_W, titleH);
         pdf.addPage(); cursorY = CONFIG.MARGIN_TOP;
 
-        // --- 5. 内容渲染 ---
+        // --- 6. 逐条渲染 ---
         const total = conversationHistory.length;
         for (let i = 0; i < total; i++) {
             const item = conversationHistory[i];
             const isUser = item.role === 'user';
-            setProgress(0.1 + (i / total) * 0.85, `排版 ${i+1}/${total}`);
+            setProgress(0.1 + (i / total) * 0.85, `渲染 ${i+1}/${total}`);
 
             const textHtml = parseMarkdown(item.text);
             let nodeHtml = '';
@@ -1508,21 +1564,19 @@ async function exportToPDF() {
                 // 用户
                 nodeHtml = `
                     <div style="width:100%; display:flex; justify-content:flex-end; padding:10px 0;">
-                        <div style="max-width:80%; background:#efefef; border-radius:8px; padding:12px 20px;">
+                        <div style="max-width:80%; background:#e8e8e8; border-radius:8px; padding:12px 20px;">
                             <div style="font-size:16px; color:#333; font-family:sans-serif; line-height:1.5;">${textHtml}</div>
                         </div>
                     </div>`;
             } else {
-                // AI (通栏书籍风)
+                // AI (通栏书籍排版)
                 const info = item.leaderInfo || { name: 'North Star', field: 'Assistant' };
                 nodeHtml = `
                     <div style="width:100%; padding:20px 0;">
-                        <!-- 头部 -->
                         <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:15px; border-bottom:1px dashed #d7ccc8; padding-bottom:8px;">
                             <div><span style="font-size:20px; font-weight:bold; color:#d84315; font-family:'Times New Roman','Songti SC',serif;">${info.name}</span></div>
-                            <div style="font-size:12px; background:#f2f2f2; color:#666; padding:2px 8px; border-radius:4px; font-family:sans-serif;">${info.field}</div>
+                            <div style="font-size:12px; background:#f0f0f0; color:#666; padding:2px 8px; border-radius:4px; font-family:sans-serif;">${info.field}</div>
                         </div>
-                        <!-- 正文 -->
                         <div style="font-size:16px; text-align:justify; color:#222; line-height:1.6;">
                             ${textHtml}
                         </div>
@@ -1533,32 +1587,21 @@ async function exportToPDF() {
 
             stage.innerHTML = nodeHtml;
 
-            // --- MathJax 稳定修复逻辑 ---
+            // --- MathJax 处理逻辑 (核心修改) ---
             if (window.MathJax) {
                 try {
-                    // 1. 渲染公式
+                    // 1. 让 MathJax 渲染
                     await MathJax.typesetPromise([stage]);
-                    // 2. 缓冲时间 (不可省略)
+                    // 2. 缓冲
                     await new Promise(r => setTimeout(r, 400));
-                    
-                    // 3. 【关键】修复 html2canvas 对 SVG 尺寸识别错误的问题
-                    // 遍历所有生成的 SVG，强制写入 width/height 属性 (px)
-                    const svgs = stage.querySelectorAll('svg');
-                    svgs.forEach(svg => {
-                        const rect = svg.getBoundingClientRect();
-                        if (rect.width > 0 && rect.height > 0) {
-                            // html2canvas 需要明确的属性才能正确渲染 SVG
-                            svg.setAttribute('width', rect.width + 'px');
-                            svg.setAttribute('height', rect.height + 'px');
-                        }
-                        // 确保 overflow 可见，防止公式被切
-                        svg.style.overflow = 'visible';
-                    });
-                    
-                } catch(e) { console.warn("Math error:", e); }
+                    // 3. 【执行光栅化】将 MathJax 节点替换为 IMG
+                    await rasterizeMathJax(stage);
+                } catch(e) { 
+                    console.warn("Math error:", e); 
+                }
             }
             
-            // 等待图片
+            // 等待页面内其他图片
             const imgs = stage.querySelectorAll('img');
             await Promise.all(Array.from(imgs).map(img => {
                 if (img.complete) return Promise.resolve();
@@ -1588,7 +1631,7 @@ async function exportToPDF() {
             }
         }
 
-        // --- 6. 页码 ---
+        // --- 7. 页码 ---
         setProgress(0.99, "页码");
         const pageCount = pdf.internal.getNumberOfPages();
         for (let i = 1; i <= pageCount; i++) {
@@ -1608,5 +1651,4 @@ async function exportToPDF() {
         document.body.style.cursor = originalCursor;
     }
 }
-
 
