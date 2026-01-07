@@ -1335,7 +1335,7 @@ function exportToMD() {
 }
 
 /* 
- * 3. 简化版导出 PDF 
+ * 3. 导出 PDF 
  * 逻辑：创建一个临时的、干净的 HTML 列表（仅包含问答文字），
  * 然后对其截图生成 PDF。不包含 SVG 连线和画布特效。
  */
@@ -1348,86 +1348,187 @@ async function exportToPDF() {
     const originalCursor = document.body.style.cursor;
     document.body.style.cursor = 'wait';
 
-    // 创建离屏容器
+    // 1. 创建离屏容器
     const printDiv = document.createElement('div');
     printDiv.style.position = 'absolute';
     printDiv.style.left = '-10000px'; 
     printDiv.style.top = '0px';
-    printDiv.style.width = '595px';   
+    printDiv.style.width = '650px'; //稍微加宽一点，让排版更舒展
     printDiv.style.backgroundColor = '#ffffff';
-    printDiv.style.padding = '40px'; 
+    printDiv.style.padding = '40px 50px'; 
     printDiv.style.fontFamily = '"Helvetica Neue", Helvetica, Arial, "Microsoft Yahei", sans-serif';
     printDiv.style.color = '#333';
     printDiv.style.zIndex = '-1';     
 
-    // 构建 HTML 内容
+    // 2. 构建 HTML 内容头部
     let contentHtml = `
-        <h2 style="text-align:center; color:#333; border-bottom:2px solid #ddd; padding-bottom:15px; margin-bottom:20px;">
-            对话北极星 (Talk with North Stars)
-        </h2>
-        <div style="font-size: 12px; color: #888; text-align: right; margin-bottom: 30px;">
-            导出时间: ${new Date().toLocaleString()}
+        <div style="text-align:center; margin-bottom: 40px;">
+            <h2 style="color:#2c3e50; font-size: 24px; margin-bottom:10px; font-weight:700;">
+                对话北极星思维轨迹
+            </h2>
+            <div style="font-size: 14px; color: #95a5a6; font-family: serif; font-style: italic;">
+                Talk with North Stars - Insight Stream
+            </div>
+            <div style="width: 60px; height: 3px; background: #e67e22; margin: 15px auto;"></div>
+            <div style="font-size: 12px; color: #aaa; text-align: right; margin-top: 10px;">
+                ${new Date().toLocaleString()}
+            </div>
         </div>
     `;
 
+    // 3. 遍历历史记录构建节点
     conversationHistory.forEach((item, index) => {
         const isUser = item.role === 'user';
-        const nameColor = isUser ? '#2980b9' : '#d35400';
-        const nameText = isUser ? 'User (提问)' : (item.leaderInfo?.name || 'Assistant');
-        const bgColor = isUser ? '#f0f7fb' : '#fff5eb';
         
-        // 文本处理
+        // --- 文本处理 (Markdown/LaTeX) ---
         let textContent = item.text.replace(/\n/g, '<br>');
         if (!isUser && typeof parseMarkdownWithMath === 'function') {
             try { textContent = parseMarkdownWithMath(item.text); } catch(e) {}
         }
 
-        // --- 修改点：准备要插入的人物信息 HTML ---
-        let extraInfoHtml = '';
         if (isUser) {
-            // 向后看一条
+            // ==================== 用户部分 (保持原有逻辑 + 你的关联人物小卡片) ====================
+            
+            // 查找关联的下一个人（用于显示 User 问题卡片底部的关联提示）
+            let extraInfoHtml = '';
             const nextItem = conversationHistory[index + 1];
             if (nextItem && nextItem.role !== 'user' && nextItem.leaderInfo) {
                 const info = nextItem.leaderInfo;
-                // 构建精美的小卡片放在 User 问题后面
                 extraInfoHtml = `
-                    <div style="margin-top: 12px; border-top: 1px dashed #bcdaea; padding-top: 8px; font-size: 13px; color: #555;">
-                        <span style="font-weight:bold; color: #2c3e50;">🧩 关联人物：${info.name}</span> 
-                        <span style="color: #7f8c8d;"> | ${info.field}</span>
-                        <div style="margin-top:4px; font-style:italic; color:#666;">"${info.contribution}"</div>
+                    <div style="margin-top: 15px; border-top: 1px dashed #bcdaea; padding-top: 10px; font-size: 13px; color: #555; display:flex; align-items:center;">
+                        <span style="font-weight:bold; color: #2c3e50; margin-right:8px;">🧩 关联人物：${info.name}</span> 
+                        <span style="background:#eef6fa; color: #7f8c8d; font-size:11px; padding:2px 6px; border-radius:4px;">${info.field}</span>
+                    </div>
+                    <div style="margin-top:6px; font-style:italic; color:#7f8c8d; font-size: 12px; padding-left: 20px;">
+                        "${info.contribution.substring(0, 50)}${info.contribution.length > 50 ? '...' : ''}"
                     </div>
                 `;
             }
-        }
 
-        // 构建节点
-        contentHtml += `
-            <div class="pdf-node" style="margin-bottom: 20px;">
-                <div style="font-weight: bold; color: ${nameColor}; margin-bottom: 5px; font-size: 14px;">
-                    ${nameText}:
+            // 用户气泡样式
+            contentHtml += `
+                <div class="pdf-node" style="margin-bottom: 30px; display: flex; flex-direction: column; align-items: flex-end;">
+                    <div style="font-weight: bold; color: #2980b9; margin-bottom: 8px; font-size: 15px; width: 100%; text-align: right;">
+                        <span style="background: #eef7fc; padding: 4px 10px; border-radius: 15px;">User (提问)</span>
+                    </div>
+                    <div style="background: #f0f7fb; padding: 15px 20px; border-radius: 12px 0 12px 12px; line-height: 1.6; font-size: 14px; border: 1px solid #dbe9f1; text-align: justify; box-shadow: 0 2px 5px rgba(0,0,0,0.03); max-width: 90%;">
+                        <div style="font-family: 'Indie Flower', 'KaiTi', cursive; font-weight: bold; color: #34495e;">${item.text}</div> <!-- 模拟手写字体样式 -->
+                        ${extraInfoHtml}
+                    </div>
                 </div>
-                <div style="background: ${bgColor}; padding: 12px; border-radius: 8px; line-height: 1.6; font-size: 14px; border: 1px solid #eee; text-align: justify;">
-                    ${textContent}
-                    ${extraInfoHtml} <!-- 插入额外信息 -->
+            `;
+
+        } else {
+            // ==================== 北极星部分 (修改为画布精致样式) ====================
+            
+            const info = item.leaderInfo || { name: 'Unknown', field: '', contribution: '' };
+
+            // 这里的样式尽可能模拟了 renderDialogueCanvas 中的 CSS 效果
+            // 比如 .star-decoration-top, .leader-header 等
+            contentHtml += `
+                <div class="pdf-node" style="margin-bottom: 40px; margin-top: 10px; position: relative;">
+                    
+                    <!-- 模拟画布卡片容器 -->
+                    <div style="
+                        border: 1px solid #ecd0b7; 
+                        background: #fffdf9; 
+                        border-radius: 12px; 
+                        position: relative; 
+                        box-shadow: 0 4px 15px rgba(211, 84, 0, 0.08);
+                        overflow: hidden;
+                    ">
+                        
+                        <!-- 顶部装饰星号 -->
+                        <div style="text-align: center; color: #e67e22; font-size: 14px; margin-top: 10px; opacity: 0.7;">
+                            <i class="fas fa-star-of-life"></i>
+                        </div>
+
+                        <!-- 头部：名字与领域 -->
+                        <div style="text-align: center; padding: 5px 20px;">
+                            <div style="font-size: 20px; font-weight: bold; color: #d35400; font-family: 'Ma Shan Zheng', cursive, sans-serif; letter-spacing: 1px;">
+                                ${info.name}
+                            </div>
+                            <div style="margin-top: 5px;">
+                                <span style="
+                                    background: #fff5eb; 
+                                    color: #d35400; 
+                                    border: 1px solid #f5c6cb; 
+                                    padding: 3px 10px; 
+                                    border-radius: 12px; 
+                                    font-size: 11px; 
+                                    font-weight: 600;
+                                    text-transform: uppercase;
+                                ">
+                                    ${info.field}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- 贡献引用区 -->
+                        <div style="
+                            background: #fff8e1; 
+                            color: #8d6e63; 
+                            font-size: 12px; 
+                            padding: 10px 15px; 
+                            margin: 15px 25px; 
+                            border-radius: 6px; 
+                            border-left: 3px solid #ffca28; 
+                            font-style: italic;
+                            line-height: 1.4;
+                        ">
+                            <i class="fas fa-quote-left" style="font-size: 10px; opacity: 0.6; margin-right: 5px;"></i> 
+                            ${info.contribution}
+                        </div>
+
+                        <!-- 分割线 -->
+                        <div style="height: 1px; background: linear-gradient(to right, transparent, #e0e0e0, transparent); margin: 15px 40px;"></div>
+
+                        <!-- 核心回答内容 -->
+                        <div style="
+                            padding: 0 30px 20px 30px; 
+                            color: #2c3e50; 
+                            line-height: 1.8; 
+                            font-size: 14px; 
+                            text-align: justify;
+                            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                        ">
+                            ${textContent}
+                        </div>
+
+                        <!-- 底部装饰 -->
+                        <div style="
+                            background: #fdf2e9; 
+                            padding: 6px; 
+                            text-align: right; 
+                            font-size: 10px; 
+                            color: #d35400; 
+                            font-weight: bold; 
+                            padding-right: 20px;
+                            letter-spacing: 1px;
+                        ">
+                            <i class="fas fa-feather-alt"></i> NORTH STAR INSIGHT
+                        </div>
+                    </div>
                 </div>
-            </div>
-        `;
+            `;
+        }
     });
 
     printDiv.innerHTML = contentHtml;
     document.body.appendChild(printDiv);
 
     try {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 300)); // 稍等渲染，特别是字体
 
-        // --- 以下为原版智能切割逻辑 (Smart Slicing)，保持原样 ---
+        // --- 智能切割逻辑 (Smart Slicing) ---
         const nodeElements = printDiv.querySelectorAll('.pdf-node');
         const safeCuts = []; 
         
         nodeElements.forEach(el => {
             const top = el.offsetTop;
             const bottom = top + el.offsetHeight;
-            safeCuts.push(top); 
+            // 允许在节点之间的空白处切割
+            safeCuts.push(top - 10); 
             safeCuts.push(bottom + 10); 
         });
         
@@ -1460,13 +1561,17 @@ async function exportToPDF() {
                 proposedCut = totalHeight;
             } else {
                 let bestCut = -1;
+                // 寻找最近的“安全切割点”，避免切断卡片
                 for (let cutDom of sortedCuts) {
                     const cutCanvas = cutDom * scale; 
+                    // 在页面底部向上寻找最近的安全点（比如留出10%的缓冲）
                     if (cutCanvas > renderedHeight && cutCanvas < proposedCut) {
                         bestCut = cutCanvas;
                     }
                 }
-                if (bestCut !== -1) {
+                
+                // 如果找到了切割点，且切割点不要离页面底部太远（防止一页只有一点点内容）
+                if (bestCut !== -1 && (proposedCut - bestCut) < (pageHeightInCanvas * 0.3)) {
                     proposedCut = bestCut;
                 }
             }
@@ -1491,7 +1596,6 @@ async function exportToPDF() {
             renderedHeight = proposedCut;
         }
 
-        // --- 修改点：统一文件名 ---
         pdf.save(`${getExportFileName()}.pdf`);
 
     } catch (error) {
