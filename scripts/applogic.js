@@ -1346,23 +1346,31 @@ async function exportToPDF() {
         return;
     }
 
-    // 2. 锁定界面状态
+    // 2. 锁定界面状态 & 保存当前滚动位置
     const originalCursor = document.body.style.cursor;
-    document.body.style.cursor = 'wait';
-    const originalScrollPos = window.scrollY; // 记录滚动位置
+    const originalScrollPos = window.scrollY; 
+    const originalOverflow = document.body.style.overflow;
 
-    // 3. 创建离屏容器 (关键修正：移回视口内，但用 z-index 隐藏)
+    document.body.style.cursor = 'wait';
+    
+    // --- 修复关键步骤1：强制滚动到顶部，防止坐标计算错位 ---
+    window.scrollTo(0, 0);
+
+    // 3. 创建离屏容器
     const printDiv = document.createElement('div');
     printDiv.style.position = 'absolute';
     printDiv.style.top = '0px';
     printDiv.style.left = '0px'; 
-    printDiv.style.width = '650px';   // 稍微宽一点，阅读体验更好
+    printDiv.style.width = '650px';   
     printDiv.style.backgroundColor = '#ffffff';
     printDiv.style.padding = '40px 50px'; 
     printDiv.style.fontFamily = '"Helvetica Neue", Helvetica, Arial, "Microsoft Yahei", sans-serif';
     printDiv.style.color = '#333';
-    printDiv.style.zIndex = '-9999';  // 放在主界面最底层，用户看不见，但浏览器会渲染
-    printDiv.style.visibility = 'visible'; 
+    
+    // --- 修复关键步骤2：使用 z-index: -1 并在 Body 内，确保浏览器计算渲染树 ---
+    // 不要使用 visibility: hidden，否则 html2canvas 可能跳过渲染
+    printDiv.style.zIndex = '-1';  
+    printDiv.style.display = 'block';
 
     // 4. 构建 HTML 头部
     let contentHtml = `
@@ -1380,20 +1388,16 @@ async function exportToPDF() {
         </div>
     `;
 
-    // 5. 遍历并构建对话节点
+    // 5. 遍历并构建对话节点 (逻辑保持不变)
     conversationHistory.forEach((item, index) => {
         const isUser = item.role === 'user';
-        
-        // 文本预处理 (Markdown/LaTeX)
         let textContent = item.text.replace(/\n/g, '<br>');
         if (!isUser && typeof parseMarkdownWithMath === 'function') {
             try { textContent = parseMarkdownWithMath(item.text); } catch(e) {}
         }
 
         if (isUser) {
-            // === 用户部分：包含关联人物小卡片 ===
             let extraInfoHtml = '';
-            // 向后看一条，寻找关联的北极星人物
             const nextItem = conversationHistory[index + 1];
             if (nextItem && nextItem.role !== 'user' && nextItem.leaderInfo) {
                 const info = nextItem.leaderInfo;
@@ -1420,88 +1424,21 @@ async function exportToPDF() {
                 </div>
             `;
         } else {
-            // === AI部分：复刻画布样式 ===
             const info = item.leaderInfo || { name: 'Unknown', field: '', contribution: '' };
             contentHtml += `
                 <div class="pdf-node" style="margin-bottom: 40px; margin-top: 10px; position: relative;">
-                    <div style="
-                        border: 1px solid #ecd0b7; 
-                        background: #fffdf9; 
-                        border-radius: 12px; 
-                        position: relative; 
-                        box-shadow: 0 4px 15px rgba(211, 84, 0, 0.08);
-                        overflow: hidden;
-                    ">
-                        <!-- 顶部星星 -->
-                        <div style="text-align: center; color: #e67e22; font-size: 14px; margin-top: 10px; opacity: 0.7;">
-                            <i class="fas fa-star-of-life"></i>
-                        </div>
-                        
-                        <!-- 姓名与头衔 -->
+                    <div style="border: 1px solid #ecd0b7; background: #fffdf9; border-radius: 12px; position: relative; box-shadow: 0 4px 15px rgba(211, 84, 0, 0.08); overflow: hidden;">
+                        <div style="text-align: center; color: #e67e22; font-size: 14px; margin-top: 10px; opacity: 0.7;"><i class="fas fa-star-of-life"></i></div>
                         <div style="text-align: center; padding: 5px 20px;">
-                            <div style="font-size: 20px; font-weight: bold; color: #d35400; font-family: 'Ma Shan Zheng', cursive, sans-serif; letter-spacing: 1px;">
-                                ${info.name}
-                            </div>
-                            <div style="margin-top: 5px;">
-                                <span style="
-                                    background: #fff5eb; 
-                                    color: #d35400; 
-                                    border: 1px solid #f5c6cb; 
-                                    padding: 3px 10px; 
-                                    border-radius: 12px; 
-                                    font-size: 11px; 
-                                    font-weight: 600;
-                                    text-transform: uppercase;
-                                ">
-                                    ${info.field}
-                                </span>
-                            </div>
+                            <div style="font-size: 20px; font-weight: bold; color: #d35400; font-family: 'Ma Shan Zheng', cursive, sans-serif;">${info.name}</div>
+                            <div style="margin-top: 5px;"><span style="background: #fff5eb; color: #d35400; border: 1px solid #f5c6cb; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;">${info.field}</span></div>
                         </div>
-
-                        <!-- 引用区域 -->
-                        <div style="
-                            background: #fff8e1; 
-                            color: #8d6e63; 
-                            font-size: 12px; 
-                            padding: 10px 15px; 
-                            margin: 15px 25px; 
-                            border-radius: 6px; 
-                            border-left: 3px solid #ffca28; 
-                            font-style: italic;
-                            line-height: 1.4;
-                        ">
-                            <i class="fas fa-quote-left" style="font-size: 10px; opacity: 0.6; margin-right: 5px;"></i> 
-                            ${info.contribution}
+                        <div style="background: #fff8e1; color: #8d6e63; font-size: 12px; padding: 10px 15px; margin: 15px 25px; border-radius: 6px; border-left: 3px solid #ffca28; font-style: italic; line-height: 1.4;">
+                            <i class="fas fa-quote-left" style="font-size: 10px; opacity: 0.6; margin-right: 5px;"></i> ${info.contribution}
                         </div>
-
-                        <!-- 分割线 -->
                         <div style="height: 1px; background: linear-gradient(to right, transparent, #e0e0e0, transparent); margin: 15px 40px;"></div>
-
-                        <!-- 核心回答 -->
-                        <div style="
-                            padding: 0 30px 20px 30px; 
-                            color: #2c3e50; 
-                            line-height: 1.8; 
-                            font-size: 14px; 
-                            text-align: justify;
-                            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                        ">
-                            ${textContent}
-                        </div>
-
-                        <!-- 底部装饰条 -->
-                        <div style="
-                            background: #fdf2e9; 
-                            padding: 6px; 
-                            text-align: right; 
-                            font-size: 10px; 
-                            color: #d35400; 
-                            font-weight: bold; 
-                            padding-right: 20px;
-                            letter-spacing: 1px;
-                        ">
-                            <i class="fas fa-feather-alt"></i> NORTH STAR INSIGHT
-                        </div>
+                        <div style="padding: 0 30px 20px 30px; color: #2c3e50; line-height: 1.8; font-size: 14px; text-align: justify; font-family: -apple-system, sans-serif;">${textContent}</div>
+                        <div style="background: #fdf2e9; padding: 6px; text-align: right; font-size: 10px; color: #d35400; font-weight: bold; padding-right: 20px;"><i class="fas fa-feather-alt"></i> NORTH STAR INSIGHT</div>
                     </div>
                 </div>
             `;
@@ -1513,17 +1450,17 @@ async function exportToPDF() {
     document.body.appendChild(printDiv);
 
     try {
-        // 等待渲染，特别是字体加载
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // 等待渲染
+        await new Promise(resolve => setTimeout(resolve, 800)); // 稍微增加延时确保字体加载
         
-        // 如果使用了 MathJax，可以在这里触发一次渲染 (可选)
         if (window.MathJax) {
             try { await MathJax.typesetPromise([printDiv]); } catch (e) {}
         }
 
-        // 7. 获取真实尺寸 (避免 0 宽高的关键)
-        const totalWidth = printDiv.offsetWidth;
-        const totalHeight = printDiv.offsetHeight;
+        // --- 修复关键步骤3：确保宽高为整数 ---
+        // 使用 scrollWidth/scrollHeight 获取完整内容尺寸
+        const totalWidth = Math.ceil(printDiv.scrollWidth);
+        const totalHeight = Math.ceil(printDiv.scrollHeight);
 
         // 8. 智能切割点计算
         const nodeElements = printDiv.querySelectorAll('.pdf-node');
@@ -1536,25 +1473,23 @@ async function exportToPDF() {
         });
         const sortedCuts = [...new Set(safeCuts)].sort((a, b) => a - b);
 
-        const scale = 2; // 高清倍率
+        const scale = 2; 
         
-        // 9. 执行截图 (配置增强)
+        // 9. 执行截图 (配置修正)
         const canvas = await html2canvas(printDiv, {
             scale: scale,
             useCORS: true,
             logging: false,
             backgroundColor: '#ffffff',
-            width: totalWidth,      // 显式指定宽
-            height: totalHeight,    // 显式指定高
-            windowWidth: totalWidth,
-            windowHeight: totalHeight,
-            x: 0,                   // 强制坐标
-            y: 0,
-            scrollX: 0,
-            scrollY: 0
+            // --- 修复关键步骤4：精简配置，移除强制的 x/y/windowWidth ---
+            // 只要我们 scroll 到了 (0,0)，html2canvas 默认行为通常是最准的
+            width: totalWidth,      
+            height: totalHeight,
+            scrollY: 0, // 明确告诉 html2canvas 不需要额外滚动
+            scrollX: 0
         });
 
-        // 10. PDF 分页生成
+        // 10. PDF 分页生成 (逻辑保持不变)
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
         
@@ -1571,7 +1506,6 @@ async function exportToPDF() {
             if (proposedCut >= canvasHeight) {
                 proposedCut = canvasHeight;
             } else {
-                // 寻找最佳切割点
                 let bestCut = -1;
                 for (let cutDom of sortedCuts) {
                     const cutCanvas = cutDom * scale; 
@@ -1579,14 +1513,13 @@ async function exportToPDF() {
                         bestCut = cutCanvas;
                     }
                 }
-                // 仅当切割点合理时采纳
                 if (bestCut !== -1 && (proposedCut - bestCut) < (pageHeightInCanvas * 0.4)) {
                     proposedCut = bestCut;
                 }
             }
 
             const sliceHeight = proposedCut - renderedHeight;
-            if (sliceHeight <= 0) break; // 防止死循环
+            if (sliceHeight <= 0) break; 
 
             const sliceCanvas = document.createElement('canvas');
             sliceCanvas.width = canvas.width;
@@ -1612,13 +1545,15 @@ async function exportToPDF() {
 
     } catch (error) {
         console.error("PDF Export Failed:", error);
-        alert("导出 PDF 失败，请检查控制台日志。");
+        alert("导出 PDF 失败：" + (error.message || "未知错误"));
     } finally {
-        // 12. 清理
+        // 12. 清理 & 恢复现场
         if (printDiv && printDiv.parentNode) {
             printDiv.parentNode.removeChild(printDiv);
         }
         document.body.style.cursor = originalCursor;
-        window.scrollTo(0, originalScrollPos); // 恢复滚动
+        document.body.style.overflow = originalOverflow;
+        // 恢复滚动位置
+        window.scrollTo(0, originalScrollPos); 
     }
 }
