@@ -1424,42 +1424,40 @@ function exportToPDF() {
     overlay.appendChild(style);
 
     // --- 步骤 B: 第一页 (图1在上，图2在下) ---
-    // ---  第一页 (绝对定位版 - 彻底防止图片乱跑) ---
+    // --- 第一页 (图1顶天，图2立地，中间留缝) ---
     const coverPage1 = document.createElement('div');
     coverPage1.className = 'print-cover-page';
-    // 强制换页
     coverPage1.style.breakAfter = 'page'; 
 
-    // --- 图1：占据上半部分 (0% - 50%) ---
+    // --- 图1：位于顶部，高度设为48%（留出空间） ---
     const img1 = document.createElement('img');
     img1.src = 'images/对话北极星Cover1.jpg'; 
     
-    // 绝对定位样式
     img1.style.position = 'absolute';
-    img1.style.top = '0';
+    img1.style.top = '0';      // 钉在页面顶部
     img1.style.left = '0';
     img1.style.width = '100%';
-    img1.style.height = '50%'; // 强制高度
-    img1.style.objectFit = 'contain'; // 保持比例，改 'cover' 可填满
-    img1.style.objectPosition = 'center bottom'; // 图片靠下对齐(靠近中间)
+    img1.style.height = '48%'; // 关键：只占48%，不占满一半
+    img1.style.objectFit = 'contain';
+    // 关键优化：内容在框内"居中偏上"，利用顶部的空白，远离中间
+    img1.style.objectPosition = 'center 40%'; 
     
-    // --- 图2：占据下半部分 (50% - 100%) ---
+    // --- 图2：位于底部，高度设为48% ---
     const img2 = document.createElement('img');
     img2.src = 'images/对话北极星Cover2.jpg'; 
     
-    // 绝对定位样式
     img2.style.position = 'absolute';
-    img2.style.top = '50%'; // 从页面中间开始
+    img2.style.bottom = '0';   // 关键：钉在页面底部，而不是算 top 坐标
     img2.style.left = '0';
     img2.style.width = '100%';
-    img2.style.height = '50%'; // 强制高度
+    img2.style.height = '48%'; // 关键：只占48%
     img2.style.objectFit = 'contain';
-    img2.style.objectPosition = 'center top'; // 图片靠上对齐(靠近中间)
+    // 关键优化：内容在框内"居中偏下"，利用底部的空白，远离中间
+    img2.style.objectPosition = 'center 60%'; 
 
     coverPage1.appendChild(img1);
     coverPage1.appendChild(img2);
     overlay.appendChild(coverPage1);
-
 
     // --- 步骤 C: 处理对话内容 ---
     const contentWrapper = document.createElement('div');
