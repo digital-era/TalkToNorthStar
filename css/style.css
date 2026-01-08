@@ -2439,14 +2439,21 @@
         border-left: 4px solid #0056b3 !important; /* 深蓝线，更清晰 */
         border: 1px solid #eee;
         font-weight: 500 !important;
+        /* --- 新增以下两行关键代码 --- */
+        -webkit-print-color-adjust: exact !important; /* 针对 Chrome, Safari, Edge */
+        print-color-adjust: exact !important;         /* 标准属性 */
     }
     
     /* North Star: 纯白底 + 香槟色线 */
     #print-overlay .answer-node {
-        background-color: #fff !important; 
+       /* 使用极淡的米黄色，配合金色边框非常高级 */
+        background-color: #FFFAF0 !important; 
         /* 修复了之前的语法错误 */
         border-left: 1px solid #D4AF37 !important; 
         border: 1px solid #D4AF37 !important; 
+        /* 记得加上这个，否则打印时没有背景色 */
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
 
     /* --- 7. 隐藏无关元素 --- */
