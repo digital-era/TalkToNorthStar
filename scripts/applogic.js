@@ -1336,48 +1336,57 @@ function exportToMD() {
 
 /* --- PDF导出最终版：原生高清矢量导出 --- */
 function exportToPDF() {
-    // 1. 基础检查
-    const sourceContent = document.getElementById('thoughtStreamContent');
-    if (!sourceContent) {
-        alert("未找到内容区域");
+    const source = document.getElementById('thoughtStreamContent');
+    if (!source) {
+        alert("找不到要导出的内容区域！");
         return;
     }
 
-    // 2. 临时修改网页标题
-    // 浏览器打印保存 PDF 时，默认会使用网页 Title 作为文件名
-    // 这样就解决了“文件名不一致”的问题
+    // 1. 创建打印专用容器（替身）
+    // 如果旧的没删掉，先删掉
+    let oldOverlay = document.getElementById('print-overlay');
+    if (oldOverlay) document.body.removeChild(oldOverlay);
+
+    const overlay = document.createElement('div');
+    overlay.id = 'print-overlay';
+    
+    // 2. 克隆内容 (Deep Clone)
+    // 这一步把内容复制到替身里，不管原内容藏得有多深
+    const contentClone = source.cloneNode(true);
+    
+    // 移除可能导致冲突的 id (可选)
+    contentClone.removeAttribute('id');
+    
+    // 将克隆内容放入替身
+    overlay.appendChild(contentClone);
+    document.body.appendChild(overlay);
+
+    // 3. 修改文件名
     const originalTitle = document.title;
-    const fileName = getExportFileName();
-    document.title = fileName;
+    document.title = getExportFileName();
 
-    // 3. 针对手机端的特殊处理
-    // 手机浏览器有时需要一点缓冲时间来重新计算布局（特别是隐藏了其他元素后）
-    // 我们添加一个 loading 状态
-    const loadingDiv = document.createElement('div');
-    loadingDiv.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:99999;display:flex;justify-content:center;align-items:center;font-size:16px;color:#333;';
-    loadingDiv.innerText = '正在准备打印预览...';
-    document.body.appendChild(loadingDiv);
-
-    // 4. 延时触发打印
-    // 延时是为了让 CSS @media print 生效，以及让手机浏览器准备好渲染树
+    // 4. 触发打印
+    // 延时 100ms 是为了让手机浏览器有时间渲染这个新插入的 div
     setTimeout(() => {
-        // 移除 loading 遮罩，否则它也会被打印出来（虽然有 z-index，但在 print 模式下有时会干扰）
-        document.body.removeChild(loadingDiv);
+        window.print();
+    }, 100);
 
-        try {
-            // 触发打印
-            window.print();
-        } catch (e) {
-            alert("唤起打印失败，请尝试使用浏览器菜单中的'分享'或'打印'功能。");
-            console.error(e);
-        } finally {
-            // 5. 恢复网页标题
-            // 为了防止用户取消打印后标题没变回来，稍微延时一下恢复
-            setTimeout(() => {
-                document.title = originalTitle;
-            }, 1000);
+    // 5. 打印后清理 (监听两种情况以兼容不同浏览器)
+    
+    // 方案A: 电脑端/部分手机监听打印完成
+    const cleanup = () => {
+        document.title = originalTitle;
+        if (document.body.contains(overlay)) {
+            document.body.removeChild(overlay);
         }
-    }, 500); // 500ms 延时对手机比较安全
+        window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
+
+    // 方案B: 手机端点完打印后可能不会立即回调，甚至永远不回调
+    // 我们可以不立即删除，依靠 CSS 把它隐藏在后面
+    // 或者设置一个较长的延时自动删除（比如 5秒后）
+    setTimeout(cleanup, 5000); 
 }
 
 
