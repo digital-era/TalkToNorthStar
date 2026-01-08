@@ -1500,10 +1500,28 @@ function exportToPDF() {
         // 创建媒体查询对象
         const mediaQueryList = window.matchMedia('print');
         
+        // --- 4. 添加备用清理机制（防止监听器不触发）---
+        const backupCleanup = setTimeout(() => {
+            console.log("⚠️ 备用清理机制触发");
+            document.title = originalTitle;
+            if (document.body.contains(overlay)) {
+                document.body.removeChild(overlay);
+            }
+            if (mediaQueryList.removeEventListener) {
+                mediaQueryList.removeEventListener('change', handlePrintChange);
+            } else {
+                mediaQueryList.removeListener(handlePrintChange);
+            }
+            console.groupEnd();
+        }, 10000); // 10秒后备清理
+        
         // 定义处理函数
         const handlePrintChange = (event) => {
             if (!event.matches) {
                 console.log("🖨️ 打印完成或取消，开始清理...");
+                
+                // 清除备用定时器
+                clearTimeout(backupCleanup);
                 
                 // 使用setTimeout确保清理在所有打印任务完成后执行
                 setTimeout(() => {
@@ -1521,7 +1539,11 @@ function exportToPDF() {
                     overlay.innerHTML = "";
                     
                     // 移除事件监听器
-                    mediaQueryList.removeEventListener('change', handlePrintChange);
+                    if (mediaQueryList.removeEventListener) {
+                        mediaQueryList.removeEventListener('change', handlePrintChange);
+                    } else {
+                        mediaQueryList.removeListener(handlePrintChange);
+                    }
                     
                     // 结束日志分组
                     console.groupEnd();
@@ -1536,24 +1558,6 @@ function exportToPDF() {
             // 兼容旧版浏览器
             mediaQueryList.addListener(handlePrintChange);
         }
-        
-        // --- 4. 添加备用清理机制（防止监听器不触发）---
-        const backupCleanup = setTimeout(() => {
-            console.log("⚠️ 备用清理机制触发");
-            document.title = originalTitle;
-            if (document.body.contains(overlay)) {
-                document.body.removeChild(overlay);
-            }
-            mediaQueryList.removeEventListener('change', handlePrintChange);
-            console.groupEnd();
-        }, 10000); // 10秒后备清理
-        
-        // 在正式清理时取消备用清理
-        const originalHandlePrintChange = handlePrintChange;
-        handlePrintChange = function(event) {
-            clearTimeout(backupCleanup);
-            originalHandlePrintChange(event);
-        };
         
         // --- 5. 延迟确保标题更新，然后打印 ---
         console.log("⏳ 等待300ms确保浏览器更新标题...");
