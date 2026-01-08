@@ -1339,45 +1339,39 @@ function createCoverPage(imagePath, type) {
     // type: 'front' (封面) | 'back' (封底)
     const pageContainer = document.createElement('div');
     
-    // 应用特定类名，触发 CSS 中的 named page 规则
+    // 应用特定类名，触发 JS动态注入的 CSS 中的 named page 规则
+    // 这将忽略掉您 CSS 文件中定义的 @page { margin: 15mm 5mm }
     pageContainer.className = 'print-cover-page';
     
-    // 基础样式：Flex布局居中
+    // 基础样式：Flex布局
     pageContainer.style.display = 'flex';
-    pageContainer.style.justifyContent = 'center';
-    pageContainer.style.alignItems = 'center';
     pageContainer.style.width = '100%';
-    
-    // 注意：打印时 height: 100vh 有时会导致多余空白页，
-    // 这里设为 100% 配合 page-break 属性更安全
     pageContainer.style.height = '100%'; 
     
-    // 创建图片
+    // 默认居中
+    pageContainer.style.justifyContent = 'center';
+    pageContainer.style.alignItems = 'center';
+
     const img = document.createElement('img');
     img.src = imagePath;
     
-    // 图片样式：保证清晰度且适应纸张
-    img.style.width = '100%';
-    img.style.height = '100%'; 
-    img.style.objectFit = 'contain'; // 保持比例，如果图片比例和A4不一致，会有留白而不是变形
-    // 如果你的图片是严格的 A4 比例，可以用 cover 强制铺满
-    // img.style.objectFit = 'cover'; 
+    // 基础图片样式
+    img.style.width = '100%'; 
+    img.style.objectFit = 'contain'; 
     
     pageContainer.appendChild(img);
 
     // --- 分页逻辑 ---
     if (type === 'back') {
-        // 封底：前面强制分页
         pageContainer.style.breakBefore = 'page';
     } else {
-        // 封面：后面强制分页
         pageContainer.style.breakAfter = 'page';
     }
 
     return pageContainer;
 }
 
-/* --- PDF导出最终版：解决边距冲突与空白页问题 --- */
+/* --- PDF导出最终版 --- */
 function exportToPDF() {
     console.group("🚀 [PDF Export] Start");
     
@@ -1387,7 +1381,7 @@ function exportToPDF() {
         return;
     }
 
-    // 1. 清理旧层
+    // 1. 清理旧层 (防止多次点击导致堆叠)
     let oldOverlay = document.getElementById('print-overlay');
     if (oldOverlay) document.body.removeChild(oldOverlay);
 
@@ -1395,75 +1389,97 @@ function exportToPDF() {
     const overlay = document.createElement('div');
     overlay.id = 'print-overlay';
 
-    // --- 关键修正 A: 注入 Named Page 样式 ---
-    // 这段 CSS 允许我们在同一个 PDF 里混合使用“无边距(封面)”和“有边距(正文)”
+    // --- 关键步骤 A: 注入 Named Page 样式 ---
+    // 这段样式负责"打架"：让封面无视 CSS 文件里的 15mm 边距，而正文保留边距
     const style = document.createElement('style');
     style.innerHTML = `
-        /* 定义一个名为 cover-layout 的页面类型，无边距 */
+        /* 定义无边距页面类型 */
         @page cover-layout {
             margin: 0 !important;
             size: auto;
         }
 
         @media print {
-            /* 应用于封面容器：强制使用无边距页面，并占满全屏 */
+            /* 封面容器：应用无边距，强制全屏 */
             .print-cover-page {
-                page: cover-layout; /* 关键：切换页面配置 */
+                page: cover-layout; 
                 width: 100vw !important;
-                height: 100vh !important; /* 强制铺满一页 */
+                height: 100vh !important;
                 max-width: none !important;
                 margin: 0 !important;
                 padding: 0 !important;
             }
             
-            /* 修正图片在打印时的尺寸 */
             .print-cover-page img {
                 max-width: 100% !important;
                 height: auto !important;
-                max-height: 100vh !important;
             }
 
-            /* 修正内容容器，防止其被原来的 position:absolute 影响流布局 */
+            /* 修正内容容器，确保它不应用 cover-layout，从而继承外部 CSS 的 15mm 边距 */
             #print-content-wrapper {
                 position: relative;
                 width: 100%;
-                /* 恢复默认页面流，不要 page: cover-layout，这样它就会继承你css文件里的 @page {margin: 15mm 5mm} */
             }
         }
     `;
     overlay.appendChild(style);
 
-    // --- 步骤 B: 插入封面 (Cover1, Cover2) ---
-    const cover1 = createCoverPage('images/对话北极星Cover1.jpg', 'front');
-    overlay.appendChild(cover1);
+    // --- 步骤 B: 第一页 (图1在上，图2在下) ---
+    // 手动构建一个组合容器，复用 'print-cover-page' 以去除边距
+    const coverPage1 = document.createElement('div');
+    coverPage1.className = 'print-cover-page'; // 关键：去除边距
+    coverPage1.style.display = 'flex';
+    coverPage1.style.flexDirection = 'column'; // 垂直排列
+    coverPage1.style.justifyContent = 'center'; // 整体垂直居中
+    coverPage1.style.alignItems = 'center';
+    coverPage1.style.breakAfter = 'page'; // 结束后换页
 
-    const cover2 = createCoverPage('images/对话北极星Cover2.jpg', 'front');
-    overlay.appendChild(cover2);
+    // 图1 (178K)
+    const img1 = document.createElement('img');
+    img1.src = 'images/对话北极星Cover1.jpg'; 
+    img1.style.width = '100%';
+    img1.style.marginBottom = '0px'; // 图1图2紧密连接，如需间隙可改为 '10px'
+    img1.style.objectFit = 'contain';
+    
+    // 图2 (90K)
+    const img2 = document.createElement('img');
+    img2.src = 'images/对话北极星Cover2.jpg'; 
+    img2.style.width = '100%';
+    img2.style.objectFit = 'contain';
+
+    coverPage1.appendChild(img1);
+    coverPage1.appendChild(img2);
+    overlay.appendChild(coverPage1);
+
 
     // --- 步骤 C: 处理对话内容 ---
-    // 创建一个包裹层，用于隔离封面和内容
     const contentWrapper = document.createElement('div');
     contentWrapper.id = 'print-content-wrapper';
     
+    // 克隆节点，保护原页面事件和数据
     const contentClone = source.cloneNode(true);
     contentClone.removeAttribute('id');
 
-    // 注入角色名逻辑 (保持不变)
+    // 插入角色标题 (保持原逻辑)
     const nodes = contentClone.children;
     for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
+        
+        // 跳过非对话节点
+        if (!node.classList.contains('thought-node')) continue;
+
         let roleTitle = document.createElement('div');
         roleTitle.style.fontWeight = 'bold';
-        roleTitle.style.marginBottom = '2px'; // 稍微改小一点
+        roleTitle.style.marginBottom = '2px';
         roleTitle.style.fontSize = '12px';
 
         if (node.classList.contains('question-node')) {
             roleTitle.innerText = "🧑 User"; 
-            roleTitle.style.color = '#0056b3'; // 对应你的新CSS深蓝
+            roleTitle.style.color = '#0056b3';
             node.insertBefore(roleTitle, node.firstChild);
         } else if (node.classList.contains('answer-node')) {
             roleTitle.innerText = "🤖 North Star"; 
-            roleTitle.style.color = '#b8860b'; // 对应金色/暗金色
+            roleTitle.style.color = '#b8860b';
             node.insertBefore(roleTitle, node.firstChild);
         }
     }
@@ -1471,23 +1487,46 @@ function exportToPDF() {
     contentWrapper.appendChild(contentClone);
     overlay.appendChild(contentWrapper);
 
-    // --- 步骤 D: 插入封底 (Cover3) ---
+
+    // --- 步骤 D: 最后一页 (图3，位置上提) ---
     const backCover = createCoverPage('images/对话北极星Cover3.jpg', 'back');
+    
+    // 针对图3的特殊位置调整
+    // 改为 flex-start (顶部对齐)，然后用 padding 把图片顶下来一点点
+    // 这样就实现了"比居中靠上，但又不是死死贴着顶端"的效果
+    backCover.style.justifyContent = 'flex-start'; 
+    backCover.style.paddingTop = '10vh'; // 距离顶端 10% 页面高度，可按需调整
+    
+    // 限制一下图3的高度，防止它太大了撑满全屏
+    const img3 = backCover.querySelector('img');
+    if (img3) {
+        img3.style.height = 'auto';
+        img3.style.maxHeight = '60vh'; // 限制最大高度
+    }
+    
     overlay.appendChild(backCover);
 
-    // 3. 挂载
+    // 3. 挂载到 Body
     document.body.appendChild(overlay);
 
-    // 4. 打印
+    // 4. 执行打印
     const originalTitle = document.title;
     document.title = getExportFileName();
 
+    // 延时1秒，给图片加载留时间 (300K图片瞬间就能加载完，但1秒更稳妥)
     setTimeout(() => {
         window.print();
+        
+        // 恢复标题
         document.title = originalTitle;
-        // document.body.removeChild(overlay); 
+        
+        // --- 内存释放 ---
+        // 打印对话框关闭后执行
+        // 1. 移除 DOM，断开图片引用
+        document.body.removeChild(overlay);
+        // 2. 强制清空 innerHTML 帮助 GC 识别
+        overlay.innerHTML = "";
+        
         console.groupEnd();
-    }, 800);
+    }, 1000);
 }
-
-
