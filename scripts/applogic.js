@@ -1499,24 +1499,29 @@ function exportToPDF() {
          // 使用media query监听打印状态
         const mediaQueryList = window.matchMedia('print');
         const handlePrintChange = (mql) => {
-        if (!mql.matches) {
-            // 打印结束
-            setTimeout(() => {
-                document.title = originalTitle;
-                if (document.body.contains(overlay)) {
-                    document.body.removeChild(overlay);
-                }
-                overlay.innerHTML = "";
-                mediaQueryList.removeListener(handlePrintChange);
-                console.groupEnd();
-            }, 500);
-        }
-    };
-    
-    mediaQueryList.addListener(handlePrintChange);
-    
-    // 延长延迟确保标题设置生效
-    setTimeout(() => {
-        window.print();
-    }, 300);
-});
+            if (!mql.matches) {
+                // 打印结束（包括取消）
+                setTimeout(() => {
+                    document.title = originalTitle;
+                    if (document.body.contains(overlay)) {
+                        document.body.removeChild(overlay);
+                    }
+                    overlay.innerHTML = "";
+                    mediaQueryList.removeListener(handlePrintChange);
+                    console.groupEnd();
+                }, 500);
+            }
+        };
+        
+        mediaQueryList.addListener(handlePrintChange);
+        
+        // 延长延迟确保标题设置生效，并在打印前再次确认标题
+        setTimeout(() => {
+            // 再次确认标题，防止被其他代码修改
+            if (document.title !== finalName) {
+                document.title = finalName;
+            }
+            console.log("🖨️ 开始打印，当前标题:", document.title);
+            window.print();
+        }, 500); // 延迟500ms，确保浏览器已经更新标题
+    });
