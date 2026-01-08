@@ -1271,6 +1271,69 @@ function deleteNode(event, index) {
     }
 }
 
+/* --- 辅助函数：生成文件名时间戳 --- */
+function getExportFileName() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hour = String(now.getHours()).padStart(2, '0');
+    const minute = String(now.getMinutes()).padStart(2, '0');
+    const second = String(now.getSeconds()).padStart(2, '0');
+    
+    // 格式：TalkwithNorthStars20231027103000
+    return `TalkwithNorthStars${year}${month}${day}${hour}${minute}${second}`;
+}
+
+// 2. 导出为 Markdown
+function exportToMD() {
+    if (!conversationHistory || conversationHistory.length === 0) {
+        alert("画布为空，无法导出。");
+        return;
+    }
+
+    let mdContent = "# Dialogue Canvas Export\n\n";
+    const timestamp = new Date().toLocaleString();
+    mdContent += `> Exported on: ${timestamp}\n\n---\n\n`;
+
+    conversationHistory.forEach((item, index) => {
+        const isUser = item.role === 'user';
+        const roleName = isUser ? "User" : (item.leaderInfo?.name || "North Star");
+        
+        // 引用格式化
+        let text = item.text.replace(/\n/g, '\n> '); 
+        
+        // --- 修改点：在 User 问题后增加北极星人物信息 ---
+        if (isUser) {
+            // 向后看一条
+            const nextItem = conversationHistory[index + 1];
+            if (nextItem && nextItem.role !== 'user' && nextItem.leaderInfo) {
+                const info = nextItem.leaderInfo;
+                // 追加信息到 User 的文本块中
+                text += `\n\n> **🧩 关联北极星人物**：${info.name}`;
+                text += `\n> - 领域：${info.field}`;
+                text += `\n> - 贡献：${info.contribution}`;
+            }
+        }
+
+        mdContent += `### ${roleName}:\n${text}\n\n`;
+    });
+
+    // 创建 Blob 并下载
+    const blob = new Blob([mdContent], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    
+    // --- 修改点：统一文件名 ---
+    a.download = `${getExportFileName()}.md`;
+    
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
 /* --- PDF导出最终版：原生高清矢量导出 --- */
 function exportToPDF() {
     // 1. 基础检查
