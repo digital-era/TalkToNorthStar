@@ -1334,7 +1334,43 @@ function exportToMD() {
     URL.revokeObjectURL(url);
 }
 
-/* --- PDF导出最终版：原生高清矢量导出 --- */
+/* --- 辅助函数：创建全屏封面页 --- */
+function createCoverPage(imagePath, isBackCover = false) {
+    const pageContainer = document.createElement('div');
+    
+    // 设置容器样式，确保图片居中并占满
+    pageContainer.className = 'print-cover-page';
+    pageContainer.style.width = '100%';
+    pageContainer.style.height = '100vh'; // 视口高度，打印时通常对应一页
+    pageContainer.style.display = 'flex';
+    pageContainer.style.justifyContent = 'center';
+    pageContainer.style.alignItems = 'center';
+    pageContainer.style.boxSizing = 'border-box';
+    
+    // 创建图片元素
+    const img = document.createElement('img');
+    img.src = imagePath;
+    img.style.maxWidth = '100%';
+    img.style.maxHeight = '100%';
+    img.style.objectFit = 'contain'; // 保持比例适应
+    
+    pageContainer.appendChild(img);
+
+    // --- 关键：控制分页 ---
+    if (isBackCover) {
+        // 如果是封底，强制在其之前分页
+        pageContainer.style.pageBreakBefore = 'always'; 
+        pageContainer.style.breakBefore = 'page';
+    } else {
+        // 如果是封面，强制在其之后分页
+        pageContainer.style.pageBreakAfter = 'always';
+        pageContainer.style.breakAfter = 'page';
+    }
+
+    return pageContainer;
+}
+
+/* --- PDF导出最终版：带封面封底 --- */
 function exportToPDF() {
     console.group("🚀 [PDF Export] Start");
     
@@ -1351,52 +1387,88 @@ function exportToPDF() {
     // 2. 创建新层
     const overlay = document.createElement('div');
     overlay.id = 'print-overlay';
-    
-    // 3. 深度克隆
+
+    // --- 步骤 A: 插入动态样式 (确保打印时封面全屏且无边距干扰) ---
+    const style = document.createElement('style');
+    style.innerHTML = `
+        @media print {
+            @page {
+                margin: 0; /* 尝试移除浏览器默认页边距，让封面铺满 */
+                size: auto;
+            }
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            #print-overlay {
+                width: 100%;
+                z-index: 9999;
+            }
+            .print-cover-page {
+                width: 100vw;
+                height: 100vh;
+                page-break-after: always; /* 兼容性写法 */
+                break-after: page;
+            }
+        }
+    `;
+    overlay.appendChild(style);
+
+    // --- 步骤 B: 插入前两个封面 (Cover1, Cover2) ---
+    // 注意：路径根据你的描述设定
+    const cover1 = createCoverPage('images/对话北极星Cover1.png');
+    overlay.appendChild(cover1);
+
+    const cover2 = createCoverPage('images/对话北极星Cover2.png');
+    overlay.appendChild(cover2);
+
+    // --- 步骤 C: 处理对话内容核心 ---
     const contentClone = source.cloneNode(true);
     contentClone.removeAttribute('id');
+    // 给内容容器加一些内边距，避免文字贴着纸张边缘（因为上面为了封面设了 margin:0）
+    contentClone.style.padding = "20px 40px"; 
 
-    // --- 新增优化步骤：遍历节点，显式注入角色名 ---
-    // 这样 PDF 里能清晰看到是谁在说话，而且不依赖 CSS content
+    // 遍历节点，显式注入角色名 (保留你原有的逻辑)
     const nodes = contentClone.children;
     for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
-        
-        // 假设你的数据源 conversationHistory 和 DOM 节点是一一对应的
-        // 如果 DOM 上没有存数据，这里做一个简单的根据类名判断
         let roleTitle = document.createElement('div');
         roleTitle.style.fontWeight = 'bold';
         roleTitle.style.marginBottom = '5px';
         roleTitle.style.fontSize = '12px';
 
         if (node.classList.contains('question-node')) {
-            roleTitle.innerText = "🧑 User"; // 用户名
-            roleTitle.style.color = '#007bff'; // 蓝
+            roleTitle.innerText = "🧑 User"; 
+            roleTitle.style.color = '#007bff'; 
             node.insertBefore(roleTitle, node.firstChild);
         } else if (node.classList.contains('answer-node')) {
-            // 尝试找一下关联的 conversationHistory 数据，或者简单写死
-            // 如果你的 DOM 节点上有 data-name 属性更好
             roleTitle.innerText = "🤖 North Star"; 
-            roleTitle.style.color = '#28a745'; // 绿
+            roleTitle.style.color = '#28a745'; 
             node.insertBefore(roleTitle, node.firstChild);
         }
     }
-
     overlay.appendChild(contentClone);
+
+    // --- 步骤 D: 插入封底 (Cover3) ---
+    // 第二个参数 true 表示这是一个封底，会在它之前强制分页
+    const backCover = createCoverPage('images/对话北极星Cover3.png', true);
+    overlay.appendChild(backCover);
+
+    // 3. 挂载到 DOM
     document.body.appendChild(overlay);
 
     // 4. 设置标题并打印
     const originalTitle = document.title;
     document.title = getExportFileName();
 
-    // 给一点时间让浏览器渲染样式
+    // 延时打印，确保图片加载完成
+    // 如果图片较大，建议适当增加延时，或者使用 img.onload 逻辑
     setTimeout(() => {
         window.print();
         document.title = originalTitle;
-        // 打印结束后移除（可选，保留方便调试）
-        // document.body.removeChild(overlay); 
+        // document.body.removeChild(overlay); // 调试时可注释掉
         console.groupEnd();
-    }, 500);
+    }, 800); // 稍微增加了一点延时给图片渲染
 }
 
 
