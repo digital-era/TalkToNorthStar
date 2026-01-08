@@ -1496,75 +1496,76 @@ function exportToPDF() {
         document.title = finalName;
         console.log("📄 文件名已设置为:", finalName);
 
-    // --- 3. 使用media query监听打印状态（修正版）---
-    // 创建媒体查询对象
-    const mediaQueryList = window.matchMedia('print');
-    
-    // 定义处理函数
-    const handlePrintChange = (event) => {
-        if (!event.matches) {
-            console.log("🖨️ 打印完成或取消，开始清理...");
-            
-            // 使用setTimeout确保清理在所有打印任务完成后执行
-            setTimeout(() => {
-                // 恢复标题
-                document.title = originalTitle;
-                console.log("✅ 标题已恢复为:", originalTitle);
+        // --- 3. 使用media query监听打印状态（修正版）---
+        // 创建媒体查询对象
+        const mediaQueryList = window.matchMedia('print');
+        
+        // 定义处理函数
+        const handlePrintChange = (event) => {
+            if (!event.matches) {
+                console.log("🖨️ 打印完成或取消，开始清理...");
                 
-                // 清理DOM元素
-                if (document.body.contains(overlay)) {
-                    document.body.removeChild(overlay);
-                    console.log("🗑️ 打印层已移除");
-                }
-                
-                // 清理内存
-                overlay.innerHTML = "";
-                
-                // 移除事件监听器
-                mediaQueryList.removeEventListener('change', handlePrintChange);
-                
-                // 结束日志分组
-                console.groupEnd();
-            }, 500); // 500ms延迟确保完全清理
-        }
-    };
-    
-    // 添加事件监听器（使用现代语法）
-    if (mediaQueryList.addEventListener) {
-        mediaQueryList.addEventListener('change', handlePrintChange);
-    } else {
-        // 兼容旧版浏览器
-        mediaQueryList.addListener(handlePrintChange);
-    }
-    
-    // --- 4. 添加备用清理机制（防止监听器不触发）---
-    const backupCleanup = setTimeout(() => {
-        console.log("⚠️ 备用清理机制触发");
-        document.title = originalTitle;
-        if (document.body.contains(overlay)) {
-            document.body.removeChild(overlay);
-        }
-        mediaQueryList.removeEventListener('change', handlePrintChange);
-        console.groupEnd();
-    }, 10000); // 10秒后备清理
-    
-    // 在正式清理时取消备用清理
-    const originalHandlePrintChange = handlePrintChange;
-    handlePrintChange = function(event) {
-        clearTimeout(backupCleanup);
-        originalHandlePrintChange(event);
-    };
-    
-    // --- 5. 延迟确保标题更新，然后打印 ---
-    console.log("⏳ 等待300ms确保浏览器更新标题...");
-    setTimeout(() => {
-        // 再次确认标题
-        if (document.title !== finalName) {
-            document.title = finalName;
-            console.log("🔄 重新确认标题为:", finalName);
+                // 使用setTimeout确保清理在所有打印任务完成后执行
+                setTimeout(() => {
+                    // 恢复标题
+                    document.title = originalTitle;
+                    console.log("✅ 标题已恢复为:", originalTitle);
+                    
+                    // 清理DOM元素
+                    if (document.body.contains(overlay)) {
+                        document.body.removeChild(overlay);
+                        console.log("🗑️ 打印层已移除");
+                    }
+                    
+                    // 清理内存
+                    overlay.innerHTML = "";
+                    
+                    // 移除事件监听器
+                    mediaQueryList.removeEventListener('change', handlePrintChange);
+                    
+                    // 结束日志分组
+                    console.groupEnd();
+                }, 500); // 500ms延迟确保完全清理
+            }
+        };
+        
+        // 添加事件监听器（使用现代语法）
+        if (mediaQueryList.addEventListener) {
+            mediaQueryList.addEventListener('change', handlePrintChange);
+        } else {
+            // 兼容旧版浏览器
+            mediaQueryList.addListener(handlePrintChange);
         }
         
-        console.log("🖨️ 触发打印对话框...");
-        window.print();
-    }, 300);
-});
+        // --- 4. 添加备用清理机制（防止监听器不触发）---
+        const backupCleanup = setTimeout(() => {
+            console.log("⚠️ 备用清理机制触发");
+            document.title = originalTitle;
+            if (document.body.contains(overlay)) {
+                document.body.removeChild(overlay);
+            }
+            mediaQueryList.removeEventListener('change', handlePrintChange);
+            console.groupEnd();
+        }, 10000); // 10秒后备清理
+        
+        // 在正式清理时取消备用清理
+        const originalHandlePrintChange = handlePrintChange;
+        handlePrintChange = function(event) {
+            clearTimeout(backupCleanup);
+            originalHandlePrintChange(event);
+        };
+        
+        // --- 5. 延迟确保标题更新，然后打印 ---
+        console.log("⏳ 等待300ms确保浏览器更新标题...");
+        setTimeout(() => {
+            // 再次确认标题
+            if (document.title !== finalName) {
+                document.title = finalName;
+                console.log("🔄 重新确认标题为:", finalName);
+            }
+            
+            console.log("🖨️ 触发打印对话框...");
+            window.print();
+        }, 300);
+    });
+} 
