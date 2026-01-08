@@ -1478,11 +1478,7 @@ function exportToPDF() {
     
     Promise.race([Promise.all(imagePromises), timeoutPromise]).then(() => {
         
-        // 备份旧标题
-        const originalTitle = document.title;
-        
-        // --- 1. 计算新文件名 ---
-        // 确保 finalName 绝对不为空
+        // 1. 直接改名
         let finalName = "对话记录";
         if (typeof getExportFileName === 'function') {
             finalName = getExportFileName();
@@ -1491,32 +1487,19 @@ function exportToPDF() {
             const pad = (n) => String(n).padStart(2, '0');
             finalName = `对话北极星_${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}`;
         }
-
-        // --- 2. 设置新标题 ---
         document.title = finalName;
-        console.log("📄 文件名已设置为:", finalName);
 
-        // --- 3. 定义清理函数 (只在打印结束后执行) ---
-        const cleanup = () => {
-            console.log("🧹 打印窗口关闭，开始清理...");
-            document.title = originalTitle; // 恢复标题
+        // 2. 稍微等一下让浏览器反应过来，然后直接打
+        setTimeout(() => {
+            window.print();
+            
+            // 3. 打印完只清理遮罩层，【不再恢复标题】
+            // 这样文件名绝对稳，唯一的副作用就是浏览器标签页名字变了
             if (document.body.contains(overlay)) {
                 document.body.removeChild(overlay);
             }
             overlay.innerHTML = "";
             console.groupEnd();
-            
-            // 移除监听器，防止内存泄漏
-            window.removeEventListener('afterprint', cleanup);
-        };
-
-        // --- 4. 绑定事件：只有当窗口关闭时才恢复标题 ---
-        // 这是解决 "文件名为空" 最稳妥的办法
-        window.addEventListener('afterprint', cleanup);
-
-        // --- 5. 稍微缓冲 100ms 确保浏览器检测到 title 变化，然后打印 ---
-        setTimeout(() => {
-            window.print();
         }, 100);
     });
 }
