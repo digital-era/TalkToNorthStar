@@ -2326,10 +2326,14 @@
     z-index: -1;
 }
 
-/* --- 0. 核心修正：控制浏览器物理页边距 (解决边距过大问题) --- */
+/* --- 0. 核心修正：调整页边距以容纳页眉页脚, 解决左右边距过大问题 --- */
 @page {
-    /* 将打印机默认的 ~20mm 边距强制设为 5mm */
-    margin: 5mm; 
+    /* 
+       语法顺序：上  右  下  左 
+       将上下设为 15mm (给页眉页脚留位置)
+       将左右设为 5mm (保持水平方向内容尽可能宽)
+    */
+    margin: 15mm 5mm; 
     size: auto;
 }
 
@@ -2431,8 +2435,8 @@
     
     /* User: 浅灰底 + 香槟色线 (修改了原来的蓝色) */
     #print-overlay .question-node {
-        background-color: #fcfcfc !important; 
-        border-left: 4px solid #D4AF37 !important; /* 统一改为香槟色 */
+        background-color: #f0f6ff !important; /* 浅蓝底 */
+        border-left: 4px solid #0056b3 !important; /* 深蓝线，更清晰 */
         border: 1px solid #eee;
         font-weight: 500 !important;
     }
@@ -2441,8 +2445,8 @@
     #print-overlay .answer-node {
         background-color: #fff !important; 
         /* 修复了之前的语法错误 */
-        border-left: 4px solid #D4AF37 !important; 
-        border: 1px solid #eee;
+        border-left: 1px solid #D4AF37 !important; 
+        border: 1px solid #D4AF37 !important; 
     }
 
     /* --- 7. 隐藏无关元素 --- */
