@@ -1271,154 +1271,50 @@ function deleteNode(event, index) {
     }
 }
 
-/* --- 辅助函数：生成文件名时间戳 --- */
-function getExportFileName() {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hour = String(now.getHours()).padStart(2, '0');
-    const minute = String(now.getMinutes()).padStart(2, '0');
-    const second = String(now.getSeconds()).padStart(2, '0');
-    
-    // 格式：TalkwithNorthStars20231027103000
-    return `TalkwithNorthStars${year}${month}${day}${hour}${minute}${second}`;
-}
-
-// 2. 导出为 Markdown
-function exportToMD() {
-    if (!conversationHistory || conversationHistory.length === 0) {
-        alert("画布为空，无法导出。");
-        return;
-    }
-
-    let mdContent = "# Dialogue Canvas Export\n\n";
-    const timestamp = new Date().toLocaleString();
-    mdContent += `> Exported on: ${timestamp}\n\n---\n\n`;
-
-    conversationHistory.forEach((item, index) => {
-        const isUser = item.role === 'user';
-        const roleName = isUser ? "User" : (item.leaderInfo?.name || "North Star");
-        
-        // 引用格式化
-        let text = item.text.replace(/\n/g, '\n> '); 
-        
-        // --- 修改点：在 User 问题后增加北极星人物信息 ---
-        if (isUser) {
-            // 向后看一条
-            const nextItem = conversationHistory[index + 1];
-            if (nextItem && nextItem.role !== 'user' && nextItem.leaderInfo) {
-                const info = nextItem.leaderInfo;
-                // 追加信息到 User 的文本块中
-                text += `\n\n> **🧩 关联北极星人物**：${info.name}`;
-                text += `\n> - 领域：${info.field}`;
-                text += `\n> - 贡献：${info.contribution}`;
-            }
-        }
-
-        mdContent += `### ${roleName}:\n${text}\n\n`;
-    });
-
-    // 创建 Blob 并下载
-    const blob = new Blob([mdContent], { type: 'text/markdown;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    
-    // --- 修改点：统一文件名 ---
-    a.download = `${getExportFileName()}.md`;
-    
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-}
-
-/* --- 新版：直接生成 PDF 文件下载 (html2canvas + jsPDF) --- */
-async function exportToPDF() {
+/* --- PDF导出最终版：原生高清矢量导出 --- */
+function exportToPDF() {
     // 1. 基础检查
     const sourceContent = document.getElementById('thoughtStreamContent');
-    if (!conversationHistory || conversationHistory.length === 0 || !sourceContent) {
-        alert("没有可导出的内容。");
+    if (!sourceContent) {
+        alert("未找到内容区域");
         return;
     }
 
-    // 显示加载提示 (因为生成图片比较耗时，给用户反馈)
-    const loadingBtn = document.createElement('div');
-    loadingBtn.innerText = "正在生成 PDF，请稍候...";
-    loadingBtn.style.cssText = "position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);padding:20px;background:rgba(0,0,0,0.8);color:#fff;border-radius:10px;z-index:9999;";
-    document.body.appendChild(loadingBtn);
+    // 2. 临时修改网页标题
+    // 浏览器打印保存 PDF 时，默认会使用网页 Title 作为文件名
+    // 这样就解决了“文件名不一致”的问题
+    const originalTitle = document.title;
+    const fileName = getExportFileName();
+    document.title = fileName;
 
-    try {
-        // 2. 创建一个隐藏的容器用于渲染
-        // 为什么不直接用原来的 DOM？因为屏幕宽度不一定是 A4 纸宽度，直接截图会变形。
-        let exportArea = document.getElementById('export-container-hidden');
-        if (exportArea) document.body.removeChild(exportArea); // 清理旧的
-        
-        exportArea = document.createElement('div');
-        exportArea.id = 'export-container-hidden';
-        
-        // 克隆内容
-        const contentClone = sourceContent.cloneNode(true);
-        contentClone.removeAttribute('id'); // 移除ID避免冲突
-        exportArea.appendChild(contentClone);
-        document.body.appendChild(exportArea);
+    // 3. 针对手机端的特殊处理
+    // 手机浏览器有时需要一点缓冲时间来重新计算布局（特别是隐藏了其他元素后）
+    // 我们添加一个 loading 状态
+    const loadingDiv = document.createElement('div');
+    loadingDiv.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#fff;z-index:99999;display:flex;justify-content:center;align-items:center;font-size:16px;color:#333;';
+    loadingDiv.innerText = '正在准备打印预览...';
+    document.body.appendChild(loadingDiv);
 
-        // 3. 等待 MathJax 或图片加载 (简单延时)
-        await new Promise(resolve => setTimeout(resolve, 500));
+    // 4. 延时触发打印
+    // 延时是为了让 CSS @media print 生效，以及让手机浏览器准备好渲染树
+    setTimeout(() => {
+        // 移除 loading 遮罩，否则它也会被打印出来（虽然有 z-index，但在 print 模式下有时会干扰）
+        document.body.removeChild(loadingDiv);
 
-        // 4. 使用 html2canvas 截图
-        // scale: 2 保证高清，useCORS 允许跨域图片
-        const canvas = await html2canvas(exportArea, {
-            scale: 2, 
-            useCORS: true,
-            logging: false,
-            windowWidth: 794 // 强制模拟桌面宽度
-        });
-
-        // 5. 初始化 PDF (A4纸: 595.28 x 841.89 pt)
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'pt', 'a4');
-        
-        const contentWidth = canvas.width;
-        const contentHeight = canvas.height;
-
-        // A4 纸的尺寸（保留一点页边距）
-        const pageWidth = 595.28;
-        const pageHeight = 841.89;
-        const leftHeight = contentHeight;
-        
-        // 计算图片在 PDF 中的显示尺寸 (等比缩放)
-        const imgWidth = pageWidth; 
-        const imgHeight = (pageWidth / contentWidth) * contentHeight;
-
-        // 6. 分页逻辑 (处理长图)
-        let position = 0; // 当前页面内容的顶部偏移
-        let heightLeft = imgHeight; // 剩余未打印的高度
-
-        // 第一页
-        pdf.addImage(canvas, 'JPEG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-
-        // 循环添加后续页
-        while (heightLeft > 0) {
-            position = heightLeft - imgHeight; // 向上偏移，显示图片的下半部分
-            pdf.addPage();
-            pdf.addImage(canvas, 'JPEG', 0, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
+        try {
+            // 触发打印
+            window.print();
+        } catch (e) {
+            alert("唤起打印失败，请尝试使用浏览器菜单中的'分享'或'打印'功能。");
+            console.error(e);
+        } finally {
+            // 5. 恢复网页标题
+            // 为了防止用户取消打印后标题没变回来，稍微延时一下恢复
+            setTimeout(() => {
+                document.title = originalTitle;
+            }, 1000);
         }
-
-        // 7. 保存文件 (文件名与 MD 保持一致)
-        const fileName = `${getExportFileName()}.pdf`;
-        pdf.save(fileName);
-
-    } catch (error) {
-        console.error("PDF Export Error:", error);
-        alert("导出失败，请重试。");
-    } finally {
-        // 8. 清理工作
-        document.body.removeChild(loadingBtn);
-        const exportArea = document.getElementById('export-container-hidden');
-        if (exportArea) document.body.removeChild(exportArea);
-    }
+    }, 500); // 500ms 延时对手机比较安全
 }
+
+
