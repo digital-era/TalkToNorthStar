@@ -1434,10 +1434,10 @@ function exportToPDF() {
     overlay.appendChild(style);
 
     // --- 步骤 B: 插入封面 (Cover1, Cover2) ---
-    const cover1 = createCoverPage('images/对话北极星Cover1.png', 'front');
+    const cover1 = createCoverPage('images/对话北极星Cover1.jpg', 'front');
     overlay.appendChild(cover1);
 
-    const cover2 = createCoverPage('images/对话北极星Cover2.png', 'front');
+    const cover2 = createCoverPage('images/对话北极星Cover2.jpg', 'front');
     overlay.appendChild(cover2);
 
     // --- 步骤 C: 处理对话内容 ---
@@ -1472,7 +1472,7 @@ function exportToPDF() {
     overlay.appendChild(contentWrapper);
 
     // --- 步骤 D: 插入封底 (Cover3) ---
-    const backCover = createCoverPage('images/对话北极星Cover3.png', 'back');
+    const backCover = createCoverPage('images/对话北极星Cover3.jpg', 'back');
     overlay.appendChild(backCover);
 
     // 3. 挂载
