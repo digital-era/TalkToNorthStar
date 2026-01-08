@@ -1343,312 +1343,45 @@ function exportToMD() {
  * 2. 【对齐修正】精准复制行内公式的 vertical-align 属性，防止图片跟文字基线对不齐
  * 3. 保持无框书籍排版风格
  */
-async function exportToPDF() {
-    // --- 0. 基础检查 ---
+/* --- 新版：原生高清 PDF 导出 --- */
+function exportToPDF() {
+    // 1. 基础检查
     if (!conversationHistory || conversationHistory.length === 0) {
         alert("没有可导出的内容。");
         return;
     }
-    if (typeof window.jspdf === 'undefined' || typeof html2canvas === 'undefined') {
-        alert("缺少必要组件，请检查引入。");
-        return;
+
+    // 2. 准备打印环境
+    // 我们暂时把页面锁定，添加打印标记类
+    document.body.classList.add('printing-mode');
+
+    // 3. 针对 MathJax 的特殊处理 (确保重排)
+    // 打印模式下宽度改变，需要通知 MathJax 重新计算公式布局
+    if (window.MathJax) {
+        const container = document.getElementById('thoughtStreamContent');
+        MathJax.typesetPromise([container]).then(() => {
+            // 4. 唤起浏览器打印对话框
+            // 这是一个阻塞操作，用户关闭打印窗口后才会继续执行
+            window.print();
+            
+            // 5. 打印结束后清理
+            cleanupAfterPrint();
+        }).catch(err => {
+            console.error(err);
+            window.print(); // 即使公式出错也尝试打印
+            cleanupAfterPrint();
+        });
+    } else {
+        window.print();
+        cleanupAfterPrint();
     }
+}
 
-    // --- 1. 核心配置 ---
-    const CONFIG = {
-        A4_W: 210, A4_H: 297,
-        MARGIN_TOP: 25, MARGIN_BOT: 30, MARGIN_X: 20,
-        
-        SCALE: 4,           // 4倍高清采样
-        STAGE_WIDTH: 780,   // 宽度
-        
-        // 书籍配色
-        PAGE_BG: "#fdf9f2", 
-        TEXT_COLOR: "#222",
-        
-        FONT_STACK: "'Times New Roman', 'Songti SC', 'SimSun', serif",
-    };
-
-    const CONTENT_W = CONFIG.A4_W - (CONFIG.MARGIN_X * 2);
-    const PAGE_SAFE_BOTTOM = CONFIG.A4_H - CONFIG.MARGIN_BOT;
-    const MAX_CONTENT_H = PAGE_SAFE_BOTTOM - CONFIG.MARGIN_TOP;
-
-    // --- 2. Markdown 解析器 ---
-    function parseMarkdown(text) {
-        if (!text) return '';
-        let html = text
-            // 标题
-            .replace(/^# (.*$)/gim, '<h1 style="font-size:24px; font-weight:bold; color:#d84315; margin:22px 0 15px; font-family:\'Songti SC\',serif;">$1</h1>')
-            .replace(/^## (.*$)/gim, '<h2 style="font-size:20px; font-weight:bold; color:#333; margin:18px 0 10px; border-bottom:1px dashed #caa; padding-bottom:5px;">$1</h2>')
-            .replace(/^### (.*$)/gim, '<h3 style="font-size:17px; font-weight:bold; color:#444; margin:15px 0 8px;">$1</h3>')
-            .replace(/^#### (.*$)/gim, '<h4 style="font-size:16px; font-weight:bold; color:#000; margin:12px 0 6px;">$1</h4>')
-            // 粗体
-            .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#000;">$1</strong>')
-            // 列表
-            .replace(/^\s*(\d+)\.\s+(.*$)/gim, '<div style="margin-left:2em; text-indent:-1.2em; margin-bottom:6px; line-height:1.6;"><span style="font-weight:bold; font-family:\'Times New Roman\'; margin-right:4px;">$1.</span>$2</div>')
-            .replace(/^\s*-\s+(.*$)/gim, '<div style="margin-left:2em; text-indent:-1em; margin-bottom:6px; line-height:1.6;">• $1</div>')
-            // 分割线
-            .replace(/^\s*[-*_]{3,}\s*$/gim, '<div style="border-top:1px solid #d7ccc8; margin:25px 0; height:1px;"></div>')
-            // 换行
-            .replace(/\n\n/g, '<div style="height:10px;"></div>') 
-            .replace(/\n/g, '<br>');
-        return html;
-    }
-
-    // --- 3. 【核武器】SVG 转图片函数 (解决行内公式空白) ---
-    async function rasterizeMathJax(container) {
-        // 找到所有的 MathJax 容器 (mjx-container)
-        const mathNodes = Array.from(container.querySelectorAll('mjx-container'));
-        
-        if (mathNodes.length === 0) return;
-
-        // 使用 Promise.all 并行处理，提高速度
-        await Promise.all(mathNodes.map(async (node) => {
-            const svg = node.querySelector('svg');
-            if (!svg) return;
-
-            // 1. 获取几何信息 (Bounding Rect)
-            // 这步至关重要，它决定了行内公式在图片化后会不会变形
-            const rect = node.getBoundingClientRect();
-            const width = rect.width;
-            const height = rect.height;
-            
-            // 跳过未渲染的
-            if (width < 1 || height < 1) return;
-
-            // 2. 获取计算样式 (特别是 vertical-align)
-            // 行内公式通常有 vertical-align: -0.xxx ex，必须复制给图片
-            const computedStyle = window.getComputedStyle(node);
-            const vAlign = computedStyle.verticalAlign;
-            const color = computedStyle.color || '#000'; // 强制获取颜色
-
-            // 3. 序列化 SVG
-            // 必须显式设置 xmlns 和 fill，否则转图片后可能是黑块或透明
-            svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-            svg.style.color = color; 
-            svg.style.fill = 'currentColor'; // 确保颜色正确
-            
-            const xml = new XMLSerializer().serializeToString(svg);
-            
-            // 4. 转 Base64
-            const svg64 = btoa(unescape(encodeURIComponent(xml)));
-            const imgSrc = 'data:image/svg+xml;base64,' + svg64;
-
-            // 5. 创建 img 标签替换原节点
-            const img = new Image();
-            img.src = imgSrc;
-            img.style.width = `${width}px`;
-            img.style.height = `${height}px`;
-            img.style.verticalAlign = vAlign; // 【关键】对齐修复
-            img.style.display = 'inline-block';
-            
-            // 等待图片解码完成，防止截图闪烁
-            await new Promise(resolve => {
-                img.onload = resolve;
-                img.onerror = resolve;
-            });
-
-            // 6. DOM 替换
-            // 替换掉 mjx-container，直接放 img
-            if (node.parentNode) {
-                node.parentNode.replaceChild(img, node);
-            }
-        }));
-    }
-
-    // --- 4. UI 初始化 ---
-    const originalCursor = document.body.style.cursor;
-    document.body.style.cursor = 'wait';
-    window.scrollTo(0, 0);
-
-    // 4.1 遮罩
-    const mask = document.createElement('div');
-    mask.style.cssText = `
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(30,30,33,0.98); z-index: 999999;
-        display: flex; flex-direction: column; justify-content: center; align-items: center;
-        font-family: sans-serif; color: #e0c38c; opacity: 0; transition: opacity 0.3s;
-    `;
-    mask.innerHTML = `
-        <div style="font-size:32px; margin-bottom:20px; animation:pulse 2s infinite;">✦</div>
-        <div style="font-size:16px; letter-spacing:2px; margin-bottom:30px;">正在转换数学公式...</div>
-        <div style="width:240px; height:2px; background:#444; border-radius:2px;"><div id="pdf-bar" style="width:0%; height:100%; background:#e0c38c; transition:width 0.2s;"></div></div>
-        <div id="pdf-txt" style="font-size:12px; color:#888; margin-top:10px;">0%</div>
-        <style>@keyframes pulse{0%{opacity:0.5}50%{opacity:1}100%{opacity:0.5}}</style>
-    `;
-    document.body.appendChild(mask);
-    requestAnimationFrame(() => mask.style.opacity = '1');
-    const setProgress = (p, t) => {
-        const pct = Math.floor(p*100);
-        document.getElementById('pdf-bar').style.width = pct+"%";
-        document.getElementById('pdf-txt').innerText = t || pct+"%";
-    };
-
-    // 4.2 渲染舞台
-    const stage = document.createElement('div');
-    stage.id = 'pdf-stage';
-    stage.style.cssText = `
-        position: absolute; top: 0; left: 0;
-        width: ${CONFIG.STAGE_WIDTH}px;
-        min-height: 100px;
-        background: ${CONFIG.PAGE_BG}; 
-        font-family: ${CONFIG.FONT_STACK};
-        color: ${CONFIG.TEXT_COLOR};
-        line-height: 1.6;
-        padding: 40px;
-        box-sizing: border-box;
-        z-index: -1000; 
-        visibility: visible; 
-        overflow: hidden;
-    `;
-    document.body.appendChild(stage);
-
-    try {
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        let cursorY = CONFIG.MARGIN_TOP; 
-
-        // 辅助：长图切割
-        const addSplittedImage = (canvas, contentW, contentH_mm) => {
-            const imgData = canvas.toDataURL('image/jpeg', 0.98);
-            let remainingH = contentH_mm;
-            let stitchedH = 0;
-            while (remainingH > 0) {
-                const spaceOnPage = PAGE_SAFE_BOTTOM - cursorY;
-                if (spaceOnPage < 30 && remainingH > 30) {
-                    pdf.addPage(); cursorY = CONFIG.MARGIN_TOP; continue;
-                }
-                const drawH = Math.min(remainingH, spaceOnPage);
-                const ratio = canvas.height / contentH_mm;
-                const srcY = stitchedH * ratio;
-                const srcH = drawH * ratio;
-                const clipCv = document.createElement('canvas');
-                clipCv.width = canvas.width; clipCv.height = srcH;
-                const ctx = clipCv.getContext('2d');
-                ctx.fillStyle = CONFIG.PAGE_BG;
-                ctx.fillRect(0,0, clipCv.width, clipCv.height);
-                ctx.drawImage(canvas, 0, srcY, canvas.width, srcH, 0, 0, clipCv.width, clipCv.height);
-                pdf.addImage(clipCv.toDataURL('image/jpeg', 0.98), 'JPEG', CONFIG.MARGIN_X, cursorY, contentW, drawH);
-                cursorY += drawH; stitchedH += drawH; remainingH -= drawH;
-                if (remainingH > 0.5) { pdf.addPage(); cursorY = CONFIG.MARGIN_TOP; }
-            }
-        };
-
-        // --- 5. 封面 ---
-        setProgress(0.05, "封面");
-        stage.innerHTML = `
-            <div style="min-height:600px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
-                <div style="font-size:48px; font-weight:bold; letter-spacing:6px; color:#222; margin-bottom:30px; font-family:'Songti SC',serif;">对话 <span style="color:#d84315;">•</span> 北极星</div>
-                <div style="width:50px; height:3px; background:#8d6e63; margin-bottom:40px;"></div>
-                <div style="font-size:20px; color:#555; font-family:'Times New Roman',serif; font-style:italic;">North Star Insight</div>
-                <div style="font-size:14px; color:#999; margin-top:20px; font-family:'Times New Roman';">${new Date().toLocaleDateString()}</div>
-            </div>
-        `;
-        await new Promise(r => setTimeout(r, 200));
-        const titleCanvas = await html2canvas(stage, { scale: CONFIG.SCALE, useCORS:true, backgroundColor: CONFIG.PAGE_BG });
-        const titleH = (titleCanvas.height * CONTENT_W) / titleCanvas.width;
-        pdf.addImage(titleCanvas.toDataURL('image/jpeg', 0.95), 'JPEG', CONFIG.MARGIN_X, CONFIG.MARGIN_TOP, CONTENT_W, titleH);
-        pdf.addPage(); cursorY = CONFIG.MARGIN_TOP;
-
-        // --- 6. 逐条渲染 ---
-        const total = conversationHistory.length;
-        for (let i = 0; i < total; i++) {
-            const item = conversationHistory[i];
-            const isUser = item.role === 'user';
-            setProgress(0.1 + (i / total) * 0.85, `渲染 ${i+1}/${total}`);
-
-            const textHtml = parseMarkdown(item.text);
-            let nodeHtml = '';
-
-            if (isUser) {
-                // 用户
-                nodeHtml = `
-                    <div style="width:100%; display:flex; justify-content:flex-end; padding:10px 0;">
-                        <div style="max-width:80%; background:#e8e8e8; border-radius:8px; padding:12px 20px;">
-                            <div style="font-size:16px; color:#333; font-family:sans-serif; line-height:1.5;">${textHtml}</div>
-                        </div>
-                    </div>`;
-            } else {
-                // AI (通栏书籍排版)
-                const info = item.leaderInfo || { name: 'North Star', field: 'Assistant' };
-                nodeHtml = `
-                    <div style="width:100%; padding:20px 0;">
-                        <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:15px; border-bottom:1px dashed #d7ccc8; padding-bottom:8px;">
-                            <div><span style="font-size:20px; font-weight:bold; color:#d84315; font-family:'Times New Roman','Songti SC',serif;">${info.name}</span></div>
-                            <div style="font-size:12px; background:#f0f0f0; color:#666; padding:2px 8px; border-radius:4px; font-family:sans-serif;">${info.field}</div>
-                        </div>
-                        <div style="font-size:16px; text-align:justify; color:#222; line-height:1.6;">
-                            ${textHtml}
-                        </div>
-                        <div style="height:20px;"></div>
-                    </div>
-                `;
-            }
-
-            stage.innerHTML = nodeHtml;
-
-            // --- MathJax 处理逻辑 (核心修改) ---
-            if (window.MathJax) {
-                try {
-                    // 1. 让 MathJax 渲染
-                    await MathJax.typesetPromise([stage]);
-                    // 2. 缓冲
-                    await new Promise(r => setTimeout(r, 400));
-                    // 3. 【执行光栅化】将 MathJax 节点替换为 IMG
-                    await rasterizeMathJax(stage);
-                } catch(e) { 
-                    console.warn("Math error:", e); 
-                }
-            }
-            
-            // 等待页面内其他图片
-            const imgs = stage.querySelectorAll('img');
-            await Promise.all(Array.from(imgs).map(img => {
-                if (img.complete) return Promise.resolve();
-                return new Promise(r => { img.onload = r; img.onerror = r; });
-            }));
-
-            // 截图
-            const nodeCanvas = await html2canvas(stage, {
-                scale: CONFIG.SCALE,
-                useCORS: true,
-                backgroundColor: null 
-            });
-
-            const nodeImgH = (nodeCanvas.height * CONTENT_W) / nodeCanvas.width;
-            
-            // 分页
-            if (cursorY + nodeImgH <= PAGE_SAFE_BOTTOM) {
-                pdf.addImage(nodeCanvas.toDataURL('image/jpeg', 0.98), 'JPEG', CONFIG.MARGIN_X, cursorY, CONTENT_W, nodeImgH);
-                cursorY += nodeImgH;
-            } else if (nodeImgH < MAX_CONTENT_H) {
-                pdf.addPage(); cursorY = CONFIG.MARGIN_TOP;
-                pdf.addImage(nodeCanvas.toDataURL('image/jpeg', 0.98), 'JPEG', CONFIG.MARGIN_X, cursorY, CONTENT_W, nodeImgH);
-                cursorY += nodeImgH;
-            } else {
-                if ((PAGE_SAFE_BOTTOM - cursorY) < 40) { pdf.addPage(); cursorY = CONFIG.MARGIN_TOP; }
-                addSplittedImage(nodeCanvas, CONTENT_W, nodeImgH);
-            }
-        }
-
-        // --- 7. 页码 ---
-        setProgress(0.99, "页码");
-        const pageCount = pdf.internal.getNumberOfPages();
-        for (let i = 1; i <= pageCount; i++) {
-            pdf.setPage(i);
-            pdf.setFontSize(10); pdf.setTextColor(150); pdf.setFont('Times', 'Roman');
-            pdf.text(`- ${i} / ${pageCount} -`, CONFIG.A4_W/2, CONFIG.A4_H-12, {align:'center'});
-        }
-
-        pdf.save(`NorthStar_Insight_${Date.now()}.pdf`);
-
-    } catch (err) {
-        console.error(err);
-        alert("导出出错: " + err.message);
-    } finally {
-        if(mask) { mask.style.opacity='0'; setTimeout(()=>mask.remove(),300); }
-        if(stage) stage.remove();
-        document.body.style.cursor = originalCursor;
+function cleanupAfterPrint() {
+    document.body.classList.remove('printing-mode');
+    // 如果之前有 SVG 连线，建议重新绘制一下以适应屏幕宽度
+    if(typeof drawConnections === 'function') {
+        setTimeout(drawConnections, 300);
     }
 }
 
