@@ -1381,118 +1381,121 @@ function exportToPDF() {
         return;
     }
 
-    // 1. 清理旧层 (防止多次点击导致堆叠)
-    let oldOverlay = document.getElementById('print-overlay');
-    if (oldOverlay) document.body.removeChild(oldOverlay);
+    // --- 0. 准备图片加载追踪器 ---
+    const imagePromises = [];
+    
+    // 内部工具：追踪图片加载状态 (成功或失败都算完成，防止卡死)
+    function trackImageLoad(imgElement) {
+        return new Promise((resolve) => {
+            if (imgElement.complete && imgElement.naturalHeight !== 0) {
+                resolve(); // 图片已缓存
+            } else {
+                imgElement.onload = () => resolve();
+                imgElement.onerror = () => resolve(); // 图片挂了也继续，不要卡住
+            }
+        });
+    }
 
-    // 2. 创建新层
+    // --- 1. 清理旧 DOM ---
+    let oldOverlay = document.getElementById('print-overlay');
+    if (oldOverlay && document.body.contains(oldOverlay)) {
+        document.body.removeChild(oldOverlay);
+    }
+
+    // --- 2. 创建打印遮罩层 ---
     const overlay = document.createElement('div');
     overlay.id = 'print-overlay';
 
-    // --- 关键步骤 A: 注入 Named Page 样式 ---
-    // 这段样式负责"打架"：让封面无视 CSS 文件里的 15mm 边距，而正文保留边距
+    // --- 3. 注入关键 CSS (修复页面截断 bug) ---
     const style = document.createElement('style');
     style.innerHTML = `
-       /* 1. 封面页规则 */
-        @page cover-layout {
-            margin: 0 !important;
-            size: auto;
-        }
-
-        /* 【新增 1】显式定义正文页的默认边距，防止被封面带偏 */
-        @page {
-            margin: 15mm 5mm; 
-        }
+        /* 封面页：强制无边距 */
+        @page cover-layout { margin: 0 !important; size: auto; }
+        
+        /* 正文页：强制恢复边距 */
+        @page { margin: 15mm 5mm; }
 
         @media print {
-            /* 【新增 2】全局高度解锁：防止 Body 被锁定在 100vh 导致截断 */
-            html, body {
-                height: auto !important;
-                overflow: visible !important;
-                margin: 0 !important;
+            /* 【核心修复】防止 Body 高度被锁死，允许正文无限延伸 */
+            html, body { 
+                height: auto !important; 
+                overflow: visible !important; 
+                margin: 0 !important; 
+            }
+            
+            /* 遮罩层自适应 */
+            #print-overlay { 
+                position: absolute !important; 
+                top: 0 !important; left: 0 !important; 
+                width: 100% !important; 
+                height: auto !important; 
+                overflow: visible !important; 
+                display: block !important; 
             }
 
-            /* 封面容器设置 */
-            .print-cover-page {
+            /* 封面容器：锁死一页高度 */
+            .print-cover-page { 
                 page: cover-layout; 
-                width: 100vw !important;
+                width: 100vw !important; 
                 height: 100vh !important; 
-                margin: 0 !important;
-                padding: 0 !important;
+                margin: 0 !important; padding: 0 !important; 
                 position: relative !important; 
-                overflow: hidden !important;   
+                overflow: hidden !important; 
                 break-inside: avoid !important; 
                 break-after: page !important; 
             }
             
-            /* 正文容器设置 */
-            #print-content-wrapper {
-                /* 【新增 3】核心修复：退出封面的 page 模式，切回默认 */
+            /* 正文容器：【核心修复】退出封面模式，回到普通文档流 */
+            #print-content-wrapper { 
                 page: auto; 
-                
-                /* 【新增 4】高度自适应：允许内容无限向下延伸 */
+                break-before: page; 
+                position: relative; 
+                width: 100%; 
                 height: auto !important; 
                 overflow: visible !important; 
-                
-                break-before: page;
-                position: relative;
-                width: 100%;
-                display: block !important;
+                display: block !important; 
             }
         }
     `;
     overlay.appendChild(style);
 
-    // --- 步骤 B: 第一页 (图1在上，图2在下) ---
-    // --- 第一页 (图1顶天，图2立地，中间留缝) ---
+    // --- 4. 构建首页 (Cover 1) ---
     const coverPage1 = document.createElement('div');
     coverPage1.className = 'print-cover-page';
-    coverPage1.style.breakAfter = 'page'; 
-
-    // --- 图1：位于顶部，高度设为48%（留出空间） ---
+    
+    // 图1 (上)
     const img1 = document.createElement('img');
     img1.src = 'images/对话北极星Cover1.jpg'; 
-    
     img1.style.position = 'absolute';
-    img1.style.top = '0';      // 钉在页面顶部
-    img1.style.left = '0';
-    img1.style.width = '100%';
-    img1.style.height = '48%'; // 关键：只占48%，不占满一半
-    img1.style.objectFit = 'contain';
-    // 关键优化：内容在框内"居中偏上"，利用顶部的空白，远离中间
-    img1.style.objectPosition = 'center 40%'; 
-    
-    // --- 图2：位于底部，高度设为48% ---
+    img1.style.top = '0'; img1.style.left = '0';
+    img1.style.width = '100%'; img1.style.height = '48%'; 
+    img1.style.objectFit = 'contain'; img1.style.objectPosition = 'center 40%';
+    coverPage1.appendChild(img1);
+    imagePromises.push(trackImageLoad(img1)); // 追踪
+
+    // 图2 (下)
     const img2 = document.createElement('img');
     img2.src = 'images/对话北极星Cover2.jpg'; 
-    
     img2.style.position = 'absolute';
-    img2.style.bottom = '0';   // 关键：钉在页面底部，而不是算 top 坐标
-    img2.style.left = '0';
-    img2.style.width = '100%';
-    img2.style.height = '48%'; // 关键：只占48%
-    img2.style.objectFit = 'contain';
-    // 关键优化：内容在框内"居中偏下"，利用底部的空白，远离中间
-    img2.style.objectPosition = 'center 60%'; 
-
-    coverPage1.appendChild(img1);
+    img2.style.bottom = '0'; img2.style.left = '0';
+    img2.style.width = '100%'; img2.style.height = '48%'; 
+    img2.style.objectFit = 'contain'; img2.style.objectPosition = 'center 60%';
     coverPage1.appendChild(img2);
+    imagePromises.push(trackImageLoad(img2)); // 追踪
+
     overlay.appendChild(coverPage1);
 
-    // --- 步骤 C: 处理对话内容 ---
+    // --- 5. 构建正文 ---
     const contentWrapper = document.createElement('div');
     contentWrapper.id = 'print-content-wrapper';
     
-    // 克隆节点，保护原页面事件和数据
     const contentClone = source.cloneNode(true);
     contentClone.removeAttribute('id');
 
-    // 插入角色标题 (保持原逻辑)
+    // 插入角色标题
     const nodes = contentClone.children;
     for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
-        
-        // 跳过非对话节点
         if (!node.classList.contains('thought-node')) continue;
 
         let roleTitle = document.createElement('div');
@@ -1510,50 +1513,57 @@ function exportToPDF() {
             node.insertBefore(roleTitle, node.firstChild);
         }
     }
-    
     contentWrapper.appendChild(contentClone);
     overlay.appendChild(contentWrapper);
 
-
-    // --- 步骤 D: 最后一页 (图3，位置上提) ---
+    // --- 6. 构建尾页 (Cover 3) ---
+    // 使用辅助函数创建，并保留你的特殊样式修改
     const backCover = createCoverPage('images/对话北极星Cover3.jpg', 'back');
+    backCover.style.justifyContent = 'flex-start'; // 顶部对齐
+    backCover.style.paddingTop = '10vh';           // 顶部留白
     
-    // 针对图3的特殊位置调整
-    // 改为 flex-start (顶部对齐)，然后用 padding 把图片顶下来一点点
-    // 这样就实现了"比居中靠上，但又不是死死贴着顶端"的效果
-    backCover.style.justifyContent = 'flex-start'; 
-    backCover.style.paddingTop = '10vh'; // 距离顶端 10% 页面高度，可按需调整
-    
-    // 限制一下图3的高度，防止它太大了撑满全屏
     const img3 = backCover.querySelector('img');
     if (img3) {
         img3.style.height = 'auto';
-        img3.style.maxHeight = '60vh'; // 限制最大高度
+        img3.style.maxHeight = '60vh';             // 限制高度
+        imagePromises.push(trackImageLoad(img3));  // 追踪
     }
-    
     overlay.appendChild(backCover);
 
-    // 3. 挂载到 Body
+    // --- 7. 挂载到 DOM ---
     document.body.appendChild(overlay);
 
-    // 4. 执行打印
-    const originalTitle = document.title;
-    document.title = getExportFileName();
+    // --- 8. 智能等待 & 打印 ---
+    console.log(`⏳ 正在等待 ${imagePromises.length} 张图片资源...`);
 
-    // 延时1秒，给图片加载留时间 (300K图片瞬间就能加载完，但1秒更稳妥)
-    setTimeout(() => {
-        window.print();
-        
-        // 恢复标题
-        document.title = originalTitle;
-        
-        // --- 内存释放 ---
-        // 打印对话框关闭后执行
-        // 1. 移除 DOM，断开图片引用
-        document.body.removeChild(overlay);
-        // 2. 强制清空 innerHTML 帮助 GC 识别
-        overlay.innerHTML = "";
-        
-        console.groupEnd();
-    }, 1000);
+    // 设置5秒超时，防止网络问题导致永远不打印
+    const timeoutPromise = new Promise(resolve => setTimeout(resolve, 5000));
+
+    Promise.race([Promise.all(imagePromises), timeoutPromise]).then(() => {
+        // 给渲染引擎留 50ms 缓冲，防止图片刚解码还没上屏
+        setTimeout(() => {
+            console.log("✅ 准备就绪，开始打印");
+            
+            // 备份旧标题
+            const originalTitle = document.title;
+            
+            // 设置导出文件名 (在打印前一瞬间设置)
+            document.title = getExportFileName();
+
+            // 唤起打印
+            window.print();
+
+            // --- 打印结束后的清理 ---
+            document.title = originalTitle;
+            
+            // 延时一点移除，避免某些浏览器打印未开始就移除 DOM
+            // 大部分浏览器 print() 是阻塞的，但 Chrome 有时会有非阻塞行为
+            if (document.body.contains(overlay)) {
+                document.body.removeChild(overlay);
+            }
+            overlay.innerHTML = ""; // 释放内存
+            
+            console.groupEnd();
+        }, 50); 
+    });
 }
