@@ -2317,93 +2317,63 @@
     pointer-events: none;
 }
 
-/* --- 打印专用样式 (修复空白页问题) --- */
+/* --- 导出专用样式 --- */
 
-/* 默认隐藏打印专用区，防止在屏幕上看到重影 */
-#print-area-container {
-    display: none;
+/* 这是一个隐藏的容器，专门用来渲染导出内容，避免干扰屏幕显示 */
+#export-container-hidden {
+    position: fixed;
+    top: -9999px;
+    left: -9999px;
+    width: 794px; /* A4 纸的标准像素宽度 (96DPI) */
+    background: #ffffff;
+    z-index: -1;
 }
 
-@media print {
-    /* 1. 隐藏原来的整个 APP 界面 */
-    /* 排除 print-area-container，其他所有 body 的直接子元素全部隐藏 */
-    body > *:not(#print-area-container) {
-        display: none !important;
-    }
+/* 导出时的内容样式 */
+#export-container-hidden .thought-stream {
+    width: 100% !important;
+    padding: 40px !important; /* 调整内边距，留出白边 */
+    box-sizing: border-box !important; /* 核心修复：防止 padding 撑爆宽度导致右侧文字截断 */
+    font-family: "PingFang SC", "Microsoft YaHei", sans-serif; /* 手机上字体更友好 */
+}
 
-    /* 2. 强制 Body 设置 */
-    body, html {
-        height: auto !important;
-        overflow: visible !important;
-        background: #fff !important; /* 强制白纸 */
-        margin: 0 !important;
-        padding: 0 !important;
-    }
+/* 节点通用样式 */
+#export-container-hidden .thought-node {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    box-shadow: none !important; /* 移除阴影让PDF更干净 */
+    page-break-inside: avoid; /* 尽量避免在节点中间分页 */
+    color: #333; /* 保持深灰色字体，而不是纯黑 */
+    word-wrap: break-word; /* 核心修复：强制长单词换行，防止超出 */
+    white-space: pre-wrap; /* 保留换行符 */
+}
 
-    /* 3. 显示并设置打印区的样式 */
-    #print-area-container {
-        display: block !important;
-        position: static !important; /* 关键：静态定位，让内容自然流式排列 */
-        width: 100% !important;
-        background: #fff !important;
-        color: #000 !important;
-        padding: 20px 40px !important;
-        font-family: "Times New Roman", "Songti SC", serif; /* 书籍字体 */
-    }
+/* 提问 (User) - 保持彩色 */
+#export-container-hidden .question-node {
+    background-color: #f0f7ff !important; /* 浅蓝背景 */
+    border-left: 5px solid #007bff !important; /* 蓝色左边框 */
+    text-align: left;
+}
 
-    /* 4. 修复内容的排版 */
-    /* 这里的 .thought-stream 是从 cloneNode 复制过来的类名 */
-    #print-area-container .thought-stream {
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        display: block !important; /* 解除 flex 布局可能带来的分页问题 */
-    }
+/* 回答 (Bot) - 保持彩色 */
+#export-container-hidden .answer-node {
+    background-color: #fff !important;
+    border-left: 5px solid #28a745 !important; /* 绿色左边框 */
+    text-align: justify; /* 两端对齐，排版更整齐 */
+}
 
-    /* 5. 节点样式重置 (去除深色模式和特效) */
-    #print-area-container .thought-node {
-        page-break-inside: avoid; /* 防止节点被切断 */
-        break-inside: avoid;
-        background: transparent !important;
-        box-shadow: none !important;
-        border: 1px solid #ddd !important;
-        border-radius: 8px !important;
-        margin-bottom: 20px !important;
-        color: #000 !important;
-        opacity: 1 !important;
-        transform: none !important; /* 去除浮动动画 */
-        padding: 15px !important;
-        float: none !important;
-    }
+/* 隐藏不需要的元素 */
+#export-container-hidden .node-delete-btn,
+#export-container-hidden .star-decoration-top,
+#export-container-hidden .star-decoration-bottom {
+    display: none !important;
+}
 
-    /* 6. 针对不同角色的微调 */
-    #print-area-container .question-node {
-        background-color: #f9f9f9 !important;
-        border-left: 4px solid #333 !important;
-        text-align: left !important;
-        width: 100% !important;
-    }
-    
-    #print-area-container .answer-node {
-        background-color: #fff !important;
-        text-align: justify !important;
-        width: 100% !important;
-    }
-
-    /* 7. 隐藏不需要的元素 */
-    #print-area-container .node-delete-btn,
-    #print-area-container .star-decoration-top,
-    #print-area-container .star-decoration-bottom {
-        display: none !important;
-    }
-    
-    /* 8. MathJax 颜色修正 */
-    #print-area-container mjx-container,
-    #print-area-container mjx-container svg {
-        color: #000 !important;
-        fill: #000 !important;
-    }
+/* 修复 MathJax 公式颜色，保持原色或深灰 */
+#export-container-hidden mjx-container {
+    color: inherit !important;
 }
 
 /* 适配移动端 */
