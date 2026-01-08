@@ -1334,17 +1334,8 @@ function exportToMD() {
     URL.revokeObjectURL(url);
 }
 
-
-/**
- * 最终完美版：对话导出 PDF
- * ------------------------------------------------
- * 修复核心：
- * 1. 【暴力转图】将所有 MathJax 公式强制转为 Base64 图片，彻底解决行内公式空白问题
- * 2. 【对齐修正】精准复制行内公式的 vertical-align 属性，防止图片跟文字基线对不齐
- * 3. 保持无框书籍排版风格
- */
-/* --- 新版：原生高清 PDF 导出 --- */
-function exportToPDF() {
+/* --- 新版：直接生成 PDF 文件下载 (html2canvas + jsPDF) --- */
+async function exportToPDF() {
     // 1. 基础检查
     const sourceContent = document.getElementById('thoughtStreamContent');
     if (!conversationHistory || conversationHistory.length === 0 || !sourceContent) {
@@ -1352,50 +1343,82 @@ function exportToPDF() {
         return;
     }
 
-    // 2. 锁定界面状态，防止用户操作
-    const originalBodyOverflow = document.body.style.overflow;
-    
-    // 3. 创建打印专用容器 (替身)
-    // 这个容器将直接放在 body 下，没有任何定位干扰
-    const printArea = document.createElement('div');
-    printArea.id = 'print-area-container';
-    
-    // 4. 克隆内容 (Deep Clone)
-    // true 表示克隆所有子节点，包括已经渲染好的 MathJax SVG
-    const contentClone = sourceContent.cloneNode(true);
-    
-    // 移除克隆节点可能导致的 ID 冲突 (可选，但为了规范建议做)
-    contentClone.removeAttribute('id'); 
-    
-    // 将克隆内容放入打印区
-    printArea.appendChild(contentClone);
-    document.body.appendChild(printArea);
+    // 显示加载提示 (因为生成图片比较耗时，给用户反馈)
+    const loadingBtn = document.createElement('div');
+    loadingBtn.innerText = "正在生成 PDF，请稍候...";
+    loadingBtn.style.cssText = "position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);padding:20px;background:rgba(0,0,0,0.8);color:#fff;border-radius:10px;z-index:9999;";
+    document.body.appendChild(loadingBtn);
 
-    // 5. 添加打印标记类 (触发 CSS)
-    document.body.classList.add('is-printing-mode');
-
-    // 6. 稍微延时以确保 DOM 渲染完成
-    setTimeout(() => {
-        window.print();
-
-        // 7. 打印完成后 (无论用户取消还是确认) 立即清理
-        // 注意：有些浏览器 window.print 是阻塞的，有些不是，
-        // 为了保险，利用 onafterprint 事件或延时清理
+    try {
+        // 2. 创建一个隐藏的容器用于渲染
+        // 为什么不直接用原来的 DOM？因为屏幕宽度不一定是 A4 纸宽度，直接截图会变形。
+        let exportArea = document.getElementById('export-container-hidden');
+        if (exportArea) document.body.removeChild(exportArea); // 清理旧的
         
-        const cleanup = () => {
-            document.body.classList.remove('is-printing-mode');
-            if (document.body.contains(printArea)) {
-                document.body.removeChild(printArea);
-            }
-            document.body.style.overflow = originalBodyOverflow;
-            window.removeEventListener('afterprint', cleanup);
-        };
-
-        // 监听打印窗口关闭
-        window.addEventListener('afterprint', cleanup);
+        exportArea = document.createElement('div');
+        exportArea.id = 'export-container-hidden';
         
-        // 兜底：如果浏览器不支持 afterprint，2秒后自动清理
-        setTimeout(cleanup, 2000); 
-    }, 50);
+        // 克隆内容
+        const contentClone = sourceContent.cloneNode(true);
+        contentClone.removeAttribute('id'); // 移除ID避免冲突
+        exportArea.appendChild(contentClone);
+        document.body.appendChild(exportArea);
+
+        // 3. 等待 MathJax 或图片加载 (简单延时)
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // 4. 使用 html2canvas 截图
+        // scale: 2 保证高清，useCORS 允许跨域图片
+        const canvas = await html2canvas(exportArea, {
+            scale: 2, 
+            useCORS: true,
+            logging: false,
+            windowWidth: 794 // 强制模拟桌面宽度
+        });
+
+        // 5. 初始化 PDF (A4纸: 595.28 x 841.89 pt)
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'pt', 'a4');
+        
+        const contentWidth = canvas.width;
+        const contentHeight = canvas.height;
+
+        // A4 纸的尺寸（保留一点页边距）
+        const pageWidth = 595.28;
+        const pageHeight = 841.89;
+        const leftHeight = contentHeight;
+        
+        // 计算图片在 PDF 中的显示尺寸 (等比缩放)
+        const imgWidth = pageWidth; 
+        const imgHeight = (pageWidth / contentWidth) * contentHeight;
+
+        // 6. 分页逻辑 (处理长图)
+        let position = 0; // 当前页面内容的顶部偏移
+        let heightLeft = imgHeight; // 剩余未打印的高度
+
+        // 第一页
+        pdf.addImage(canvas, 'JPEG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        // 循环添加后续页
+        while (heightLeft > 0) {
+            position = heightLeft - imgHeight; // 向上偏移，显示图片的下半部分
+            pdf.addPage();
+            pdf.addImage(canvas, 'JPEG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+        }
+
+        // 7. 保存文件 (文件名与 MD 保持一致)
+        const fileName = `${getExportFileName()}.pdf`;
+        pdf.save(fileName);
+
+    } catch (error) {
+        console.error("PDF Export Error:", error);
+        alert("导出失败，请重试。");
+    } finally {
+        // 8. 清理工作
+        document.body.removeChild(loadingBtn);
+        const exportArea = document.getElementById('export-container-hidden');
+        if (exportArea) document.body.removeChild(exportArea);
+    }
 }
-
