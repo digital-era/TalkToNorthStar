@@ -2369,7 +2369,8 @@
         
         /* 字体设置：纯黑 + 极度紧凑 */
         color: #000000 !important;
-        font-family: "Microsoft YaHei", "Segoe UI", sans-serif;
+        /*font-family: "Microsoft YaHei", "Segoe UI", sans-serif;*/
+        font-family: 'Noto Serif SC', 'Cinzel', serif;
         font-size: 12px !important; /* 字体稍微调小一点点以容纳更多内容 */
         line-height: 1.25 !important; /* 【关键】：进一步压缩行高 (原1.35) */
     }
