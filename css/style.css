@@ -2382,16 +2382,16 @@
         color: #000000 !important; /* 强制内部所有元素纯黑 */
     }
 
-    /* 压缩段落 P 标签 - 现在只有 3px 间距 */
+    /* 压缩段落 P 标签 - 现在只有 2px 间距 */
     #print-overlay .thought-node p {
-        margin-bottom: 3px !important; 
+        margin-bottom: 2px !important; 
         text-align: justify;
     }
     
     /* 列表紧凑化 */
     #print-overlay .thought-node ul, 
     #print-overlay .thought-node ol {
-        margin-bottom: 4px !important;
+        margin-bottom: 2px !important;
         padding-left: 18px !important; /* 减少缩进占用宽度 */
     }
     #print-overlay .thought-node li {
@@ -2425,7 +2425,8 @@
     /* AI: 绿底黑字 */
     #print-overlay .answer-node {
         background-color: #f4fff6 !important; /* 浅绿底 */
-        border-left: 4px solid #1e7e34 !important; /* 深绿线 */
+        /*border-left: 4px solid #1e7e34 !important;  深绿线 */
+        border-left: 4px #D4AF37 !important;  香槟金线 */
         border: 1px solid #d4edda;
     }
 
