@@ -2317,85 +2317,114 @@
     pointer-events: none;
 }
 
-/* 1. 打印设置平时状态：不要用 display: none，而是移出屏幕 */
-/* 这样浏览器能计算高度，JS 日志也能读出数据 */
+/* --- 1. 打印替身的基础设置 --- */
 #print-overlay {
     position: fixed;
     top: -9999px;
     left: -9999px;
-    width: 100vw; /* 强制宽度 */
-    height: auto;
+    width: 100vw;
     z-index: -1;
-    background: white;
-    
-    /* 预先强制颜色，防止克隆时带入浅色 */
-    color: #000 !important;
 }
 
-/* 2. 打印状态 */
+/* --- 2. 打印媒体查询（核心） --- */
 @media print {
-    /* 隐藏所有原网页内容 */
+    /* 隐藏原页面 */
     body > *:not(#print-overlay) {
         display: none !important;
     }
 
-    /* 重置 Body */
+    /* 页面基础设置 */
     body {
         background: #fff !important;
         margin: 0 !important;
         padding: 0 !important;
-        height: auto !important;
-        overflow: visible !important;
+        /* 允许背景打印（Chrome/Safari/Edge） */
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
 
-    /* 把替身移回屏幕正中央 */
+    /* 替身复位 */
     #print-overlay {
-        position: absolute !important; /* 改回 absolute 以便分页 */
+        position: absolute !important;
         top: 0 !important;
         left: 0 !important;
         width: 100% !important;
         height: auto !important;
         z-index: 99999 !important;
-        padding: 20px 40px !important;
-        
-        /* 核心修复：强制黑字白底 */
+        padding: 40px 50px !important; /* 给纸张留出优雅的页边距 */
+        box-sizing: border-box;
         background: #fff !important;
+    }
+
+    /* ---打印PDF设置 --- */    
+    /* 1. 基础文字颜色设为黑（保证阅读），但不要强制覆盖所有子元素的边框/背景 */
+    #print-overlay {
+        color: #1a1a1a !important; /* 深灰比纯黑更柔和 */
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        line-height: 1.6 !important; /* 调整行高，1.5-1.6 最舒适 */
+    }
+
+    /* 2. 对话气泡容器 */
+    #print-overlay .thought-node {
+        position: relative;
+        page-break-inside: avoid !important; /* 防止气泡被切分到两页 */
+        margin-bottom: 16px !important;      /* 调小节点间距 */
+        padding: 12px 16px !important;       /* 气泡内边距 */
+        border-radius: 8px !important;       /* 圆角更优雅 */
+        white-space: pre-wrap !important;    /* 保留换行 */
+        font-size: 14px !important;
+        border: 1px solid #e0e0e0;           /* 加上淡淡的边框 */
+        box-shadow: none !important;
+    }
+
+    /* 3. 移除多余的元素间距 (解决行间距过大问题) */
+    #print-overlay .thought-node p {
+        margin: 0 0 8px 0 !important; /* 段落间距微调 */
+    }
+    #print-overlay .thought-node p:last-child {
+        margin-bottom: 0 !important;
+    }
+
+    /* --- 解决：左侧黑线太丑 & 恢复角色颜色 --- */
+    
+    /* 用户样式 (提问) - 设定为蓝色系 */
+    #print-overlay .question-node {
+        background-color: #f0f7ff !important; /* 极浅的蓝底 */
+        border-left: 4px solid #007bff !important; /* 恢复左侧线，但在左边做装饰 */
+        border: 1px solid #cce5ff; /* 整体边框微蓝 */
         color: #000 !important;
     }
-
-    /* 3. 暴力强制所有子元素颜色 (解决隐形墨水) */
-    #print-overlay * {
-        color: #000 !important; /* 纯黑文字 */
-        background-color: transparent !important; /* 去掉深色背景 */
-        box-shadow: none !important;
-        text-shadow: none !important;
-        
-        /* 强制打印背景色 (Chrome需要) */
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
+    /* 可以在用户名字前加个图标 */
+    #print-overlay .question-node::before {
+        content: "User"; /* 或者 content: url(user-icon.png); */
+        display: block;
+        font-weight: bold;
+        color: #007bff;
+        font-size: 12px;
+        margin-bottom: 6px;
     }
 
-    /* 4. 节点样式微调 */
-    #print-overlay .thought-node {
-        border: 1px solid #000 !important; /* 边框变黑 */
-        page-break-inside: avoid !important;
-        margin-bottom: 20px !important;
-        white-space: pre-wrap !important;
-    }
-
-    /* 角色特定样式 (保留左侧色条，但背景变白) */
-    #print-overlay .question-node {
-        border-left: 5px solid #000 !important; /* 或者保留 #007bff */
-        background-color: #eee !important; /* 浅灰背景区分 */
-    }
-    
+    /* 北极星样式 (回答) - 设定为绿色或紫色系 */
     #print-overlay .answer-node {
-        border-left: 5px solid #000 !important;
-        background-color: #fff !important;
+        background-color: #f6fff9 !important; /* 极浅的绿底 */
+        border-left: 4px solid #28a745 !important; /* 绿色左侧线 */
+        border: 1px solid #d4edda;
+        color: #000 !important;
     }
-    
-    /* 隐藏无用按钮 */
+    #print-overlay .answer-node::before {
+        /* 如果 JS 里有 leaderInfo.name，这里可能不好直接取，
+           建议在 JS 克隆时把名字插入到 DOM 中，或者这里写通用名 */
+        content: "North Star / AI"; 
+        display: block;
+        font-weight: bold;
+        color: #28a745;
+        font-size: 12px;
+        margin-bottom: 6px;
+    }
+
+    /* 隐藏不需要的按钮 */
     #print-overlay .node-delete-btn,
+    #print-overlay .action-bar,
     #print-overlay button {
         display: none !important;
     }
