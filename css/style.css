@@ -2328,101 +2328,109 @@
 
 /* --- 2. 打印媒体查询（核心） --- */
 @media print {
-    /* 隐藏原页面 */
+    /* 1. 隐藏非打印内容 */
     body > *:not(#print-overlay) {
         display: none !important;
     }
 
-    /* 页面基础设置 */
+    /* 2. 页面基础设置 */
     body {
         background: #fff !important;
         margin: 0 !important;
         padding: 0 !important;
-        /* 允许背景打印（Chrome/Safari/Edge） */
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
 
-    /* 替身复位 */
+    /* 3. 打印容器复位 - 增加页面两侧留白，更像文档 */
     #print-overlay {
         position: absolute !important;
         top: 0 !important;
         left: 0 !important;
         width: 100% !important;
-        height: auto !important;
         z-index: 99999 !important;
-        padding: 40px 50px !important; /* 给纸张留出优雅的页边距 */
-        box-sizing: border-box;
+        padding: 30px 40px !important; /* 调整页边距 */
         background: #fff !important;
+        box-sizing: border-box;
+        
+        /* 全局字体紧凑化 */
+        color: #1a1a1a !important;
+        font-family: "Microsoft YaHei", "Segoe UI", sans-serif; /* 选用紧凑型字体 */
+        font-size: 13px !important; /* 稍微调小字号，更显精致 */
+        line-height: 1.45 !important; /* 1.45 比 1.6 更紧凑，接近 Canvas */
     }
 
-    /* ---打印PDF设置 --- */    
-    /* 1. 基础文字颜色设为黑（保证阅读），但不要强制覆盖所有子元素的边框/背景 */
-    #print-overlay {
-        color: #1a1a1a !important; /* 深灰比纯黑更柔和 */
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        line-height: 1.6 !important; /* 调整行高，1.5-1.6 最舒适 */
-    }
-
-    /* 2. 对话气泡容器 */
+    /* 4. 对话气泡容器 - 紧凑版 */
     #print-overlay .thought-node {
         position: relative;
-        page-break-inside: avoid !important; /* 防止气泡被切分到两页 */
-        margin-bottom: 16px !important;      /* 调小节点间距 */
-        padding: 12px 16px !important;       /* 气泡内边距 */
-        border-radius: 8px !important;       /* 圆角更优雅 */
-        white-space: pre-wrap !important;    /* 保留换行 */
-        font-size: 14px !important;
-        border: 1px solid #e0e0e0;           /* 加上淡淡的边框 */
-        box-shadow: none !important;
+        page-break-inside: avoid !important;
+        margin-bottom: 10px !important; /* 气泡之间的距离：从 16px 降到 10px */
+        padding: 8px 12px !important;   /* 气泡内部留白：从 12px 降到 8px */
+        border-radius: 6px !important;
+        border: 1px solid #e0e0e0;
+        white-space: pre-wrap !important; /* 保留换行，但依靠下方样式控制间距 */
     }
 
-    /* 3. 移除多余的元素间距 (解决行间距过大问题) */
-    #print-overlay .thought-node p {
-        margin: 0 0 8px 0 !important; /* 段落间距微调 */
+    /* --- 5. 核心修复：暴力压缩内部元素间距 --- */
+    
+    /* 移除所有默认的顶部间距，防止叠加 */
+    #print-overlay .thought-node * {
+        margin-top: 0 !important;
     }
+
+    /* 压缩段落 P 标签 */
+    #print-overlay .thought-node p {
+        margin-bottom: 6px !important; /* 段落间只留 6px */
+        text-align: justify; /* 两端对齐更整齐 */
+    }
+    /* 最后一个段落去掉间距 */
     #print-overlay .thought-node p:last-child {
         margin-bottom: 0 !important;
     }
 
-    /* --- 解决：左侧黑线太丑 & 恢复角色颜色 --- */
+    /* 压缩列表 (ul, ol, li) - 这是"条目距离大"的罪魁祸首 */
+    #print-overlay .thought-node ul, 
+    #print-overlay .thought-node ol {
+        margin-bottom: 6px !important;
+        padding-left: 20px !important; /* 缩进不要太大 */
+    }
+    #print-overlay .thought-node li {
+        margin-bottom: 2px !important; /* 列表项之间几乎不需要间距 */
+        line-height: 1.4 !important;
+    }
+    /* 列表内的 p 标签经常会导致双倍间距，强制去除 */
+    #print-overlay .thought-node li p {
+        margin-bottom: 0 !important;
+        display: inline; /* 强制行内显示，防止换行 */
+    }
+
+    /* 标题 (Markdown 中的 #) */
+    #print-overlay .thought-node h1, 
+    #print-overlay .thought-node h2, 
+    #print-overlay .thought-node h3 {
+        margin-bottom: 8px !important;
+        font-size: 1.1em !important; /* 标题不要太大 */
+        font-weight: bold;
+        line-height: 1.2 !important;
+    }
+
+    /* --- 6. 角色样式 (保留颜色) --- */
     
-    /* 用户样式 (提问) - 设定为蓝色系 */
+    /* User: 蓝调 */
     #print-overlay .question-node {
-        background-color: #f0f7ff !important; /* 极浅的蓝底 */
-        border-left: 4px solid #007bff !important; /* 恢复左侧线，但在左边做装饰 */
-        border: 1px solid #cce5ff; /* 整体边框微蓝 */
-        color: #000 !important;
+        background-color: #f4f9ff !important;
+        border-left: 4px solid #007bff !important; 
+        border: 1px solid #dbeeff;
     }
-    /* 可以在用户名字前加个图标 */
-    #print-overlay .question-node::before {
-        content: "User"; /* 或者 content: url(user-icon.png); */
-        display: block;
-        font-weight: bold;
-        color: #007bff;
-        font-size: 12px;
-        margin-bottom: 6px;
-    }
-
-    /* 北极星样式 (回答) - 设定为绿色或紫色系 */
+    
+    /* AI: 绿调 */
     #print-overlay .answer-node {
-        background-color: #f6fff9 !important; /* 极浅的绿底 */
-        border-left: 4px solid #28a745 !important; /* 绿色左侧线 */
-        border: 1px solid #d4edda;
-        color: #000 !important;
-    }
-    #print-overlay .answer-node::before {
-        /* 如果 JS 里有 leaderInfo.name，这里可能不好直接取，
-           建议在 JS 克隆时把名字插入到 DOM 中，或者这里写通用名 */
-        content: "North Star / AI"; 
-        display: block;
-        font-weight: bold;
-        color: #28a745;
-        font-size: 12px;
-        margin-bottom: 6px;
+        background-color: #f8fff9 !important;
+        border-left: 4px solid #28a745 !important;
+        border: 1px solid #e2f5e5;
     }
 
-    /* 隐藏不需要的按钮 */
+    /* --- 7. 隐藏无关元素 --- */
     #print-overlay .node-delete-btn,
     #print-overlay .action-bar,
     #print-overlay button {
