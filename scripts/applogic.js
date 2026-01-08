@@ -1334,43 +1334,50 @@ function exportToMD() {
     URL.revokeObjectURL(url);
 }
 
-/* --- 辅助函数：创建全屏封面页 --- */
-function createCoverPage(imagePath, isBackCover = false) {
+/* --- 辅助函数：创建全屏封面页 (配合 Named Pages) --- */
+function createCoverPage(imagePath, type) {
+    // type: 'front' (封面) | 'back' (封底)
     const pageContainer = document.createElement('div');
     
-    // 设置容器样式，确保图片居中并占满
+    // 应用特定类名，触发 CSS 中的 named page 规则
     pageContainer.className = 'print-cover-page';
-    pageContainer.style.width = '100%';
-    pageContainer.style.height = '100vh'; // 视口高度，打印时通常对应一页
+    
+    // 基础样式：Flex布局居中
     pageContainer.style.display = 'flex';
     pageContainer.style.justifyContent = 'center';
     pageContainer.style.alignItems = 'center';
-    pageContainer.style.boxSizing = 'border-box';
+    pageContainer.style.width = '100%';
     
-    // 创建图片元素
+    // 注意：打印时 height: 100vh 有时会导致多余空白页，
+    // 这里设为 100% 配合 page-break 属性更安全
+    pageContainer.style.height = '100%'; 
+    
+    // 创建图片
     const img = document.createElement('img');
     img.src = imagePath;
-    img.style.maxWidth = '100%';
-    img.style.maxHeight = '100%';
-    img.style.objectFit = 'contain'; // 保持比例适应
+    
+    // 图片样式：保证清晰度且适应纸张
+    img.style.width = '100%';
+    img.style.height = '100%'; 
+    img.style.objectFit = 'contain'; // 保持比例，如果图片比例和A4不一致，会有留白而不是变形
+    // 如果你的图片是严格的 A4 比例，可以用 cover 强制铺满
+    // img.style.objectFit = 'cover'; 
     
     pageContainer.appendChild(img);
 
-    // --- 关键：控制分页 ---
-    if (isBackCover) {
-        // 如果是封底，强制在其之前分页
-        pageContainer.style.pageBreakBefore = 'always'; 
+    // --- 分页逻辑 ---
+    if (type === 'back') {
+        // 封底：前面强制分页
         pageContainer.style.breakBefore = 'page';
     } else {
-        // 如果是封面，强制在其之后分页
-        pageContainer.style.pageBreakAfter = 'always';
+        // 封面：后面强制分页
         pageContainer.style.breakAfter = 'page';
     }
 
     return pageContainer;
 }
 
-/* --- PDF导出最终版：带封面封底 --- */
+/* --- PDF导出最终版：解决边距冲突与空白页问题 --- */
 function exportToPDF() {
     console.group("🚀 [PDF Export] Start");
     
@@ -1388,87 +1395,99 @@ function exportToPDF() {
     const overlay = document.createElement('div');
     overlay.id = 'print-overlay';
 
-    // --- 步骤 A: 插入动态样式 (确保打印时封面全屏且无边距干扰) ---
+    // --- 关键修正 A: 注入 Named Page 样式 ---
+    // 这段 CSS 允许我们在同一个 PDF 里混合使用“无边距(封面)”和“有边距(正文)”
     const style = document.createElement('style');
     style.innerHTML = `
+        /* 定义一个名为 cover-layout 的页面类型，无边距 */
+        @page cover-layout {
+            margin: 0 !important;
+            size: auto;
+        }
+
         @media print {
-            @page {
-                margin: 0; /* 尝试移除浏览器默认页边距，让封面铺满 */
-                size: auto;
-            }
-            body {
-                margin: 0;
-                padding: 0;
-            }
-            #print-overlay {
-                width: 100%;
-                z-index: 9999;
-            }
+            /* 应用于封面容器：强制使用无边距页面，并占满全屏 */
             .print-cover-page {
-                width: 100vw;
-                height: 100vh;
-                page-break-after: always; /* 兼容性写法 */
-                break-after: page;
+                page: cover-layout; /* 关键：切换页面配置 */
+                width: 100vw !important;
+                height: 100vh !important; /* 强制铺满一页 */
+                max-width: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            
+            /* 修正图片在打印时的尺寸 */
+            .print-cover-page img {
+                max-width: 100% !important;
+                height: auto !important;
+                max-height: 100vh !important;
+            }
+
+            /* 修正内容容器，防止其被原来的 position:absolute 影响流布局 */
+            #print-content-wrapper {
+                position: relative;
+                width: 100%;
+                /* 恢复默认页面流，不要 page: cover-layout，这样它就会继承你css文件里的 @page {margin: 15mm 5mm} */
             }
         }
     `;
     overlay.appendChild(style);
 
-    // --- 步骤 B: 插入前两个封面 (Cover1, Cover2) ---
-    // 注意：路径根据你的描述设定
-    const cover1 = createCoverPage('images/对话北极星Cover1.png');
+    // --- 步骤 B: 插入封面 (Cover1, Cover2) ---
+    const cover1 = createCoverPage('images/对话北极星Cover1.png', 'front');
     overlay.appendChild(cover1);
 
-    const cover2 = createCoverPage('images/对话北极星Cover2.png');
+    const cover2 = createCoverPage('images/对话北极星Cover2.png', 'front');
     overlay.appendChild(cover2);
 
-    // --- 步骤 C: 处理对话内容核心 ---
+    // --- 步骤 C: 处理对话内容 ---
+    // 创建一个包裹层，用于隔离封面和内容
+    const contentWrapper = document.createElement('div');
+    contentWrapper.id = 'print-content-wrapper';
+    
     const contentClone = source.cloneNode(true);
     contentClone.removeAttribute('id');
-    // 给内容容器加一些内边距，避免文字贴着纸张边缘（因为上面为了封面设了 margin:0）
-    contentClone.style.padding = "20px 40px"; 
 
-    // 遍历节点，显式注入角色名 (保留你原有的逻辑)
+    // 注入角色名逻辑 (保持不变)
     const nodes = contentClone.children;
     for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
         let roleTitle = document.createElement('div');
         roleTitle.style.fontWeight = 'bold';
-        roleTitle.style.marginBottom = '5px';
+        roleTitle.style.marginBottom = '2px'; // 稍微改小一点
         roleTitle.style.fontSize = '12px';
 
         if (node.classList.contains('question-node')) {
             roleTitle.innerText = "🧑 User"; 
-            roleTitle.style.color = '#007bff'; 
+            roleTitle.style.color = '#0056b3'; // 对应你的新CSS深蓝
             node.insertBefore(roleTitle, node.firstChild);
         } else if (node.classList.contains('answer-node')) {
             roleTitle.innerText = "🤖 North Star"; 
-            roleTitle.style.color = '#28a745'; 
+            roleTitle.style.color = '#b8860b'; // 对应金色/暗金色
             node.insertBefore(roleTitle, node.firstChild);
         }
     }
-    overlay.appendChild(contentClone);
+    
+    contentWrapper.appendChild(contentClone);
+    overlay.appendChild(contentWrapper);
 
     // --- 步骤 D: 插入封底 (Cover3) ---
-    // 第二个参数 true 表示这是一个封底，会在它之前强制分页
-    const backCover = createCoverPage('images/对话北极星Cover3.png', true);
+    const backCover = createCoverPage('images/对话北极星Cover3.png', 'back');
     overlay.appendChild(backCover);
 
-    // 3. 挂载到 DOM
+    // 3. 挂载
     document.body.appendChild(overlay);
 
-    // 4. 设置标题并打印
+    // 4. 打印
     const originalTitle = document.title;
     document.title = getExportFileName();
 
-    // 延时打印，确保图片加载完成
-    // 如果图片较大，建议适当增加延时，或者使用 img.onload 逻辑
     setTimeout(() => {
         window.print();
         document.title = originalTitle;
-        // document.body.removeChild(overlay); // 调试时可注释掉
+        // document.body.removeChild(overlay); 
         console.groupEnd();
-    }, 800); // 稍微增加了一点延时给图片渲染
+    }, 800);
 }
 
 
