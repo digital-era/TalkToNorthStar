@@ -1336,57 +1336,120 @@ function exportToMD() {
 
 /* --- PDF导出最终版：原生高清矢量导出 --- */
 function exportToPDF() {
+    console.group("🚀 [PDF Export Debug] 开始导出流程");
+    
+    // 1. 获取源内容
     const source = document.getElementById('thoughtStreamContent');
     if (!source) {
+        console.error("❌ 错误：找不到 id 为 'thoughtStreamContent' 的元素！");
+        console.groupEnd();
         alert("找不到要导出的内容区域！");
         return;
     }
 
-    // 1. 创建打印专用容器（替身）
-    // 如果旧的没删掉，先删掉
+    // 打印源元素信息，检查是否有高度
+    const sourceRect = source.getBoundingClientRect();
+    console.log("1. 源元素状态:", {
+        element: source,
+        width: sourceRect.width,
+        height: sourceRect.height,
+        childrenCount: source.children.length,
+        innerTextLength: source.innerText.length
+    });
+
+    if (source.innerText.length === 0) {
+        console.warn("⚠️ 警告：源元素似乎没有文本内容！");
+    }
+
+    // 2. 清理与创建替身
     let oldOverlay = document.getElementById('print-overlay');
-    if (oldOverlay) document.body.removeChild(oldOverlay);
+    if (oldOverlay) {
+        console.log("2. 清理旧的 print-overlay");
+        document.body.removeChild(oldOverlay);
+    }
 
     const overlay = document.createElement('div');
     overlay.id = 'print-overlay';
     
-    // 2. 克隆内容 (Deep Clone)
-    // 这一步把内容复制到替身里，不管原内容藏得有多深
+    // 3. 克隆内容
+    console.log("3. 开始克隆节点...");
     const contentClone = source.cloneNode(true);
     
-    // 移除可能导致冲突的 id (可选)
-    contentClone.removeAttribute('id');
+    // 检查克隆结果
+    if (!contentClone) {
+        console.error("❌ 克隆失败！");
+        console.groupEnd();
+        return;
+    }
     
-    // 将克隆内容放入替身
+    // 移除 ID 防止冲突
+    contentClone.removeAttribute('id');
     overlay.appendChild(contentClone);
     document.body.appendChild(overlay);
 
-    // 3. 修改文件名
-    const originalTitle = document.title;
-    document.title = getExportFileName();
-
-    // 4. 触发打印
-    // 延时 100ms 是为了让手机浏览器有时间渲染这个新插入的 div
-    setTimeout(() => {
-        window.print();
-    }, 100);
-
-    // 5. 打印后清理 (监听两种情况以兼容不同浏览器)
+    // 4. 关键：检查替身在页面上的渲染状态
+    // 我们需要确保替身被加入 DOM 后，是有高度的，并且里面的文字颜色不是白色的
+    const overlayRect = overlay.getBoundingClientRect();
+    const computedStyle = window.getComputedStyle(overlay);
     
-    // 方案A: 电脑端/部分手机监听打印完成
+    console.log("4. 替身插入 DOM 后的状态 (关键步骤):", {
+        inDocument: document.body.contains(overlay),
+        width: overlayRect.width,
+        height: overlayRect.height, // 如果这里是 0，那就是 CSS 布局问题
+        color: computedStyle.color, // 如果是 rgb(255, 255, 255) 说明是白字
+        backgroundColor: computedStyle.backgroundColor,
+        display: computedStyle.display,
+        visibility: computedStyle.visibility
+    });
+
+    if (overlayRect.height === 0) {
+        console.error("❌ 严重错误：打印替身的高度为 0！这会导致输出空白页。请检查 CSS 是否父容器使用了 Flex/Grid 导致脱离文档流。");
+    }
+
+    // 5. 修改文件名
+    const originalTitle = document.title;
+    const newTitle = getExportFileName();
+    document.title = newTitle;
+    console.log(`5. 临时修改页面标题为: ${newTitle}`);
+
+    // 6. 触发打印
+    console.log("6. 等待 500ms 让浏览器渲染图片和样式...");
+    setTimeout(() => {
+        console.log("🖨️ 触发 window.print()");
+        
+        // 最后一次检查（防止异步加载导致的变动）
+        const finalCheck = document.getElementById('print-overlay');
+        if(finalCheck) {
+             console.log("   打印前最终高度 check:", finalCheck.scrollHeight);
+        }
+
+        window.print();
+        console.log("✅ print() 指令已发出");
+    }, 500);
+
+    // 7. 清理逻辑
     const cleanup = () => {
+        console.log("🧹 执行清理工作...");
         document.title = originalTitle;
         if (document.body.contains(overlay)) {
-            document.body.removeChild(overlay);
+            // 注意：为了调试方便，你可以暂时注释掉下面这行 removeChild
+            // 这样打印完你可以手动检查页面最下方的 overlay 元素
+            document.body.removeChild(overlay); 
+            console.log("   已移除 print-overlay");
         }
         window.removeEventListener('afterprint', cleanup);
+        console.groupEnd();
     };
+    
     window.addEventListener('afterprint', cleanup);
-
-    // 方案B: 手机端点完打印后可能不会立即回调，甚至永远不回调
-    // 我们可以不立即删除，依靠 CSS 把它隐藏在后面
-    // 或者设置一个较长的延时自动删除（比如 5秒后）
-    setTimeout(cleanup, 5000); 
+    
+    // 移动端兜底
+    setTimeout(() => {
+        if (document.body.contains(overlay)) {
+            console.log("⏰ 超时强制清理");
+            cleanup();
+        }
+    }, 5000); 
 }
 
 
