@@ -1393,30 +1393,29 @@ function exportToPDF() {
     // 这段样式负责"打架"：让封面无视 CSS 文件里的 15mm 边距，而正文保留边距
     const style = document.createElement('style');
     style.innerHTML = `
-        /* 定义无边距页面类型 */
+        /* 封面页专用设置：无边距 */
         @page cover-layout {
             margin: 0 !important;
             size: auto;
         }
 
         @media print {
-            /* 封面容器：应用无边距，强制全屏 */
+            /* 封面容器：强制一页，禁止内部换页 */
             .print-cover-page {
                 page: cover-layout; 
                 width: 100vw !important;
-                height: 100vh !important;
-                max-width: none !important;
+                /* 稍微小于100，防止浏览器因1px误差强行换页 */
+                height: 99.5vh !important; 
                 margin: 0 !important;
                 padding: 0 !important;
+                position: relative !important; /* 开启绝对定位参考系 */
+                overflow: hidden !important;   /* 裁剪溢出部分 */
+                break-inside: avoid !important; /* 禁止在容器内部拆页 */
             }
             
-            .print-cover-page img {
-                max-width: 100% !important;
-                height: auto !important;
-            }
-
-            /* 修正内容容器，确保它不应用 cover-layout，从而继承外部 CSS 的 15mm 边距 */
+            /* 正文容器：恢复文档流，且必须在新的一页开始 */
             #print-content-wrapper {
+                break-before: page;
                 position: relative;
                 width: 100%;
             }
@@ -1425,42 +1424,37 @@ function exportToPDF() {
     overlay.appendChild(style);
 
     // --- 步骤 B: 第一页 (图1在上，图2在下) ---
-    // 手动构建一个组合容器，复用 'print-cover-page' 以去除边距
+    // ---  第一页 (绝对定位版 - 彻底防止图片乱跑) ---
     const coverPage1 = document.createElement('div');
     coverPage1.className = 'print-cover-page';
-    coverPage1.style.display = 'flex';
-    coverPage1.style.flexDirection = 'column'; // 垂直排列
-    coverPage1.style.justifyContent = 'space-between'; // 上下撑开或居中均可
-    coverPage1.style.alignItems = 'center';
-    coverPage1.style.breakAfter = 'page'; // 结束后强制换页
+    // 强制换页
+    coverPage1.style.breakAfter = 'page'; 
 
-    // 通用图片样式函数：让图片自动适应高度
-    function configCoverImg(imgElement) {
-        imgElement.style.width = '100%';
-        // 关键：flex: 1 让两张图平分垂直空间
-        imgElement.style.flex = '1'; 
-        // 关键：height: 0 配合 flex: 1 使用，强制忽略图片原始高度，完全由容器分配高度
-        imgElement.style.height = '0'; 
-        // 保持比例：根据需要选 'contain'(完整显示) 或 'cover'(填满不留白但裁切)
-        imgElement.style.objectFit = 'contain'; 
-        imgElement.style.display = 'block';
-    }
-
-    // 图1
+    // --- 图1：占据上半部分 (0% - 50%) ---
     const img1 = document.createElement('img');
     img1.src = 'images/对话北极星Cover1.jpg'; 
-    configCoverImg(img1);
-    // 如果想要两张图中间有点缝隙，可以加 padding
-    // img1.style.paddingBottom = '5px'; 
     
-    // 图2
+    // 绝对定位样式
+    img1.style.position = 'absolute';
+    img1.style.top = '0';
+    img1.style.left = '0';
+    img1.style.width = '100%';
+    img1.style.height = '50%'; // 强制高度
+    img1.style.objectFit = 'contain'; // 保持比例，改 'cover' 可填满
+    img1.style.objectPosition = 'center bottom'; // 图片靠下对齐(靠近中间)
+    
+    // --- 图2：占据下半部分 (50% - 100%) ---
     const img2 = document.createElement('img');
     img2.src = 'images/对话北极星Cover2.jpg'; 
-    configCoverImg(img2);
-
-    coverPage1.appendChild(img1);
-    coverPage1.appendChild(img2);
-    overlay.appendChild(coverPage1);
+    
+    // 绝对定位样式
+    img2.style.position = 'absolute';
+    img2.style.top = '50%'; // 从页面中间开始
+    img2.style.left = '0';
+    img2.style.width = '100%';
+    img2.style.height = '50%'; // 强制高度
+    img2.style.objectFit = 'contain';
+    img2.style.objectPosition = 'center top'; // 图片靠上对齐(靠近中间)
 
     coverPage1.appendChild(img1);
     coverPage1.appendChild(img2);
