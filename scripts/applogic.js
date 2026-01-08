@@ -1346,42 +1346,56 @@ function exportToMD() {
 /* --- 新版：原生高清 PDF 导出 --- */
 function exportToPDF() {
     // 1. 基础检查
-    if (!conversationHistory || conversationHistory.length === 0) {
+    const sourceContent = document.getElementById('thoughtStreamContent');
+    if (!conversationHistory || conversationHistory.length === 0 || !sourceContent) {
         alert("没有可导出的内容。");
         return;
     }
 
-    // 2. 准备打印环境
-    // 我们暂时把页面锁定，添加打印标记类
-    document.body.classList.add('printing-mode');
+    // 2. 锁定界面状态，防止用户操作
+    const originalBodyOverflow = document.body.style.overflow;
+    
+    // 3. 创建打印专用容器 (替身)
+    // 这个容器将直接放在 body 下，没有任何定位干扰
+    const printArea = document.createElement('div');
+    printArea.id = 'print-area-container';
+    
+    // 4. 克隆内容 (Deep Clone)
+    // true 表示克隆所有子节点，包括已经渲染好的 MathJax SVG
+    const contentClone = sourceContent.cloneNode(true);
+    
+    // 移除克隆节点可能导致的 ID 冲突 (可选，但为了规范建议做)
+    contentClone.removeAttribute('id'); 
+    
+    // 将克隆内容放入打印区
+    printArea.appendChild(contentClone);
+    document.body.appendChild(printArea);
 
-    // 3. 针对 MathJax 的特殊处理 (确保重排)
-    // 打印模式下宽度改变，需要通知 MathJax 重新计算公式布局
-    if (window.MathJax) {
-        const container = document.getElementById('thoughtStreamContent');
-        MathJax.typesetPromise([container]).then(() => {
-            // 4. 唤起浏览器打印对话框
-            // 这是一个阻塞操作，用户关闭打印窗口后才会继续执行
-            window.print();
-            
-            // 5. 打印结束后清理
-            cleanupAfterPrint();
-        }).catch(err => {
-            console.error(err);
-            window.print(); // 即使公式出错也尝试打印
-            cleanupAfterPrint();
-        });
-    } else {
+    // 5. 添加打印标记类 (触发 CSS)
+    document.body.classList.add('is-printing-mode');
+
+    // 6. 稍微延时以确保 DOM 渲染完成
+    setTimeout(() => {
         window.print();
-        cleanupAfterPrint();
-    }
-}
 
-function cleanupAfterPrint() {
-    document.body.classList.remove('printing-mode');
-    // 如果之前有 SVG 连线，建议重新绘制一下以适应屏幕宽度
-    if(typeof drawConnections === 'function') {
-        setTimeout(drawConnections, 300);
-    }
+        // 7. 打印完成后 (无论用户取消还是确认) 立即清理
+        // 注意：有些浏览器 window.print 是阻塞的，有些不是，
+        // 为了保险，利用 onafterprint 事件或延时清理
+        
+        const cleanup = () => {
+            document.body.classList.remove('is-printing-mode');
+            if (document.body.contains(printArea)) {
+                document.body.removeChild(printArea);
+            }
+            document.body.style.overflow = originalBodyOverflow;
+            window.removeEventListener('afterprint', cleanup);
+        };
+
+        // 监听打印窗口关闭
+        window.addEventListener('afterprint', cleanup);
+        
+        // 兜底：如果浏览器不支持 afterprint，2秒后自动清理
+        setTimeout(cleanup, 2000); 
+    }, 50);
 }
 
