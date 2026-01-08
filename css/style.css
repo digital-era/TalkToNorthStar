@@ -2318,90 +2318,86 @@
 }
 
 /* --- 打印与导出核心修复样式 --- */
+/* 默认情况下隐藏打印替身，不干扰正常使用 */
+#print-overlay {
+    display: none;
+}
 
 @media print {
-    /* 1. 强制打印背景色与彩色 (修复黑白问题) */
-    body, .thought-node, .question-node, .answer-node {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        color-adjust: exact !important;
-    }
-
-    /* 2. 页面基础设置：去除页眉页脚，留出边距 */
-    @page {
-        size: auto; /* 自动适配纸张 */
-        margin: 15mm 10mm; /* 上下15mm，左右10mm */
-    }
-
-    /* 3. 隐藏页面上所有非对话内容 */
-    body > *:not(#thoughtStreamContent) {
+    /* 1. 暴力隐藏所有元素 (除替身外) */
+    body > *:not(#print-overlay) {
         display: none !important;
     }
 
-    /* 4. 强制重置主体容器样式 (修复右侧截断) */
+    /* 2. 重置 Body，确保无干扰 */
     body {
+        margin: 0 !important;
+        padding: 0 !important;
         background: #fff !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        overflow: visible !important; /* 手机端必须可见 */
-        width: 100% !important;
+        overflow: visible !important;
     }
 
-    /* 5. 对话流容器限制 */
-    #thoughtStreamContent {
+    /* 3. 显示打印替身，并覆盖整个页面 */
+    #print-overlay {
         display: block !important;
-        position: static !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
         width: 100% !important;
-        /* 核心修复：防止内容超出 A4 纸宽度 */
-        max-width: 100% !important; 
-        box-sizing: border-box !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        box-shadow: none !important;
+        background: #fff !important;
+        z-index: 99999 !important;
+        padding: 20px 40px !important; /* 页边距 */
     }
 
-    /* 6. 节点样式优化 (修复文字溢出和分页截断) */
-    .thought-node {
-        /* 核心修复：防止节点被分页切成两半 */
-        page-break-inside: avoid !important; 
-        break-inside: avoid !important;
+    /* 4. 强制开启背景色 (解决黑白问题) */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* 5. 节点样式修复 (解决文字截断) */
+    /* 注意：因为是 cloneNode，原本的 class 都在，所以直接用 class 选择器 */
+    #print-overlay .thought-node {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
         
-        /* 核心修复：强制长文字换行，防止右侧超出 */
+        /* 核心：强制换行，防止右侧文字被切掉 */
         white-space: pre-wrap !important;
-        word-wrap: break-word !important;
+        word-wrap: break-word !important; 
         overflow-wrap: break-word !important;
         
-        /* 外观修正 */
-        width: 100% !important;
-        box-sizing: border-box !important;
-        margin-bottom: 15px !important;
+        /* 防止分页切断文字 */
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        
+        margin-bottom: 20px !important;
         border: 1px solid #ddd !important;
         box-shadow: none !important;
     }
 
-    /* 保持 User 蓝色 */
-    .question-node {
+    /* 6. 角色颜色修复 */
+    #print-overlay .question-node {
         background-color: #f0f7ff !important;
-        border-left: 4px solid #007bff !important;
+        border-left: 5px solid #007bff !important;
     }
-
-    /* 保持 Bot 绿色/白色 */
-    .answer-node {
+    
+    #print-overlay .answer-node {
         background-color: #fff !important;
-        border-left: 4px solid #28a745 !important;
-        text-align: justify !important; /* 让大段文字两端对齐，更像书 */
+        border-left: 5px solid #28a745 !important;
+        text-align: justify !important;
     }
 
-    /* 7. 隐藏不需要的按钮和装饰 */
-    .node-delete-btn, 
-    .star-decoration-top, 
-    .star-decoration-bottom {
+    /* 7. 隐藏不需要的按钮 */
+    #print-overlay .node-delete-btn,
+    #print-overlay .star-decoration-top,
+    #print-overlay .star-decoration-bottom {
         display: none !important;
     }
-
-    /* 8. 修复 MathJax 公式颜色 */
-    mjx-container {
-        color: inherit !important;
+    
+    /* 8. 修复公式颜色 */
+    #print-overlay mjx-container {
+        color: black !important;
     }
 }
 
