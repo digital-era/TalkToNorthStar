@@ -1393,31 +1393,51 @@ function exportToPDF() {
     // 这段样式负责"打架"：让封面无视 CSS 文件里的 15mm 边距，而正文保留边距
     const style = document.createElement('style');
     style.innerHTML = `
-        /* 封面页专用设置：无边距 */
+       /* 1. 封面页规则 */
         @page cover-layout {
             margin: 0 !important;
             size: auto;
         }
 
+        /* 【新增 1】显式定义正文页的默认边距，防止被封面带偏 */
+        @page {
+            margin: 15mm 5mm; 
+        }
+
         @media print {
-            /* 封面容器：强制一页，禁止内部换页 */
+            /* 【新增 2】全局高度解锁：防止 Body 被锁定在 100vh 导致截断 */
+            html, body {
+                height: auto !important;
+                overflow: visible !important;
+                margin: 0 !important;
+            }
+
+            /* 封面容器设置 */
             .print-cover-page {
                 page: cover-layout; 
                 width: 100vw !important;
-                /* 稍微小于100，防止浏览器因1px误差强行换页 */
-                height: 99.5vh !important; 
+                height: 100vh !important; 
                 margin: 0 !important;
                 padding: 0 !important;
-                position: relative !important; /* 开启绝对定位参考系 */
-                overflow: hidden !important;   /* 裁剪溢出部分 */
-                break-inside: avoid !important; /* 禁止在容器内部拆页 */
+                position: relative !important; 
+                overflow: hidden !important;   
+                break-inside: avoid !important; 
+                break-after: page !important; 
             }
             
-            /* 正文容器：恢复文档流，且必须在新的一页开始 */
+            /* 正文容器设置 */
             #print-content-wrapper {
+                /* 【新增 3】核心修复：退出封面的 page 模式，切回默认 */
+                page: auto; 
+                
+                /* 【新增 4】高度自适应：允许内容无限向下延伸 */
+                height: auto !important; 
+                overflow: visible !important; 
+                
                 break-before: page;
                 position: relative;
                 width: 100%;
+                display: block !important;
             }
         }
     `;
