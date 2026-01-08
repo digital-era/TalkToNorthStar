@@ -2317,66 +2317,73 @@
     pointer-events: none;
 }
 
-/* --- 打印与导出核心修复样式 --- */
-/* 默认情况下隐藏打印替身，不干扰正常使用 */
+/* 平时隐藏替身 */
 #print-overlay {
     display: none;
 }
 
 @media print {
-    /* 1. 暴力隐藏所有元素 (除替身外) */
+    /* 1. 隐藏除替身外的所有元素 */
     body > *:not(#print-overlay) {
         display: none !important;
     }
 
-    /* 2. 重置 Body，确保无干扰 */
+    /* 2. 重置 Body */
     body {
         margin: 0 !important;
         padding: 0 !important;
-        background: #fff !important;
+        background-color: #fff !important;
+        /* 允许页面滚动和延伸，防止截断 */
+        height: auto !important; 
         overflow: visible !important;
     }
 
-    /* 3. 显示打印替身，并覆盖整个页面 */
+    /* 3. 打印替身样式 (核心修改) */
     #print-overlay {
         display: block !important;
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
+        /* 修改点 A: 改为 relative，让内容撑开高度，确保分页正常 */
+        position: relative !important; 
+        top: auto !important;
+        left: auto !important;
         width: 100% !important;
+        height: auto !important;
         background: #fff !important;
         z-index: 99999 !important;
-        padding: 20px 40px !important; /* 页边距 */
+        padding: 20px 40px !important;
+        
+        /* 修改点 B: 强制全局文字为黑色，解决深色模式下“白纸白字”问题 */
+        color: #000 !important; 
     }
 
-    /* 4. 强制开启背景色 (解决黑白问题) */
-    * {
+    /* 4. 强制所有子元素颜色适配打印 */
+    #print-overlay * {
+        /* 强制文字变黑 */
+        color: #000 !important; 
+        /* 移除屏幕上的阴影效果，打印更清晰 */
+        box-shadow: none !important; 
+        text-shadow: none !important;
+        /* 强制打印背景色 (Chrome/Edge需要) */
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
 
-    /* 5. 节点样式修复 (解决文字截断) */
-    /* 注意：因为是 cloneNode，原本的 class 都在，所以直接用 class 选择器 */
+    /* 5. 节点样式优化 */
     #print-overlay .thought-node {
         width: 100% !important;
         max-width: 100% !important;
-        box-sizing: border-box !important;
+        border: 1px solid #ddd !important;
+        margin-bottom: 20px !important;
         
-        /* 核心：强制换行，防止右侧文字被切掉 */
+        /* 防止文字被右侧切断 */
         white-space: pre-wrap !important;
         word-wrap: break-word !important; 
-        overflow-wrap: break-word !important;
         
-        /* 防止分页切断文字 */
+        /* 防止节点内部被分页切断 */
         page-break-inside: avoid !important;
         break-inside: avoid !important;
-        
-        margin-bottom: 20px !important;
-        border: 1px solid #ddd !important;
-        box-shadow: none !important;
     }
 
-    /* 6. 角色颜色修复 */
+    /* 6. 角色样式保留 */
     #print-overlay .question-node {
         background-color: #f0f7ff !important;
         border-left: 5px solid #007bff !important;
@@ -2385,19 +2392,13 @@
     #print-overlay .answer-node {
         background-color: #fff !important;
         border-left: 5px solid #28a745 !important;
-        text-align: justify !important;
     }
 
-    /* 7. 隐藏不需要的按钮 */
+    /* 7. 隐藏不需要的元素 */
     #print-overlay .node-delete-btn,
     #print-overlay .star-decoration-top,
     #print-overlay .star-decoration-bottom {
         display: none !important;
-    }
-    
-    /* 8. 修复公式颜色 */
-    #print-overlay mjx-container {
-        color: black !important;
     }
 }
 
