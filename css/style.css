@@ -2350,8 +2350,8 @@
         width: 100% !important;
         z-index: 99999 !important;
         
-        /* 左右边距从 40px 减小到 15px，极大拓宽内容显示区域 */
-        padding: 20px 15px !important; 
+        /* 左右边距从 40px 减小到 0px，极大拓宽内容显示区域 */
+        padding: 20px 0px !important; 
         
         background: #fff !important;
         box-sizing: border-box;
@@ -2426,8 +2426,8 @@
     #print-overlay .answer-node {
         background-color: #f4fff6 !important; /* 浅绿底 */
         /*border-left: 4px solid #1e7e34 !important;  深绿线 */
-        border-left: 4px #D4AF37 !important;  香槟金线 */
-        border: 1px solid #d4edda;
+        border-left: 1px solid #D4AF37 !important;  香槟金线 */
+        border: 1px solid #D4AF37 !important;
     }
 
     /* --- 7. 隐藏无关元素 --- */
@@ -2435,6 +2435,44 @@
     #print-overlay .action-bar,
     #print-overlay button {
         display: none !important;
+    }
+  
+   /* --- 新增：针对 PDF 导出的特定样式修正 --- */
+    /* 1. 北极星标志 (*) 颜色修改 */
+    #print-overlay .star-decoration-top,
+    #print-overlay .star-decoration-top i,
+    #print-overlay .star-decoration-bottom i {
+        color: #D4AF37 !important; /* 香槟色 */
+        -webkit-print-color-adjust: exact !important; /* 强制打印颜色 */
+        print-color-adjust: exact !important;
+    }
+
+    /* 2. 领域 (Field) 样式优化 */
+    #print-overlay .badge-field {
+        /* 去掉接近黑色的背景，改为透明 */
+        background-color: transparent !important; 
+        background: transparent !important;
+        
+        /* 字体颜色改为黑色或深灰，确保在白纸上看得清 */
+        color: #000000 !important; 
+        font-weight: bold !important;
+        
+        /* 加上香槟色边框 */
+        border: 1px solid #D4AF37 !important;
+        
+        /* 微调内边距 */
+        padding: 2px 6px !important;
+        border-radius: 4px !important;
+        
+        /* 强制打印边框颜色 */
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    /* 3. 名字旁边的修饰线颜色统一 */
+    #print-overlay .node-divider {
+        background: linear-gradient(to right, transparent, #D4AF37, transparent) !important;
+        opacity: 1 !important;
     }
 }
 
