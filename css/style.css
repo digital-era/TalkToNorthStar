@@ -2317,63 +2317,92 @@
     pointer-events: none;
 }
 
-/* --- 导出专用样式 --- */
+/* --- 打印与导出核心修复样式 --- */
 
-/* 这是一个隐藏的容器，专门用来渲染导出内容，避免干扰屏幕显示 */
-#export-container-hidden {
-    position: fixed;
-    top: -9999px;
-    left: -9999px;
-    width: 794px; /* A4 纸的标准像素宽度 (96DPI) */
-    background: #ffffff;
-    z-index: -1;
-}
+@media print {
+    /* 1. 强制打印背景色与彩色 (修复黑白问题) */
+    body, .thought-node, .question-node, .answer-node {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
 
-/* 导出时的内容样式 */
-#export-container-hidden .thought-stream {
-    width: 100% !important;
-    padding: 40px !important; /* 调整内边距，留出白边 */
-    box-sizing: border-box !important; /* 核心修复：防止 padding 撑爆宽度导致右侧文字截断 */
-    font-family: "PingFang SC", "Microsoft YaHei", sans-serif; /* 手机上字体更友好 */
-}
+    /* 2. 页面基础设置：去除页眉页脚，留出边距 */
+    @page {
+        size: auto; /* 自动适配纸张 */
+        margin: 15mm 10mm; /* 上下15mm，左右10mm */
+    }
 
-/* 节点通用样式 */
-#export-container-hidden .thought-node {
-    margin-bottom: 20px;
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #e0e0e0;
-    box-shadow: none !important; /* 移除阴影让PDF更干净 */
-    page-break-inside: avoid; /* 尽量避免在节点中间分页 */
-    color: #333; /* 保持深灰色字体，而不是纯黑 */
-    word-wrap: break-word; /* 核心修复：强制长单词换行，防止超出 */
-    white-space: pre-wrap; /* 保留换行符 */
-}
+    /* 3. 隐藏页面上所有非对话内容 */
+    body > *:not(#thoughtStreamContent) {
+        display: none !important;
+    }
 
-/* 提问 (User) - 保持彩色 */
-#export-container-hidden .question-node {
-    background-color: #f0f7ff !important; /* 浅蓝背景 */
-    border-left: 5px solid #007bff !important; /* 蓝色左边框 */
-    text-align: left;
-}
+    /* 4. 强制重置主体容器样式 (修复右侧截断) */
+    body {
+        background: #fff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important; /* 手机端必须可见 */
+        width: 100% !important;
+    }
 
-/* 回答 (Bot) - 保持彩色 */
-#export-container-hidden .answer-node {
-    background-color: #fff !important;
-    border-left: 5px solid #28a745 !important; /* 绿色左边框 */
-    text-align: justify; /* 两端对齐，排版更整齐 */
-}
+    /* 5. 对话流容器限制 */
+    #thoughtStreamContent {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        /* 核心修复：防止内容超出 A4 纸宽度 */
+        max-width: 100% !important; 
+        box-sizing: border-box !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+    }
 
-/* 隐藏不需要的元素 */
-#export-container-hidden .node-delete-btn,
-#export-container-hidden .star-decoration-top,
-#export-container-hidden .star-decoration-bottom {
-    display: none !important;
-}
+    /* 6. 节点样式优化 (修复文字溢出和分页截断) */
+    .thought-node {
+        /* 核心修复：防止节点被分页切成两半 */
+        page-break-inside: avoid !important; 
+        break-inside: avoid !important;
+        
+        /* 核心修复：强制长文字换行，防止右侧超出 */
+        white-space: pre-wrap !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        
+        /* 外观修正 */
+        width: 100% !important;
+        box-sizing: border-box !important;
+        margin-bottom: 15px !important;
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+    }
 
-/* 修复 MathJax 公式颜色，保持原色或深灰 */
-#export-container-hidden mjx-container {
-    color: inherit !important;
+    /* 保持 User 蓝色 */
+    .question-node {
+        background-color: #f0f7ff !important;
+        border-left: 4px solid #007bff !important;
+    }
+
+    /* 保持 Bot 绿色/白色 */
+    .answer-node {
+        background-color: #fff !important;
+        border-left: 4px solid #28a745 !important;
+        text-align: justify !important; /* 让大段文字两端对齐，更像书 */
+    }
+
+    /* 7. 隐藏不需要的按钮和装饰 */
+    .node-delete-btn, 
+    .star-decoration-top, 
+    .star-decoration-bottom {
+        display: none !important;
+    }
+
+    /* 8. 修复 MathJax 公式颜色 */
+    mjx-container {
+        color: inherit !important;
+    }
 }
 
 /* 适配移动端 */
