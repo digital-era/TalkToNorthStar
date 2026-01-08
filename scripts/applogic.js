@@ -1427,25 +1427,40 @@ function exportToPDF() {
     // --- 步骤 B: 第一页 (图1在上，图2在下) ---
     // 手动构建一个组合容器，复用 'print-cover-page' 以去除边距
     const coverPage1 = document.createElement('div');
-    coverPage1.className = 'print-cover-page'; // 关键：去除边距
+    coverPage1.className = 'print-cover-page';
     coverPage1.style.display = 'flex';
     coverPage1.style.flexDirection = 'column'; // 垂直排列
-    coverPage1.style.justifyContent = 'center'; // 整体垂直居中
+    coverPage1.style.justifyContent = 'space-between'; // 上下撑开或居中均可
     coverPage1.style.alignItems = 'center';
-    coverPage1.style.breakAfter = 'page'; // 结束后换页
+    coverPage1.style.breakAfter = 'page'; // 结束后强制换页
 
-    // 图1 (178K)
+    // 通用图片样式函数：让图片自动适应高度
+    function configCoverImg(imgElement) {
+        imgElement.style.width = '100%';
+        // 关键：flex: 1 让两张图平分垂直空间
+        imgElement.style.flex = '1'; 
+        // 关键：height: 0 配合 flex: 1 使用，强制忽略图片原始高度，完全由容器分配高度
+        imgElement.style.height = '0'; 
+        // 保持比例：根据需要选 'contain'(完整显示) 或 'cover'(填满不留白但裁切)
+        imgElement.style.objectFit = 'contain'; 
+        imgElement.style.display = 'block';
+    }
+
+    // 图1
     const img1 = document.createElement('img');
     img1.src = 'images/对话北极星Cover1.jpg'; 
-    img1.style.width = '100%';
-    img1.style.marginBottom = '0px'; // 图1图2紧密连接，如需间隙可改为 '10px'
-    img1.style.objectFit = 'contain';
+    configCoverImg(img1);
+    // 如果想要两张图中间有点缝隙，可以加 padding
+    // img1.style.paddingBottom = '5px'; 
     
-    // 图2 (90K)
+    // 图2
     const img2 = document.createElement('img');
     img2.src = 'images/对话北极星Cover2.jpg'; 
-    img2.style.width = '100%';
-    img2.style.objectFit = 'contain';
+    configCoverImg(img2);
+
+    coverPage1.appendChild(img1);
+    coverPage1.appendChild(img2);
+    overlay.appendChild(coverPage1);
 
     coverPage1.appendChild(img1);
     coverPage1.appendChild(img2);
