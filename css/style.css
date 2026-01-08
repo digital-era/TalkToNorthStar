@@ -2333,7 +2333,7 @@
         display: none !important;
     }
 
-    /* 2. 页面基础设置 */
+    /* 2. Body 设置：允许背景色打印 */
     body {
         background: #fff !important;
         margin: 0 !important;
@@ -2342,92 +2342,91 @@
         print-color-adjust: exact !important;
     }
 
-    /* 3. 打印容器复位 - 增加页面两侧留白，更像文档 */
+    /* 3. 打印容器复位 - 【核心修改：增加宽度】 */
     #print-overlay {
         position: absolute !important;
         top: 0 !important;
         left: 0 !important;
         width: 100% !important;
         z-index: 99999 !important;
-        padding: 30px 40px !important; /* 调整页边距 */
+        
+        /* 左右边距从 40px 减小到 15px，极大拓宽内容显示区域 */
+        padding: 20px 15px !important; 
+        
         background: #fff !important;
         box-sizing: border-box;
         
-        /* 全局字体紧凑化 */
-        color: #1a1a1a !important;
-        font-family: "Microsoft YaHei", "Segoe UI", sans-serif; /* 选用紧凑型字体 */
-        font-size: 13px !important; /* 稍微调小字号，更显精致 */
-        line-height: 1.45 !important; /* 1.45 比 1.6 更紧凑，接近 Canvas */
+        /* 【核心修改：字体纯黑 & 紧凑】 */
+        color: #000000 !important; /* 强制纯黑，杜绝灰色看不清 */
+        font-family: "Microsoft YaHei", "Segoe UI", sans-serif;
+        font-size: 13px !important; 
+        line-height: 1.35 !important; /* 行高进一步压缩 (原1.45) */
     }
 
-    /* 4. 对话气泡容器 - 紧凑版 */
+    /* 4. 对话气泡容器 */
     #print-overlay .thought-node {
         position: relative;
         page-break-inside: avoid !important;
-        margin-bottom: 10px !important; /* 气泡之间的距离：从 16px 降到 10px */
-        padding: 8px 12px !important;   /* 气泡内部留白：从 12px 降到 8px */
-        border-radius: 6px !important;
-        border: 1px solid #e0e0e0;
-        white-space: pre-wrap !important; /* 保留换行，但依靠下方样式控制间距 */
+        margin-bottom: 8px !important; /* 气泡间距压缩 */
+        padding: 8px 10px !important;  /* 气泡内边距压缩 */
+        border-radius: 4px !important;
+        border: 1px solid #ccc;        /* 边框颜色加深一点，防止太淡看不清 */
+        white-space: pre-wrap !important; 
     }
 
-    /* --- 5. 核心修复：暴力压缩内部元素间距 --- */
+    /* --- 5. 【核心修改：暴力压缩段落间距】 --- */
     
-    /* 移除所有默认的顶部间距，防止叠加 */
+    /* 移除所有默认 margin-top */
     #print-overlay .thought-node * {
         margin-top: 0 !important;
+        color: #000000 !important; /* 强制内部所有元素纯黑 */
     }
 
-    /* 压缩段落 P 标签 */
+    /* 压缩段落 P 标签 - 现在只有 3px 间距 */
     #print-overlay .thought-node p {
-        margin-bottom: 6px !important; /* 段落间只留 6px */
-        text-align: justify; /* 两端对齐更整齐 */
+        margin-bottom: 3px !important; 
+        text-align: justify;
     }
-    /* 最后一个段落去掉间距 */
-    #print-overlay .thought-node p:last-child {
-        margin-bottom: 0 !important;
-    }
-
-    /* 压缩列表 (ul, ol, li) - 这是"条目距离大"的罪魁祸首 */
+    
+    /* 列表紧凑化 */
     #print-overlay .thought-node ul, 
     #print-overlay .thought-node ol {
-        margin-bottom: 6px !important;
-        padding-left: 20px !important; /* 缩进不要太大 */
+        margin-bottom: 4px !important;
+        padding-left: 18px !important; /* 减少缩进占用宽度 */
     }
     #print-overlay .thought-node li {
-        margin-bottom: 2px !important; /* 列表项之间几乎不需要间距 */
-        line-height: 1.4 !important;
+        margin-bottom: 0px !important; /* 列表项之间无间距 */
+        line-height: 1.3 !important;
     }
-    /* 列表内的 p 标签经常会导致双倍间距，强制去除 */
-    #print-overlay .thought-node li p {
-        margin-bottom: 0 !important;
-        display: inline; /* 强制行内显示，防止换行 */
-    }
-
-    /* 标题 (Markdown 中的 #) */
-    #print-overlay .thought-node h1, 
-    #print-overlay .thought-node h2, 
-    #print-overlay .thought-node h3 {
-        margin-bottom: 8px !important;
-        font-size: 1.1em !important; /* 标题不要太大 */
-        font-weight: bold;
-        line-height: 1.2 !important;
-    }
-
-    /* --- 6. 角色样式 (保留颜色) --- */
     
-    /* User: 蓝调 */
+    /* 如果内容里有公式或标题，强制加粗显眼 */
+    #print-overlay .thought-node h1,
+    #print-overlay .thought-node h2,
+    #print-overlay .thought-node strong,
+    #print-overlay .thought-node b {
+        font-weight: 800 !important; /* 特别加粗 */
+        color: #000 !important;
+        margin-bottom: 4px !important;
+    }
+
+    /* --- 6. 角色样式 (保持浅色底，但左侧线条加深) --- */
+    
+    /* User: 蓝底黑字 */
     #print-overlay .question-node {
-        background-color: #f4f9ff !important;
-        border-left: 4px solid #007bff !important; 
-        border: 1px solid #dbeeff;
+        background-color: #f0f6ff !important; /* 浅蓝底 */
+        border-left: 4px solid #0056b3 !important; /* 深蓝线，更清晰 */
+        border: 1px solid #cce5ff;
+    }
+    /* 增加 User 文字的权重，防止看起来太细 */
+    #print-overlay .question-node {
+        font-weight: 500 !important;
     }
     
-    /* AI: 绿调 */
+    /* AI: 绿底黑字 */
     #print-overlay .answer-node {
-        background-color: #f8fff9 !important;
-        border-left: 4px solid #28a745 !important;
-        border: 1px solid #e2f5e5;
+        background-color: #f4fff6 !important; /* 浅绿底 */
+        border-left: 4px solid #1e7e34 !important; /* 深绿线 */
+        border: 1px solid #d4edda;
     }
 
     /* --- 7. 隐藏无关元素 --- */
