@@ -1478,7 +1478,11 @@ function exportToPDF() {
     
     Promise.race([Promise.all(imagePromises), timeoutPromise]).then(() => {
         
-        // 1. 直接改名
+        // 备份旧标题
+        const originalTitle = document.title;
+        
+        // --- 1. 计算新文件名 ---
+        // 确保 finalName 绝对不为空
         let finalName = "对话记录";
         if (typeof getExportFileName === 'function') {
             finalName = getExportFileName();
@@ -1487,19 +1491,32 @@ function exportToPDF() {
             const pad = (n) => String(n).padStart(2, '0');
             finalName = `对话北极星_${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}`;
         }
-        document.title = finalName;
 
-        // 2. 稍微等一下让浏览器反应过来，然后直接打
-        setTimeout(() => {
-            window.print();
-            
-            // 3. 打印完只清理遮罩层，【不再恢复标题】
-            // 这样文件名绝对稳，唯一的副作用就是浏览器标签页名字变了
-            if (document.body.contains(overlay)) {
-                document.body.removeChild(overlay);
-            }
-            overlay.innerHTML = "";
-            console.groupEnd();
-        }, 100);
-    });
-}
+        // --- 2. 设置新标题 ---
+        document.title = finalName;
+        console.log("📄 文件名已设置为:", finalName);
+
+         // 使用media query监听打印状态
+        const mediaQueryList = window.matchMedia('print');
+        const handlePrintChange = (mql) => {
+        if (!mql.matches) {
+            // 打印结束
+            setTimeout(() => {
+                document.title = originalTitle;
+                if (document.body.contains(overlay)) {
+                    document.body.removeChild(overlay);
+                }
+                overlay.innerHTML = "";
+                mediaQueryList.removeListener(handlePrintChange);
+                console.groupEnd();
+            }, 500);
+        }
+    };
+    
+    mediaQueryList.addListener(handlePrintChange);
+    
+    // 延长延迟确保标题设置生效
+    setTimeout(() => {
+        window.print();
+    }, 300);
+});
