@@ -1292,7 +1292,7 @@ function exportToMD() {
         return;
     }
 
-    let mdContent = "# Dialogue Canvas Export\n\n";
+    let mdContent = "# 对话北极星 (Talk with North Stars)\n\n";
     const timestamp = new Date().toLocaleString();
     mdContent += `> Exported on: ${timestamp}\n\n---\n\n`;
 
@@ -1518,7 +1518,8 @@ function exportToPDF() {
 
     // 4. 执行打印
     const originalTitle = document.title;
-    document.title = getExportFileName();
+    //document.title = getExportFileName();
+    document.title = "对话北极星 (Talk with North Stars)";
 
     // 延时1秒，给图片加载留时间 (300K图片瞬间就能加载完，但1秒更稳妥)
     setTimeout(() => {
