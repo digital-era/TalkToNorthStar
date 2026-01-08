@@ -2317,120 +2317,92 @@
     pointer-events: none;
 }
 
-/* --- 打印专用样式 (@media print) --- */
+/* --- 打印专用样式 (修复空白页问题) --- */
+
+/* 默认隐藏打印专用区，防止在屏幕上看到重影 */
+#print-area-container {
+    display: none;
+}
+
 @media print {
-    /* 1. 全局重置：隐藏所有无关元素 */
-    body * {
-        visibility: hidden; /* 先隐藏所有 */
-    }
-    
-    /* 2. 只显示画布内容容器及其子元素 */
-    #thoughtStreamContent, 
-    #thoughtStreamContent * {
-        visibility: visible;
+    /* 1. 隐藏原来的整个 APP 界面 */
+    /* 排除 print-area-container，其他所有 body 的直接子元素全部隐藏 */
+    body > *:not(#print-area-container) {
+        display: none !important;
     }
 
-    /* 3. 设置页面背景和字体 */
-    body {
-        background: #fff !important; /* 强制白底 */
-        color: #000 !important;      /* 强制黑字 */
-        margin: 0;
-        padding: 0;
+    /* 2. 强制 Body 设置 */
+    body, html {
+        height: auto !important;
         overflow: visible !important;
-    }
-    
-    /* 隐藏深空背景层 */
-    .canvas-modal, .canvas-modal::before, .canvas-modal::after {
-        background: none !important;
-        display: none !important; 
+        background: #fff !important; /* 强制白纸 */
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
-    /* 4. 容器重排：适应 A4 纸张宽度 */
-    .thought-stream {
-        position: absolute;
-        top: 0;
-        left: 0;
+    /* 3. 显示并设置打印区的样式 */
+    #print-area-container {
+        display: block !important;
+        position: static !important; /* 关键：静态定位，让内容自然流式排列 */
+        width: 100% !important;
+        background: #fff !important;
+        color: #000 !important;
+        padding: 20px 40px !important;
+        font-family: "Times New Roman", "Songti SC", serif; /* 书籍字体 */
+    }
+
+    /* 4. 修复内容的排版 */
+    /* 这里的 .thought-stream 是从 cloneNode 复制过来的类名 */
+    #print-area-container .thought-stream {
         width: 100% !important;
         max-width: 100% !important;
         margin: 0 !important;
-        padding: 20px 40px !important; /* 纸张页边距 */
-        background: #fff !important;
-        display: block !important; /* 确保不做 flex 导致分页问题 */
+        padding: 0 !important;
+        display: block !important; /* 解除 flex 布局可能带来的分页问题 */
     }
 
-    /* 5. 核心分页控制：禁止节点被切断 */
-    .thought-node {
-        page-break-inside: avoid !important; /* 关键：旧版浏览器 */
-        break-inside: avoid !important;      /* 关键：新版浏览器 */
-        
-        /* 调整打印时的样式 */
-        float: none !important; /* 防止浮动影响计算 */
-        width: 100% !important;
-        max-width: 100% !important;
-        margin-bottom: 30px !important;
-        box-shadow: none !important; /* 打印不需要阴影 */
-        border: 1px solid #ddd !important; /* 用边框代替阴影 */
+    /* 5. 节点样式重置 (去除深色模式和特效) */
+    #print-area-container .thought-node {
+        page-break-inside: avoid; /* 防止节点被切断 */
+        break-inside: avoid;
+        background: transparent !important;
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+        border-radius: 8px !important;
+        margin-bottom: 20px !important;
+        color: #000 !important;
         opacity: 1 !important;
-        transform: none !important;
-        
-        /* 强制显示颜色 (浏览器默认可能不打印背景色) */
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
+        transform: none !important; /* 去除浮动动画 */
+        padding: 15px !important;
+        float: none !important;
     }
 
-    /* 6. 针对不同角色的样式微调 */
+    /* 6. 针对不同角色的微调 */
+    #print-area-container .question-node {
+        background-color: #f9f9f9 !important;
+        border-left: 4px solid #333 !important;
+        text-align: left !important;
+        width: 100% !important;
+    }
     
-    /* 用户提问：简约风格 */
-    .thought-node.question-node {
-        background-color: #f5f5f5 !important;
-        color: #333 !important;
-        border-left: 5px solid #666 !important;
-        border-radius: 8px;
-    }
-    .question-node .user-handwriting {
-        color: #000 !important;
-        text-shadow: none !important;
-        font-family: serif; /* 打印用衬线体更好读 */
-    }
-
-    /* 北极星回答：书籍排版 */
-    .thought-node.answer-node {
+    #print-area-container .answer-node {
         background-color: #fff !important;
-        border: 1px solid #ccc !important;
-        color: #000 !important;
-        /* 去除之前的卷角伪元素，打印容易错位 */
-    }
-    .thought-node.answer-node::after,
-    .thought-node.answer-node::before {
-        display: none !important;
+        text-align: justify !important;
+        width: 100% !important;
     }
 
-    /* 7. 处理数学公式 MathJax */
-    mjx-container {
-        color: #000 !important;
+    /* 7. 隐藏不需要的元素 */
+    #print-area-container .node-delete-btn,
+    #print-area-container .star-decoration-top,
+    #print-area-container .star-decoration-bottom {
+        display: none !important;
     }
-    /* 确保 SVG 颜色正确 */
-    mjx-container svg path {
+    
+    /* 8. MathJax 颜色修正 */
+    #print-area-container mjx-container,
+    #print-area-container mjx-container svg {
+        color: #000 !important;
         fill: #000 !important;
-    }
-
-    /* 8. 处理连线 (SVG) */
-    /* 打印分页时，绝对定位的长 SVG 连线会被切断且错位，建议隐藏原 SVG，
-       改用 CSS 左侧边线来表示时间轴 */
-    #thoughtTrailsSvg {
-        display: none !important;
-    }
-    
-    /* 添加左侧时间轴线代替 SVG */
-    #thoughtStreamContent {
-        border-left: 2px solid #ddd;
-        margin-left: 20px !important;
-        padding-left: 30px !important;
-    }
-    
-    /* 隐藏删除按钮等交互元素 */
-    .node-delete-btn, .canvas-close-btn, .canvas-toolbar {
-        display: none !important;
     }
 }
 
