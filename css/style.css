@@ -2326,108 +2326,123 @@
     z-index: -1;
 }
 
-/* --- 2. 打印媒体查询（核心） --- */
+/* --- 0. 核心修正：控制浏览器物理页边距 (解决边距过大问题) --- */
+@page {
+    /* 将打印机默认的 ~20mm 边距强制设为 5mm */
+    margin: 5mm; 
+    size: auto;
+}
+
+/* --- 2. 打印媒体查询 (完整修正版) --- */
 @media print {
     /* 1. 隐藏非打印内容 */
     body > *:not(#print-overlay) {
         display: none !important;
     }
 
-    /* 2. Body 设置：允许背景色打印 */
+    /* 2. Body 设置 */
     body {
         background: #fff !important;
         margin: 0 !important;
         padding: 0 !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
     }
-
-    /* 3. 打印容器复位 - 【核心修改：增加宽度】 */
+  
+    /* 3. 打印容器复位 - 【核心修改：全宽 + 紧凑】 */
     #print-overlay {
         position: absolute !important;
         top: 0 !important;
         left: 0 !important;
         width: 100% !important;
+        /* 强制覆盖可能的 max-width 限制 */
+        max-width: 100% !important; 
         z-index: 99999 !important;
         
-        /* 左右边距从 40px 减小到 0px，极大拓宽内容显示区域 */
-        padding: 20px 0px !important; 
+        /* 去除所有内边距，让 @page 控制边缘 */
+        padding: 0 !important; 
+        margin: 0 !important;
         
         background: #fff !important;
-        box-sizing: border-box;
         
-        /* 【核心修改：字体纯黑 & 紧凑】 */
-        color: #000000 !important; /* 强制纯黑，杜绝灰色看不清 */
+        /* 字体设置：纯黑 + 极度紧凑 */
+        color: #000000 !important;
         font-family: "Microsoft YaHei", "Segoe UI", sans-serif;
-        font-size: 13px !important; 
-        line-height: 1.35 !important; /* 行高进一步压缩 (原1.45) */
+        font-size: 12px !important; /* 字体稍微调小一点点以容纳更多内容 */
+        line-height: 1.25 !important; /* 【关键】：进一步压缩行高 (原1.35) */
     }
 
-    /* 4. 对话气泡容器 */
+    /* 4. 对话气泡容器 - 【核心修改：强制撑满宽度】 */
     #print-overlay .thought-node {
         position: relative;
+        /* 关键：强制气泡宽度 100%，解决“内容宽度被压缩” */
+        width: 100% !important;
+        max-width: 100% !important;
+        
         page-break-inside: avoid !important;
-        margin-bottom: 8px !important; /* 气泡间距压缩 */
-        padding: 8px 10px !important;  /* 气泡内边距压缩 */
+        margin-bottom: 5px !important; /* 气泡间距再压缩 */
+        padding: 5px 8px !important;   /* 内边距压缩 */
+        
         border-radius: 4px !important;
-        border: 1px solid #ccc;        /* 边框颜色加深一点，防止太淡看不清 */
+        border: 1px solid #ddd;       
         white-space: pre-wrap !important; 
+        box-sizing: border-box !important; /* 防止边框撑破布局 */
     }
 
-    /* --- 5. 【核心修改：暴力压缩段落间距】 --- */
+    /* --- 5. 【核心修改：暴力压缩段落与空隙】 --- */
     
-    /* 移除所有默认 margin-top */
     #print-overlay .thought-node * {
         margin-top: 0 !important;
-        color: #000000 !important; /* 强制内部所有元素纯黑 */
+        color: #000000 !important;
     }
 
-    /* 压缩段落 P 标签 - 现在只有 2px 间距 */
+    /* 压缩 P 标签：间距改为 1px */
     #print-overlay .thought-node p {
-        margin-bottom: 2px !important; 
+        margin-bottom: 1px !important; 
         text-align: justify;
+        line-height: 1.25 !important;
     }
     
-    /* 列表紧凑化 */
+    /* 隐藏空段落 (Markdown解析常出现多余空行) */
+    #print-overlay .thought-node p:empty {
+        display: none !important;
+    }
+    
+    /* 列表极致紧凑 */
     #print-overlay .thought-node ul, 
     #print-overlay .thought-node ol {
-        margin-bottom: 2px !important;
-        padding-left: 18px !important; /* 减少缩进占用宽度 */
+        margin-bottom: 1px !important;
+        padding-left: 15px !important; 
     }
     #print-overlay .thought-node li {
-        margin-bottom: 0px !important; /* 列表项之间无间距 */
-        line-height: 1.3 !important;
+        margin-bottom: 0px !important;
+        line-height: 1.25 !important;
     }
     
-    /* 如果内容里有公式或标题，强制加粗显眼 */
+    /* 标题加粗 */
     #print-overlay .thought-node h1,
     #print-overlay .thought-node h2,
     #print-overlay .thought-node strong,
     #print-overlay .thought-node b {
-        font-weight: 800 !important; /* 特别加粗 */
+        font-weight: 800 !important;
         color: #000 !important;
-        margin-bottom: 4px !important;
+        margin-bottom: 2px !important;
     }
 
-    /* --- 6. 角色样式 (保持浅色底，但左侧线条加深) --- */
+    /* --- 6. 角色样式 (统一香槟色边线) --- */
     
-    /* User: 蓝底黑字 */
+    /* User: 浅灰底 + 香槟色线 (修改了原来的蓝色) */
     #print-overlay .question-node {
-        background-color: #f0f6ff !important; /* 浅蓝底 */
-        border-left: 4px solid #0056b3 !important; /* 深蓝线，更清晰 */
-        border: 1px solid #cce5ff;
-    }
-    /* 增加 User 文字的权重，防止看起来太细 */
-    #print-overlay .question-node {
+        background-color: #fcfcfc !important; 
+        border-left: 4px solid #D4AF37 !important; /* 统一改为香槟色 */
+        border: 1px solid #eee;
         font-weight: 500 !important;
     }
     
-    /* AI: 绿底黑字 */
+    /* North Star: 纯白底 + 香槟色线 */
     #print-overlay .answer-node {
-        background-color: #f4fff6 !important; /* 浅绿底 */
-        /*border-left: 4px solid #1e7e34 !important;  深绿线 */
-        border-left: 1px solid #D4AF37 !important;  香槟金线 */
-        border: 1px solid #D4AF37 !important;
+        background-color: #fff !important; 
+        /* 修复了之前的语法错误 */
+        border-left: 4px solid #D4AF37 !important; 
+        border: 1px solid #eee;
     }
 
     /* --- 7. 隐藏无关元素 --- */
@@ -2437,42 +2452,33 @@
         display: none !important;
     }
   
-   /* --- 新增：针对 PDF 导出的特定样式修正 --- */
-    /* 1. 北极星标志 (*) 颜色修改 */
+   /* --- 8. 北极星与领域样式修正 --- */
+    /* 标志颜色 */
     #print-overlay .star-decoration-top,
     #print-overlay .star-decoration-top i,
     #print-overlay .star-decoration-bottom i {
-        color: #D4AF37 !important; /* 香槟色 */
-        -webkit-print-color-adjust: exact !important; /* 强制打印颜色 */
+        color: #D4AF37 !important; 
+        -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
 
-    /* 2. 领域 (Field) 样式优化 */
+    /* 领域标签优化 */
     #print-overlay .badge-field {
-        /* 去掉接近黑色的背景，改为透明 */
-        background-color: transparent !important; 
         background: transparent !important;
-        
-        /* 字体颜色改为黑色或深灰，确保在白纸上看得清 */
         color: #000000 !important; 
         font-weight: bold !important;
-        
-        /* 加上香槟色边框 */
         border: 1px solid #D4AF37 !important;
-        
-        /* 微调内边距 */
-        padding: 2px 6px !important;
+        padding: 1px 5px !important; /* 稍微再紧凑一点 */
         border-radius: 4px !important;
-        
-        /* 强制打印边框颜色 */
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
     
-    /* 3. 名字旁边的修饰线颜色统一 */
+    /* 分割线 */
     #print-overlay .node-divider {
         background: linear-gradient(to right, transparent, #D4AF37, transparent) !important;
         opacity: 1 !important;
+        margin: 5px 0 !important; /* 减少分割线上下间距 */
     }
 }
 
