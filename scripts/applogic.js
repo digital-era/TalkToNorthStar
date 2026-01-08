@@ -1573,7 +1573,7 @@ function exportToPDF() {
             window.print();
             
             // 3. 打印指令发出后，恢复现场
-            document.title = originalTitle;
+            // document.title = originalTitle; 由于异步问题，修改完名称就不恢复了
             
             // --- 内存释放 ---
             if (document.body.contains(overlay)) {
