@@ -1573,3 +1573,146 @@ function exportToPDF() {
         }, 300);
     });
 } 
+
+/* --- 新增：导出为 HTML 功能 --- */
+function exportToHTML() {
+    if (!conversationHistory || conversationHistory.length === 0) {
+        alert("画布为空，无法导出。");
+        return;
+    }
+
+    // 1. 克隆内容节点，避免修改原始界面
+    const contentContainer = document.getElementById('thoughtStreamContent');
+    const clone = contentContainer.cloneNode(true);
+
+    // 2. 清理不需要的交互元素 (删除按钮)
+    const deleteBtns = clone.querySelectorAll('.node-delete-btn');
+    deleteBtns.forEach(btn => btn.remove());
+    
+    // 清理 onclick 属性，导出的页面不需要交互逻辑
+    const allElements = clone.querySelectorAll('*');
+    allElements.forEach(el => el.removeAttribute('onclick'));
+
+    // 3. 获取导出的文件名
+    let fileName = "对话记录";
+    if (typeof getExportFileName === 'function') {
+        fileName = getExportFileName();
+    }
+
+    // 4. 构建完整的 HTML 字符串
+    // 我们将把关键样式直接嵌入，确保导出的文件打开就是深色星空主题
+    const htmlContent = `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${fileName}</title>
+    <!-- 引入字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;700&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
+    <!-- 引入图标库 (使用 CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <style>
+        /* --- 基础重置 --- */
+        body { margin: 0; padding: 0; font-family: 'Noto Serif SC', serif; overflow-x: hidden; }
+        
+        /* --- 背景：复用 .canvas-modal 的深色星空样式 --- */
+        body {
+            background: linear-gradient(to bottom, #02060a 0%, #0d1620 100%);
+            min-height: 100vh;
+            color: #ccc;
+        }
+
+        /* --- 简单的星空背景模拟 (简化版动画) --- */
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(1px 1px at 10% 10%, #fff, transparent), radial-gradient(2px 2px at 50% 50%, #fff, transparent);
+            background-size: 500px 500px; opacity: 0.5; z-index: -1; pointer-events: none;
+        }
+
+        /* --- 容器布局 --- */
+        .thought-stream {
+            max-width: 900px; margin: 0 auto; padding: 80px 20px;
+            display: flex; flex-direction: column; gap: 60px;
+        }
+
+        /* --- 节点通用样式 --- */
+        .thought-node {
+            position: relative; max-width: 80%; padding: 0; border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        /* --- User 样式 --- */
+        .thought-node.question-node {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #fff;
+            padding: 20px 25px; color: #fff;
+            border-radius: 0 10px 10px 0;
+            backdrop-filter: blur(5px);
+        }
+        .user-avatar-mark {
+            position: absolute; left: -20px; top: -15px; width: 40px; height: 40px;
+            background: #fff; color: #0d1218; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .user-handwriting {
+            font-family: 'Ma Shan Zheng', cursive; font-size: 1.3rem; line-height: 1.6; letter-spacing: 1px;
+        }
+
+        /* --- North Star 样式 --- */
+        .thought-node.answer-node {
+            align-self: flex-end;
+            background: #f4ecd8; color: #2c1e12;
+            border-radius: 4px 4px 4px 50px;
+            padding: 30px 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid rgba(139, 90, 43, 0.2);
+            position: relative;
+        }
+        /* 卷角效果 */
+        .thought-node.answer-node::after {
+            content: ''; position: absolute; bottom: 8px; right: 8px;
+            width: 40px; height: 40px; z-index: -1;
+            box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.4);
+            transform: skew(15deg) rotate(5deg); border-radius: 50%;
+        }
+
+        /* --- 内容排版 --- */
+        .leader-name { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.4rem; color: #3e2723; text-align: center; }
+        .badge-field { background: #3e2723; color: #d7ccc8; padding: 2px 8px; border-radius: 2px; font-size: 0.75rem; display: inline-block; }
+        .leader-header { text-align: center; margin-bottom: 10px; }
+        .leader-contribution-hint { font-size: 0.9rem; color: #6d4c41; font-style: italic; text-align: center; margin-bottom: 15px; }
+        .node-divider { height: 1px; background: linear-gradient(to right, transparent, #8b5a2b, transparent); margin: 15px 0; opacity: 0.4; }
+        .star-content { font-size: 1rem; line-height: 1.8; color: #1a1a1a; text-align: justify; }
+        
+        /* 装饰图标 */
+        .star-decoration-top { text-align: center; color: #8b5a2b; margin-bottom: 10px; }
+        .star-decoration-bottom { margin-top: 20px; text-align: right; font-size: 0.8rem; color: #8b5a2b; font-family: 'Cinzel', serif; opacity: 0.6; }
+
+        /* 页脚 */
+        footer { text-align: center; padding: 50px; color: #555; font-size: 0.8rem; font-family: sans-serif; }
+    </style>
+</head>
+<body>
+    <div class="thought-stream">
+        ${clone.innerHTML}
+    </div>
+    <footer>
+        Exported from Talk with North Stars • ${new Date().toLocaleString()}
+    </footer>
+</body>
+</html>`;
+
+    // 5. 创建 Blob 并下载
+    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${fileName}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
