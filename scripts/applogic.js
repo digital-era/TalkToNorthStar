@@ -1404,7 +1404,7 @@ function createCoverPage(imagePath, type) {
 
 /* --- PDF导出优化版 (Artistic Version) --- */
 function exportToPDF() {
-    console.group("🚀 [PDF Export - Ultimate Fix V3] Start");
+    console.group("🚀 [PDF Export V4 - Industrial Fix] Start");
     
     const source = document.getElementById('thoughtStreamContent');
     if (!source) {
@@ -1422,29 +1422,29 @@ function exportToPDF() {
         });
     }
 
-    // 1. 清理
+    // 1. 清理旧层
     let oldOverlay = document.getElementById('print-overlay');
     if (oldOverlay) document.body.removeChild(oldOverlay);
 
-    // 2. 创建覆盖层
+    // 2. 创建新层
     const overlay = document.createElement('div');
     overlay.id = 'print-overlay';
 
-    // --- 3. 注入 CSS (核心修复逻辑) ---
+    // --- 3. 注入 CSS (这是核心) ---
     const style = document.createElement('style');
     style.innerHTML = `
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
 
-        /* 1. 页面重置：消除白边 */
+        /* 1. 纸张归零 */
         @page {
             size: A4;
-            margin: 0; /* 强制 0 边距 */
+            margin: 0; /* 必须是0，否则封面会有白边 */
         }
 
         @media print {
             html, body {
                 width: 100%;
-                height: auto;
+                height: 100%;
                 margin: 0 !important;
                 padding: 0 !important;
                 background-color: #fff !important;
@@ -1452,161 +1452,150 @@ function exportToPDF() {
                 print-color-adjust: exact !important;
             }
 
-            /* 隐藏网页原有内容 */
             body > *:not(#print-overlay) { display: none !important; }
 
             #print-overlay {
-                width: 100% !important;
+                width: 100%;
                 position: absolute;
                 top: 0; left: 0;
                 z-index: 99999;
             }
 
-            /* --- 封面系统 (修复白边与拉伸) --- */
-            .print-page-container {
+            /* --- 封面与封底通用容器 --- */
+            .full-page-container {
                 width: 100% !important;
-                /* A4 标准比例高度，确保占满一页 */
-                height: 297mm !important; 
-                position: relative !important;
-                break-after: page;
+                height: 297mm !important; /* 强制 A4 高度 */
+                position: relative;
                 overflow: hidden;
-                /* 关键：深色背景防止微小白边 */
-                background-color: #02060a; 
+                break-after: page;
+                break-inside: avoid;
+                background-color: #02060a; /* 深色补底 */
             }
 
-            /* 封面图片容器：使用背景图模式，防止布局挤压 */
-            .cover-bg-layer {
-                width: 100%;
-                height: 100%;
-                background-size: cover; /* 铺满 */
-                background-position: center;
-                background-repeat: no-repeat;
+            /* 封面上下部分 */
+            .cover-top {
+                width: 100%; height: 55%;
+                background-size: cover; background-position: center bottom;
+            }
+            .cover-bottom {
+                width: 100%; height: 45%;
+                background-size: cover; background-position: top center;
             }
 
-            /* --- 内容页系统 (修复文字截断与双重水印) --- */
+            /* --- 内容页布局 --- */
             #print-content-wrapper { 
                 width: 100% !important;
-                background-color: #fff !important;
-                font-family: 'Noto Serif SC', serif;
-                /* 关键：上下留白，不再使用固定页眉页脚，防止遮挡文字 */
-                padding: 20mm 15mm !important; 
+                padding: 20mm 15mm !important; /* 给正文留出物理边距 */
                 box-sizing: border-box;
-                break-before: page; 
+                background-color: #fff;
+                break-before: page;
+                min-height: 297mm; /* 保证至少有一页高度 */
             }
 
-            /* 页眉：改为流式布局，不固定 */
-            .flow-header {
-                width: 100%;
-                text-align: center;
-                font-family: 'Cinzel', serif;
-                font-size: 8pt;
-                color: #aaa;
-                border-bottom: 1px solid #eee;
-                padding-bottom: 10px;
-                margin-bottom: 30px; /* 与正文拉开距离 */
-            }
-
-            /* --- 节点样式 (修复段落间距与分页) --- */
+            /* --- 核心：暴力修复段落间距 --- */
             .thought-node {
                 width: 100% !important;
-                margin-bottom: 15px !important; 
-                padding: 0 !important;
+                margin-bottom: 15px !important;
                 border: none !important;
-                /* 核心：防止节点内部被切断 */
-                break-inside: avoid; 
-                page-break-inside: avoid;
+                break-inside: avoid; /* 防止节点被切断 */
             }
 
-            /* 强制重置段落：修复间距过大 */
-            .thought-node p {
-                margin: 0 0 0.5em 0 !important; /* 上0，下0.5em */
-                line-height: 1.6 !important;
-                text-align: justify;
+            /* 这里的 * 选择器是关键：强制重置所有子元素的间距 */
+            .thought-node * {
+                margin-top: 0 !important;
+                margin-bottom: 5px !important; /* 极小的间距 */
+                line-height: 1.5 !important;
                 font-size: 11pt !important;
+                font-family: 'Noto Serif SC', serif !important;
+                text-align: justify;
             }
-            
-            /* 暴力隐藏所有换行符和空段落 */
+
+            /* 单独处理标题，稍微大一点 */
+            .thought-node h1, .thought-node h2, .thought-node h3 {
+                font-size: 13pt !important;
+                font-weight: bold !important;
+                margin-top: 10px !important;
+                margin-bottom: 8px !important;
+            }
+
+            /* 隐藏空行和换行符 */
             .thought-node br { display: none !important; }
             .thought-node p:empty { display: none !important; }
+            
+            /* 列表紧凑化 */
+            .thought-node ul, .thought-node ol {
+                padding-left: 20px !important;
+                margin-bottom: 5px !important;
+            }
+            .thought-node li {
+                margin-bottom: 2px !important;
+            }
 
-            /* User 样式 */
+            /* 角色框样式 */
             .thought-node.question-node {
                 border-left: 3px solid #2c3e50 !important;
-                padding-left: 15px !important;
+                padding-left: 10px !important;
                 margin-top: 20px !important;
+                background: transparent !important; /* 去掉背景防止打印太黑 */
             }
             .question-node .role-label {
-                font-family: 'Cinzel', serif; font-size: 9pt; color: #999; margin-bottom: 5px;
+                font-family: 'Cinzel', serif !important; 
+                font-size: 9pt !important; 
+                color: #999 !important;
+                margin-bottom: 2px !important;
             }
             .question-node .node-content {
                 font-family: 'Ma Shan Zheng', cursive !important;
-                font-size: 15pt !important;
-                color: #222 !important;
+                font-size: 14pt !important;
+                color: #000 !important;
             }
 
-            /* AI 样式 */
             .thought-node.answer-node {
                 background-color: #FFFAF0 !important; 
-                border: 1px solid #e8e4d8 !important; 
-                padding: 20px !important; 
-                border-radius: 8px;
-                box-shadow: none !important;
+                border: 1px solid #D4AF37 !important; 
+                padding: 15px !important;
+                border-radius: 5px;
             }
 
-            /* --- 文末落款 (修复双重显示) --- */
-            /* 之前是因为有固定footer又有这个，现在只保留这个 */
-            .final-signature {
-                margin-top: 40px;
-                padding-top: 20px;
-                border-top: 1px solid rgba(139, 90, 43, 0.3);
+            /* --- 封底 (解决文字截断) --- */
+            .back-page-content {
+                width: 100%; height: 100%;
+                background-size: 100% 100%; /* 强制拉伸铺满 */
                 display: flex;
-                justify-content: flex-end;
-                align-items: center;
-                gap: 10px;
+                flex-direction: column;
+                justify-content: center; /* 垂直居中 */
+                align-items: center; /* 水平居中 */
+                color: rgba(255,255,255,0.9);
+                text-align: center;
+                padding-bottom: 50mm; /* 把文字往上顶一点，避开底部 */
+            }
+            
+            /* 文末落款 */
+            .final-signature {
+                margin-top: 30px;
+                text-align: right;
                 font-family: 'Cinzel', serif;
                 color: #8b5a2b;
-                /* 防止落款被切到下一页的一半 */
-                break-inside: avoid; 
-                page-break-inside: avoid;
-            }
-
-            /* --- 封底 (修复文字显示不全) --- */
-            /* 单独处理封底背景图，确保文字（通常在图片下方）不被切 */
-            .back-cover-layer {
-                width: 100%;
-                height: 100%;
-                /* 使用 100% 100% 强制拉伸填满，或者 cover */
-                background-size: 100% 100%; 
-                background-position: center;
-                background-repeat: no-repeat;
+                border-top: 1px solid #eee;
+                padding-top: 10px;
+                break-inside: avoid;
             }
         }
     `;
     overlay.appendChild(style);
 
-    // --- 1. 封面 (使用背景图修复白边) ---
+    // --- 1. 封面 (使用背景图) ---
     const coverPage = document.createElement('div');
-    coverPage.className = 'print-page-container';
+    coverPage.className = 'full-page-container';
     
-    // 我们将两张图合并为一个 DOM 结构的背景，或者简单点，上下布局
-    // 为了修复右侧白边，容器宽度设为 100%
     const coverTop = document.createElement('div');
-    coverTop.style.height = '55%';
-    coverTop.style.width = '100%';
+    coverTop.className = 'cover-top';
     coverTop.style.backgroundImage = "url('images/对话北极星Cover1.jpg')";
-    coverTop.style.backgroundSize = 'cover';
-    coverTop.style.backgroundPosition = 'bottom';
     
     const coverBottom = document.createElement('div');
-    coverBottom.style.height = '45%';
-    coverBottom.style.width = '100%';
+    coverBottom.className = 'cover-bottom';
     coverBottom.style.backgroundImage = "url('images/对话北极星Cover2.jpg')";
-    // 关键：Contain 模式会留黑边，Cover 模式会切字
-    // 解决方案：使用 100% 100% 拉伸 (文字稍微变胖一点点但绝对完整)，或者 cover + center
-    coverBottom.style.backgroundSize = 'cover'; 
-    coverBottom.style.backgroundPosition = 'top center';
-    coverBottom.style.backgroundColor = '#0d1620'; // 补底色
-
+    
     imagePromises.push(trackImageLoad('images/对话北极星Cover1.jpg'));
     imagePromises.push(trackImageLoad('images/对话北极星Cover2.jpg'));
 
@@ -1614,63 +1603,73 @@ function exportToPDF() {
     coverPage.appendChild(coverBottom);
     overlay.appendChild(coverPage);
 
-    // --- 2. 内容页 (无固定页脚，防止遮挡) ---
+    // --- 2. 正文 (清理结构) ---
     const contentWrapper = document.createElement('div');
     contentWrapper.id = 'print-content-wrapper';
 
-    // 顶部添加一个简单的 LOGO/标题
+    // 简单页眉
     const header = document.createElement('div');
-    header.className = 'flow-header';
-    header.innerText = `TALK WITH NORTH STARS • ${new Date().toLocaleDateString()}`;
+    header.style.textAlign = 'center';
+    header.style.fontSize = '9pt';
+    header.style.color = '#ccc';
+    header.style.marginBottom = '20px';
+    header.style.fontFamily = 'Cinzel, serif';
+    header.innerText = "TALK WITH NORTH STARS";
     contentWrapper.appendChild(header);
 
-    // 处理内容节点
+    // 处理节点
     const contentClone = source.cloneNode(true);
     const nodes = contentClone.children;
     for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
         if (!node.classList.contains('thought-node')) continue;
 
+        // 插入 Role Label
         if (node.classList.contains('question-node')) {
             const role = document.createElement('div');
             role.className = 'role-label';
             role.innerText = 'THE INQUIRER';
             node.insertBefore(role, node.firstChild);
         }
+        
+        // 关键：删除节点内的删除按钮等垃圾元素
+        const trash = node.querySelectorAll('.node-delete-btn, .star-decoration-top, .star-decoration-bottom');
+        trash.forEach(el => el.remove());
+
         contentWrapper.appendChild(node.cloneNode(true));
     }
 
-    // 添加文末落款 (这是唯一的落款，不会重叠了)
+    // 唯一的文末落款
     const signature = document.createElement('div');
     signature.className = 'final-signature';
-    signature.innerHTML = `
-        <i class="fas fa-feather-alt"></i>
-        <span>NORTH STAR INSIGHT</span>
-    `;
+    signature.innerHTML = `NORTH STAR INSIGHT <i class="fas fa-feather-alt"></i>`;
     contentWrapper.appendChild(signature);
+
     overlay.appendChild(contentWrapper);
 
-    // --- 3. 封底 (修复文字截断) ---
-    const backCover = document.createElement('div');
-    backCover.className = 'print-page-container';
+    // --- 3. 封底 (垂直居中内容) ---
+    const backPage = document.createElement('div');
+    backPage.className = 'full-page-container';
+    // 强制分页，防止粘连
+    backPage.style.breakBefore = 'page';
     
-    const backLayer = document.createElement('div');
-    backLayer.className = 'back-cover-layer';
-    backLayer.style.backgroundImage = "url('images/对话北极星Cover3.jpg')";
-    // 封底如果有文字，建议用 background-size: contain 配合深色背景，或者 cover
-    // 根据反馈文字看不见，可能是被切了。改为 contain 居中试一下，或者 100% 100%
-    // 考虑到全屏效果，这里强制拉伸铺满
-    backLayer.style.backgroundSize = "100% 100%"; 
+    const backContent = document.createElement('div');
+    backContent.className = 'back-page-content';
+    backContent.style.backgroundImage = "url('images/对话北极星Cover3.jpg')";
     
     imagePromises.push(trackImageLoad('images/对话北极星Cover3.jpg'));
-    backCover.appendChild(backLayer);
-    overlay.appendChild(backCover);
+    
+    // 如果封底需要文字，在这里加，而不是靠图片自带
+    // backContent.innerHTML = `<h1>谢谢！</h1><p>对话北极星...</p>`; 
+    
+    backPage.appendChild(backContent);
+    overlay.appendChild(backPage);
 
     // 4. 执行
     document.body.appendChild(overlay);
-    console.log("⏳ 等待渲染...");
     
-    Promise.all(imagePromises).then(() => new Promise(r => setTimeout(r, 800))).then(() => {
+    // 稍微多等一会儿图片
+    Promise.all(imagePromises).then(() => new Promise(r => setTimeout(r, 1000))).then(() => {
         window.print();
         setTimeout(() => {
             if (document.body.contains(overlay)) document.body.removeChild(overlay);
