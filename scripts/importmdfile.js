@@ -207,6 +207,53 @@ function parseOldFormatMD(normalized) {
     return history;
 }
 
+/**
+ * 从【问题 / Question】块中精确提取用户真正提问（双引号优先）
+ */
+function extractRealUserQuestion(block) {
+    // 优先匹配“用户问题:”后的双引号内容
+    const quoteMatch = block.match(/用户问题\s*[:：]\s*["“](.+?)["”]/s);
+    if (quoteMatch && quoteMatch[1]) {
+        return quoteMatch[1].trim();
+    }
+
+    // 次匹配：用户问题: 后非引号内容（到下一个空行或指令）
+    const colonMatch = block.match(/用户问题\s*[:：]\s*([^\n]+?)(?=\n\s*请你作为|\n\s*$)/s);
+    if (colonMatch && colonMatch[1]) {
+        return colonMatch[1].trim();
+    }
+
+    // 兜底：取最后出现的引号内容
+    const lastQuote = block.match(/["“](.+?)["”]/s);
+    return lastQuote ? lastQuote[1].trim() : '';
+}
+
+/**
+ * 从背景设定中提取北极星人物信息
+ */
+function extractLeaderInfoFromPrompt(block) {
+    const info = { name: 'Unknown', field: '', contribution: '' };
+
+    // 提取“你是 XXX (英文名)”
+    const nameMatch = block.match(/你是\s+([^（(]+)[（(]([^）)]+)[）)]/);
+    if (nameMatch) {
+        info.name = nameMatch[1].trim();
+    }
+
+    // 提取“主要贡献:”
+    const contribMatch = block.match(/主要贡献[：:]\s*([^\n]+?)(?=\n\s*-|$)/);
+    if (contribMatch) {
+        info.contribution = contribMatch[1].trim();
+    }
+
+    // 提取“专业领域:”
+    const fieldMatch = block.match(/专业领域[：:]\s*([^\n]+?)(?=\n\s*-|$)/);
+    if (fieldMatch) {
+        info.field = fieldMatch[1].trim();
+    }
+
+    return info.name !== 'Unknown' ? info : null;
+}
 
 /**
  * 从MD内容解析出 conversationHistory 格式
@@ -226,59 +273,57 @@ function parseMDToHistory(mdContent) {
         return parseOldFormatMD(normalized);
     }
     // ── 策略2：【问题 / Question】 + 【北极星答复】格式 ───────
-    else if (normalized.match(/【\s*(问题|Question)\s*\/\s*(问题|Question)\s*】/i) ||
-             normalized.includes('【北极星答复') ||
-             normalized.includes('【NorthStar Answer')) {
-
+    else if (normalized.includes('【问题 / Question】') || normalized.includes('【北极星答复')) {
         const parts = normalized.split(/【([^】]+)】:/).filter(Boolean);
-
+    
         let currentRole = null;
-        let questionBlockLines = [];
-
+        let questionBlock = '';  // 暂存【问题 / Question】的全部内容
+    
         for (let i = 0; i < parts.length; i++) {
             const part = parts[i].trim();
-
+    
             if (i % 2 === 0) {
-                // 标题
+                // 标题部分
                 const title = part.toLowerCase();
                 if (title.includes('问题') || title.includes('question')) {
                     currentRole = 'user';
-                    questionBlockLines = [];
+                    questionBlock = '';
                 } else if (title.includes('答复') || title.includes('northstar answer')) {
                     currentRole = 'assistant';
-                    questionBlockLines = []; // 新的assistant块开始
                 }
             } else {
-                // 内容
+                // 内容部分
                 if (currentRole === 'user') {
-                    questionBlockLines.push(part);
-
-                    // 尝试在本块结束时提取真正的问题
-                    const fullBlock = questionBlockLines.join('\n');
-                    const userQuestion = extractRealUserQuestion(fullBlock);
-
-                    if (userQuestion) {
-                        history.push({
-                            role: 'user',
-                            text: userQuestion,
-                            leaderInfo: null
-                        });
+                    questionBlock += part + '\n';
+    
+                    // ★ 核心：从 questionBlock 中提取真正用户问题 + 北极星信息
+                    const userQuestion = extractRealUserQuestion(questionBlock);
+                    const leaderInfo = extractLeaderInfoFromPrompt(questionBlock);
+    
+                    history.push({
+                        role: 'user',
+                        text: userQuestion || '（未提取到具体问题）',
+                        leaderInfo: null
+                    });
+    
+                    // 如果提取到了 leaderInfo，保存给后续 assistant 使用
+                    if (leaderInfo) {
+                        history[history.length - 1]._pendingLeader = leaderInfo;
                     }
                 } else if (currentRole === 'assistant') {
                     let text = part.trim();
-
-                    // 尝试提取人物名称（常见写法：作为 某某 (英文名)）
-                    const leaderMatch = text.match(/^作为\s+([^（(]+)[（(]([^）)]+)[）)]/);
-                    const leaderName = leaderMatch ? leaderMatch[1].trim() : null;
-
+    
+                    // 使用从 prompt 中提取的 leaderInfo（优先级最高）
+                    let leaderInfo = { name: 'Unknown', field: '', contribution: '' };
+                    if (history.length > 0 && history[history.length - 1]._pendingLeader) {
+                        leaderInfo = history[history.length - 1]._pendingLeader;
+                        delete history[history.length - 1]._pendingLeader;
+                    }
+    
                     history.push({
                         role: 'assistant',
-                        text,
-                        leaderInfo: leaderName ? {
-                            name: leaderName,
-                            field: '',
-                            contribution: ''
-                        } : null
+                        text: text,
+                        leaderInfo: leaderInfo
                     });
                 }
             }
