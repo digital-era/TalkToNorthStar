@@ -212,23 +212,58 @@ function parseOldFormatMD(normalized) {
  * 优先级：1. “用户问题:”后双引号内容（最可靠）  2. 到第一个“请你作为”前的非空内容
  */
 function extractRealUserQuestion(block) {
-    console.log('【调试】完整 question block：', block);  // 打印原始块内容
+    console.group('【extractRealUserQuestion 调试】');
+    console.log('原始输入 block（完整内容）：', block);
+    console.log('block 长度：', block.length);
+    console.log('block 前 200 字符：', block.substring(0, 200));
 
     block = block.trim();
+    console.log('清理 trim 后 block：', block);
 
-    // 步骤1：严格匹配
+    // 步骤1：严格匹配“用户问题:”后（允许中间换行）的双引号内容
     const strictPattern = /用户问题\s*[:：]\s*(?:\n\s*)*["“]([^"”]+)["”]/;
     const strictMatch = block.match(strictPattern);
-    console.log('【调试】strictPattern 匹配结果：', strictMatch);  // 看是否命中
-
+    console.log('步骤1 - strictPattern 正则：', strictPattern);
+    console.log('步骤1 - 匹配结果 strictMatch：', strictMatch);
     if (strictMatch && strictMatch[1]) {
-        console.log('【成功】提取到引号内容：', strictMatch[1].trim());
-        return strictMatch[1].trim();
+        const result = strictMatch[1].trim();
+        console.log('【成功】步骤1 命中，返回：', result);
+        console.groupEnd();
+        return result;
     }
 
-    // ... 其余代码不变 ...
+    // 步骤2：匹配“用户问题:”后到“请你作为”前的所有内容
+    const untilCmd = block.match(/用户问题\s*[:：]\s*([\s\S]*?)(?=请你作为\s|$)/);
+    console.log('步骤2 - untilCmd 正则：', /用户问题\s*[:：]\s*([\s\S]*?)(?=请你作为\s|$)/);
+    console.log('步骤2 - 匹配结果 untilCmd：', untilCmd);
+    if (untilCmd && untilCmd[1]) {
+        let candidate = untilCmd[1]
+            .replace(/^\n+/, '')           // 去掉冒号后的空行
+            .replace(/["“]([^"”]*)["”]/g, '$1') // 提取引号内容
+            .replace(/\s+$/, '')
+            .trim();
 
-    console.log('【兜底】最终返回：', '（未提取到具体问题）');
+        console.log('步骤2 - 清理后的 candidate：', candidate);
+        if (candidate && !candidate.includes('请你作为')) {
+            console.log('【成功】步骤2 命中，返回：', candidate);
+            console.groupEnd();
+            return candidate;
+        }
+    }
+
+    // 步骤3：兜底取第一个完整双引号
+    const firstQuote = block.match(/["“](.+?)["”]/);
+    console.log('步骤3 - firstQuote 正则：', /["“](.+?)["”]/);
+    console.log('步骤3 - 匹配结果 firstQuote：', firstQuote);
+    if (firstQuote && firstQuote[1]) {
+        const result = firstQuote[1].trim();
+        console.log('【兜底成功】步骤3 命中，返回：', result);
+        console.groupEnd();
+        return result;
+    }
+
+    console.log('【兜底失败】未匹配到任何有效内容，返回默认值');
+    console.groupEnd();
     return '（未提取到具体问题）';
 }
 
