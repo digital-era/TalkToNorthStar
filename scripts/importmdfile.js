@@ -63,6 +63,10 @@ function importFromMD() {
     }, 1000);
 }
 
+// 转义正则特殊字符的辅助函数（防止角色名中含有 . * 等字符导致正则失效）
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 /**
  * 专门处理旧格式（### User: / ### 人物名:）的解析函数
@@ -154,21 +158,51 @@ function parseOldFormatMD(normalized) {
             .map(line => (line.startsWith('> ') ? line.substring(2) : line).trim())
             .filter(line => line)
             .join('\n');
-
+        
+        // ★ 新增：移除文本开头可能存在的角色名（防止重复显示和样式异常）
+        if (roleName && text) {
+            // 构造角色名可能出现的几种常见开头模式
+            const possiblePrefixes = [
+                roleName,                              // 直接是名字
+                roleName + ':',                        // 名字后带冒号
+                roleName + '：',                       // 全角冒号
+                roleName + ' (',                       // 带英文名括号
+                roleName.replace(/\s*\([^)]+\)/, ''),  // 去掉括号后的中文名
+            ];
+        
+            let cleaned = text;
+        
+            for (const prefix of possiblePrefixes) {
+                if (!prefix) continue;
+                
+                // 允许前面可能有少量空白或换行
+                const regex = new RegExp(
+                    `^\\s*(?:${escapeRegExp(prefix)})\\s*[:：]?\\s*`,
+                    'i'
+                );
+                
+                cleaned = cleaned.replace(regex, '').trim();
+                
+                if (cleaned !== text) break; // 匹配成功一次即可退出
+            }
+        
+            text = cleaned;
+        }
+        
         let leaderInfo = { name: roleName, field: '', contribution: '' };
-
-        // 优先使用从 User 段提取的信息（最可靠）
+        
+        // 下面继续原有逻辑：使用 pending 的 leaderInfo 等
         if (pendingUser && pendingUser._tempLeaderInfo) {
             leaderInfo = pendingUser._tempLeaderInfo;
-            delete pendingUser._tempLeaderInfo; // 清理临时字段
+            delete pendingUser._tempLeaderInfo;
         }
-
-        // 先把 pending 的 User 推入（保持顺序）
+        
+        // 先把 pending 的 User 推入
         if (pendingUser) {
             history.push(pendingUser);
             pendingUser = null;
         }
-
+        
         // 再推入 assistant
         history.push({
             role: 'assistant',
