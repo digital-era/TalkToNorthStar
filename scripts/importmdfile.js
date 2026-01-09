@@ -212,38 +212,36 @@ function parseOldFormatMD(normalized) {
  * 优先级：1. “用户问题:”后双引号内容（最可靠）  2. 到第一个“请你作为”前的非空内容
  */
 function extractRealUserQuestion(block) {
-    // 清理前后空白，便于匹配
     block = block.trim();
 
-    // 优先级最高：严格匹配“用户问题:”后第一个双引号完整内容
-    const strictQuoteMatch = block.match(/用户问题\s*[:：]\s*["“]([^"”]+)["”]/);
-    if (strictQuoteMatch && strictQuoteMatch[1]) {
-        return strictQuoteMatch[1].trim();
+    // 步骤1：先尝试严格匹配“用户问题:”后可能带换行的双引号内容
+    const strictPattern = /用户问题\s*[:：]\s*(?:\n\s*)*["“]([^"”]+)["”]/;
+    const strictMatch = block.match(strictPattern);
+    if (strictMatch && strictMatch[1]) {
+        return strictMatch[1].trim();
     }
 
-    // 次优先：匹配“用户问题:”后，到“请你作为”出现前的所有非空内容
-    const untilInstruction = block.match(/用户问题\s*[:：]\s*([\s\S]*?)(?=请你作为\s|$)/);
-    if (untilInstruction && untilInstruction[1]) {
-        let candidate = untilInstruction[1]
-            .replace(/["“]([^"”]+)["”]/g, '$1')  // 去掉多余引号（如果有）
-            .replace(/\s+$/, '')                  // 去尾部空白
+    // 步骤2：匹配“用户问题:”后，到“请你作为”前的所有内容（允许中间换行）
+    const untilCmd = block.match(/用户问题\s*[:：]\s*([\s\S]*?)(?=请你作为\s|$)/);
+    if (untilCmd && untilCmd[1]) {
+        let candidate = untilCmd[1]
+            .replace(/^\n+/, '')              // 去掉“用户问题:”后的空行
+            .replace(/["“]([^"”]*)["”]/, '$1') // 提取引号内容
+            .replace(/\s+$/, '')
             .trim();
 
-        // 如果 candidate 以引号开头但没闭合，也清理
-        candidate = candidate.replace(/^["“]/, '').trim();
-
-        if (candidate) return candidate;
+        if (candidate && !candidate.includes('请你作为')) {
+            return candidate;
+        }
     }
 
-    // 兜底：取块中任意完整双引号内容（最后出现的）
-    const anyQuote = block.match(/["“](.+?)["”]/s);
-    if (anyQuote && anyQuote[1]) {
-        return anyQuote[1].trim();
+    // 步骤3：兜底取块中第一个完整双引号（最保险）
+    const firstQuote = block.match(/["“](.+?)["”]/);
+    if (firstQuote && firstQuote[1]) {
+        return firstQuote[1].trim();
     }
 
-    // 最坏情况：返回最后一行非指令内容
-    const lines = block.split('\n').map(l => l.trim()).filter(l => l && !l.includes('请你作为'));
-    return lines[lines.length - 1] || '（未提取到具体问题）';
+    return '（未提取到具体问题）';
 }
 
 
