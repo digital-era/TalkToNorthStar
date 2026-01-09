@@ -1402,9 +1402,9 @@ function createCoverPage(imagePath, type) {
     return pageContainer;
 }
 
-/* --- PDF导出最终版 --- */
+/* --- PDF导出优化版 (Artistic Version) --- */
 function exportToPDF() {
-    console.group("🚀 [PDF Export] Start");
+    console.group("🚀 [PDF Export - Artistic Mode] Start");
     
     const source = document.getElementById('thoughtStreamContent');
     if (!source) {
@@ -1429,187 +1429,258 @@ function exportToPDF() {
     const overlay = document.createElement('div');
     overlay.id = 'print-overlay';
 
-    // --- 关键步骤 A: 注入 Named Page 样式 (CSS逻辑无误) ---
+    // --- 关键步骤 A: 注入艺术级打印样式 ---
+    // 核心思路：@page 设为 0 边距以支持封面全屏，内容页通过 padding 控制版心
     const style = document.createElement('style');
     style.innerHTML = `
-        @page cover-layout { margin: 0 !important; size: auto; }
-        @page { margin: 15mm 5mm; }
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+        @page {
+            size: A4;
+            margin: 0; /* 关键：0边距，实现封面无白边 */
+        }
 
         @media print {
-            html, body { height: auto !important; overflow: visible !important; margin: 0 !important; }
-            #print-overlay { position: absolute !important; top: 0 !important; left: 0 !important; width: 100% !important; height: auto !important; overflow: visible !important; display: block !important; }
-            .print-cover-page { page: cover-layout; width: 100vw !important; height: 100vh !important; margin: 0 !important; padding: 0 !important; position: relative !important; overflow: hidden !important; break-inside: avoid !important; break-after: page !important; }
-            #print-content-wrapper { page: auto; break-before: page; position: relative; width: 100%; height: auto !important; overflow: visible !important; display: block !important; }
+            html, body { 
+                width: 210mm; 
+                height: auto; 
+                margin: 0 !important; 
+                padding: 0 !important;
+                background: #fff !important; 
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* 隐藏所有非打印元素 */
+            body > *:not(#print-overlay) { display: none !important; }
+
+            #print-overlay {
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                display: block !important;
+                z-index: 99999 !important;
+            }
+
+            /* --- 封面样式 (全屏) --- */
+            .print-cover-page { 
+                width: 210mm !important; 
+                height: 296mm !important; /* A4 标准高度 */
+                position: relative !important; 
+                overflow: hidden !important; 
+                break-after: page !important; 
+                break-inside: avoid !important;
+            }
+            
+            .print-cover-page img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover; /* 保证填满不留白 */
+                display: block;
+            }
+
+            /* --- 内容页容器 (模拟书籍版心) --- */
+            #print-content-wrapper { 
+                width: 100% !important;
+                box-sizing: border-box !important;
+                /* 关键：给内容页设置类似书籍的边距 (上右下左) */
+                padding: 20mm 15mm 20mm 15mm !important; 
+                background-color: #fff !important;
+                font-family: 'Noto Serif SC', serif;
+                break-before: page; /* 内容从新的一页开始 */
+            }
+
+            /* --- 节点美化 --- */
+            .thought-node {
+                width: 100% !important;
+                margin-bottom: 12mm !important;
+                padding: 0 !important;
+                border: none !important;
+                break-inside: avoid; /* 尽量不切断一个对话块 */
+            }
+
+            /* User: 极简手写风格 */
+            .thought-node.question-node {
+                border-left: 3px solid #2c3e50 !important;
+                padding-left: 15px !important;
+                margin-top: 10mm !important; /* 提问前多留白 */
+            }
+            
+            .question-node .role-title {
+                color: #888;
+                font-size: 10pt;
+                font-family: 'Cinzel', serif;
+                margin-bottom: 4px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            .question-node .node-content {
+                font-family: 'Ma Shan Zheng', cursive !important;
+                font-size: 16pt !important; /* 手写体大一点才好看 */
+                color: #000 !important;
+                line-height: 1.6 !important;
+            }
+
+            /* North Star: 典雅信笺风格 */
+            .thought-node.answer-node {
+                background-color: #FFFAF0 !important; /* 极淡的米色 */
+                border: 1px solid #e0dcd0 !important; /* 极细边框 */
+                border-radius: 4px !important;
+                padding: 8mm !important; /* 内部留白 */
+                position: relative;
+                box-shadow: none !important;
+            }
+
+            /* 领袖信息头 */
+            .leader-header {
+                text-align: center;
+                border-bottom: 1px solid rgba(139, 90, 43, 0.3);
+                padding-bottom: 10px;
+                margin-bottom: 15px;
+            }
+            .leader-name {
+                font-family: 'Playfair Display', serif !important;
+                font-size: 18pt !important;
+                font-weight: 700;
+                color: #2c1e12 !important;
+            }
+            .leader-badges span {
+                font-size: 8pt;
+                border: 1px solid #8b5a2b;
+                padding: 1px 6px;
+                border-radius: 3px;
+                color: #8b5a2b;
+                text-transform: uppercase;
+            }
+
+            /* 正文排版 */
+            .answer-node .node-content {
+                font-family: 'Noto Serif SC', serif !important;
+                font-size: 11pt !important;
+                line-height: 1.8 !important; /* 宽松行高 */
+                color: #1a1a1a !important;
+                text-align: justify; /* 两端对齐，像印刷品 */
+            }
+            
+            /* 去除无用元素 */
+            .node-delete-btn, .user-avatar-mark, .star-decoration-top, .star-decoration-bottom {
+                display: none !important;
+            }
+            
+            /* 添加页脚装饰 */
+            .page-footer-mark {
+                text-align: center; 
+                margin-top: 5mm; 
+                font-size: 8pt; 
+                color: #ccc; 
+                font-family: 'Cinzel', serif;
+            }
         }
     `;
     overlay.appendChild(style);
 
-    // --- 步骤 B: 第一页 (图1在上，图2在下) ---
+    // --- 步骤 B: 第一页 (双图拼接，全屏) ---
     const coverPage1 = document.createElement('div');
     coverPage1.className = 'print-cover-page';
-    coverPage1.style.breakAfter = 'page'; 
+    
+    // 我们创建一个 flex 容器来垂直排列两张图，确保无缝
+    const coverFlex = document.createElement('div');
+    coverFlex.style.display = 'flex';
+    coverFlex.style.flexDirection = 'column';
+    coverFlex.style.height = '100%';
+    coverFlex.style.width = '100%';
 
     const img1 = document.createElement('img');
     img1.src = 'images/对话北极星Cover1.jpg'; 
-    img1.style.position = 'absolute'; img1.style.top = '0'; img1.style.left = '0';
-    img1.style.width = '100%'; img1.style.height = '48%'; 
-    img1.style.objectFit = 'contain'; img1.style.objectPosition = 'center 40%'; 
+    img1.style.flex = '1'; // 均分高度
+    img1.style.objectFit = 'cover'; 
     imagePromises.push(trackImageLoad(img1));
-    coverPage1.appendChild(img1);
-
+    
     const img2 = document.createElement('img');
     img2.src = 'images/对话北极星Cover2.jpg'; 
-    img2.style.position = 'absolute'; img2.style.bottom = '0'; img2.style.left = '0';
-    img2.style.width = '100%'; img2.style.height = '48%'; 
-    img2.style.objectFit = 'contain'; img2.style.objectPosition = 'center 60%'; 
+    img2.style.flex = '1'; 
+    img2.style.objectFit = 'cover'; 
+    img2.style.objectPosition = 'top'; // 确保衔接自然
     imagePromises.push(trackImageLoad(img2));
-    coverPage1.appendChild(img2);
+
+    coverFlex.appendChild(img1);
+    coverFlex.appendChild(img2);
+    coverPage1.appendChild(coverFlex);
     overlay.appendChild(coverPage1);
 
-    // --- 步骤 C: 处理对话内容 ---
+    // --- 步骤 C: 处理对话内容 (带版心的容器) ---
     const contentWrapper = document.createElement('div');
     contentWrapper.id = 'print-content-wrapper';
     
     const contentClone = source.cloneNode(true);
-    contentClone.removeAttribute('id');
-
     const nodes = contentClone.children;
+    
+    // 重新构建节点，清洗DOM
     for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
         if (!node.classList.contains('thought-node')) continue;
 
-        let roleTitle = document.createElement('div');
-        roleTitle.style.fontWeight = 'bold';
-        roleTitle.style.marginBottom = '2px';
-        roleTitle.style.fontSize = '12px';
-
+        // 为 User 节点添加显式的角色标签
         if (node.classList.contains('question-node')) {
-            roleTitle.innerText = "🧑 User"; 
-            roleTitle.style.color = '#0056b3';
-            node.insertBefore(roleTitle, node.firstChild);
-        } else if (node.classList.contains('answer-node')) {
-            roleTitle.innerText = "🤖 North Star"; 
-            roleTitle.style.color = '#b8860b';
-            node.insertBefore(roleTitle, node.firstChild);
+            const role = document.createElement('div');
+            role.className = 'role-title';
+            role.innerText = 'The Inquirer'; // 更有诗意的名字
+            node.insertBefore(role, node.firstChild);
         }
     }
     contentWrapper.appendChild(contentClone);
+    
+    // 添加一个优雅的结束语
+    const endMark = document.createElement('div');
+    endMark.className = 'page-footer-mark';
+    endMark.innerHTML = "— Generated by Talk with North Stars —";
+    contentWrapper.appendChild(endMark);
+
     overlay.appendChild(contentWrapper);
 
-    // --- 步骤 D: 最后一页 (保留特殊排版) ---
-    const backCover = createCoverPage('images/对话北极星Cover3.jpg', 'back');
-    backCover.style.justifyContent = 'flex-start'; 
-    backCover.style.paddingTop = '10vh'; 
+    // --- 步骤 D: 最后一页 (封底全屏) ---
+    const backCover = document.createElement('div');
+    backCover.className = 'print-cover-page';
+    backCover.style.display = 'flex';
+    backCover.style.alignItems = 'center';
+    backCover.style.justifyContent = 'center';
+    backCover.style.background = '#02060a'; // 如果图片加载慢，用深色底
+
+    const img3 = document.createElement('img');
+    img3.src = 'images/对话北极星Cover3.jpg';
+    img3.style.width = '100%';
+    img3.style.height = '100%';
+    img3.style.objectFit = 'cover';
+    imagePromises.push(trackImageLoad(img3));
     
-    const img3 = backCover.querySelector('img');
-    if (img3) {
-        img3.style.height = 'auto'; img3.style.maxHeight = '60vh'; 
-        imagePromises.push(trackImageLoad(img3));
-    }
+    backCover.appendChild(img3);
     overlay.appendChild(backCover);
 
     // 3. 挂载
     document.body.appendChild(overlay);
 
-    // 4. 执行打印 (核心修复：使用 onafterprint 事件)
-    console.log(`⏳ 等待 ${imagePromises.length} 张图片资源...`);
-    const timeoutPromise = new Promise(resolve => setTimeout(resolve, 5000));
-    
-    Promise.race([Promise.all(imagePromises), timeoutPromise]).then(() => {
-        
-        // 备份旧标题
-        const originalTitle = document.title;
-        
-        // --- 1. 计算新文件名 ---
-        // 确保 finalName 绝对不为空
-        let finalName = "对话记录";
-        if (typeof getExportFileName === 'function') {
-            finalName = getExportFileName();
-        } else {
-            const d = new Date();
-            const pad = (n) => String(n).padStart(2, '0');
-            finalName = `对话北极星_${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}`;
-        }
-
-        // --- 2. 设置新标题 ---
+    // 4. 执行打印
+    console.log(`⏳ 等待 ${imagePromises.length} 张高清素材...`);
+    // 给图片稍微多一点时间渲染
+    Promise.all(imagePromises).then(() => new Promise(r => setTimeout(r, 800))).then(() => {
+        const d = new Date();
+        const finalName = `NorthStars_ArtPiece_${d.getFullYear()}${d.getMonth()+1}${d.getDate()}`;
         document.title = finalName;
-        console.log("📄 文件名已设置为:", finalName);
-
-        // --- 3. 使用media query监听打印状态（修正版）---
-        // 创建媒体查询对象
-        const mediaQueryList = window.matchMedia('print');
         
-        // --- 4. 添加备用清理机制（防止监听器不触发）---
-        const backupCleanup = setTimeout(() => {
-            console.log("⚠️ 备用清理机制触发");
-            document.title = originalTitle;
-            if (document.body.contains(overlay)) {
-                document.body.removeChild(overlay);
-            }
-            if (mediaQueryList.removeEventListener) {
-                mediaQueryList.removeEventListener('change', handlePrintChange);
-            } else {
-                mediaQueryList.removeListener(handlePrintChange);
-            }
-            console.groupEnd();
-        }, 10000); // 10秒后备清理
+        window.print();
         
-        // 定义处理函数
-        const handlePrintChange = (event) => {
-            if (!event.matches) {
-                console.log("🖨️ 打印完成或取消，开始清理...");
-                
-                // 清除备用定时器
-                clearTimeout(backupCleanup);
-                
-                // 使用setTimeout确保清理在所有打印任务完成后执行
-                setTimeout(() => {
-                    // 恢复标题
-                    document.title = originalTitle;
-                    console.log("✅ 标题已恢复为:", originalTitle);
-                    
-                    // 清理DOM元素
-                    if (document.body.contains(overlay)) {
-                        document.body.removeChild(overlay);
-                        console.log("🗑️ 打印层已移除");
-                    }
-                    
-                    // 清理内存
-                    overlay.innerHTML = "";
-                    
-                    // 移除事件监听器
-                    if (mediaQueryList.removeEventListener) {
-                        mediaQueryList.removeEventListener('change', handlePrintChange);
-                    } else {
-                        mediaQueryList.removeListener(handlePrintChange);
-                    }
-                    
-                    // 结束日志分组
-                    console.groupEnd();
-                }, 500); // 500ms延迟确保完全清理
-            }
-        };
-        
-        // 添加事件监听器（使用现代语法）
-        if (mediaQueryList.addEventListener) {
-            mediaQueryList.addEventListener('change', handlePrintChange);
-        } else {
-            // 兼容旧版浏览器
-            mediaQueryList.addListener(handlePrintChange);
-        }
-        
-        // --- 5. 延迟确保标题更新，然后打印 ---
-        console.log("⏳ 等待300ms确保浏览器更新标题...");
+        // 打印后的清理 (延迟执行)
         setTimeout(() => {
-            // 再次确认标题
-            if (document.title !== finalName) {
-                document.title = finalName;
-                console.log("🔄 重新确认标题为:", finalName);
-            }
-            
-            console.log("🖨️ 触发打印对话框...");
-            window.print();
-        }, 300);
+             document.title = "Talk with North Stars"; // 恢复标题
+             if (document.body.contains(overlay)) {
+                 document.body.removeChild(overlay);
+             }
+             console.groupEnd();
+        }, 1000); // 稍微延长等待时间，防止打印对话框还没出来就删了
     });
 } 
 
