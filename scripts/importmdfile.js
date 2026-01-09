@@ -208,25 +208,37 @@ function parseOldFormatMD(normalized) {
 }
 
 /**
- * 从【问题 / Question】块中精确提取用户真正提问（双引号优先）
+ * 从【问题 / Question】块中精确提取用户真正提问
+ * 优先级：1. “用户问题:”后双引号内容  2. 到“请你作为”前的非空内容  3. 兜底最后出现的引号
  */
 function extractRealUserQuestion(block) {
-    // 优先匹配“用户问题:”后的双引号内容
+    // 1. 最高优先：匹配“用户问题:”后紧跟的双引号内容（允许中间有空格）
     const quoteMatch = block.match(/用户问题\s*[:：]\s*["“](.+?)["”]/s);
     if (quoteMatch && quoteMatch[1]) {
         return quoteMatch[1].trim();
     }
 
-    // 次匹配：用户问题: 后非引号内容（到下一个空行或指令）
-    const colonMatch = block.match(/用户问题\s*[:：]\s*([^\n]+?)(?=\n\s*请你作为|\n\s*$)/s);
-    if (colonMatch && colonMatch[1]) {
-        return colonMatch[1].trim();
+    // 2. 次优先：匹配“用户问题:”后，到“请你作为”指令前的所有内容（截断指令）
+    const untilInstruction = block.match(/用户问题\s*[:：]\s*([\s\S]*?)(?=请你作为\s|$)/s);
+    if (untilInstruction && untilInstruction[1]) {
+        // 清理可能的剩余指令痕迹，只保留提问部分
+        let candidate = untilInstruction[1].trim();
+        // 移除末尾的逗号、冒号等
+        candidate = candidate.replace(/[，,:：;]$/, '').trim();
+        if (candidate) return candidate;
     }
 
-    // 兜底：取最后出现的引号内容
-    const lastQuote = block.match(/["“](.+?)["”]/s);
-    return lastQuote ? lastQuote[1].trim() : '';
+    // 3. 兜底：取块中最后出现的完整引号内容
+    const lastQuote = block.match(/["“](.+?)["”](?![^"“]*["”])/s);
+    if (lastQuote && lastQuote[1]) {
+        return lastQuote[1].trim();
+    }
+
+    // 最坏情况：返回块末尾非空行
+    const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
+    return lines[lines.length - 1] || '';
 }
+
 
 /**
  * 从背景设定中提取北极星人物信息
