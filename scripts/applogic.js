@@ -1404,7 +1404,7 @@ function createCoverPage(imagePath, type) {
 
 /* --- PDF导出优化版 (Artistic Version) --- */
 function exportToPDF() {
-    console.group("🚀 [PDF Export V4 - Industrial Fix] Start");
+    console.group("🚀 [PDF Export V5 - Final Polish] Start");
     
     const source = document.getElementById('thoughtStreamContent');
     if (!source) {
@@ -1430,15 +1430,15 @@ function exportToPDF() {
     const overlay = document.createElement('div');
     overlay.id = 'print-overlay';
 
-    // --- 3. 注入 CSS (这是核心) ---
+    // --- 3. 注入 CSS (核心修复) ---
     const style = document.createElement('style');
     style.innerHTML = `
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
 
-        /* 1. 纸张归零 */
+        /* 1. 纸张归零，确保全屏背景有效 */
         @page {
             size: A4;
-            margin: 0; /* 必须是0，否则封面会有白边 */
+            margin: 0; 
         }
 
         @media print {
@@ -1459,132 +1459,178 @@ function exportToPDF() {
                 position: absolute;
                 top: 0; left: 0;
                 z-index: 99999;
+                /* 初始化页码计数器 */
+                counter-reset: page-num; 
             }
 
-            /* --- 封面与封底通用容器 --- */
+            /* ================= 封面与封底修复 ================= */
+            /* 1. 封面容器 */
             .full-page-container {
                 width: 100% !important;
-                height: 297mm !important; /* 强制 A4 高度 */
+                height: 297mm !important; /* 锁死 A4 高度 */
                 position: relative;
                 overflow: hidden;
                 break-after: page;
                 break-inside: avoid;
-                background-color: #02060a; /* 深色补底 */
+                /* 关键：使用深色背景填充图片未覆盖区域，防止白边 */
+                background-color: #050914; 
             }
 
-            /* 封面上下部分 */
+            /* 2. 封面图片 - 上半部分 (纯图) */
             .cover-top {
-                width: 100%; height: 55%;
-                background-size: cover; background-position: center bottom;
+                width: 100%; height: 50%;
+                background-size: cover; /* 保持填满 */
+                background-position: center bottom;
             }
+            
+            /* 3. 封面图片 - 下半部分 (带字) - 修复贴边与拉伸 */
             .cover-bottom {
-                width: 100%; height: 45%;
-                background-size: cover; background-position: top center;
+                width: 100%; height: 50%;
+                /* 关键改动：使用 contain 保持文字不变形 */
+                background-size: contain; 
+                background-repeat: no-repeat;
+                background-position: center top;
+                /* 关键改动：左右内边距，把文字往中间挤，防止贴边 */
+                box-sizing: border-box;
+                padding: 0 10mm; 
             }
 
-            /* --- 内容页布局 --- */
+            /* 4. 封底 - 修复严重变形 */
+            .back-page-content {
+                width: 100%; height: 100%;
+                /* 关键改动：contain 保持比例，center 居中 */
+                background-size: contain; 
+                background-repeat: no-repeat;
+                background-position: center;
+                /* 配合父容器的深色背景，看起来像一张完整的图 */
+            }
+
+            /* ================= 正文排版与间距大杀器 ================= */
             #print-content-wrapper { 
                 width: 100% !important;
-                padding: 20mm 15mm !important; /* 给正文留出物理边距 */
+                /* 上下内边距，避开页眉页脚 */
+                padding: 15mm 15mm 20mm 15mm !important; 
                 box-sizing: border-box;
                 background-color: #fff;
                 break-before: page;
-                min-height: 297mm; /* 保证至少有一页高度 */
+                position: relative;
             }
 
-            /* --- 核心：暴力修复段落间距 --- */
+            /* 
+               毁灭级间距重置 
+               针对所有 p, ul, ol, li, div 强制压缩间距
+            */
             .thought-node {
-                width: 100% !important;
-                margin-bottom: 15px !important;
+                margin-bottom: 10px !important;
                 border: none !important;
-                break-inside: avoid; /* 防止节点被切断 */
+                width: 100% !important;
             }
 
-            /* 这里的 * 选择器是关键：强制重置所有子元素的间距 */
-            .thought-node * {
+            .thought-node p, 
+            .thought-node ul, 
+            .thought-node ol, 
+            .thought-node li,
+            .thought-node div {
                 margin-top: 0 !important;
-                margin-bottom: 5px !important; /* 极小的间距 */
-                line-height: 1.5 !important;
+                margin-bottom: 4px !important; /* 强制 4px 间距 */
+                padding-top: 0 !important;
+                padding-bottom: 0 !important;
+                line-height: 1.4 !important; /* 紧凑行高 */
                 font-size: 11pt !important;
                 font-family: 'Noto Serif SC', serif !important;
+                color: #222 !important;
                 text-align: justify;
             }
 
-            /* 单独处理标题，稍微大一点 */
-            .thought-node h1, .thought-node h2, .thought-node h3 {
-                font-size: 13pt !important;
-                font-weight: bold !important;
-                margin-top: 10px !important;
-                margin-bottom: 8px !important;
+            /* 修复列表缩进 */
+            .thought-node ul, .thought-node ol {
+                padding-left: 1.2em !important;
+                margin-left: 0 !important;
             }
 
-            /* 隐藏空行和换行符 */
+            /* 标题稍微大一点，但也紧凑 */
+            .thought-node strong, .thought-node h1, .thought-node h2, .thought-node h3 {
+                font-weight: bold !important;
+                color: #000 !important;
+                margin-top: 8px !important;
+                margin-bottom: 4px !important;
+                display: block;
+            }
+
+            /* 彻底隐藏空行 */
             .thought-node br { display: none !important; }
             .thought-node p:empty { display: none !important; }
+
+            /* ================= 优雅的页码 (仅正文显示) ================= */
             
-            /* 列表紧凑化 */
-            .thought-node ul, .thought-node ol {
-                padding-left: 20px !important;
-                margin-bottom: 5px !important;
-            }
-            .thought-node li {
-                margin-bottom: 2px !important;
+            /* 定义页码容器，固定在页面底部 */
+            .page-footer-container {
+                position: fixed;
+                bottom: 5mm;
+                left: 0;
+                width: 100%;
+                text-align: center;
+                z-index: 1000;
+                pointer-events: none;
             }
 
-            /* 角色框样式 */
+            .page-number::after {
+                /* CSS 计数器自动增加 */
+                counter-increment: page-num; 
+                content: "— " counter(page-num) " —";
+                font-family: 'Cinzel', serif;
+                font-size: 9pt;
+                color: #888;
+            }
+
+            /* 
+               技巧：封面和封底不需要页码 
+               我们在生成 HTML 时，只把页码容器放在正文 Wrapper 里
+               由于 position: fixed 是相对于视口的，我们需要控制它只在打印正文时可见
+               (浏览器打印对于跨页的 fixed 元素会自动重复)
+            */
+
+            /* ================= 角色框微调 ================= */
             .thought-node.question-node {
                 border-left: 3px solid #2c3e50 !important;
                 padding-left: 10px !important;
-                margin-top: 20px !important;
-                background: transparent !important; /* 去掉背景防止打印太黑 */
+                margin-top: 15px !important;
             }
             .question-node .role-label {
                 font-family: 'Cinzel', serif !important; 
-                font-size: 9pt !important; 
+                font-size: 8pt !important; 
                 color: #999 !important;
-                margin-bottom: 2px !important;
+                margin-bottom: 0 !important;
             }
             .question-node .node-content {
                 font-family: 'Ma Shan Zheng', cursive !important;
                 font-size: 14pt !important;
-                color: #000 !important;
+                line-height: 1.3 !important; /* 手写体行高 */
+                margin-bottom: 0 !important;
             }
 
             .thought-node.answer-node {
                 background-color: #FFFAF0 !important; 
                 border: 1px solid #D4AF37 !important; 
-                padding: 15px !important;
-                border-radius: 5px;
+                padding: 10px 15px !important; /* 减少内边距 */
+                border-radius: 4px;
             }
 
-            /* --- 封底 (解决文字截断) --- */
-            .back-page-content {
-                width: 100%; height: 100%;
-                background-size: 100% 100%; /* 强制拉伸铺满 */
+            /* 封底容器 */
+            .back-cover-container {
+                break-before: page;
+                width: 100%; 
+                height: 297mm;
+                background-color: #02060a;
                 display: flex;
-                flex-direction: column;
-                justify-content: center; /* 垂直居中 */
-                align-items: center; /* 水平居中 */
-                color: rgba(255,255,255,0.9);
-                text-align: center;
-                padding-bottom: 50mm; /* 把文字往上顶一点，避开底部 */
-            }
-            
-            /* 文末落款 */
-            .final-signature {
-                margin-top: 30px;
-                text-align: right;
-                font-family: 'Cinzel', serif;
-                color: #8b5a2b;
-                border-top: 1px solid #eee;
-                padding-top: 10px;
-                break-inside: avoid;
+                align-items: center;
+                justify-content: center;
             }
         }
     `;
     overlay.appendChild(style);
 
-    // --- 1. 封面 (使用背景图) ---
+    // --- 1. 封面 (使用 Contain 修复变形 + Padding 修复贴边) ---
     const coverPage = document.createElement('div');
     coverPage.className = 'full-page-container';
     
@@ -1603,21 +1649,28 @@ function exportToPDF() {
     coverPage.appendChild(coverBottom);
     overlay.appendChild(coverPage);
 
-    // --- 2. 正文 (清理结构) ---
+    // --- 2. 正文 (包含自动页码) ---
     const contentWrapper = document.createElement('div');
     contentWrapper.id = 'print-content-wrapper';
 
-    // 简单页眉
+    // 注入页码 (由于是 fixed，它会自动出现在每一张正文页的底部)
+    // 注意：封面/封底在 wrapper 之外，所以不会有页码
+    const pageNumFooter = document.createElement('div');
+    pageNumFooter.className = 'page-footer-container';
+    pageNumFooter.innerHTML = `<span class="page-number"></span>`;
+    contentWrapper.appendChild(pageNumFooter);
+
+    // 简单的页眉
     const header = document.createElement('div');
     header.style.textAlign = 'center';
-    header.style.fontSize = '9pt';
+    header.style.fontSize = '8pt';
     header.style.color = '#ccc';
-    header.style.marginBottom = '20px';
+    header.style.marginBottom = '15px';
     header.style.fontFamily = 'Cinzel, serif';
     header.innerText = "TALK WITH NORTH STARS";
     contentWrapper.appendChild(header);
 
-    // 处理节点
+    // 处理节点内容
     const contentClone = source.cloneNode(true);
     const nodes = contentClone.children;
     for (let i = 0; i < nodes.length; i++) {
@@ -1632,26 +1685,29 @@ function exportToPDF() {
             node.insertBefore(role, node.firstChild);
         }
         
-        // 关键：删除节点内的删除按钮等垃圾元素
+        // 删除垃圾元素
         const trash = node.querySelectorAll('.node-delete-btn, .star-decoration-top, .star-decoration-bottom');
         trash.forEach(el => el.remove());
 
         contentWrapper.appendChild(node.cloneNode(true));
     }
 
-    // 唯一的文末落款
+    // 文末落款
     const signature = document.createElement('div');
-    signature.className = 'final-signature';
+    signature.style.marginTop = '20px';
+    signature.style.textAlign = 'right';
+    signature.style.fontFamily = 'Cinzel, serif';
+    signature.style.color = '#8b5a2b';
+    signature.style.borderTop = '1px solid #eee';
+    signature.style.paddingTop = '10px';
     signature.innerHTML = `NORTH STAR INSIGHT <i class="fas fa-feather-alt"></i>`;
     contentWrapper.appendChild(signature);
 
     overlay.appendChild(contentWrapper);
 
-    // --- 3. 封底 (垂直居中内容) ---
-    const backPage = document.createElement('div');
-    backPage.className = 'full-page-container';
-    // 强制分页，防止粘连
-    backPage.style.breakBefore = 'page';
+    // --- 3. 封底 (使用 Contain 修复拉伸) ---
+    const backCover = document.createElement('div');
+    backCover.className = 'back-cover-container'; // 使用独立容器
     
     const backContent = document.createElement('div');
     backContent.className = 'back-page-content';
@@ -1659,16 +1715,12 @@ function exportToPDF() {
     
     imagePromises.push(trackImageLoad('images/对话北极星Cover3.jpg'));
     
-    // 如果封底需要文字，在这里加，而不是靠图片自带
-    // backContent.innerHTML = `<h1>谢谢！</h1><p>对话北极星...</p>`; 
-    
-    backPage.appendChild(backContent);
-    overlay.appendChild(backPage);
+    backCover.appendChild(backContent);
+    overlay.appendChild(backCover);
 
     // 4. 执行
     document.body.appendChild(overlay);
     
-    // 稍微多等一会儿图片
     Promise.all(imagePromises).then(() => new Promise(r => setTimeout(r, 1000))).then(() => {
         window.print();
         setTimeout(() => {
