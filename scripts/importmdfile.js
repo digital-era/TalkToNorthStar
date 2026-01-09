@@ -314,7 +314,7 @@ function parseMDToHistory(mdContent) {
         return parseOldFormatMD(normalized);
     }
     // ── 策略2：【问题 / Question】 + 【北极星答复】格式 ───────
-    else if (normalized.includes('【问题 / Question】') || normalized.includes('【北极星答复')) {
+    else if (normalized.includes('【问题 / Question】') || normalized.includes('【北极星答复】')) {
         const parts = normalized.split(/【([^】]+)】:/).filter(Boolean);
     
         let currentRole = null;
