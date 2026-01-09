@@ -2085,9 +2085,11 @@
 
 .badge-field {
     font-size: 0.75rem;
-    background: #3e2723;
-    color: #d7ccc8;
+    font-weight: bold;
+    background: transparent;
+    color: #000000;
     padding: 2px 8px;
+    border: 1px solid #D4AF37; 
     border-radius: 2px;
     text-transform: uppercase;
     letter-spacing: 1px;
