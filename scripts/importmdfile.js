@@ -74,21 +74,12 @@ function escapeRegExp(string) {
  */
 function parseOldFormatMD(normalized) {
     const history = [];
-
-    // 分割所有 ### 段落
     const sections = normalized.split(/^###\s+/m).filter(Boolean);
 
-    // 跳过文件头部（标题 + Exported on + ---）
+    // 跳过头部的元信息（标题 + Exported on + ---）
     let startIndex = 0;
     for (let i = 0; i < sections.length; i++) {
-        const section = sections[i].trim();
-        if (
-            section.includes('对话北极星') ||
-            section.includes('Talk with North Stars') ||
-            section.includes('Exported on') ||
-            section.startsWith('---') ||
-            section === ''
-        ) {
+        if (sections[i].trim().match(/对话北极星|Talk with North Stars|Exported on|---/)) {
             startIndex = i + 1;
             continue;
         }
@@ -104,106 +95,60 @@ function parseOldFormatMD(normalized) {
         const lines = section.split('\n');
         const roleName = lines[0].trim().replace(/:$/, '');
 
-        // 提取原始正文（保留 > 前缀供后续处理）
-        let rawText = lines.slice(1).join('\n').trim();
-        if (!rawText) continue;
+        // 原始文本行（不提前 trim）
+        let rawLines = lines.slice(1);
 
         if (roleName === 'User') {
-            let cleanText = rawText;
-            let extractedLeaderInfo = null;
+            // User 部分处理（保持简单）
+            let userText = rawLines
+                .map(l => l.startsWith('> ') ? l.substring(2) : l)
+                .join('\n')
+                .trim();
 
-            // 匹配并剥离完整的 🧩 信息块（更精确的正则）
-            const infoBlockRegex = />\s*\*\*🧩 关联北极星人物\*\*：\s*(.+?)(?=\n|$)(?:[\s\S]*?>\s*-\s*领域[：:]\s*(.+?)(?=\n|$))?(?:[\s\S]*?>\s*-\s*贡献[：:]\s*(.+?)(?=\n|$))?/s;
-
-            const match = rawText.match(infoBlockRegex);
-            if (match) {
-                const name = (match[1] || '').trim();
-                const field = (match[2] || '').trim();
-                const contribution = (match[3] || '').trim();
-
-                extractedLeaderInfo = {
-                    name: name || 'Unknown',
-                    field: field || '',
-                    contribution: contribution || ''
-                };
-
-                // 从原始文本中移除整个信息块
-                cleanText = rawText.replace(infoBlockRegex, '').trim();
-            }
-
-            // 统一清理剩余的 > 引用符号和多余空行
-            cleanText = cleanText
-                .split('\n')
-                .map(line => (line.startsWith('> ') ? line.substring(2) : line).trim())
-                .filter(line => line)
-                .join('\n');
-
-            pendingUser = {
-                role: 'user',
-                text: cleanText,
-                leaderInfo: null
-            };
-
-            // 如果提取到了信息块，保存用于下一个 assistant 节点
-            if (extractedLeaderInfo) {
-                pendingUser._tempLeaderInfo = extractedLeaderInfo;
-            }
-
+            pendingUser = { role: 'user', text: userText, leaderInfo: null };
             continue;
         }
 
-        // 处理 assistant 节点
-        let text = rawText
-            .split('\n')
-            .map(line => (line.startsWith('> ') ? line.substring(2) : line).trim())
-            .filter(line => line)
-            .join('\n');
-        
-        // ★ 新增：移除文本开头可能存在的角色名（防止重复显示和样式异常）
-        if (roleName && text) {
-            // 构造角色名可能出现的几种常见开头模式
-            const possiblePrefixes = [
-                roleName,                              // 直接是名字
-                roleName + ':',                        // 名字后带冒号
-                roleName + '：',                       // 全角冒号
-                roleName + ' (',                       // 带英文名括号
-                roleName.replace(/\s*\([^)]+\)/, ''),  // 去掉括号后的中文名
-            ];
-        
-            let cleaned = text;
-        
-            for (const prefix of possiblePrefixes) {
-                if (!prefix) continue;
-                
-                // 允许前面可能有少量空白或换行
-                const regex = new RegExp(
-                    `^\\s*(?:${escapeRegExp(prefix)})\\s*[:：]?\\s*`,
-                    'i'
-                );
-                
-                cleaned = cleaned.replace(regex, '').trim();
-                
-                if (cleaned !== text) break; // 匹配成功一次即可退出
+        // ★ assistant 部分：核心规范化处理
+        let textLines = rawLines.map(line => {
+            // 只去掉引用符，不破坏段落
+            if (line.trim().startsWith('>')) {
+                return line.replace(/^>\s?/, '');
             }
-        
-            text = cleaned;
+            return line;
+        });
+
+        // 保留空行作为段落分隔，只清理行尾空白
+        textLines = textLines.map(l => l.trimEnd());
+
+        // 拼接回文本，压缩过多空行
+        let text = textLines.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+
+        // 移除可能的角色名重复开头
+        if (roleName && text) {
+            const prefixRegex = new RegExp(`^\\s*${escapeRegExp(roleName)}[:：]?\\s*`, 'i');
+            text = text.replace(prefixRegex, '').trim();
         }
-        
+
+        // ★ 额外防护：提前移除所有行首 # 和 Setext 标题线，防止 marked 再生成标题
+        text = text
+            .replace(/^#{1,6}\s*/gm, '')                // 移除所有标题语法
+            .replace(/^(?:-{3,}|={3,})\s*$/gm, '---')   // 分隔符降级为普通文本
+            .trim();
+
         let leaderInfo = { name: roleName, field: '', contribution: '' };
-        
-        // 下面继续原有逻辑：使用 pending 的 leaderInfo 等
+
+        // 使用 pending 的 leaderInfo（如果有）
         if (pendingUser && pendingUser._tempLeaderInfo) {
             leaderInfo = pendingUser._tempLeaderInfo;
             delete pendingUser._tempLeaderInfo;
         }
-        
-        // 先把 pending 的 User 推入
+
         if (pendingUser) {
             history.push(pendingUser);
             pendingUser = null;
         }
-        
-        // 再推入 assistant
+
         history.push({
             role: 'assistant',
             text: text,
@@ -211,13 +156,16 @@ function parseOldFormatMD(normalized) {
         });
     }
 
-    // 处理可能的最后一个孤立 User
-    if (pendingUser) {
-        history.push(pendingUser);
-    }
+    if (pendingUser) history.push(pendingUser);
 
     return history;
 }
+
+// 辅助函数（如果还没有）
+function escapeRegExp(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 
 /**
  * 从MD内容解析出 conversationHistory 格式
