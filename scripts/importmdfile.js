@@ -76,7 +76,7 @@ function parseOldFormatMD(normalized) {
     const history = [];
     const sections = normalized.split(/^###\s+/m).filter(Boolean);
 
-    // 跳过头部的元信息（标题 + Exported on + ---）
+    // 跳过头部元信息
     let startIndex = 0;
     for (let i = 0; i < sections.length; i++) {
         if (sections[i].trim().match(/对话北极星|Talk with North Stars|Exported on|---/)) {
@@ -95,50 +95,96 @@ function parseOldFormatMD(normalized) {
         const lines = section.split('\n');
         const roleName = lines[0].trim().replace(/:$/, '');
 
-        // 原始文本行（不提前 trim）
+        // 原始文本行
         let rawLines = lines.slice(1);
 
         if (roleName === 'User') {
-            // User 部分处理（保持简单）
-            let userText = rawLines
-                .map(l => l.startsWith('> ') ? l.substring(2) : l)
-                .join('\n')
+            // ★ 关键强化：User 段落的完整清理 + 信息块剥离
+            let userLines = rawLines.map(line => {
+                // 去掉引用符
+                if (line.trim().startsWith('>')) {
+                    return line.replace(/^>\s?/, '');
+                }
+                return line;
+            });
+
+            let userText = userLines.join('\n');
+
+            // ★ 剥离 🧩 关联信息块（精确匹配三种常见写法）
+            const infoBlockPatterns = [
+                /\*\*🧩 关联北极星人物\*\*：\s*(.+?)\n\s*-\s*领域[：:]\s*(.+?)\n\s*-\s*贡献[：:]\s*(.+?)(?=\n|$)/s,
+                /🧩 关联北极星人物：\s*(.+?)\n\s*-\s*领域：\s*(.+?)\n\s*-\s*贡献：\s*(.+?)(?=\n|$)/s,
+                /\*\*🧩 关联北极星人物\*\*：(.+?)(?:- 领域：(.+?))?(?:- 贡献：(.+?))?/s
+            ];
+
+            let extractedLeaderInfo = null;
+            for (const pattern of infoBlockPatterns) {
+                const match = userText.match(pattern);
+                if (match) {
+                    const name = (match[1] || '').trim();
+                    const field = (match[2] || '').trim();
+                    const contribution = (match[3] || '').trim();
+
+                    extractedLeaderInfo = {
+                        name: name || 'Unknown',
+                        field: field || '',
+                        contribution: contribution || ''
+                    };
+
+                    // 移除整个信息块
+                    userText = userText.replace(pattern, '').trim();
+                    break;
+                }
+            }
+
+            // 最终清理：保留段落换行，只去多余空行
+            userText = userText
+                .replace(/\n{3,}/g, '\n\n')
                 .trim();
 
-            pendingUser = { role: 'user', text: userText, leaderInfo: null };
+            pendingUser = {
+                role: 'user',
+                text: userText,
+                leaderInfo: null
+            };
+
+            // 如果剥离出了信息块，保存给下一个 assistant 用
+            if (extractedLeaderInfo) {
+                pendingUser._tempLeaderInfo = extractedLeaderInfo;
+            }
+
             continue;
         }
 
-        // ★ assistant 部分：核心规范化处理
+        // assistant 节点处理（保持换行修复）
         let textLines = rawLines.map(line => {
-            // 只去掉引用符，不破坏段落
             if (line.trim().startsWith('>')) {
                 return line.replace(/^>\s?/, '');
             }
             return line;
         });
 
-        // 保留空行作为段落分隔，只清理行尾空白
         textLines = textLines.map(l => l.trimEnd());
 
-        // 拼接回文本，压缩过多空行
-        let text = textLines.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+        let text = textLines.join('\n')
+            .replace(/\n{3,}/g, '\n\n')
+            .trim();
 
-        // 移除可能的角色名重复开头
+        // 移除可能的角色名重复
         if (roleName && text) {
             const prefixRegex = new RegExp(`^\\s*${escapeRegExp(roleName)}[:：]?\\s*`, 'i');
             text = text.replace(prefixRegex, '').trim();
         }
 
-        // ★ 额外防护：提前移除所有行首 # 和 Setext 标题线，防止 marked 再生成标题
+        // 额外防护：移除残余标题语法
         text = text
-            .replace(/^#{1,6}\s*/gm, '')                // 移除所有标题语法
-            .replace(/^(?:-{3,}|={3,})\s*$/gm, '---')   // 分隔符降级为普通文本
+            .replace(/^#{1,6}\s*/gm, '')
+            .replace(/^(?:-{3,}|={3,})\s*$/gm, '---')
             .trim();
 
         let leaderInfo = { name: roleName, field: '', contribution: '' };
 
-        // 使用 pending 的 leaderInfo（如果有）
+        // 使用 User 段提取的信息（最可靠）
         if (pendingUser && pendingUser._tempLeaderInfo) {
             leaderInfo = pendingUser._tempLeaderInfo;
             delete pendingUser._tempLeaderInfo;
@@ -159,11 +205,6 @@ function parseOldFormatMD(normalized) {
     if (pendingUser) history.push(pendingUser);
 
     return history;
-}
-
-// 辅助函数（如果还没有）
-function escapeRegExp(str) {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 
