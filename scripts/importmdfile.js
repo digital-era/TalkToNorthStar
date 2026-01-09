@@ -374,37 +374,3 @@ function parseMDToHistory(mdContent) {
     // 最终清理
     return history.filter(item => item && item.text?.trim());
 }
-
-/**
- * 从【问题 / Question】块中提取真正用户提出的核心问题
- * 主要依赖“用户问题:”关键字
- */
-function extractRealUserQuestion(blockText) {
-    const lines = blockText.split('\n').map(l => l.trim());
-
-    for (let line of lines) {
-        // 优先匹配最常见的格式：用户问题: "实际问题内容"
-        const quotedMatch = line.match(/用户问题\s*[:：]\s*["“](.+?)["”]/);
-        if (quotedMatch && quotedMatch[1]) {
-            return quotedMatch[1].trim();
-        }
-
-        // 次优先：用户问题: 后面直接跟内容（不带引号）
-        const colonMatch = line.match(/用户问题\s*[:：]\s*(.+)/);
-        if (colonMatch && colonMatch[1]) {
-            return colonMatch[1].trim();
-        }
-    }
-
-    // 降级方案：返回块中最后出现的、看起来像问题的行（带问号或较长内容）
-    for (let i = lines.length - 1; i >= 0; i--) {
-        const line = lines[i];
-        if (line.length > 8 &&
-            (line.includes('？') || line.includes('?') || line.includes('请') || line.length > 30)) {
-            return line.trim();
-        }
-    }
-
-    // 最坏情况：返回块的前200字符（避免返回整块提示词）
-    return blockText.trim().substring(0, 200);
-}
