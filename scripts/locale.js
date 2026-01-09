@@ -99,7 +99,7 @@
                 "saveBtnText": "保存设置",
                 "aboutBtnText": "了解我们",    
                 // --- 新增宣言模态框的翻译 ---
-                "manifestoTitle": "《对话北极星》——让深度思想对话触手可及",                                                    
+                "manifestoTitle": "《对话北极星》——书写思想旋律，点燃探索火花，让深度对话触手可及",                                                    
                 "manifestoPara1": "你，是否曾仰望星空，渴望与群星对话？",
                 "manifestoPara2": "在知识的浩瀚海洋中，我们时常感到迷茫，被信息的洪流裹挟，被表面的喧嚣困扰。我们追逐着零散的知识碎片，却鲜少有机会触及那些真正塑造人类文明的深刻思想。",
                 "manifestoPara3": "达·芬奇、爱因斯坦、海明威、马斯克……他们的卓越并非偶然，而是源于对世界运转的深刻洞察：物理的第一性原理、艺术的无限可能、人性的光辉与挑战。他们理解系统，面对混沌，每一次的远见与修正都如北极星般指引，最终塑造了他们的时代。",
@@ -108,7 +108,7 @@
                 "manifestoPara6": "如果你对商业的脉搏充满好奇，可以与巴菲特洞察价值投资的精髓，或和腾讯马化腾分析社交媒体的演变。在文学的殿堂，与莎士比亚品味人性的悲喜，或随马尔克斯的魔幻现实主义漫游拉美大地；艺术的殿堂里，与达·芬奇共鸣科学与艺术的融合，或与梵高感受色彩深处的情感。更可以与中国家电巨头美的方洪波探讨智能制造的未来，或跟比亚迪王传福展望新能源汽车的蓝图。",
                 "manifestoPara7": "这不仅仅是技术，更是一次灵魂的邀约，一次思维的远征。我们精心构建《对话北极星》，让AI化身为连接人类智慧与潜能的桥梁。它严格遵循每一位“北极星”人物的思想框架、专业领域和语言风格，确保每一次回复都深邃而富有启发性。",
                 "manifestoPara8": "你无需穷尽所有数据，也无需在噪音中苦寻信号。在这里，你的每一个问题，都将得到北极星般的回应。每一次提问，都可能激发你内心深处未曾触及的创新火花；每一次对话，都将拓展你认知世界的边界，推动你个人成长的进程。",
-                "manifestoConclusion": "我们使命是以AI原生智慧，重燃探索与创意的火花——点亮你心中永恒的灯塔。",
+                "manifestoConclusion": "我们使命是以AI原生智慧，书写思想旋律，点燃探索火花——让深度对话触手可及。",
 
                 "immersiveTitle": "《对话北极星》深度沉浸模式：以多模态旋律，重谱信念的乐章",
                 "immersiveCoreTitle": "[核心理念]",
@@ -221,7 +221,7 @@
                 "saveBtnText": "Save Setting",                    
                 "aboutBtnText": "About Us",    
                  // --- 新增宣言模态框的翻译 ---
-                "manifestoTitle": "《Talk with North Stars》—Deep conversations, at your fingertips.",
+                "manifestoTitle": "《Talk with North Stars》—Compose the melody of thought, ignite the spark of exploration and bring deep conversations to your fingertips.",
                 "manifestoPara1": "Have you ever gazed at the stars, yearning to converse with the constellations?",
                 "manifestoPara2": "In the vast ocean of knowledge, we often feel lost, swept away by the deluge of information and troubled by superficial clamor. We chase fragmented pieces of knowledge, yet rarely have the opportunity to touch upon the profound thoughts that truly shaped human civilization.",
                 "manifestoPara3": "Leonardo da Vinci, Albert Einstein, Ernest Hemingway, Elon Musk... their excellence was not accidental, but stemmed from profound insights into how the world operates: the first principles of physics, the infinite possibilities of art, the brilliance and challenges of human nature. They understood systems, faced chaos, and every foresight and correction, like the North Star, guided them, ultimately shaping their era.",
@@ -230,7 +230,7 @@
                 "manifestoPara6": "If you are curious about the pulse of business, you can gain insights into the essence of value investing with Warren Buffett, or analyze the evolution of social media with Pony Ma of Tencent. In the halls of literature, you can savor the joys and sorrows of humanity with Shakespeare, or wander through Latin America with Márquez's magical realism; in the realm of art, you can resonate with Leonardo da Vinci's fusion of science and art, or feel the deep emotions within colors with Van Gogh. You can even discuss the future of intelligent manufacturing with Fang Hongbo, CEO of Chinese home appliance giant Midea, or envision the blueprint for new energy vehicles with Wang Chuanfu, chairman of BYD.",
                 "manifestoPara7": "This is not just technology; it is an invitation to the soul, an expedition of the mind. We meticulously built 'Talk to NorthStar' to let AI serve as a bridge connecting human wisdom and potential. It strictly adheres to the thought framework, professional field, and linguistic style of each 'NorthStar' figure, ensuring every response is profound and inspiring.",
                 "manifestoPara8": "You don't need to exhaust all data, nor search tirelessly for signals amidst the noise. Here, every question you ask will receive a NorthStar-like response. Every inquiry may spark innovative fires previously untouched deep within you; every dialogue will expand the boundaries of your perception of the world and propel your personal growth.",
-                "manifestoConclusion": "Our mission is to rekindle the spark of exploration and creativity with AI-native wisdom—Illuminate the eternal lighthouse in your heart.",
+                "manifestoConclusion": "Our mission is to Compose the melody of thought, ignite the spark of exploration with AI-native wisdom— Bring deep conversations to your fingertips.",
 
                 "immersiveTitle": "NorthStar Dialogue Immersive Mode: Recomposing the Melody of Belief",
                 "immersiveCoreTitle": "[Core Philosophy]",
