@@ -63,6 +63,128 @@ function importFromMD() {
     }, 1000);
 }
 
+
+/**
+ * 专门处理旧格式（### User: / ### 人物名:）的解析函数
+ * 已针对头部元信息、🧩 信息块剥离、leaderInfo 正确传递进行优化
+ */
+function parseOldFormatMD(normalized) {
+    const history = [];
+
+    // 分割所有 ### 段落
+    const sections = normalized.split(/^###\s+/m).filter(Boolean);
+
+    // 跳过文件头部（标题 + Exported on + ---）
+    let startIndex = 0;
+    for (let i = 0; i < sections.length; i++) {
+        const section = sections[i].trim();
+        if (
+            section.includes('对话北极星') ||
+            section.includes('Talk with North Stars') ||
+            section.includes('Exported on') ||
+            section.startsWith('---') ||
+            section === ''
+        ) {
+            startIndex = i + 1;
+            continue;
+        }
+        break;
+    }
+
+    let pendingUser = null;
+
+    for (let i = startIndex; i < sections.length; i++) {
+        const section = sections[i].trim();
+        if (!section) continue;
+
+        const lines = section.split('\n');
+        const roleName = lines[0].trim().replace(/:$/, '');
+
+        // 提取原始正文（保留 > 前缀供后续处理）
+        let rawText = lines.slice(1).join('\n').trim();
+        if (!rawText) continue;
+
+        if (roleName === 'User') {
+            let cleanText = rawText;
+            let extractedLeaderInfo = null;
+
+            // 匹配并剥离完整的 🧩 信息块（更精确的正则）
+            const infoBlockRegex = />\s*\*\*🧩 关联北极星人物\*\*：\s*(.+?)(?=\n|$)(?:[\s\S]*?>\s*-\s*领域[：:]\s*(.+?)(?=\n|$))?(?:[\s\S]*?>\s*-\s*贡献[：:]\s*(.+?)(?=\n|$))?/s;
+
+            const match = rawText.match(infoBlockRegex);
+            if (match) {
+                const name = (match[1] || '').trim();
+                const field = (match[2] || '').trim();
+                const contribution = (match[3] || '').trim();
+
+                extractedLeaderInfo = {
+                    name: name || 'Unknown',
+                    field: field || '',
+                    contribution: contribution || ''
+                };
+
+                // 从原始文本中移除整个信息块
+                cleanText = rawText.replace(infoBlockRegex, '').trim();
+            }
+
+            // 统一清理剩余的 > 引用符号和多余空行
+            cleanText = cleanText
+                .split('\n')
+                .map(line => (line.startsWith('> ') ? line.substring(2) : line).trim())
+                .filter(line => line)
+                .join('\n');
+
+            pendingUser = {
+                role: 'user',
+                text: cleanText,
+                leaderInfo: null
+            };
+
+            // 如果提取到了信息块，保存用于下一个 assistant 节点
+            if (extractedLeaderInfo) {
+                pendingUser._tempLeaderInfo = extractedLeaderInfo;
+            }
+
+            continue;
+        }
+
+        // 处理 assistant 节点
+        let text = rawText
+            .split('\n')
+            .map(line => (line.startsWith('> ') ? line.substring(2) : line).trim())
+            .filter(line => line)
+            .join('\n');
+
+        let leaderInfo = { name: roleName, field: '', contribution: '' };
+
+        // 优先使用从 User 段提取的信息（最可靠）
+        if (pendingUser && pendingUser._tempLeaderInfo) {
+            leaderInfo = pendingUser._tempLeaderInfo;
+            delete pendingUser._tempLeaderInfo; // 清理临时字段
+        }
+
+        // 先把 pending 的 User 推入（保持顺序）
+        if (pendingUser) {
+            history.push(pendingUser);
+            pendingUser = null;
+        }
+
+        // 再推入 assistant
+        history.push({
+            role: 'assistant',
+            text: text,
+            leaderInfo: leaderInfo
+        });
+    }
+
+    // 处理可能的最后一个孤立 User
+    if (pendingUser) {
+        history.push(pendingUser);
+    }
+
+    return history;
+}
+
 /**
  * 从MD内容解析出 conversationHistory 格式
  * 支持两种主要导出格式
@@ -76,66 +198,10 @@ function parseMDToHistory(mdContent) {
         .trim();
 
     // ── 策略1：经典 ### 格式 ───────────────────────────────
+   // 根据文件特征选择解析策略
     if (normalized.includes('### ')) {
-        const sections = normalized.split(/^###\s+/m).filter(Boolean);
-        let pendingUser = null;
-
-        for (const section of sections) {
-            const lines = section.trim().split('\n');
-            if (lines.length < 1) continue;
-
-            const roleName = lines[0].trim().replace(/:$/, '');
-            let text = lines.slice(1)
-                .map(l => l.startsWith('> ') ? l.substring(2).trim() : l.trim())
-                .filter(Boolean)
-                .join('\n');
-
-            if (!text) continue;
-
-            if (roleName === 'User') {
-                pendingUser = { role: 'user', text, leaderInfo: null };
-                continue;
-            }
-
-            // 处理关联信息（可能出现在AI段或User段）
-            let leaderInfo = { name: roleName, field: '', contribution: '' };
-
-            if (pendingUser) {
-                const infoPatterns = [
-                    /🧩 关联北极星人物[：:](.+?)(?=\n|$)/s,
-                    /[-•]?\s*领域[：:](.+?)(?=\n|$)/,
-                    /[-•]?\s*贡献[：:](.+?)(?=\n|$)/
-                ];
-
-                infoPatterns.forEach((regex, idx) => {
-                    const match = text.match(regex);
-                    if (match) {
-                        const value = match[1].trim();
-                        if (idx === 0) leaderInfo.name = value;
-                        else if (idx === 1) leaderInfo.field = value;
-                        else if (idx === 2) leaderInfo.contribution = value;
-                        text = text.replace(regex, '').trim();
-                    }
-                });
-
-                if (pendingUser.text.trim()) {
-                    history.push(pendingUser);
-                }
-                pendingUser = null;
-            }
-
-            history.push({
-                role: 'assistant',
-                text: text.trim(),
-                leaderInfo
-            });
-        }
-
-        if (pendingUser?.text?.trim()) {
-            history.push(pendingUser);
-        }
+        return parseOldFormatMD(normalized);
     }
-
     // ── 策略2：【问题 / Question】 + 【北极星答复】格式 ───────
     else if (normalized.match(/【\s*(问题|Question)\s*\/\s*(问题|Question)\s*】/i) ||
              normalized.includes('【北极星答复') ||
