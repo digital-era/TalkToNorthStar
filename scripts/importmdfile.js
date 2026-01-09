@@ -209,35 +209,43 @@ function parseOldFormatMD(normalized) {
 
 /**
  * 从【问题 / Question】块中精确提取用户真正提问
- * 优先级：1. “用户问题:”后双引号内容  2. 到“请你作为”前的非空内容  3. 兜底最后出现的引号
+ * 优先级：1. “用户问题:”后双引号内容（最可靠）  2. 到第一个“请你作为”前的非空内容
  */
 function extractRealUserQuestion(block) {
-    // 1. 最高优先：匹配“用户问题:”后紧跟的双引号内容（允许中间有空格）
-    const quoteMatch = block.match(/用户问题\s*[:：]\s*["“](.+?)["”]/s);
-    if (quoteMatch && quoteMatch[1]) {
-        return quoteMatch[1].trim();
+    // 清理前后空白，便于匹配
+    block = block.trim();
+
+    // 优先级最高：严格匹配“用户问题:”后第一个双引号完整内容
+    const strictQuoteMatch = block.match(/用户问题\s*[:：]\s*["“]([^"”]+)["”]/);
+    if (strictQuoteMatch && strictQuoteMatch[1]) {
+        return strictQuoteMatch[1].trim();
     }
 
-    // 2. 次优先：匹配“用户问题:”后，到“请你作为”指令前的所有内容（截断指令）
-    const untilInstruction = block.match(/用户问题\s*[:：]\s*([\s\S]*?)(?=请你作为\s|$)/s);
+    // 次优先：匹配“用户问题:”后，到“请你作为”出现前的所有非空内容
+    const untilInstruction = block.match(/用户问题\s*[:：]\s*([\s\S]*?)(?=请你作为\s|$)/);
     if (untilInstruction && untilInstruction[1]) {
-        // 清理可能的剩余指令痕迹，只保留提问部分
-        let candidate = untilInstruction[1].trim();
-        // 移除末尾的逗号、冒号等
-        candidate = candidate.replace(/[，,:：;]$/, '').trim();
+        let candidate = untilInstruction[1]
+            .replace(/["“]([^"”]+)["”]/g, '$1')  // 去掉多余引号（如果有）
+            .replace(/\s+$/, '')                  // 去尾部空白
+            .trim();
+
+        // 如果 candidate 以引号开头但没闭合，也清理
+        candidate = candidate.replace(/^["“]/, '').trim();
+
         if (candidate) return candidate;
     }
 
-    // 3. 兜底：取块中最后出现的完整引号内容
-    const lastQuote = block.match(/["“](.+?)["”](?![^"“]*["”])/s);
-    if (lastQuote && lastQuote[1]) {
-        return lastQuote[1].trim();
+    // 兜底：取块中任意完整双引号内容（最后出现的）
+    const anyQuote = block.match(/["“](.+?)["”]/s);
+    if (anyQuote && anyQuote[1]) {
+        return anyQuote[1].trim();
     }
 
-    // 最坏情况：返回块末尾非空行
-    const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
-    return lines[lines.length - 1] || '';
+    // 最坏情况：返回最后一行非指令内容
+    const lines = block.split('\n').map(l => l.trim()).filter(l => l && !l.includes('请你作为'));
+    return lines[lines.length - 1] || '（未提取到具体问题）';
 }
+
 
 
 /**
