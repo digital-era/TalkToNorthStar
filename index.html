@@ -66,7 +66,7 @@
         <div class="top-right-controls">
             <!-- 1. [新增] 音乐播放器 (移到第一位，即最左侧) -->
             <!-- 注意：请确保 music/HansZimmer-Interstellar-ImperialOrchestra.mp3 文件存在，或修改为有效路径 -->
-            <div class="icon-btn music-wrapper" title="播放音乐" onclick="toggleMusic(this)">
+            <div class="icon-btn music-wrapper" title="背景音乐" onclick="toggleMusic(this)">
                 <i class="fas fa-music main-music-icon"></i>
                 
                 <!-- 随机播放小标记 -->
@@ -80,13 +80,13 @@
                 </audio>
             </div>
 
-            <!-- 2. 开启沉浸阅读：只留图标，增加 title 提示 -->
-            <button class="icon-btn" onclick="openElegantMode()" title="开启沉浸阅读">
+            <!-- 2. 开启星语阅读：只留图标，增加 title 提示 -->
+            <button class="icon-btn" onclick="openElegantMode()" title="星语阅读">
                 <i class="fas fa-wand-magic-sparkles"></i>
             </button>
 
             <!-- 3. 开启对话画布 -->
-            <button class="icon-btn" onclick="openDialogueCanvas()" title="对话画布：思想流淌">
+            <button class="icon-btn" onclick="openDialogueCanvas()" title="思想画布">
                 <i class="fas fa-scroll"></i> <!-- 使用卷轴图标 -->
             </button>
             
@@ -420,17 +420,17 @@
         
         <!-- 顶部工具栏 -->
         <div class="canvas-toolbar">
-            <span class="canvas-title">DIALOGUE CANVAS</span>
+            <span class="canvas-title">思想画布</span>
             <button onclick="clearCanvasHistory()" title="清空画布"><i class="fas fa-eraser"></i></button>
             <!-- 新增：导出组 -->
             <!--div class="toolbar-group" style="margin-right: 15px; border-right: 1px solid #ddd; padding-right: 15px; display:inline-block;"-->
             <div class="toolbar-group" style="margin-right: 15px; display:inline-block;">
-                <button onclick="exportToPDF()" title="导出为PDF"><i class="fas fa-file-pdf"></i></button>
-                <button onclick="exportToMD()" title="导出为Markdown"><i class="fas fa-file-alt"></i></button>
+                <button onclick="exportToPDF()" title="导出PDF"><i class="fas fa-file-pdf"></i></button>
+                <button onclick="exportToMD()" title="导出Markdown"><i class="fas fa-file-alt"></i></button>
                 <!-- 新增：导出为HTML -->
-                <button onclick="exportToHTML()" title="导出为HTML网页"><i class="fas fa-file-code"></i>
+                <button onclick="exportToHTML()" title="导出HTML"><i class="fas fa-file-code"></i>
                 <!-- 新增：导入MD文件 -->
-                <button onclick="importFromMD()" title="从本地导入历史MD文件"><i class="fas fa-file-import"></i>
+                <button onclick="importFromMD()" title="导入Markdown"><i class="fas fa-file-import"></i>
 </button>
             </div>
             <!--
