@@ -4,6 +4,8 @@ let currentGeneratedPrompt = '';
 
 // --- [新增] 对话画布相关全局变量 ---
 let conversationHistory = []; // 存储 {role, text, leaderName, timestamp}
+// --- [新增] 用于临时存储从 MD 导入的对话历史
+let importedHistory = null;  
 let isCanvasModeOpen = false;
 
 // --- NEW: Modal Control ---
@@ -1058,22 +1060,29 @@ function closeDialogueCanvas() {
 }
 
 function clearCanvasHistory() {
-    // 1. 判断是否有内容可清空
-    if (!conversationHistory || conversationHistory.length === 0) {
+    // 1. 判断当前是否有内容（考虑导入历史）
+    const currentHistory = importedHistory || conversationHistory;
+    if (!currentHistory || currentHistory.length === 0) {
         alert("画布已经是空的了。");
         return;
     }
 
-    // 2. 弹出确认框
-    const isConfirmed = confirm("⚠️ 高风险操作\n\n您确定要清空整个画布吗？\n此操作将移除所有当前的思维节点且无法恢复。\n(主界面的对话记录不会受影响)");
+    // 2. 提示语稍作调整，提醒用户会清空导入内容
+    const isConfirmed = confirm(
+        "⚠️ 高风险操作\n\n" +
+        "您确定要清空整个画布吗？\n" +
+        "此操作将移除所有当前的思维节点（包括任何从MD导入的历史内容），且无法恢复。\n" +
+        "(主界面的对话记录不会受影响)"
+    );
 
-    // 3. 用户点击“确定”后执行
+    // 3. 执行清空
     if (isConfirmed) {
-        conversationHistory = []; // 清空数组
-        renderDialogueCanvas();   // 重绘界面
+        conversationHistory = [];           // 清空原有对话历史
+        importedHistory = null;             // ★ 同时清除导入的历史
+        renderDialogueCanvas();             // 重绘
         
-        // 可选：给个轻提示
-        // alert("画布已清空"); 
+        // 可选：轻提示
+        // alert("画布已清空");
     }
 }
 
@@ -1087,16 +1096,18 @@ function renderDialogueCanvas() {
     const container = document.getElementById('thoughtStreamContent');
     const svgEl = document.getElementById('thoughtTrailsSvg');
     container.innerHTML = '';
-    
-    if (conversationHistory.length === 0) {
+
+    // ★ 新增：统一取当前要渲染的数据源
+    const history = importedHistory || conversationHistory;
+    if (history.length === 0) {
         container.innerHTML = `<div style="text-align:center; color:#888; margin-top:100px; font-family:'Ma Shan Zheng'">
             暂无思想轨迹...<br>请先在主界面与北极星对话。
         </div>`;
-        svgEl.innerHTML = ''; 
+        svgEl.innerHTML = '';
         return;
     }
 
-    conversationHistory.forEach((item, index) => {
+    history.forEach((item, index) => {
         const node = document.createElement('div');
         const isUser = item.role === 'user';
         
@@ -1263,6 +1274,8 @@ function deleteNode(event, index) {
 
     // 3. 用户点击“确定”后执行
     if (isConfirmed) {
+        // ★ 新增：操作当前显示的历史
+        const history = importedHistory || conversationHistory;
         // 从数组中删除指定索引的元素
         conversationHistory.splice(index, 1);
         
@@ -1287,7 +1300,10 @@ function getExportFileName() {
 
 // 2. 导出为 Markdown
 function exportToMD() {
-    if (!conversationHistory || conversationHistory.length === 0) {
+    // ★ 新增：使用当前显示的历史
+    const history = importedHistory || conversationHistory;
+    
+    if (!history || history.length === 0) {
         alert("画布为空，无法导出。");
         return;
     }
@@ -1296,7 +1312,8 @@ function exportToMD() {
     const timestamp = new Date().toLocaleString();
     mdContent += `> Exported on: ${timestamp}\n\n---\n\n`;
 
-    conversationHistory.forEach((item, index) => {
+    history.forEach((item, index) => {
+        // 以下保持原逻辑，只需把 conversationHistory 换成 history
         const isUser = item.role === 'user';
         const roleName = isUser ? "User" : (item.leaderInfo?.name || "North Star");
         
@@ -1306,7 +1323,7 @@ function exportToMD() {
         // --- 修改点：在 User 问题后增加北极星人物信息 ---
         if (isUser) {
             // 向后看一条
-            const nextItem = conversationHistory[index + 1];
+            const nextItem = history[index + 1];
             if (nextItem && nextItem.role !== 'user' && nextItem.leaderInfo) {
                 const info = nextItem.leaderInfo;
                 // 追加信息到 User 的文本块中
@@ -1576,7 +1593,10 @@ function exportToPDF() {
 
 /* --- 新增：导出为 HTML 功能 --- */
 function exportToHTML() {
-    if (!conversationHistory || conversationHistory.length === 0) {
+    // ★ 新增
+    const history = importedHistory || conversationHistory;
+    
+    if (!history || history.length === 0) {
         alert("画布为空，无法导出。");
         return;
     }
