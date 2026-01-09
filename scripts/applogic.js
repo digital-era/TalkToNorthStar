@@ -1059,9 +1059,31 @@ function closeDialogueCanvas() {
     }, 500);
 }
 
+/**
+ * 合并导入历史与当前会话历史，返回用于渲染/导出/操作的完整数组
+ * @param {Array|null} imported - 从 MD 导入的历史（可能为 null）
+ * @param {Array} current - 当前会话的 conversationHistory
+ * @returns {Array} 合并后的完整历史数组（imported 在前，current 在后）
+ */
+function getMergedHistory(imported, current) {
+    const result = [];
+    
+    // 先放入导入的历史（如果存在）
+    if (imported && Array.isArray(imported) && imported.length > 0) {
+        result.push(...imported);
+    }
+    
+    // 再追加当前会话的新节点
+    if (current && Array.isArray(current) && current.length > 0) {
+        result.push(...current);
+    }
+    
+    return result;
+}
+
 function clearCanvasHistory() {
     // 1. 判断当前是否有内容（考虑导入历史）
-    const currentHistory = importedHistory || conversationHistory;
+    const currentHistory = getMergedHistory(importedHistory, conversationHistory);
     if (!currentHistory || currentHistory.length === 0) {
         alert("画布已经是空的了。");
         return;
@@ -1098,7 +1120,7 @@ function renderDialogueCanvas() {
     container.innerHTML = '';
 
     // ★ 新增：统一取当前要渲染的数据源
-    const history = importedHistory || conversationHistory;
+    const history = getMergedHistory(importedHistory, conversationHistory);
     if (history.length === 0) {
         container.innerHTML = `<div style="text-align:center; color:#888; margin-top:100px; font-family:'Ma Shan Zheng'">
             暂无思想轨迹...<br>请先在主界面与北极星对话。
@@ -1275,7 +1297,7 @@ function deleteNode(event, index) {
     // 3. 用户点击“确定”后执行
     if (isConfirmed) {
         // ★ 新增：操作当前显示的历史
-        const history = importedHistory || conversationHistory;
+        const history = getMergedHistory(importedHistory, conversationHistory);
         // 从数组中删除指定索引的元素
         conversationHistory.splice(index, 1);
         
@@ -1301,7 +1323,7 @@ function getExportFileName() {
 // 2. 导出为 Markdown
 function exportToMD() {
     // ★ 新增：使用当前显示的历史
-    const history = importedHistory || conversationHistory;
+    const history = getMergedHistory(importedHistory, conversationHistory);
     
     if (!history || history.length === 0) {
         alert("画布为空，无法导出。");
@@ -1594,7 +1616,7 @@ function exportToPDF() {
 /* --- 新增：导出为 HTML 功能 --- */
 function exportToHTML() {
     // ★ 新增
-    const history = importedHistory || conversationHistory;
+    const history = getMergedHistory(importedHistory, conversationHistory);
     
     if (!history || history.length === 0) {
         alert("画布为空，无法导出。");
