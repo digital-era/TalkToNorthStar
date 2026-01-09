@@ -309,13 +309,11 @@ function parseMDToHistory(mdContent) {
         .trim();
 
     // ── 策略1：经典 ### 格式 ───────────────────────────────
-   // 根据文件特征选择解析策略
-    if (normalized.includes('### ')) {
-        return parseOldFormatMD(normalized);
-    }
     // ── 策略2：【问题 / Question】 + 【北极星答复】格式 ───────
-    else if (normalized.includes('【问题 / Question】') || normalized.includes('【北极星答复】')) {
-        const parts = normalized.split(/【([^】]+)】:/).filter(Boolean);
+    if (normalized.includes('【问题 / Question】') || normalized.includes('【北极星答复】')) {
+        // const parts = normalized.split(/【([^】]+)】:/).filter(Boolean);
+        // 允许冒号前有空格，允许中文冒号
+        const parts = normalized.split(/【([^】]+)】\s*[:：]/).filter(Boolean);
     
         let currentRole = null;
         let questionBlock = '';  // 暂存【问题 / Question】的全部内容
@@ -370,7 +368,10 @@ function parseMDToHistory(mdContent) {
             }
         }
     }
-
+    // ── 策略2：再判断旧格式（### 格式） ───────────────────────────────
+    else if (normalized.includes('### ')) {
+        return parseOldFormatMD(normalized);
+    }
     // 最终清理
     return history.filter(item => item && item.text?.trim());
 }
