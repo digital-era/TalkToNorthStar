@@ -426,20 +426,32 @@ async function getAIResponse() {
     const headers = { 'Content-Type': 'application/json' };
     const isGeminiModel = model.toLowerCase().includes("gemini");
 
-    // 判断是否为 Qwen 模型（通过 endpoint 或 model 名）
-    const isQwenModel = apiBaseUrl.includes("dashscope.aliyuncs.com") || 
-                    model.startsWith("qwen-");
+    //修改 getAIResponse() 中的 Qwen 判断逻辑
+    const isQwenModel = apiBaseUrl === "https://qwenapi.aivibeinvest.com";
 
+    // 判断是否为 Qwen 模型（通过 endpoint 或 model 名）
+    //const isQwenModel = apiBaseUrl.includes("dashscope.aliyuncs.com") || 
+    //                model.startsWith("qwen-");
+ 
     // 2. 构造 URL
     let fullApiUrl;
     if (isGeminiModel) {
         const baseUrl = apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl;
         fullApiUrl = `${baseUrl}/v1beta/models/${model}:generateContent?key=${apiKey}`;
     } else if (isQwenModel) {  // DashScope Qwen 的专属路径        
+        // 使用你的自定义代理，路径由 Worker 自动拼接
         const baseUrl = apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl;
-        fullApiUrl = `${baseUrl}/services/aigc/text-generation/generation`;
-        headers['Authorization'] = `Bearer ${apiKey}`;
-        headers['X-DashScope-Async'] = 'disable'; // 同步调用
+        fullApiUrl = `${baseUrl}/api/v1/services/aigc/text-generation/generation`;
+        
+        // 【关键修改】使用 X-API-Key 而不是 Authorization
+        headers['X-API-Key'] = apiKey; // ← 不要加 Bearer
+        
+        // 可选：如果你的 Worker 需要 Content-Type（通常需要）
+        headers['Content-Type'] = 'application/json';
+        
+        // 注意：X-DashScope-Async 不再需要，因为你的 Worker 是通用代理
+        // 如果 DashScope 后端仍需要，可保留；否则建议移除
+        // headers['X-DashScope-Async'] = 'disable'; // 删除或注释掉
     } else {
         fullApiUrl = (apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl) + "/v1/chat/completions";
         // 非 Gemini 模型需要在 Header 里传 Key
@@ -665,8 +677,8 @@ const endpointModelMap = {
     "https://api.openai.com": [
         { value: "gpt-4o-mini", labelKey: "modelGpt4oMini" }
     ],
-     // 新增：阿里云 DashScope - Qwen 系列
-    "https://dashscope.aliyuncs.com/api/v1": [
+    // 自定义 Qwen 代理（BYOK 模式）<- 新增：阿里云 DashScope - Qwen 系列
+    "https://qwenapi.aivibeinvest.com": [
         { value: "qwen-max", labelKey: "modelQwenMax" },
         { value: "qwen-plus", labelKey: "modelQwenPlus" }
     ]
