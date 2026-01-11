@@ -426,11 +426,20 @@ async function getAIResponse() {
     const headers = { 'Content-Type': 'application/json' };
     const isGeminiModel = model.toLowerCase().includes("gemini");
 
+    // 判断是否为 Qwen 模型（通过 endpoint 或 model 名）
+    const isQwenModel = apiBaseUrl.includes("dashscope.aliyuncs.com") || 
+                    model.startsWith("qwen-");
+
     // 2. 构造 URL
     let fullApiUrl;
     if (isGeminiModel) {
         const baseUrl = apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl;
         fullApiUrl = `${baseUrl}/v1beta/models/${model}:generateContent?key=${apiKey}`;
+    } else if (isQwenModel) {  // DashScope Qwen 的专属路径        
+        const baseUrl = apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl;
+        fullApiUrl = `${baseUrl}/services/aigc/text-generation/generation`;
+        headers['Authorization'] = `Bearer ${apiKey}`;
+        headers['X-DashScope-Async'] = 'disable'; // 同步调用
     } else {
         fullApiUrl = (apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl) + "/v1/chat/completions";
         // 非 Gemini 模型需要在 Header 里传 Key
@@ -444,7 +453,20 @@ async function getAIResponse() {
             contents: [{ role: "user", parts: [{ text: promptText }] }],
             generationConfig: { temperature: 0.7 }
         };
-    } else {
+    }  else if (isQwenModel) {
+        // Qwen 请求体（支持插件）
+        requestBody = {
+            model: model,
+            input: {
+                messages: [{ role: "user", content: promptText }]
+            },
+            parameters: {
+                temperature: 0.7,
+                // 【关键】启用代搜索插件
+                plugins: ["web_search"] // 或 {}，但数组形式更可靠
+            }
+        };    
+   } else {
         requestBody = {
             model: model,
             messages: [{ role: "user", content: promptText }],
@@ -480,6 +502,14 @@ async function getAIResponse() {
             } else {
                 throw new Error("Gemini 返回数据结构异常");
             }
+         } else if (isQwenModel) {
+            // Qwen 响应解析
+            if (data.output && data.output.text) {
+                rawContent = data.output.text.trim();
+            } else {
+                console.error("Qwen response:", data);
+                throw new Error("Qwen 返回数据结构异常或配额不足");
+            }
         } else {
             if (data.choices && data.choices[0]?.message?.content) {
                 // 【修正 2】同上
@@ -487,7 +517,7 @@ async function getAIResponse() {
             } else {
                 throw new Error("API 返回数据结构异常");
             }
-        }
+        } 
 
         // 【修正 3】现在 rawContent 有值了，把它存入 dataset
         aiResponseTextElement.dataset.raw = rawContent;
@@ -634,6 +664,11 @@ const endpointModelMap = {
     ],
     "https://api.openai.com": [
         { value: "gpt-4o-mini", labelKey: "modelGpt4oMini" }
+    ],
+     // 新增：阿里云 DashScope - Qwen 系列
+    "https://dashscope.aliyuncs.com/api/v1": [
+        { value: "qwen-max", labelKey: "modelQwenMax" },
+        { value: "qwen-plus", labelKey: "modelQwenPlus" }
     ]
 };
 
