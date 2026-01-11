@@ -479,6 +479,8 @@ async function getAIResponse() {
                 plugins: {
                     web_search: {}  // 启用网络搜索插件
                 }
+                // 加上这一行！关键！
+                function_call: "auto"
             }
         };    
    } else {
