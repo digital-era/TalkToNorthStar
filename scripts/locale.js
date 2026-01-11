@@ -64,6 +64,8 @@
                 "modelDeepSeekV3": "DeepSeek-V3",
                 "modelGeminiFlash": "Gemini-2.5-Flash",
                 "modelGpt4oMini": "gpt-4o-mini",
+                "modelQwenMax": "Qwen-Max",
+                "modelQwenPlus": "Qwen-Plus",
                 "promptBaseRemarksNone": "无特定备注，请基于其贡献和领域推断其核心思维模式。",
                 "promptBaseRemarksWith": "备注中提到的特点 (${remarks}) 和",
                 "promptBackgroundSetting": "背景设定:",
