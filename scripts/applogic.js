@@ -475,7 +475,10 @@ async function getAIResponse() {
             parameters: {
                 temperature: 0.7,
                 // 【关键】启用代搜索插件
-                plugins: ["web_search"] // 或 {}，但数组形式更可靠
+                // 【关键】plugins 必须是对象，不是数组
+                plugins: {
+                    web_search: {}  // 启用网络搜索插件
+                }
             }
         };    
    } else {
