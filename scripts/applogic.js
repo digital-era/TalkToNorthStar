@@ -478,7 +478,7 @@ async function getAIResponse() {
                 // 【关键】plugins 必须是对象，不是数组
                 plugins: {
                     web_search: {}  // 启用网络搜索插件
-                }
+                },
                 // 加上这一行！关键！
                 function_call: "auto"
             }
