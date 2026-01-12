@@ -307,4 +307,145 @@ const financeMasters = [
         "en": "Known as 'Hurun,' his lists have become a barometer of wealth in China, influencing global business and investment decisions."
       }
     }
+
+    {"id": "lyn_alden", "name": "Lyn Alden (林·奥尔登)",
+        "contribution": {
+        "zh-CN": "宏观分析师和作者，对货币体系、能源转型以及黄金和比特币等替代资产提供深入分析。",
+        "en": "Macro analyst and author, provides in-depth analyses on monetary systems, energy transitions, and alternative assets like gold and bitcoin."
+        },
+        "field": {
+        "zh-CN": "宏观经济学、能源、替代投资。",
+        "en": "Macroeconomics, Energy, Alternative Investments."
+        },
+        "remarks": {
+        "zh-CN": "以数据驱动的历史比较挑战主流金融叙事著称，强调财政政策中的系统性风险。",
+        "en": "Known for data-driven historical comparisons that challenge mainstream financial narratives, emphasizing systemic risks in fiscal policies."
+        }
+    },
+    {"id": "michael_burry",  "name": "Michael Burry (迈克尔·伯里)",
+        "contribution": {
+        "zh-CN": "Scion Asset Management创始人，以通过押注房地产市场预测2008年金融危机而闻名。",
+        "en": "Founder of Scion Asset Management, famous for predicting the 2008 financial crisis through bets against the housing market."
+        },
+        "field": {
+        "zh-CN": "价值投资、对冲基金、市场预测。",
+        "en": "Value Investing, Hedge Funds, Market Predictions."
+        },
+        "remarks": {
+        "zh-CN": "以识别市场泡沫著称，如最近做空Nvidia和Palantir等AI股票。",
+        "en": "Renowned for identifying market bubbles, such as recent shorts on AI stocks like Nvidia and Palantir."
+        }
+    },
+    { "id": "raoul_pal", "name": "Raoul Pal (拉乌尔·帕尔)",
+        "contribution": {
+        "zh-CN": "Real Vision创始人，前对冲基金经理，倡导加密货币和宏观投资。",
+        "en": "Founder of Real Vision, former hedge fund manager, advocates for crypto and macro investing."
+        },
+        "field": {
+        "zh-CN": "宏观投资、加密货币、金融媒体。",
+        "en": "Macro Investing, Cryptocurrency, Financial Media."
+        },
+        "remarks": {
+        "zh-CN": "预测加密资产的巨大增长，并警告即将到来的金融变革。",
+        "en": "Predicts massive growth in crypto assets and warns of upcoming financial changes."
+        }
+    },
+    { "id": "luke_gromen", "name": "Luke Gromen (卢克·格罗门)",
+        "contribution": {
+        "zh-CN": "Forest for the Trees创始人，全球宏观经济学、债务动态和去美元化专家。",
+        "en": "Founder of Forest for the Trees, expert on global macroeconomics, debt dynamics, and dedollarization."
+        },
+        "field": {
+        "zh-CN": "全球宏观经济学、债务市场、大宗商品。",
+        "en": "Global Macroeconomics, Debt Markets, Commodities."
+        },
+        "remarks": {
+        "zh-CN": "警告美国债务螺旋，并强调向黄金和替代资产的转变。",
+        "en": "Warns about U.S. debt spirals and the shift towards gold and alternative assets."
+        }
+    },
+    { "id": "arthur_hayes", "name": "Arthur Hayes (亚瑟·海耶斯)",
+        "contribution": {
+        "zh-CN": "BitMEX联合创始人，有影响力的加密宏观思想家和投资者。",
+        "en": "Co-founder of BitMEX, influential crypto macro thinker and investor."
+        },
+        "field": {
+        "zh-CN": "加密货币、宏观交易、衍生品。",
+        "en": "Cryptocurrency, Macro Trading, Derivatives."
+        },
+        "remarks": {
+        "zh-CN": "提供对通胀、加密反弹和央行政策的大胆预测。",
+        "en": "Provides bold predictions on inflation, crypto rallies, and central bank policies."
+        }
+    },
+    { "id": "craig_hemke",  "name": "Craig Hemke (克雷格·亨克)",
+        "contribution": {
+        "zh-CN": "TFMetalsReport.com出版人，专注于黄金和白银市场的分析师。",
+        "en": "Publisher of TFMetalsReport.com, analyst focusing on gold and silver markets."
+        },
+        "field": {
+        "zh-CN": "贵金属、大宗商品交易。",
+        "en": "Precious Metals, Commodities Trading."
+        },
+        "remarks": {
+        "zh-CN": "由于物理需求和市场操纵，预测黄金和白银价格大幅上涨。",
+        "en": "Predicts significant price surges in gold and silver due to physical demand and market manipulations."
+        }
+    },
+    { "id": "steve_hanke", "name": "Steve Hanke (史蒂夫·汉克)",
+        "contribution": {
+        "zh-CN": "约翰霍普金斯大学应用经济学教授，货币改革和通胀控制顾问。",
+        "en": "Professor of Applied Economics at Johns Hopkins, advisor on currency reforms and inflation control."
+        },
+        "field": {
+        "zh-CN": "货币经济学、货币局、高通胀。",
+        "en": "Monetary Economics, Currency Boards, Hyperinflation."
+        },
+        "remarks": {
+        "zh-CN": "批判政府干预，并基于历史数据预测经济不稳定。",
+        "en": "Critiques government interventions and predicts economic instabilities based on historical data."
+        }
+    },
+    { "id": "mark_mills", "name": "Mark Mills (马克·米尔斯)",
+        "contribution": {
+        "zh-CN": "国家能源分析中心执行主任，能源和技术交叉领域的作者。",
+        "en": "Executive Director of National Center for Energy Analytics, author on energy and technology intersections."
+        },
+        "field": {
+        "zh-CN": "能源政策、技术影响、采矿。",
+        "en": "Energy Policy, Technology Impacts, Mining."
+        },
+        "remarks": {
+        "zh-CN": "挑战能源转型中的神话，突出AI和可再生能源的物理极限。",
+        "en": "Challenges myths in energy transitions, highlighting physical limits of AI and renewables."
+        }
+    },
+    {  "id": "charlie_bilello", "name": "Charlie Bilello (查理·比莱洛)",
+        "contribution": {
+        "zh-CN": "Compound Advisors首席投资官，通过图表和评论提供市场洞见。",
+        "en": "CIO of Compound Advisors, provides market insights through charts and commentary."
+        },
+        "field": {
+        "zh-CN": "市场分析、投资、金融图表。",
+        "en": "Market Analysis, Investing, Financial Charts."
+        },
+        "remarks": {
+        "zh-CN": "使用数据可视化揭示市场趋势和极端，指导投资决策。",
+        "en": "Uses data visualizations to expose market trends and extremes, guiding investment decisions."
+        }
+    },
+    { "id": "peter_l_brandt", "name": "Peter L. Brandt (彼得·L·布兰特)",
+        "contribution": {
+        "zh-CN": "Factor LLC首席执行官，使用经典图表超过40年的专业交易员。",
+        "en": "CEO of Factor LLC, professional trader using classical charting for over 40 years."
+        },
+        "field": {
+        "zh-CN": "技术分析、大宗商品交易、外汇。",
+        "en": "Technical Analysis, Commodity Trading, Forex."
+        },
+        "remarks": {
+        "zh-CN": "强调在波动市场中的纪律风险管理和模式识别。",
+        "en": "Emphasizes disciplined risk management and pattern recognition in volatile markets."
+        }
+    },
 ];
