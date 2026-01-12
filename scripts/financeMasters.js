@@ -306,8 +306,7 @@ const financeMasters = [
         "zh-CN": "被称为“胡润”，其榜单已成为中国财富风向标，影响全球商业与投资决策。",
         "en": "Known as 'Hurun,' his lists have become a barometer of wealth in China, influencing global business and investment decisions."
       }
-    }
-
+    },
     {"id": "lyn_alden", "name": "Lyn Alden (林·奥尔登)",
         "contribution": {
         "zh-CN": "宏观分析师和作者，对货币体系、能源转型以及黄金和比特币等替代资产提供深入分析。",
@@ -447,5 +446,5 @@ const financeMasters = [
         "zh-CN": "强调在波动市场中的纪律风险管理和模式识别。",
         "en": "Emphasizes disciplined risk management and pattern recognition in volatile markets."
         }
-    },
+    }
 ];
