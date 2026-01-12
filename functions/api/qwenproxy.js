@@ -1,4 +1,4 @@
-**
+/**
  * /functions/api/qwenproxy.js
  * 
  * Universal BYOK Proxy with Dynamic Role-Aware Web Search
