@@ -440,7 +440,10 @@ async function getAIResponse() {
         fullApiUrl = `${baseUrl}/v1beta/models/${model}:generateContent?key=${apiKey}`;
     } else if (isQwenModel) {  // DashScope Qwen 的专属路径        
         // 使用你的自定义代理，路径由 Worker 自动拼接
-        const baseUrl = apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl;
+        // 为了代理环境下可以执行所以固定赋值可以访问的地址
+        const baseUrl = "https://qwenapi.aipeinvestmentagent.pages.dev"
+        //const baseUrl = apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl;
+        
         fullApiUrl = `${baseUrl}/api/v1/services/aigc/text-generation/generation`;
         
         // 【关键修改】使用 X-API-Key 而不是 Authorization
