@@ -441,7 +441,7 @@ async function getAIResponse() {
     } else if (isQwenModel) {  // DashScope Qwen 的专属路径        
         // 使用你的自定义代理，路径由 Worker 自动拼接
         // 为了代理环境下可以执行所以固定赋值可以访问的地址
-        const baseUrl = "https://qwenapi.aipeinvestmentagent.pages.dev"
+        const baseUrl = "/api/qwenproxy"
         //const baseUrl = apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl;
         
         fullApiUrl = `${baseUrl}/api/v1/services/aigc/text-generation/generation`;
