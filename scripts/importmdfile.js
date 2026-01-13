@@ -372,6 +372,20 @@ function parseMDToHistory(mdContent) {
     else if (normalized.includes('### ')) {
         return parseOldFormatMD(normalized);
     }
+      // ── ★ 策略3（新增）：兜底处理 ───────────────────────────────
+     // 既不是 Question/Answer 格式，也不是 ### 格式
+     // 直接将整个文档作为一次 Assistant 的回答
+    else {
+        history.push({
+            role: 'assistant',
+            text: normalized, // 整个文档内容
+            leaderInfo: { 
+                name: 'Imported Doc', // 或者 'Unknown'，看你UI怎么显示
+                field: '', 
+                contribution: '' 
+            }
+        });
+    }
     // 最终清理
     return history.filter(item => item && item.text?.trim());
 }
