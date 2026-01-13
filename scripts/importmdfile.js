@@ -359,10 +359,14 @@ function parseMDToHistory(mdContent) {
             history = tempHistory;
         }
     }
-
+    
     // ── 策略2：尝试解析旧格式（### 格式） ───────────────────────────────
-    // 只有当前面策略1没结果，且包含 ### 时才尝试
-    if (history.length === 0 && normalized.includes('### ')) {
+    // 【修改点】：这里增加了更严格的正则判断
+    // 只有当文本中明确包含 "### User" (忽略大小写) 时，才认为是旧格式对话
+    // 否则将其视为普通 Markdown 的三级标题，跳过此步，进入策略3
+    const isOldFormatDialogue = /^###\s+User/im.test(normalized);
+
+    if (history.length === 0 && isOldFormatDialogue) {
         const oldFormatResult = parseOldFormatMD(normalized);
         if (oldFormatResult.length > 0) {
             history = oldFormatResult;
