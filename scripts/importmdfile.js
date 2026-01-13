@@ -361,12 +361,26 @@ function parseMDToHistory(mdContent) {
     }
     
     // ── 策略2：尝试解析旧格式（### 格式） ───────────────────────────────
-    // 【修改点】：这里增加了更严格的正则判断
-    // 只有当文本中明确包含 "### User" (忽略大小写) 时，才认为是旧格式对话
-    // 否则将其视为普通 Markdown 的三级标题，跳过此步，进入策略3
-    const isOldFormatDialogue = /^###\s+User/im.test(normalized);
+    // 【修改核心】：增加严苛的“指纹校验”
+    // 必须同时满足三个条件（或其关键组合），才会被认定为是旧版导出的对话记录
+    
+    // 1. 特征一：是否存在 "### User" 分隔符（结构特征）
+    const hasUserSeparator = /^###\s+User/im.test(normalized);
+    
+    // 2. 特征二：是否存在特定的文件头标识（身份特征）
+    // 匹配 "# 对话北极星" 或 "Talk with North Stars"
+    const hasHeaderSignature = /#\s*(?:对话北极星|Talk with North Stars)/i.test(normalized);
+    
+    // 3. 特征三：是否存在导出时间戳（辅助特征）
+    const hasExportMeta = />\s*Exported on/i.test(normalized);
+
+    // 【判定逻辑】：
+    // 必须有 "### User" 结构，且 (包含标题签名 或 包含导出时间)
+    // 这样既能防止普通MD文章误判，也能兼容用户可能不小心删掉了一行头部的边缘情况
+    const isOldFormatDialogue = hasUserSeparator && (hasHeaderSignature || hasExportMeta);
 
     if (history.length === 0 && isOldFormatDialogue) {
+        // 只有验明正身后，才调用旧格式解析器
         const oldFormatResult = parseOldFormatMD(normalized);
         if (oldFormatResult.length > 0) {
             history = oldFormatResult;
