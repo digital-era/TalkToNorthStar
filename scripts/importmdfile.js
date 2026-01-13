@@ -301,28 +301,26 @@ function extractLeaderInfoFromPrompt(block) {
  * 支持两种主要导出格式
  */
 function parseMDToHistory(mdContent) {
-    const history = [];
+    let history = []; // 使用 let，允许重新赋值
 
     const normalized = mdContent
         .replace(/\r\n/g, '\n')
         .replace(/\n{3,}/g, '\n\n')
         .trim();
 
-    // ── 策略1：经典 ### 格式 ───────────────────────────────
-    // ── 策略2：【问题 / Question】 + 【北极星答复】格式 ───────
+    if (!normalized) return [];
+
+    // ── 策略1：尝试解析【问题 / Question】格式 ───────
+    // 只有当解析出内容了，才算成功
     if (normalized.includes('【问题 / Question】') || normalized.includes('【北极星答复】')) {
-        // const parts = normalized.split(/【([^】]+)】:/).filter(Boolean);
-        // 允许冒号前有空格，允许中文冒号
         const parts = normalized.split(/【([^】]+)】\s*[:：]/).filter(Boolean);
-    
         let currentRole = null;
-        let questionBlock = '';  // 暂存【问题 / Question】的全部内容
-    
+        let questionBlock = '';
+        const tempHistory = []; // 临时存放，确认解析成功后再合并
+
         for (let i = 0; i < parts.length; i++) {
             const part = parts[i].trim();
-    
             if (i % 2 === 0) {
-                // 标题部分
                 const title = part.toLowerCase();
                 if (title.includes('问题') || title.includes('question')) {
                     currentRole = 'user';
@@ -331,61 +329,59 @@ function parseMDToHistory(mdContent) {
                     currentRole = 'assistant';
                 }
             } else {
-                // 内容部分
                 if (currentRole === 'user') {
                     questionBlock += part + '\n';
-    
-                    // ★ 核心：从 questionBlock 中提取真正用户问题 + 北极星信息
                     const userQuestion = extractRealUserQuestion(questionBlock);
                     const leaderInfo = extractLeaderInfoFromPrompt(questionBlock);
-    
-                    history.push({
+                    tempHistory.push({
                         role: 'user',
                         text: userQuestion || '（未提取到具体问题）',
                         leaderInfo: null
                     });
-    
-                    // 如果提取到了 leaderInfo，保存给后续 assistant 使用
-                    if (leaderInfo) {
-                        history[history.length - 1]._pendingLeader = leaderInfo;
-                    }
+                    if (leaderInfo) tempHistory[tempHistory.length - 1]._pendingLeader = leaderInfo;
                 } else if (currentRole === 'assistant') {
-                    let text = part.trim();
-    
-                    // 使用从 prompt 中提取的 leaderInfo（优先级最高）
                     let leaderInfo = { name: 'Unknown', field: '', contribution: '' };
-                    if (history.length > 0 && history[history.length - 1]._pendingLeader) {
-                        leaderInfo = history[history.length - 1]._pendingLeader;
-                        delete history[history.length - 1]._pendingLeader;
+                    if (tempHistory.length > 0 && tempHistory[tempHistory.length - 1]._pendingLeader) {
+                        leaderInfo = tempHistory[tempHistory.length - 1]._pendingLeader;
+                        delete tempHistory[tempHistory.length - 1]._pendingLeader;
                     }
-    
-                    history.push({
+                    tempHistory.push({
                         role: 'assistant',
-                        text: text,
+                        text: part.trim(),
                         leaderInfo: leaderInfo
                     });
                 }
             }
         }
+        
+        // 只有当策略1确实解析出了有效条目，才采纳
+        if (tempHistory.length > 0) {
+            history = tempHistory;
+        }
     }
-    // ── 策略2：再判断旧格式（### 格式） ───────────────────────────────
-    else if (normalized.includes('### ')) {
-        return parseOldFormatMD(normalized);
+
+    // ── 策略2：尝试解析旧格式（### 格式） ───────────────────────────────
+    // 只有当前面策略1没结果，且包含 ### 时才尝试
+    if (history.length === 0 && normalized.includes('### ')) {
+        const oldFormatResult = parseOldFormatMD(normalized);
+        if (oldFormatResult.length > 0) {
+            history = oldFormatResult;
+        }
     }
-      // ── ★ 策略3（新增）：兜底处理 ───────────────────────────────
-     // 既不是 Question/Answer 格式，也不是 ### 格式
-     // 直接将整个文档作为一次 Assistant 的回答
-    else {
+
+    // ── 策略3（兜底）：如果不符合上述任何结构，或上述解析均失效 ──────────
+    // 无论前面命中了什么关键字，只要最终结果为空，就强行把全文当作一个回答
+    if (history.length === 0) {
         history.push({
             role: 'assistant',
-            text: normalized, // 整个文档内容
+            text: normalized,
             leaderInfo: { 
-                name: 'Imported Doc', // 或者 'Unknown'，看你UI怎么显示
+                name: 'Imported Doc', 
                 field: '', 
                 contribution: '' 
             }
         });
     }
-    // 最终清理
+
     return history.filter(item => item && item.text?.trim());
 }
