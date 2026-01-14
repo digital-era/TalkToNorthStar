@@ -879,7 +879,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // 2. 【关键修复】强制更新全局 currentLang，确保 modern-filter.js 能读到
-    window.currentLang = selectedLang;
+    window.currentLang = currentLang;
     
     document.getElementById('languageSelector').value = currentLang;
 
