@@ -1,0 +1,82 @@
+/* 现代风格 - 过滤栏整体 */
+.modern-filter-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 16px 0 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.filter-chips-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.chip {
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text-secondary);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    white-space: nowrap;
+}
+
+.chip:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.24);
+}
+
+.chip.active {
+    background: var(--primary-color, #6e8efb);
+    color: white;
+    border-color: transparent;
+}
+
+/* 搜索区域 */
+.modern-search-wrapper {
+    position: relative;
+    min-width: 180px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-tertiary);
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.modern-search-input {
+    width: 100%;
+    padding: 10px 12px 10px 36px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.05);
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.modern-search-input:focus {
+    outline: none;
+    border-color: var(--primary-color, #6e8efb);
+    box-shadow: 0 0 0 3px rgba(110, 142, 251, 0.15);
+}
+
+/* 卡片动画基础 */
+.modern-mode .leader-card {
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 0;
+    transform: translateY(30px) scale(0.92);
+}
+
+.modern-mode .leader-card.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
