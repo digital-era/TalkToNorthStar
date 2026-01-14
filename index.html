@@ -106,7 +106,8 @@
                 <!-- 新增的语言图标 -->
                 <i class="fas fa-globe"></i>
                 <!-- 原有的 select，但移除了 visible class，通过 CSS 隐藏外观 -->
-                <select id="languageSelector" onchange="setLanguage(this.value)">
+                <!-- 现代界面 修改后：用分号隔开，同时调用两个函数 -->
+                <select id="languageSelector" onchange="setLanguage(this.value); window.onLanguageChanged()">
                     <option value="zh-CN">简体中文</option>
                     <option value="en">English</option>
                 </select>
