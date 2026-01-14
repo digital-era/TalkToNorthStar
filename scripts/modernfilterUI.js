@@ -37,8 +37,12 @@ function getMastersByCategory(category) {
 // ──────────────────────────────────────────────
 // 2. 从 field 提取关键词
 // ──────────────────────────────────────────────
-
-    const targetLang = lang || window.currentLang || 'zh-CN';    
+function extractCommonFieldKeywords(category, lang) {
+    // 1. 确定目标语言，优先使用传入的 lang
+    const targetLang = lang || window.currentLang || 'zh-CN';
+    
+    console.log(`[DEBUG] 提取关键词 - 分类: ${category}, 语言: ${targetLang}`);
+    
     const masters = getMastersByCategory(category);
     if (!masters.length) return [];
     
@@ -47,37 +51,56 @@ function getMastersByCategory(category) {
     masters.forEach(master => {
         let text = '';
         
-        // 1. 尝试获取多语言对象中的对应语言
-        if (typeof master.field === 'object' && master.field !== null) {
-            text = master.field[targetLang] || master.field['zh-CN'] || '';
-        } 
-        // 2. 兼容旧数据结构（field 是纯字符串）
-        else if (typeof master.field === 'string') {
+        // --- 核心修复：多语言字段读取逻辑 ---
+        if (master.field && typeof master.field === 'object') {
+            // 优先级：当前语言 -> 英文 -> 中文 -> 空字符串
+            // 这样如果你加了日语(ja)，但某些数据只有英文，它会显示英文而不是空白
+            text = master.field[targetLang] || master.field['en'] || master.field['zh-CN'] || '';
+        } else if (typeof master.field === 'string') {
+            // 兼容旧数据（纯字符串）
             text = master.field;
-            // 如果当前是英文模式，但数据只有中文字符串，这里就会导致显示中文
-            // 建议检查数据源是否包含英文 field
         }
-
+        
         if (!text) return;        
         
-        // 分割逻辑：保留英文短语完整性
-        // 中文按标点分割，英文按逗号或分号分割
+        // --- 核心修复：关键词分割逻辑 ---
+        // 使用正则分割：
+        // 1. 中文标点：、 ， ； （ ）
+        // 2. 英文标点：, ; ( ) [ ]
+        // 3. 注意：不要把空格(\s)作为分割符，因为英文 "Artificial Intelligence" 中间有空格
         const parts = text.split(/[()（）\[\]、,，；;]+/) 
-            .map(p => p.trim().replace(/[。.]$/, ''))
-            .filter(p => p.length >= 2 && p.length <= 40);
+            .map(p => {
+                // 去除首尾空格，并去除尾部可能的句号
+                return p.trim().replace(/[。.。]+$/, '');
+            })
+            .filter(p => {
+                // 长度过滤：
+                // 中文至少2个字，英文至少2个字符
+                // 英文最长放宽到 50 (例如 "Reinforcement Learning from Human Feedback")
+                return p && p.length >= 2 && p.length <= 50;
+            });
 
         parts.forEach(k => {
-            // 过滤纯数字
-            if (k && !/^[\d\s]+$/.test(k)) {
-                keywordCount.set(k, (keywordCount.get(k) || 0) + 1);
+            // 排除纯数字或纯特殊符号
+            if (!/^[\d\s\W]+$/.test(k)) {
+                // 统一转小写来统计频率，但存储原名（为了显示好看，取第一次出现的大小写格式）
+                const keyLower = k.toLowerCase();
+                if (!keywordCount.has(keyLower)) {
+                    keywordCount.set(keyLower, { text: k, count: 0 });
+                }
+                keywordCount.get(keyLower).count++;
             }
         });
     });
 
-    return [...keywordCount.entries()]
-        .sort((a, b) => b[1] - a[1]) // 按频率排序
-        .slice(0, 8)
-        .map(([k]) => k);
+    // --- 排序与输出 ---
+    // 按频率降序，频率相同按长度降序
+    const keywords = [...keywordCount.values()]
+        .sort((a, b) => b.count - a.count || b.text.length - a.text.length)
+        .slice(0, 8) // 取前8个
+        .map(item => item.text);
+        
+    return keywords;
 }
 
 // ──────────────────────────────────────────────
@@ -228,13 +251,15 @@ function initUIStyle() {
 // 7. 过滤核心函数（带详细调试日志）
 // ──────────────────────────────────────────────
 function filterModernGrid(trigger, category = null) {
-    // 1. 获取 Tab 和 Grid
     const tab = category ? document.getElementById(category) : document.querySelector('.tab-content.active');
     if (!tab) return;
     const grid = tab.querySelector('.leader-grid');
     if (!grid) return;
 
-    // 2. 获取过滤条件
+    // --- 获取当前语言 ---
+    const lang = window.currentLang || 'zh-CN';
+
+    // --- 获取过滤词 ---
     let filterVal = 'all';
     if (trigger) {
         if (trigger.tagName === 'INPUT') {
@@ -244,71 +269,80 @@ function filterModernGrid(trigger, category = null) {
         }
     }
 
-    // 3. UI 状态更新：激活胶囊
+    // --- 更新胶囊状态 ---
     if (trigger && trigger.classList?.contains('chip')) {
         tab.querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
         trigger.classList.add('active');
     }
 
-    // 4. 获取数据
     const masters = getMastersByCategory(tab.id);
-    const lang = window.currentLang || 'zh-CN'; // 确保获取最新语言
-    
     let filtered = masters;
 
-    // 5. 执行过滤 (搜索框或胶囊)
+    // --- 执行过滤 ---
     if (filterVal !== 'all' && filterVal) {
         const q = filterVal.toLowerCase();
         filtered = masters.filter(m => {
-            // 安全获取各个字段，防止报错
-            const name = (m.name || '').toLowerCase();
-            const contrib = (typeof m.contribution === 'object' ? (m.contribution[lang] || m.contribution['zh-CN']) : (m.contribution || '')).toLowerCase();
-            const field = (typeof m.field === 'object' ? (m.field[lang] || m.field['zh-CN']) : (m.field || '')).toLowerCase();
-            // 同时搜索中英文内容，增加命中率
-            return name.includes(q) || contrib.includes(q) || field.includes(q);
+            // 获取各字段文本用于搜索（包含回退逻辑）
+            const getName = (obj) => (typeof obj === 'string' ? obj : (obj[lang] || obj['en'] || obj['zh-CN'] || ''));
+            
+            // 构建搜索的大字符串
+            const searchStr = [
+                m.name,
+                getName(m.contribution),
+                getName(m.field),
+                getName(m.remarks)
+            ].join(' ').toLowerCase();
+            
+            return searchStr.includes(q);
         });
     }
 
-    // 6. 渲染卡片
-    grid.innerHTML = ''; // 清空旧内容
+    // --- 渲染卡片 ---
+    grid.innerHTML = '';
 
     if (filtered.length === 0) {
         const msg = document.createElement('div');
         msg.className = 'no-result-message';
-        // 安全获取提示语
-        const noResText = (translations[lang] && translations[lang].noMatchingLeader) ? translations[lang].noMatchingLeader : 'No matching results';
-        msg.textContent = noResText;
+        // 翻译容错
+        const t = translations[lang] || translations['en'] || {};
+        msg.textContent = t.noMatchingLeader || 'No matching results';
         grid.appendChild(msg);
     } else {
         filtered.forEach((leader, i) => {
             const card = document.createElement('div');
             card.className = 'leader-card';
             card.dataset.id = leader.id;
-            card.dataset.category = tab.id;
+            
+            // --- 提取字段显示内容 ---
+            // 辅助函数：安全获取多语言文本
+            const getText = (fieldObj) => {
+                if (!fieldObj) return '';
+                if (typeof fieldObj === 'string') return fieldObj;
+                return fieldObj[lang] || fieldObj['en'] || fieldObj['zh-CN'] || '';
+            };
 
-            // --- 数据准备 (防止 undefined 报错) ---
+            const txtContrib = getText(leader.contribution);
+            const txtField = getText(leader.field);
+            const txtRemarks = getText(leader.remarks);
+            
+            // 获取标签翻译
             const t = translations[lang] || translations['zh-CN'] || {};
-            const labelContrib = t.labelContribution || 'Contribution';
-            const labelField = t.labelField || 'Field';
-            const labelRemarks = t.labelRemarks || 'Remarks';
-
-            const txtContrib = (typeof leader.contribution === 'object') ? (leader.contribution[lang] || leader.contribution['zh-CN'] || '') : (leader.contribution || '');
-            const txtField = (typeof leader.field === 'object') ? (leader.field[lang] || leader.field['zh-CN'] || '') : (leader.field || '');
-            const txtRemarks = (typeof leader.remarks === 'object') ? (leader.remarks[lang] || leader.remarks['zh-CN'] || '') : (leader.remarks || '');
+            const lblContrib = t.labelContribution || 'Contribution';
+            const lblField = t.labelField || 'Field';
+            const lblRemarks = t.labelRemarks || 'Remarks';
 
             card.innerHTML = `
                 <h3>${leader.name}</h3>
-                <p><strong>${labelContrib}：</strong> ${txtContrib}</p>
-                <p class="field"><strong>${labelField}：</strong> ${txtField}</p>
-                ${txtRemarks ? `<p class="remarks"><strong>${labelRemarks}：</strong> ${txtRemarks}</p>` : ''}
+                <p><strong>${lblContrib}：</strong> ${txtContrib}</p>
+                <p class="field"><strong>${lblField}：</strong> ${txtField}</p>
+                ${txtRemarks ? `<p class="remarks"><strong>${lblRemarks}：</strong> ${txtRemarks}</p>` : ''}
             `;
             
-            // 点击事件
             card.onclick = () => {
-                if (typeof selectLeader === 'function') selectLeader(leader, tab.id, card);
+                if(typeof selectLeader === 'function') selectLeader(leader, tab.id, card);
             };
 
-            // 动画初始状态
+            // 动画
             card.style.opacity = '0';
             card.style.transform = 'translateY(30px) scale(0.95)';
             card.style.transition = `all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) ${i * 0.05}s`;
@@ -322,12 +356,10 @@ function filterModernGrid(trigger, category = null) {
             });
         });
     }
-
-    // 7. 更新左右箭头状态
+    
+    // 更新箭头状态
     setTimeout(() => {
-        if (typeof updateScrollButtonStates === 'function') {
-            updateScrollButtonStates(grid); 
-        }
+        if(typeof updateScrollButtonStates === 'function') updateScrollButtonStates(grid);
     }, 100);
 }
 
