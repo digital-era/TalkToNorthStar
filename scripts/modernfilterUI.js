@@ -37,60 +37,47 @@ function getMastersByCategory(category) {
 // ──────────────────────────────────────────────
 // 2. 从 field 提取关键词
 // ──────────────────────────────────────────────
-function extractCommonFieldKeywords(category, lang) {
-     // 现代界面 【关键修复】优先使用传入的 lang，其次读取全局 window.currentLang
+
     const targetLang = lang || window.currentLang || 'zh-CN';    
-    console.log(`[DEBUG] 提取关键词 - 分类: ${category}, 语言: ${targetLang}`);
-    
     const masters = getMastersByCategory(category);
     if (!masters.length) return [];
     
     const keywordCount = new Map();
     
     masters.forEach(master => {
-       // 1. 尝试获取对应语言的字段
-        let text = master.field?.[targetLang];        
-        // 【关键修复】如果英文为空，是否回退到中文？
-        // 如果您的数据结构里 field 只是字符串而不是对象（例如 field: "物理"），
-        // 那么 master.field['en'] 会是 undefined。
-        // 如果数据只有中文，这里必须做兼容，否则英文模式下全是空的
-        if (!text && typeof master.field === 'string') {
-            // 如果 field 是纯字符串，说明没有多语言支持，直接使用
-            text = master.field;
-        } else if (!text && targetLang === 'en') {
-            // 如果是对象但没有英文，回退到中文 (可选)
-            // text = master.field?.['zh-CN']; 
-        }
+        let text = '';
         
+        // 1. 尝试获取多语言对象中的对应语言
+        if (typeof master.field === 'object' && master.field !== null) {
+            text = master.field[targetLang] || master.field['zh-CN'] || '';
+        } 
+        // 2. 兼容旧数据结构（field 是纯字符串）
+        else if (typeof master.field === 'string') {
+            text = master.field;
+            // 如果当前是英文模式，但数据只有中文字符串，这里就会导致显示中文
+            // 建议检查数据源是否包含英文 field
+        }
+
         if (!text) return;        
         
-        // 修改 1: 不再使用 replace 删除括号内容
-        // 修改 2: split 分割符加入 ()（） 以及常见标点，去掉 \s 以保留英文词组空格
+        // 分割逻辑：保留英文短语完整性
+        // 中文按标点分割，英文按逗号或分号分割
         const parts = text.split(/[()（）\[\]、,，；;]+/) 
-            .map(p => {
-                // 修改 3: 去除首尾空格后，去除尾部的句号(。)或点(.)
-                return p.trim().replace(/[。.]$/, '');
-            })
-            .filter(p => {
-                // 修改 4: 长度限制放宽到 40，否则 "Artificial Intelligence" 会被过滤
-                return p.length >= 2 && p.length <= 40;
-            });
+            .map(p => p.trim().replace(/[。.]$/, ''))
+            .filter(p => p.length >= 2 && p.length <= 40);
 
         parts.forEach(k => {
-            // 排除纯数字或无意义符号（可选优化）
+            // 过滤纯数字
             if (k && !/^[\d\s]+$/.test(k)) {
                 keywordCount.set(k, (keywordCount.get(k) || 0) + 1);
             }
         });
     });
 
-    const keywords = [...keywordCount.entries()]
-        .sort((a, b) => b[1] - a[1] || b[0].length - a[0].length)
-        .slice(0, 8) // 取前8个高频词
+    return [...keywordCount.entries()]
+        .sort((a, b) => b[1] - a[1]) // 按频率排序
+        .slice(0, 8)
         .map(([k]) => k);
-        
-      console.log(`[DEBUG] 提取关键词 (${category} - ${targetLang}):`, keywords);
-    return keywords;
 }
 
 // ──────────────────────────────────────────────
@@ -101,26 +88,39 @@ function generateChipsForCategory(category, container) {
     container.innerHTML = '';
 
     // 确保使用最新的 currentLang
-    const lang = typeof currentLang !== 'undefined' ? currentLang : 'zh-CN';
+    const lang = window.currentLang || 'zh-CN';
 
-    // 生成 "All" 按钮
+    // 生成 "All" 按钮 (修复：确保取到翻译)
     const allBtn = document.createElement('button');
     allBtn.className = 'chip active';
     allBtn.dataset.filter = 'all';
-    // 确保 translations 对象存在且有对应翻译
-    allBtn.textContent = (typeof translations !== 'undefined' && translations[lang]?.all) ? translations[lang].all : '全部';
+    
+    // 安全获取翻译，防止报错
+    let allText = '全部';
+    if (typeof translations !== 'undefined' && translations[lang] && translations[lang].all) {
+        allText = translations[lang].all;
+    } else if (lang === 'en') {
+        allText = 'All';
+    }
+    allBtn.textContent = allText;
+    
     allBtn.addEventListener('click', () => filterModernGrid(allBtn));
     container.appendChild(allBtn);
 
-    // 生成关键词按钮 - 关键点：传入 lang
-    extractCommonFieldKeywords(category, lang).forEach(kw => {
-        const btn = document.createElement('button');
-        btn.className = 'chip';
-        btn.dataset.filter = kw;
-        btn.textContent = kw;
-        btn.addEventListener('click', () => filterModernGrid(btn));
-        container.appendChild(btn);
-    });
+    // 生成关键词按钮
+    const keywords = extractCommonFieldKeywords(category, lang);
+    
+    // 如果没有关键词（可能是英文数据缺失），不生成多余按钮
+    if (keywords.length > 0) {
+        keywords.forEach(kw => {
+            const btn = document.createElement('button');
+            btn.className = 'chip';
+            btn.dataset.filter = kw;
+            btn.textContent = kw;
+            btn.addEventListener('click', () => filterModernGrid(btn));
+            container.appendChild(btn);
+        });
+    }
 }
 
 // ──────────────────────────────────────────────
@@ -228,18 +228,13 @@ function initUIStyle() {
 // 7. 过滤核心函数（带详细调试日志）
 // ──────────────────────────────────────────────
 function filterModernGrid(trigger, category = null) {
+    // 1. 获取 Tab 和 Grid
     const tab = category ? document.getElementById(category) : document.querySelector('.tab-content.active');
-    if (!tab) {
-        console.warn('[DEBUG] 未找到当前激活的 tab');
-        return;
-    }
-
+    if (!tab) return;
     const grid = tab.querySelector('.leader-grid');
-    if (!grid) {
-        console.warn('[DEBUG] 未找到 leader-grid 元素');
-        return;
-    }
+    if (!grid) return;
 
+    // 2. 获取过滤条件
     let filterVal = 'all';
     if (trigger) {
         if (trigger.tagName === 'INPUT') {
@@ -249,87 +244,91 @@ function filterModernGrid(trigger, category = null) {
         }
     }
 
-    console.log(`[DEBUG] 过滤触发 - 条件: "${filterVal}" | tab: ${tab.id}`);
-
-    // 更新胶囊激活状态
+    // 3. UI 状态更新：激活胶囊
     if (trigger && trigger.classList?.contains('chip')) {
         tab.querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
         trigger.classList.add('active');
     }
 
+    // 4. 获取数据
     const masters = getMastersByCategory(tab.id);
-    if (!masters || !Array.isArray(masters) || masters.length === 0) {
-        console.warn('[DEBUG] masters 数据为空或非数组', masters);
-        grid.innerHTML = '<div class="no-result-message">分类数据加载失败</div>';
-        return;
-    }
-
+    const lang = window.currentLang || 'zh-CN'; // 确保获取最新语言
+    
     let filtered = masters;
 
+    // 5. 执行过滤 (搜索框或胶囊)
     if (filterVal !== 'all' && filterVal) {
         const q = filterVal.toLowerCase();
-        const lang = currentLang || 'zh-CN';
         filtered = masters.filter(m => {
-            const t = [
-                (m.name || '').toLowerCase(),
-                (m.contribution?.[lang] || m.contribution?.['zh-CN'] || '').toLowerCase(),
-                (m.field?.[lang] || m.field?.['zh-CN'] || '').toLowerCase(),
-                (m.remarks?.[lang] || m.remarks?.['zh-CN'] || '').toLowerCase(),
-                (m.field?.[lang === 'zh-CN' ? 'en' : 'zh-CN'] || '').toLowerCase()
-            ].join(' ');
-            return t.includes(q);
+            // 安全获取各个字段，防止报错
+            const name = (m.name || '').toLowerCase();
+            const contrib = (typeof m.contribution === 'object' ? (m.contribution[lang] || m.contribution['zh-CN']) : (m.contribution || '')).toLowerCase();
+            const field = (typeof m.field === 'object' ? (m.field[lang] || m.field['zh-CN']) : (m.field || '')).toLowerCase();
+            // 同时搜索中英文内容，增加命中率
+            return name.includes(q) || contrib.includes(q) || field.includes(q);
         });
     }
 
-    console.log(`[DEBUG] 过滤前总数: ${masters.length} | 过滤后数量: ${filtered.length} | 关键词: "${filterVal}"`);
-
-    grid.innerHTML = '';
+    // 6. 渲染卡片
+    grid.innerHTML = ''; // 清空旧内容
 
     if (filtered.length === 0) {
-        console.log('[DEBUG] 无匹配结果，显示提示');
         const msg = document.createElement('div');
         msg.className = 'no-result-message';
-        msg.textContent = translations[currentLang]?.noMatchingLeader || '暂无匹配的北极星';
+        // 安全获取提示语
+        const noResText = (translations[lang] && translations[lang].noMatchingLeader) ? translations[lang].noMatchingLeader : 'No matching results';
+        msg.textContent = noResText;
         grid.appendChild(msg);
     } else {
-        console.log('[DEBUG] 开始渲染卡片，共', filtered.length, '张');
         filtered.forEach((leader, i) => {
             const card = document.createElement('div');
             card.className = 'leader-card';
             card.dataset.id = leader.id;
             card.dataset.category = tab.id;
 
-            const lang = currentLang || 'zh-CN';
+            // --- 数据准备 (防止 undefined 报错) ---
+            const t = translations[lang] || translations['zh-CN'] || {};
+            const labelContrib = t.labelContribution || 'Contribution';
+            const labelField = t.labelField || 'Field';
+            const labelRemarks = t.labelRemarks || 'Remarks';
+
+            const txtContrib = (typeof leader.contribution === 'object') ? (leader.contribution[lang] || leader.contribution['zh-CN'] || '') : (leader.contribution || '');
+            const txtField = (typeof leader.field === 'object') ? (leader.field[lang] || leader.field['zh-CN'] || '') : (leader.field || '');
+            const txtRemarks = (typeof leader.remarks === 'object') ? (leader.remarks[lang] || leader.remarks['zh-CN'] || '') : (leader.remarks || '');
+
             card.innerHTML = `
                 <h3>${leader.name}</h3>
-                <p><strong>${translations[lang]?.labelContribution || '贡献'}：</strong> ${leader.contribution?.[lang] || leader.contribution?.['zh-CN'] || ''}</p>
-                <p class="field"><strong>${translations[lang]?.labelField || '领域'}：</strong> ${leader.field?.[lang] || leader.field?.['zh-CN'] || ''}</p>
-                ${leader.remarks?.[lang] || leader.remarks?.['zh-CN'] ? `<p class="remarks"><strong>${translations[lang]?.labelRemarks || '备注'}：</strong> ${leader.remarks?.[lang] || leader.remarks?.['zh-CN']}</p>` : ''}
+                <p><strong>${labelContrib}：</strong> ${txtContrib}</p>
+                <p class="field"><strong>${labelField}：</strong> ${txtField}</p>
+                ${txtRemarks ? `<p class="remarks"><strong>${labelRemarks}：</strong> ${txtRemarks}</p>` : ''}
             `;
-            card.onclick = () => selectLeader?.(leader, tab.id, card);
+            
+            // 点击事件
+            card.onclick = () => {
+                if (typeof selectLeader === 'function') selectLeader(leader, tab.id, card);
+            };
 
+            // 动画初始状态
             card.style.opacity = '0';
             card.style.transform = 'translateY(30px) scale(0.95)';
-            card.style.transition = `all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) ${i * 0.06}s`;
+            card.style.transition = `all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) ${i * 0.05}s`;
 
             grid.appendChild(card);
 
-            setTimeout(() => {
+            // 触发动画
+            requestAnimationFrame(() => {
                 card.style.opacity = '1';
                 card.style.transform = 'translateY(0) scale(1)';
-            }, 50);
+            });
         });
     }
 
-    // [新增/确认]：渲染完成后，检查是否需要显示左右箭头
-    // 稍微延迟一点，确保DOM渲染计算出宽度
+    // 7. 更新左右箭头状态
     setTimeout(() => {
         if (typeof updateScrollButtonStates === 'function') {
             updateScrollButtonStates(grid); 
         }
     }, 100);
-
-    updateScrollButtonStates?.(grid);
 }
 
 // ──────────────────────────────────────────────
@@ -393,42 +392,45 @@ function onTabChanged() {
 }
 
 function onLanguageChanged() {
-    console.log('[DEBUG] onLanguageChanged 被触发，当前全局语言:', window.currentLang);
+    // 1. 强制同步全局语言状态
+    const langSelect = document.getElementById('languageSelector');
+    if (langSelect) {
+        window.currentLang = langSelect.value;
+    }
+    
+    console.log('[DEBUG] 语言切换为:', window.currentLang);
 
-    // 仅在现代模式下处理
+    // 2. 仅在现代模式下处理
     const currentStyle = localStorage.getItem('northstarUIStyle');
     if (currentStyle === 'modern') {
-        
-        // 1. 重新生成胶囊按钮 (确保分类名称变成英文)
+        const activeTab = document.querySelector('.tab-content.active');
+        if (!activeTab) return;
+
+        // 3. 重新生成分类胶囊 (传入新语言)
+        // 这一步会更新“全部”按钮的文字，以及尝试提取英文关键词
         refreshChipsForActiveTab();
 
-        // 2. 强制刷新网格内容 (解决卡片消失问题)
-        const activeTab = document.querySelector('.tab-content.active');
-        if (activeTab) {
-            // 找到刚才新生成的“全部/All”按钮
-            const allBtn = activeTab.querySelector('.chip[data-filter="all"]');
+        // 4. 【关键修复】强制触发“全部”筛选
+        // 我们找到刚才新生成的 "All" 按钮，并手动调用过滤逻辑
+        const allBtn = activeTab.querySelector('.chip[data-filter="all"]');
+        
+        if (allBtn) {
+            console.log(`[DEBUG] 触发重绘: ${activeTab.id}`);
+            // 模拟点击效果，添加 active 类
+            activeTab.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            allBtn.classList.add('active');
             
-            if (allBtn) {
-                console.log(`[DEBUG] 触发重绘: ${activeTab.id}`);
-                
-                // 【关键操作】模拟点击或直接调用过滤
-                // 必须传入 allBtn 作为 trigger，这样 filterModernGrid 才知道要显示“全部”
-                // 并且这会重置内部的 filterVal 为 'all'
-                allBtn.classList.add('active'); // 视觉上激活
-                filterModernGrid(allBtn, activeTab.id); 
-            } else {
-                console.warn('[DEBUG] 未找到 All 按钮，尝试直接刷新');
-                // 如果找不到按钮，手动调用一次生成全部数据的逻辑
-                const grid = activeTab.querySelector('.leader-grid');
-                if(grid) grid.innerHTML = ''; // 先清空
-                // 传 null 表示没有特定过滤词，默认显示全部
-                filterModernGrid({ dataset: { filter: 'all' } }, activeTab.id);
-            }
+            // 传入 allBtn 作为 trigger，确保 filterVal = 'all'
+            filterModernGrid(allBtn, activeTab.id); 
+        } else {
+            // 如果万一没找到按钮，兜底强制渲染
+            console.warn('[DEBUG] 未找到 All 按钮，强制渲染全部');
+            filterModernGrid({ dataset: { filter: 'all' } }, activeTab.id);
         }
     } else {
-        // 传统模式也可能需要刷新
+        // 传统模式刷新
         if (typeof populateLeaders === 'function') {
-            // populateLeaders();
+             populateLeaders();
         }
     }
 }
