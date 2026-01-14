@@ -21,7 +21,7 @@ function getMastersByCategory(category) {
     }
     const map = {
         'ai': typeof aiMasters !== 'undefined' ? aiMasters : [],
-        'quantum': typeof quantumMasters !== 'undefined' ? quantumMasters : [],
+        'quantum': typeof QuantumMasters  !== 'undefined' ? QuantumMasters  : [],
         'universe': typeof universeMasters !== 'undefined' ? universeMasters : [],
         'humanities': typeof humanitiesMasters !== 'undefined' ? humanitiesMasters : [],
         'art': typeof artMasters !== 'undefined' ? artMasters : [],
