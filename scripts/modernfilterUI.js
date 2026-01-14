@@ -104,25 +104,67 @@ function switchUIStyle(style) {
     localStorage.setItem('northstarUIStyle', style);
     document.body.classList.toggle('modern-mode', style === 'modern');
 
-    document.querySelectorAll('.leader-scroll-container').forEach(el => {
-        el.style.display = (style === 'modern') ? 'none' : 'flex';
+    // 处理容器和按钮的显示逻辑
+    document.querySelectorAll('.leader-scroll-container').forEach(container => {
+        const leftBtn = container.querySelector('.scroll-button.left');
+        const rightBtn = container.querySelector('.scroll-button.right');
+        const grid = container.querySelector('.leader-grid');
+
+        if (style === 'modern') {
+            // === 现代模式 ===
+            // 1. 容器必须显示 (原本是 none 导致了问题)
+            container.style.display = 'block'; 
+            container.style.overflow = 'visible'; // 允许内容撑开
+            
+            // 2. 隐藏左右滚动按钮
+            if (leftBtn) leftBtn.style.display = 'none';
+            if (rightBtn) rightBtn.style.display = 'none';
+
+            // 3. 强制 Grid 换行显示 (从横向滚动变为网格排列)
+            if (grid) {
+                grid.style.display = 'flex';
+                grid.style.flexWrap = 'wrap';
+                grid.style.justifyContent = 'center'; // 卡片居中
+                grid.style.gap = '20px'; // 卡片间距
+                grid.style.overflowX = 'visible'; // 禁止横向滚动条
+            }
+
+        } else {
+            // === 传统模式 ===
+            // 恢复原来的横向滚动布局
+            container.style.display = 'flex';
+            container.style.overflow = 'hidden';
+            
+            // 显示按钮
+            if (leftBtn) leftBtn.style.display = 'block';
+            if (rightBtn) rightBtn.style.display = 'block';
+
+            // 恢复 Grid 横向排列
+            if (grid) {
+                grid.style.display = 'flex';
+                grid.style.flexWrap = 'nowrap';
+                grid.style.justifyContent = 'flex-start';
+                grid.style.gap = '0'; // 恢复默认间距
+                grid.style.overflowX = 'auto';
+            }
+            
+            // 传统模式下重新填充数据
+            if (typeof populateLeaders === 'function') {
+                populateLeaders();
+            }
+            updateAllScrollButtonStates?.();
+        }
     });
 
     updateModernFilterBarVisibility();
 
+    // 如果是现代模式，触发一次过滤以渲染卡片
     if (style === 'modern') {
         const activeTab = document.querySelector('.tab-content.active');
         if (activeTab) {
-            const grid = activeTab.querySelector('.leader-grid');
-            if (grid) {
-                filterModernGrid(null, activeTab.id);
-            }
+            // 这里的 null 表示没有触发元素，仅初始化
+            filterModernGrid(null, activeTab.id);
         }
-    } else {
-        if (typeof populateLeaders === 'function') {
-            populateLeaders();
-        }
-        updateAllScrollButtonStates?.();
     }
 }
 
