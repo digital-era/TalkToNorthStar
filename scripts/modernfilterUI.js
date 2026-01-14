@@ -40,22 +40,38 @@ function getMastersByCategory(category) {
 function extractCommonFieldKeywords(category, lang = currentLang || 'zh-CN') {
     const masters = getMastersByCategory(category);
     if (!masters.length) return [];
+    
     const keywordCount = new Map();
+    
     masters.forEach(master => {
         let text = master.field?.[lang] || master.field?.['zh-CN'] || '';
         if (!text) return;
-        text = text.replace(/（[^）]*）|\([^)]*\)/g, '').trim();
-        const parts = text.split(/[、,，；;\s]+/)
-            .map(p => p.trim())
-            .filter(p => p.length >= 2 && p.length <= 12);
+        
+        // 修改 1: 不再使用 replace 删除括号内容
+        // 修改 2: split 分割符加入 ()（） 以及常见标点，去掉 \s 以保留英文词组空格
+        const parts = text.split(/[()（）\[\]、,，；;]+/) 
+            .map(p => {
+                // 修改 3: 去除首尾空格后，去除尾部的句号(。)或点(.)
+                return p.trim().replace(/[。.]$/, '');
+            })
+            .filter(p => {
+                // 修改 4: 长度限制放宽到 40，否则 "Artificial Intelligence" 会被过滤
+                return p.length >= 2 && p.length <= 40;
+            });
+
         parts.forEach(k => {
-            if (k) keywordCount.set(k, (keywordCount.get(k) || 0) + 1);
+            // 排除纯数字或无意义符号（可选优化）
+            if (k && !/^[\d\s]+$/.test(k)) {
+                keywordCount.set(k, (keywordCount.get(k) || 0) + 1);
+            }
         });
     });
+
     const keywords = [...keywordCount.entries()]
         .sort((a, b) => b[1] - a[1] || b[0].length - a[0].length)
-        .slice(0, 8)
+        .slice(0, 8) // 取前8个高频词
         .map(([k]) => k);
+        
     console.log(`[DEBUG] ${category} 提取关键词（${lang}）：`, keywords);
     return keywords;
 }
