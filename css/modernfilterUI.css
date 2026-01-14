@@ -1,164 +1,134 @@
 /* =========================================
-   1. 现代风格 - 过滤栏容器 (父级)
+   现代风格布局核心 CSS
    ========================================= */
+
+/* 1. 容器：左搜右滑布局 */
 .modern-filter-bar {
     display: flex;
-    align-items: center;        /* 垂直居中 */
+    align-items: center;
     width: 100%;
-    height: 60px;               /* 固定高度，防止抖动 */
+    height: 56px;           /* 固定高度，视觉更稳 */
     margin: 10px 0 20px;
-    padding: 0 4px;             /* 稍微给点内边距 */
-    gap: 0;                     /* 间距由内部元素控制 */
-    position: relative;         /* 为渐变遮罩定位 */
-    overflow: hidden;           /* 防止容器本身溢出 */
+    padding: 0;
+    position: relative;
+    overflow: hidden;       /* 防止整体溢出 */
     box-sizing: border-box;
 }
 
-/* --- 右侧渐变遮罩 (提示可滑动) --- */
+/* 右侧渐变遮罩 (提示可滑动) */
 .modern-filter-bar::after {
     content: '';
     position: absolute;
     right: 0;
     top: 0;
     bottom: 0;
-    width: 60px;
-    /* 这里的颜色需要根据你的背景色调整，假设背景是深色 #121212 */
-    /* 从透明渐变到你的背景色 */
-    background: linear-gradient(to right, rgba(18,18,18,0), rgba(18,18,18,1));
-    pointer-events: none;       /* 让鼠标能穿透遮罩点击 */
+    width: 50px;
+    /* 请根据你的背景色修改下面的 hex 值，这里假设是深色背景 #1a1a1a */
+    background: linear-gradient(to right, transparent, #1a1a1a);
+    pointer-events: none;
     z-index: 2;
 }
 
-/* =========================================
-   2. 左侧：搜索区域 (固定不滚)
-   ========================================= */
+/* 2. 左侧：搜索区域 (固定) */
 .modern-search-wrapper {
-    position: relative;
+    flex: 0 0 auto;         /* 禁止压缩，宽度由内容决定 */
     display: flex;
     align-items: center;
-    flex: 0 0 auto;             /* 关键：禁止压缩，宽度自适应 */
-    z-index: 5;                 /* 层级高于滚动内容 */
     height: 100%;
-    padding-right: 16px;        /* 右侧留白 */
-    margin-right: 12px;         /* 这里的 margin 拉开与胶囊的距离 */
-    
-    /* 视觉分割线：区分搜索区和筛选区 */
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    padding-right: 12px;    /* 右侧留白 */
+    margin-right: 8px;      /* 拉开与胶囊的距离 */
+    border-right: 1px solid rgba(255, 255, 255, 0.15); /* 分割线 */
+    z-index: 5;
+    background: inherit;    /* 避免遮挡背景 */
 }
 
 .search-icon {
-    /* 这里的定位方式改为相对定位，配合 Flex 更好控制 */
-    position: relative; 
-    left: auto; top: auto; transform: none;
-    
-    color: var(--text-tertiary);
-    font-size: 18px;            /* 稍微放大图标 */
+    font-size: 16px;
+    color: var(--text-tertiary, #888);
     cursor: pointer;
-    padding: 8px;               /* 增加点击热区 */
-    border-radius: 50%;
-    transition: all 0.2s;
+    padding: 8px;
+    transition: color 0.3s;
 }
 
 .search-icon:hover {
-    color: var(--text-primary);
-    background: rgba(255,255,255,0.1);
+    color: white;
 }
 
+/* 输入框：默认折叠，展开动画 */
 .modern-search-input {
-    /* 默认隐藏，由 JS 控制显示 */
-    display: none; 
-    width: 180px;               /* 展开后的宽度 */
-    padding: 8px 12px;
-    margin-left: 8px;           /* 离图标远一点 */
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.12);
-    background: rgba(255,255,255,0.08); /* 稍微亮一点的背景 */
-    color: var(--text-primary);
-    font-size: 14px;
-    
-    /* 展开动画 */
-    animation: slideInput 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    width: 0;               /* 默认宽度为0 */
+    opacity: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: white;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-@keyframes slideInput {
-    from { width: 0; opacity: 0; }
-    to { width: 180px; opacity: 1; }
-}
-
-/* 激活状态 */
+/* 搜索激活状态 (JS 添加 search-active 类时触发) */
 .modern-search-wrapper.search-active .modern-search-input {
-    display: block !important;
+    width: 140px;           /* 展开后的宽度 */
+    opacity: 1;
+    padding: 6px 10px;
+    margin-left: 8px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
 }
 
 .modern-search-input:focus {
     outline: none;
-    border-color: var(--primary-color, #00DFD8);
-    box-shadow: 0 0 0 2px rgba(0, 223, 216, 0.2);
+    background: rgba(255,255,255,0.15);
+    border-color: #00DFD8;
 }
 
-/* =========================================
-   3. 右侧：胶囊容器 (横向滚动)
-   ========================================= */
+/* 3. 右侧：胶囊容器 (横向滚动) */
 .filter-chips-container {
-    flex: 1;                    /* 占据剩余空间 */
+    flex: 1;                /* 占据剩余空间 */
     display: flex;
-    flex-wrap: nowrap;          /* 关键：单行排列 */
+    flex-wrap: nowrap;      /* 关键：单行不换行 */
     align-items: center;
-    overflow-x: auto;           /* 允许横向滚动 */
-    gap: 8px;                   /* 胶囊间距 */
-    padding-right: 40px;        /* 右侧给遮罩留出空间 */
-    height: 100%;               /* 撑满高度 */
+    overflow-x: auto;       /* 允许横向滚动 */
+    gap: 8px;               /* 胶囊间距 */
+    height: 100%;
+    padding-right: 40px;    /* 给遮罩留位 */
     
-    /* 关键：防止 Flex 子元素导致容器无限宽 */
-    min-width: 0; 
-
-    /* 滚动体验 */
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch; /* iOS 惯性滚动 */
+    /* 解决 Flex 溢出问题 */
+    min-width: 0;
     
-    /* 隐藏滚动条 */
-    scrollbar-width: none;      /* Firefox */
-    -ms-overflow-style: none;   /* IE/Edge */
+    /* 滚动条隐藏 */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
 }
 
-/* Chrome/Safari 隐藏滚动条 */
 .filter-chips-container::-webkit-scrollbar {
     display: none;
 }
 
-/* =========================================
-   4. 胶囊样式微调
-   ========================================= */
+/* 胶囊样式 */
 .chip {
-    flex: 0 0 auto;             /* 关键：禁止被压缩，保持原始宽度 */
-    padding: 6px 16px;          /* 稍微调小高度，适应横向布局 */
-    border-radius: 999px;
-    background: rgba(255,255,255,0.06); /* 稍微降低透明度 */
+    flex: 0 0 auto;         /* 关键：禁止胶囊被挤压 */
+    padding: 6px 14px;
+    border-radius: 50px;
+    background: rgba(255,255,255,0.08);
     border: 1px solid rgba(255,255,255,0.1);
-    color: var(--text-secondary);
-    font-size: 13px;            /* 字体稍微改小一点点，更精致 */
+    color: #ccc;
+    font-size: 13px;
+    white-space: nowrap;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    white-space: nowrap;        /* 强制不换行 */
-    backdrop-filter: blur(4px);
-    
-    /* 防止文字选中 */
+    transition: all 0.2s;
     user-select: none;
 }
 
 .chip:hover {
-    background: rgba(255,255,255,0.12);
-    border-color: rgba(255,255,255,0.3);
-    color: var(--text-primary);
-    transform: translateY(-1px);
+    background: rgba(255,255,255,0.15);
+    color: white;
 }
 
-/* 激活状态 - 保持你原有的酷炫效果 */
 .chip.active {
     background: linear-gradient(135deg, #00DFD8 0%, #007cf0 100%);
     color: white;
-    border: 1px solid transparent; /* 保持边框占位防止抖动 */
-    box-shadow: 0 2px 10px rgba(0, 223, 216, 0.25);
-    transform: translateY(-1px);
-    font-weight: 600;
+    border-color: transparent;
+    box-shadow: 0 2px 8px rgba(0, 223, 216, 0.3);
 }
