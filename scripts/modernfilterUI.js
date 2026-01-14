@@ -221,17 +221,11 @@ function filterModernGrid(trigger, category = null) {
         }
     }
 
-    // --- 更新胶囊状态 & 自动滚动 ---
+    // 更新胶囊状态 & 自动滚动
     if (trigger && trigger.classList?.contains('chip')) {
         tab.querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
         trigger.classList.add('active');
-        
-        // 【新增】点击胶囊时，让其滚动到可视区域中间（提升横向滚动体验）
-        trigger.scrollIntoView({
-            behavior: 'smooth',
-            block: 'nearest',
-            inline: 'center'
-        });
+        trigger.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
 
     const masters = getMastersByCategory(tab.id);
@@ -241,12 +235,7 @@ function filterModernGrid(trigger, category = null) {
         const q = filterVal.toLowerCase();
         filtered = masters.filter(m => {
             const getName = (obj) => (typeof obj === 'string' ? obj : (obj[lang] || obj['en'] || obj['zh-CN'] || ''));
-            const searchStr = [
-                m.name,
-                getName(m.contribution),
-                getName(m.field),
-                getName(m.remarks)
-            ].join(' ').toLowerCase();
+            const searchStr = [m.name, getName(m.contribution), getName(m.field), getName(m.remarks)].join(' ').toLowerCase();
             return searchStr.includes(q);
         });
     }
@@ -265,6 +254,7 @@ function filterModernGrid(trigger, category = null) {
             card.className = 'leader-card';
             card.dataset.id = leader.id;
             
+            // 辅助函数
             const getText = (fieldObj) => {
                 if (!fieldObj) return '';
                 if (typeof fieldObj === 'string') return fieldObj;
@@ -276,25 +266,35 @@ function filterModernGrid(trigger, category = null) {
             const txtRemarks = getText(leader.remarks);
             
             const t = translations[lang] || translations['zh-CN'] || {};
-            const lblContrib = t.labelContribution || 'Contribution';
-            const lblField = t.labelField || 'Field';
-            const lblRemarks = t.labelRemarks || 'Remarks';
-
+            
             card.innerHTML = `
                 <h3>${leader.name}</h3>
-                <p><strong>${lblContrib}：</strong> ${txtContrib}</p>
-                <p class="field"><strong>${lblField}：</strong> ${txtField}</p>
-                ${txtRemarks ? `<p class="remarks"><strong>${lblRemarks}：</strong> ${txtRemarks}</p>` : ''}
+                <p><strong>${t.labelContribution || 'Contribution'}：</strong> ${txtContrib}</p>
+                <p class="field"><strong>${t.labelField || 'Field'}：</strong> ${txtField}</p>
+                ${txtRemarks ? `<p class="remarks"><strong>${t.labelRemarks || 'Remarks'}：</strong> ${txtRemarks}</p>` : ''}
             `;
             
-            card.onclick = () => {
-                if(typeof selectLeader === 'function') selectLeader(leader, tab.id, card);
+            // --- 【核心修复】 单选逻辑开始 ---
+            card.onclick = function() {
+                // 1. 清除当前网格内所有卡片的选中状态
+                // 注意：这里使用 grid.querySelectorAll 确保只影响当前 Tab
+                grid.querySelectorAll('.leader-card').forEach(c => c.classList.remove('selected'));
+
+                // 2. 给当前点击的卡片添加选中状态
+                this.classList.add('selected');
+
+                // 3. 调用原有的详情展示逻辑
+                if(typeof selectLeader === 'function') {
+                    selectLeader(leader, tab.id, this);
+                }
             };
+            // --- 【核心修复】 单选逻辑结束 ---
 
             card.style.opacity = '0';
             card.style.transform = 'translateY(30px) scale(0.95)';
             card.style.transition = `all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) ${i * 0.05}s`;
             grid.appendChild(card);
+            
             requestAnimationFrame(() => {
                 card.style.opacity = '1';
                 card.style.transform = 'translateY(0) scale(1)';
