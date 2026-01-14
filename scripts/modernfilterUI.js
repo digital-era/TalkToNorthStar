@@ -222,14 +222,24 @@ function refreshChipsForActiveTab() {
     if (tab) generateChipsForCategory(tab.id, tab.querySelector('.filter-chips-container'));
 }
 
-function toggleModernSearch(icon) {
-    const wrapper = icon.closest('.modern-search-wrapper');
-    if (wrapper) {
-        const input = wrapper.querySelector('.modern-search-input');
-        if (input) {
-            input.style.display = input.style.display === 'block' ? 'none' : 'block';
-            if (input.style.display === 'block') input.focus();
-        }
+function toggleModernSearch(iconElement) {
+    const wrapper = iconElement.closest('.modern-search-wrapper');
+    if (!wrapper) return;
+
+    const input = wrapper.querySelector('.modern-search-input');
+    if (!input) return;
+
+    // 如果输入框已显示，则隐藏并清空搜索（恢复全部）
+    if (input.style.display === 'block') {
+        input.style.display = 'none';
+        input.value = '';                    // 清空搜索词
+        filterModernGrid(input);             // 触发过滤 → 显示全部
+    } else {
+        // 显示并聚焦
+        input.style.display = 'block';
+        input.focus();
+        // 可选：如果希望打开时自动选中已有内容
+        // input.select();
     }
 }
 
