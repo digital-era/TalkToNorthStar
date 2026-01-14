@@ -113,6 +113,14 @@
         </div>
         <!-- h1 保持原位，但会通过 margin-top 被向下推 -->
         <h1 data-i18n-key="headerTitleComplete" data-i18n-target="innerHTML">对话北极星</h1>
+        <!-- 传统/现代风格UI切换 -->
+        <div class="style-toggle-container">
+        <label for="uiStyle">界面风格：</label>
+        <select id="uiStyle" onchange="switchUIStyle(this.value)">
+            <option value="traditional" selected>传统风格</option>
+            <option value="modern">现代风格</option>
+        </select>
+        </div>
         
     </header>
 
