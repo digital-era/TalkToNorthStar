@@ -164,6 +164,30 @@
       color: #f0f0f0;            /* 下拉菜单文字：亮白 */
       padding: 10px;
   }
+
+  /* --- 界面风格选择器的特殊处理 (新增，与上面完全对称) --- */
+  .style-wrapper select {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      z-index: 2;
+  }
+  
+  #uiStyle {
+      color-scheme: dark;
+  }
+  
+  #uiStyle option {
+      background-color: #1e1e1e;
+      color: #f0f0f0;
+      padding: 10px;
+  }
   
   .about-us-button:hover, 
   .settings-link:hover, 
