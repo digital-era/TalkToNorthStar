@@ -1,5 +1,6 @@
 // modern-filter.js
 // 现代风格相关完整逻辑：胶囊动态生成、过滤动画、风格切换
+// 包含调试日志，用于排查过滤结果问题
 
 // ──────────────────────────────────────────────
 // 1. 获取分类数据
@@ -18,7 +19,9 @@ function getMastersByCategory(category) {
         'sport': typeof sportMasters !== 'undefined' ? sportMasters : [],
         'chinaEntrepreneurs': typeof chinaEntrepreneurs !== 'undefined' ? chinaEntrepreneurs : []
     };
-    return map[category] || [];
+    const result = map[category] || [];
+    console.log(`[DEBUG] 获取 ${category} 分类数据，数量：${result.length}`);
+    return result;
 }
 
 // ──────────────────────────────────────────────
@@ -27,9 +30,7 @@ function getMastersByCategory(category) {
 function extractCommonFieldKeywords(category, lang = currentLang || 'zh-CN') {
     const masters = getMastersByCategory(category);
     if (!masters.length) return [];
-
     const keywordCount = new Map();
-
     masters.forEach(master => {
         let text = master.field?.[lang] || master.field?.['zh-CN'] || '';
         if (!text) return;
@@ -41,11 +42,12 @@ function extractCommonFieldKeywords(category, lang = currentLang || 'zh-CN') {
             if (k) keywordCount.set(k, (keywordCount.get(k) || 0) + 1);
         });
     });
-
-    return [...keywordCount.entries()]
+    const keywords = [...keywordCount.entries()]
         .sort((a, b) => b[1] - a[1] || b[0].length - a[0].length)
         .slice(0, 8)
         .map(([k]) => k);
+    console.log(`[DEBUG] ${category} 提取关键词（${lang}）：`, keywords);
+    return keywords;
 }
 
 // ──────────────────────────────────────────────
@@ -55,7 +57,6 @@ function generateChipsForCategory(category, container) {
     if (!container) return;
     container.innerHTML = '';
 
-    // 全部
     const allBtn = document.createElement('button');
     allBtn.className = 'chip active';
     allBtn.dataset.filter = 'all';
@@ -63,7 +64,6 @@ function generateChipsForCategory(category, container) {
     allBtn.addEventListener('click', () => filterModernGrid(allBtn));
     container.appendChild(allBtn);
 
-    // 动态关键词
     extractCommonFieldKeywords(category, currentLang).forEach(kw => {
         const btn = document.createElement('button');
         btn.className = 'chip';
@@ -91,11 +91,9 @@ function refreshChipsForActiveTab() {
 // ──────────────────────────────────────────────
 function switchUIStyle(style) {
     style = (style === 'modern') ? 'modern' : 'traditional';
-
     localStorage.setItem('northstarUIStyle', style);
     document.body.classList.toggle('modern-mode', style === 'modern');
 
-    // 传统网格显示/隐藏
     document.querySelectorAll('.leader-scroll-container').forEach(el => {
         el.style.display = (style === 'modern') ? 'none' : 'flex';
     });
@@ -111,7 +109,6 @@ function switchUIStyle(style) {
             }
         }
     } else {
-        // 恢复传统网格
         if (typeof populateLeaders === 'function') {
             populateLeaders();
         }
@@ -130,27 +127,45 @@ function initUIStyle() {
 }
 
 // ──────────────────────────────────────────────
-// 7. 过滤核心函数（略有精简）
+// 7. 过滤核心函数（带详细调试日志）
 // ──────────────────────────────────────────────
 function filterModernGrid(trigger, category = null) {
     const tab = category ? document.getElementById(category) : document.querySelector('.tab-content.active');
-    if (!tab) return;
+    if (!tab) {
+        console.warn('[DEBUG] 未找到当前激活的 tab');
+        return;
+    }
 
     const grid = tab.querySelector('.leader-grid');
-    if (!grid) return;
+    if (!grid) {
+        console.warn('[DEBUG] 未找到 leader-grid 元素');
+        return;
+    }
 
     let filterVal = 'all';
     if (trigger) {
-        if (trigger.tagName === 'INPUT') filterVal = trigger.value.trim();
-        else if (trigger.dataset?.filter) filterVal = trigger.dataset.filter;
+        if (trigger.tagName === 'INPUT') {
+            filterVal = trigger.value.trim();
+        } else if (trigger.dataset?.filter) {
+            filterVal = trigger.dataset.filter;
+        }
     }
 
+    console.log(`[DEBUG] 过滤触发 - 条件: "${filterVal}" | tab: ${tab.id}`);
+
+    // 更新胶囊激活状态
     if (trigger && trigger.classList?.contains('chip')) {
         tab.querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
         trigger.classList.add('active');
     }
 
     const masters = getMastersByCategory(tab.id);
+    if (!masters || !Array.isArray(masters) || masters.length === 0) {
+        console.warn('[DEBUG] masters 数据为空或非数组', masters);
+        grid.innerHTML = '<div class="no-result-message">分类数据加载失败</div>';
+        return;
+    }
+
     let filtered = masters;
 
     if (filterVal !== 'all' && filterVal) {
@@ -158,24 +173,28 @@ function filterModernGrid(trigger, category = null) {
         const lang = currentLang || 'zh-CN';
         filtered = masters.filter(m => {
             const t = [
-                m.name?.toLowerCase() || '',
-                m.contribution?.[lang]?.toLowerCase() || m.contribution?.['zh-CN']?.toLowerCase() || '',
-                m.field?.[lang]?.toLowerCase() || m.field?.['zh-CN']?.toLowerCase() || '',
-                m.remarks?.[lang]?.toLowerCase() || m.remarks?.['zh-CN']?.toLowerCase() || '',
-                m.field?.[lang === 'zh-CN' ? 'en' : 'zh-CN']?.toLowerCase() || ''
+                (m.name || '').toLowerCase(),
+                (m.contribution?.[lang] || m.contribution?.['zh-CN'] || '').toLowerCase(),
+                (m.field?.[lang] || m.field?.['zh-CN'] || '').toLowerCase(),
+                (m.remarks?.[lang] || m.remarks?.['zh-CN'] || '').toLowerCase(),
+                (m.field?.[lang === 'zh-CN' ? 'en' : 'zh-CN'] || '').toLowerCase()
             ].join(' ');
             return t.includes(q);
         });
     }
 
+    console.log(`[DEBUG] 过滤前总数: ${masters.length} | 过滤后数量: ${filtered.length} | 关键词: "${filterVal}"`);
+
     grid.innerHTML = '';
 
-    if (!filtered.length) {
+    if (filtered.length === 0) {
+        console.log('[DEBUG] 无匹配结果，显示提示');
         const msg = document.createElement('div');
         msg.className = 'no-result-message';
         msg.textContent = translations[currentLang]?.noMatchingLeader || '暂无匹配的北极星';
         grid.appendChild(msg);
     } else {
+        console.log('[DEBUG] 开始渲染卡片，共', filtered.length, '张');
         filtered.forEach((leader, i) => {
             const card = document.createElement('div');
             card.className = 'leader-card';
@@ -194,6 +213,7 @@ function filterModernGrid(trigger, category = null) {
             card.style.opacity = '0';
             card.style.transform = 'translateY(30px) scale(0.95)';
             card.style.transition = `all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) ${i * 0.06}s`;
+
             grid.appendChild(card);
 
             setTimeout(() => {
@@ -207,7 +227,7 @@ function filterModernGrid(trigger, category = null) {
 }
 
 // ──────────────────────────────────────────────
-// 8. 其他辅助函数（保持不变）
+// 8. 其他辅助函数
 // ──────────────────────────────────────────────
 function updateModernFilterBarVisibility() {
     const isModern = localStorage.getItem('northstarUIStyle') === 'modern';
@@ -225,21 +245,20 @@ function refreshChipsForActiveTab() {
 function toggleModernSearch(iconElement) {
     const wrapper = iconElement.closest('.modern-search-wrapper');
     if (!wrapper) return;
-
     const input = wrapper.querySelector('.modern-search-input');
     if (!input) return;
 
-    // 如果输入框已显示，则隐藏并清空搜索（恢复全部）
-    if (input.style.display === 'block') {
+    if (wrapper.classList.contains('search-active')) {
+        wrapper.classList.remove('search-active');
         input.style.display = 'none';
-        input.value = '';                    // 清空搜索词
-        filterModernGrid(input);             // 触发过滤 → 显示全部
+        input.value = '';
+        filterModernGrid(input);
+        console.log('[DEBUG] 搜索框已收起并清空');
     } else {
-        // 显示并聚焦
+        wrapper.classList.add('search-active');
         input.style.display = 'block';
         input.focus();
-        // 可选：如果希望打开时自动选中已有内容
-        // input.select();
+        console.log('[DEBUG] 搜索框已展开');
     }
 }
 
