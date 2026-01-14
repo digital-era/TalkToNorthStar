@@ -37,8 +37,8 @@ function getMastersByCategory(category) {
 // ──────────────────────────────────────────────
 // 2. 从 field 提取关键词
 // ──────────────────────────────────────────────
-function extractCommonFieldKeywords(category, lang = currentLang || 'zh-CN') {
-     // 如果未传入 lang，则尝试使用全局 currentLang，最后默认 zh-CN
+function extractCommonFieldKeywords(category, lang) {
+    // 确保获取到当前语言，默认为 zh-CN
     const targetLang = lang || (typeof currentLang !== 'undefined' ? currentLang : 'zh-CN');
     
     const masters = getMastersByCategory(category);
@@ -47,14 +47,13 @@ function extractCommonFieldKeywords(category, lang = currentLang || 'zh-CN') {
     const keywordCount = new Map();
     
     masters.forEach(master => {
-        // 核心修改：优先读取 targetLang，只有在 targetLang 内容完全为空时，才回退到 zh-CN
-        // 这样确保只要有 "en" 字段，就不会显示中文
+       // 1. 优先读取目标语言字段
         let text = master.field?.[targetLang];
+
+        // 2. 只有在非中文模式下且该字段为空时，才不回退（宁愿为空也不要混杂中文），
+        // 或者你可以根据需求决定是否回退：
+        // text = text || master.field?.['zh-CN']; // 如果想强制回退中文解开这行
         
-        // 如果当前是英文模式，但数据里没有英文，才回退到中文（防止空白）
-        if (!text && targetLang !== 'zh-CN') {
-            text = master.field?.['zh-CN'];
-        }        
         if (!text) return;        
         
         // 修改 1: 不再使用 replace 删除括号内容
@@ -82,7 +81,7 @@ function extractCommonFieldKeywords(category, lang = currentLang || 'zh-CN') {
         .slice(0, 8) // 取前8个高频词
         .map(([k]) => k);
         
-    console.log(`[DEBUG] ${category} 提取关键词（${targetLang}）：`, keywords);
+      console.log(`[DEBUG] 提取关键词 (${category} - ${targetLang}):`, keywords);
     return keywords;
 }
 
@@ -93,18 +92,20 @@ function generateChipsForCategory(category, container) {
     if (!container) return;
     container.innerHTML = '';
 
+    // 确保使用最新的 currentLang
+    const lang = typeof currentLang !== 'undefined' ? currentLang : 'zh-CN';
+
     // 生成 "All" 按钮
     const allBtn = document.createElement('button');
-    allBtn.className = 'chip active'; // 默认激活
+    allBtn.className = 'chip active';
     allBtn.dataset.filter = 'all';
-    // 确保这里 translations[currentLang] 能取到值
-    allBtn.textContent = translations[currentLang]?.all || 'All'; 
+    // 确保 translations 对象存在且有对应翻译
+    allBtn.textContent = (typeof translations !== 'undefined' && translations[lang]?.all) ? translations[lang].all : '全部';
     allBtn.addEventListener('click', () => filterModernGrid(allBtn));
     container.appendChild(allBtn);
 
-    // 生成关键词按钮
-    // 关键点：这里必须传入 currentLang
-    extractCommonFieldKeywords(category, currentLang).forEach(kw => {
+    // 生成关键词按钮 - 关键点：传入 lang
+    extractCommonFieldKeywords(category, lang).forEach(kw => {
         const btn = document.createElement('button');
         btn.className = 'chip';
         btn.dataset.filter = kw;
@@ -384,21 +385,23 @@ function onTabChanged() {
 }
 
 function onLanguageChanged() {
-    // 确保只在现代模式下执行
+    // 仅在现代模式下处理
     if (localStorage.getItem('northstarUIStyle') === 'modern') {
-        // 1. 重新生成胶囊按钮（此时会读取最新的 currentLang 生成英文按钮）
+        
+        // 1. 重新生成胶囊按钮 (确保按钮文字变成当前语言)
         refreshChipsForActiveTab();
 
-        // 2. 重新渲染网格内容（解决卡片不显示的问题）
+        // 2. 强制刷新网格内容 (解决卡片消失问题)
         const tab = document.querySelector('.tab-content.active');
         if (tab) {
-            // 找到刚刚生成的“全部/All”按钮
+            // 找到刚才生成的“全部/All”按钮
             const allBtn = tab.querySelector('.chip[data-filter="all"]');
+            
+            // 如果找到了按钮，手动触发一次过滤逻辑
             if (allBtn) {
-                // 模拟点击“全部”，这会：
-                // a. 将过滤条件重置为 all
-                // b. 使用最新的 currentLang 重新生成卡片 HTML (Name, Field 等变为英文)
-                // c. 显示卡片
+                console.log(`[DEBUG] 语言切换：触发 ${tab.id} 的重绘`);
+                // 传入 null 作为 trigger，但指定 category，或者直接传 allBtn
+                // 这里建议传 allBtn 以便让它高亮
                 filterModernGrid(allBtn, tab.id); 
             }
         }
