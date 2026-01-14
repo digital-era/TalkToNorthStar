@@ -110,49 +110,56 @@ function switchUIStyle(style) {
         const rightBtn = container.querySelector('.scroll-button.right');
         const grid = container.querySelector('.leader-grid');
 
-        if (style === 'modern') {
-            // === 现代模式 ===
-            // 1. 容器必须显示 (原本是 none 导致了问题)
-            container.style.display = 'block'; 
-            container.style.overflow = 'visible'; // 允许内容撑开
-            
-            // 2. 隐藏左右滚动按钮
-            if (leftBtn) leftBtn.style.display = 'none';
-            if (rightBtn) rightBtn.style.display = 'none';
+        // 无论哪种模式，我们现在都希望显示滚动容器结构
+        container.style.display = 'flex'; // 保证容器是flex布局以便放置按钮
+        container.style.overflow = 'hidden'; // 隐藏原生滚动条，由按钮控制
 
-            // 3. 强制 Grid 换行显示 (从横向滚动变为网格排列)
+        if (style === 'modern') {
+            // === 现代模式 (修改版：横向滚动) ===
+            
+            // 1. 显示左右滚动按钮 (原本是 hide)
+            if (leftBtn) leftBtn.style.display = 'block';
+            if (rightBtn) rightBtn.style.display = 'block';
+
+            // 2. 强制单行排列，不换行
             if (grid) {
                 grid.style.display = 'flex';
-                grid.style.flexWrap = 'wrap';
-                grid.style.justifyContent = 'center'; // 卡片居中
-                grid.style.gap = '20px'; // 卡片间距
-                grid.style.overflowX = 'visible'; // 禁止横向滚动条
+                grid.style.flexWrap = 'nowrap'; // 关键：不换行
+                grid.style.justifyContent = 'flex-start'; // 从左侧开始
+                grid.style.gap = '20px'; // 保持现代风格的宽间距
+                grid.style.overflowX = 'auto'; // 允许横向滚动
+                grid.style.scrollBehavior = 'smooth'; // 平滑滚动
+                
+                // 隐藏网格自身的滚动条（视觉上更干净，依赖按钮）
+                grid.style.scrollbarWidth = 'none'; // Firefox
+                grid.style.msOverflowStyle = 'none';  // IE/Edge
             }
 
         } else {
             // === 传统模式 ===
-            // 恢复原来的横向滚动布局
-            container.style.display = 'flex';
-            container.style.overflow = 'hidden';
             
-            // 显示按钮
             if (leftBtn) leftBtn.style.display = 'block';
             if (rightBtn) rightBtn.style.display = 'block';
 
-            // 恢复 Grid 横向排列
             if (grid) {
                 grid.style.display = 'flex';
                 grid.style.flexWrap = 'nowrap';
                 grid.style.justifyContent = 'flex-start';
-                grid.style.gap = '0'; // 恢复默认间距
+                grid.style.gap = '0'; // 恢复传统模式的默认间距
                 grid.style.overflowX = 'auto';
+                grid.style.scrollbarWidth = 'auto'; // 恢复默认滚动条
             }
             
             // 传统模式下重新填充数据
             if (typeof populateLeaders === 'function') {
                 populateLeaders();
             }
-            updateAllScrollButtonStates?.();
+        }
+        
+        // 尝试更新按钮状态（如果按钮逻辑存在）
+        // 注意：现代模式重新渲染是异步的，所以在 filterModernGrid 里还需要再调一次
+        if (typeof updateScrollButtonStates === 'function' && grid) {
+             updateScrollButtonStates(grid);
         }
     });
 
