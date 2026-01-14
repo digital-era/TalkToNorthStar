@@ -1,12 +1,22 @@
 // modern-filter.js
 // 现代风格相关完整逻辑：胶囊动态生成、过滤动画、风格切换
-// 包含调试日志，用于排查过滤结果问题
+// 包含详细调试日志，用于排查搜索框闪现/不显示、过滤结果异常等问题
+
+// 防抖工具函数（防止快速点击导致状态抖动）
+function debounce(fn, delay = 250) {
+    let timer = null;
+    return function (...args) {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), delay);
+    };
+}
 
 // ──────────────────────────────────────────────
 // 1. 获取分类数据
 // ──────────────────────────────────────────────
 function getMastersByCategory(category) {
     if (window.allData && allData[category]) {
+        console.log(`[DEBUG] 从 allData 获取 ${category} 数据，数量：${allData[category].length}`);
         return allData[category];
     }
     const map = {
@@ -242,24 +252,37 @@ function refreshChipsForActiveTab() {
     if (tab) generateChipsForCategory(tab.id, tab.querySelector('.filter-chips-container'));
 }
 
-function toggleModernSearch(iconElement) {
+// 防抖版本的 toggleModernSearch
+const debouncedToggle = debounce(function (iconElement) {
     const wrapper = iconElement.closest('.modern-search-wrapper');
     if (!wrapper) return;
+
     const input = wrapper.querySelector('.modern-search-input');
     if (!input) return;
 
-    if (wrapper.classList.contains('search-active')) {
+    const isActive = wrapper.classList.contains('search-active');
+
+    console.log('[DEBUG] toggleModernSearch 执行 - 当前状态：', isActive ? '展开' : '收起');
+
+    if (isActive) {
         wrapper.classList.remove('search-active');
         input.style.display = 'none';
         input.value = '';
+        input.blur();
         filterModernGrid(input);
-        console.log('[DEBUG] 搜索框已收起并清空');
+        console.log('[DEBUG] 已收起搜索框并清空');
     } else {
         wrapper.classList.add('search-active');
         input.style.display = 'block';
-        input.focus();
-        console.log('[DEBUG] 搜索框已展开');
+        setTimeout(() => {
+            input.focus();
+            console.log('[DEBUG] 已展开搜索框并聚焦');
+        }, 50);
     }
+}, 250);
+
+function toggleModernSearch(iconElement) {
+    debouncedToggle(iconElement);
 }
 
 function onTabChanged() {
@@ -286,11 +309,25 @@ document.addEventListener('DOMContentLoaded', () => {
     initUIStyle();
 
     document.querySelectorAll('.modern-search-input').forEach(el => {
-        el.addEventListener('input', () => filterModernGrid(el));
+        if (!el.dataset.eventBound) {
+            el.addEventListener('input', (e) => {
+                const value = e.target.value.trim();
+                console.log('[DEBUG] input 事件触发，当前值：', value || '(空)');
+                filterModernGrid(e.target);
+            });
+            el.dataset.eventBound = 'true';
+        }
     });
 
     document.querySelectorAll('.search-icon').forEach(el => {
-        el.addEventListener('click', () => toggleModernSearch(el));
+        if (!el.dataset.eventBound) {
+            el.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleModernSearch(el);
+            });
+            el.dataset.eventBound = 'true';
+        }
     });
 });
 
