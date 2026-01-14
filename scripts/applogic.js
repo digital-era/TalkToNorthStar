@@ -877,6 +877,10 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         currentLang = 'zh-CN';
     }
+    
+    // 2. 【关键修复】强制更新全局 currentLang，确保 modern-filter.js 能读到
+    window.currentLang = selectedLang;
+    
     document.getElementById('languageSelector').value = currentLang;
 
     // Load API settings early to ensure endpoint and model are set up before other UI elements might need them
@@ -884,9 +888,15 @@ document.addEventListener('DOMContentLoaded', () => {
     loadApiSettings();
 
     setLanguage(currentLang);
-    //现代界面风格
-    onLanguageChanged();
-
+    
+    // 现代界面风格【关键修复】确保 onLanguageChanged 存在再调用，并增加日志
+    console.log('[Main] 准备调用 onLanguageChanged，当前语言:', window.currentLang);    
+    if (typeof window.onLanguageChanged === 'function') {
+        window.onLanguageChanged();
+    } else {
+        console.error('[Main] 错误：onLanguageChanged 函数未定义，请检查 modern-filter.js 是否已加载');
+    }
+    
     openTab(null, 'ai');
     const firstTabButton = document.querySelector('.tab-button');
     if (firstTabButton && !firstTabButton.classList.contains('active')) {
