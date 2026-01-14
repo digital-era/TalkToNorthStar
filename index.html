@@ -142,11 +142,27 @@
 
         <div id="ai" class="tab-content active">
             <h2 data-i18n-key="selectAiLeader">选择一位泛AI北极星</h2>
+            <!-- 现代风格专用：胶囊过滤 + 搜索区域 -->
+            <div class="modern-filter-bar" style="display:none;">
+                <div class="filter-chips-container">
+                    <!-- 这里不再写死任何 <button class="chip">，全部由 JS 动态生成 -->
+                </div>
+                
+                <div class="modern-search-wrapper">
+                    <i class="fas fa-search search-icon" onclick="toggleModernSearch(this)"></i>
+                    <input type="text" class="modern-search-input" placeholder="搜索北极星..." oninput="filterModernGrid(this)">
+                </div>
+            </div>
+            
             <div class="leader-scroll-container">
                 <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
                 <div class="leader-grid" id="aiGrid"></div>
                 <button class="scroll-button right" onclick="scrollGrid(this, 1)" aria-label="Scroll Right">></button>
             </div>
+        </div>
+
+        <div id="quantum" class="tab-content">
+            <h2 data-i18n-key="selectQuantumLeader">选择一位泛量子北极星</h2>
             <!-- 现代风格专用：胶囊过滤 + 搜索区域 -->
             <div class="modern-filter-bar" style="display:none;">
                 <div class="filter-chips-container">
@@ -158,15 +174,16 @@
                     <input type="text" class="modern-search-input" placeholder="搜索北极星..." oninput="filterModernGrid(this)">
                 </div>
             </div>
-        </div>
-
-        <div id="quantum" class="tab-content">
-            <h2 data-i18n-key="selectQuantumLeader">选择一位泛量子北极星</h2>
+            
             <div class="leader-scroll-container">
                 <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
                 <div class="leader-grid" id="quantumGrid"></div>
                 <button class="scroll-button right" onclick="scrollGrid(this, 1)" aria-label="Scroll Right">></button>
             </div>            
+        </div>
+
+        <div id="universe" class="tab-content">
+            <h2 data-i18n-key="selectUniverseLeader">选择一位泛宇宙北极星</h2>
             <!-- 现代风格专用：胶囊过滤 + 搜索区域 -->
             <div class="modern-filter-bar" style="display:none;">
                 <div class="filter-chips-container">
@@ -178,15 +195,16 @@
                     <input type="text" class="modern-search-input" placeholder="搜索北极星..." oninput="filterModernGrid(this)">
                 </div>
             </div>
-        </div>
-
-        <div id="universe" class="tab-content">
-            <h2 data-i18n-key="selectUniverseLeader">选择一位泛宇宙北极星</h2>
+            
             <div class="leader-scroll-container">
                 <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
                 <div class="leader-grid" id="universeGrid"></div>
                 <button class="scroll-button right" onclick="scrollGrid(this, 1)" aria-label="Scroll Right">></button>
             </div>            
+        </div>
+
+       <div id="humanities" class="tab-content">
+            <h2 data-i18n-key="selectHumanitiesLeader">选择一位泛人文领域北极星</h2>
             <!-- 现代风格专用：胶囊过滤 + 搜索区域 -->
             <div class="modern-filter-bar" style="display:none;">
                 <div class="filter-chips-container">
@@ -198,15 +216,16 @@
                     <input type="text" class="modern-search-input" placeholder="搜索北极星..." oninput="filterModernGrid(this)">
                 </div>
             </div>
-        </div>
-
-       <div id="humanities" class="tab-content">
-            <h2 data-i18n-key="selectHumanitiesLeader">选择一位泛人文领域北极星</h2>
+           
             <div class="leader-scroll-container">
                 <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
                 <div class="leader-grid" id="humanitiesGrid"></div>
                 <button class="scroll-button right" onclick="scrollGrid(this, 1)" aria-label="Scroll Right">></button>
             </div>           
+        </div>
+
+        <div id="art" class="tab-content">
+            <h2 data-i18n-key="selectArtLeader">选择一位泛艺术领域北极星</h2>
             <!-- 现代风格专用：胶囊过滤 + 搜索区域 -->
             <div class="modern-filter-bar" style="display:none;">
                 <div class="filter-chips-container">
@@ -218,15 +237,16 @@
                     <input type="text" class="modern-search-input" placeholder="搜索北极星..." oninput="filterModernGrid(this)">
                 </div>
             </div>
-        </div>
-
-        <div id="art" class="tab-content">
-            <h2 data-i18n-key="selectArtLeader">选择一位泛艺术领域北极星</h2>
+            
             <div class="leader-scroll-container">
                 <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
                 <div class="leader-grid" id="artGrid"></div>
                 <button class="scroll-button right" onclick="scrollGrid(this, 1)" aria-label="Scroll Right">></button>
             </div>            
+        </div>
+        
+        <div id="finance" class="tab-content">
+            <h2 data-i18n-key="selectFinanceLeader">选择一位泛金融北极星</h2>
             <!-- 现代风格专用：胶囊过滤 + 搜索区域 -->
             <div class="modern-filter-bar" style="display:none;">
                 <div class="filter-chips-container">
@@ -238,15 +258,16 @@
                     <input type="text" class="modern-search-input" placeholder="搜索北极星..." oninput="filterModernGrid(this)">
                 </div>
             </div>
-        </div>
-        
-        <div id="finance" class="tab-content">
-            <h2 data-i18n-key="selectFinanceLeader">选择一位泛金融北极星</h2>
+            
             <div class="leader-scroll-container">
                 <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
                 <div class="leader-grid" id="financeGrid"></div>
                 <button class="scroll-button right" onclick="scrollGrid(this, 1)" aria-label="Scroll Right">></button>
             </div>            
+        </div>
+
+        <div id="sport" class="tab-content">
+            <h2 data-i18n-key="selectSportLeader">选择一位泛竞技领域北极星</h2>
             <!-- 现代风格专用：胶囊过滤 + 搜索区域 -->
             <div class="modern-filter-bar" style="display:none;">
                 <div class="filter-chips-container">
@@ -258,15 +279,16 @@
                     <input type="text" class="modern-search-input" placeholder="搜索北极星..." oninput="filterModernGrid(this)">
                 </div>
             </div>
-        </div>
-
-        <div id="sport" class="tab-content">
-            <h2 data-i18n-key="selectSportLeader">选择一位泛竞技领域北极星</h2>
+            
             <div class="leader-scroll-container">
                 <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
                 <div class="leader-grid" id="sportGrid"></div>
                 <button class="scroll-button right" onclick="scrollGrid(this, 1)" aria-label="Scroll Right">></button>
             </div>            
+        </div>
+
+        <div id="chinaEntrepreneurs" class="tab-content">
+            <h2 data-i18n-key="selectChinaEntrepreneursLeader">选择一位泛中华北极星</h2>
             <!-- 现代风格专用：胶囊过滤 + 搜索区域 -->
             <div class="modern-filter-bar" style="display:none;">
                 <div class="filter-chips-container">
@@ -278,26 +300,12 @@
                     <input type="text" class="modern-search-input" placeholder="搜索北极星..." oninput="filterModernGrid(this)">
                 </div>
             </div>
-        </div>
-
-        <div id="chinaEntrepreneurs" class="tab-content">
-            <h2 data-i18n-key="selectChinaEntrepreneursLeader">选择一位泛中华北极星</h2>
+            
              <div class="leader-scroll-container">
                 <button class="scroll-button left" onclick="scrollGrid(this, -1)" aria-label="Scroll Left"><</button>
                 <div class="leader-grid" id="chinaEntrepreneursGrid"></div>
                 <button class="scroll-button right" onclick="scrollGrid(this, 1)" aria-label="Scroll Right">></button>
             </div>            
-            <!-- 现代风格专用：胶囊过滤 + 搜索区域 -->
-            <div class="modern-filter-bar" style="display:none;">
-                <div class="filter-chips-container">
-                    <!-- 这里不再写死任何 <button class="chip">，全部由 JS 动态生成 -->
-                </div>
-                
-                <div class="modern-search-wrapper">
-                    <i class="fas fa-search search-icon" onclick="toggleModernSearch(this)"></i>
-                    <input type="text" class="modern-search-input" placeholder="搜索北极星..." oninput="filterModernGrid(this)">
-                </div>
-            </div>
         </div>
         
         <div class="interaction-area">
