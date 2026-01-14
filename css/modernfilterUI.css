@@ -97,3 +97,10 @@
     opacity: 1;
     transform: translateY(0) scale(1);
 }
+
+.modern-search-wrapper.search-active .modern-search-input {
+    display: block !important;
+}
+.modern-search-wrapper .modern-search-input {
+    display: none;
+}
