@@ -38,8 +38,9 @@ function getMastersByCategory(category) {
 // 2. 从 field 提取关键词
 // ──────────────────────────────────────────────
 function extractCommonFieldKeywords(category, lang) {
-    // 确保获取到当前语言，默认为 zh-CN
-    const targetLang = lang || (typeof currentLang !== 'undefined' ? currentLang : 'zh-CN');
+     // 现代界面 【关键修复】优先使用传入的 lang，其次读取全局 window.currentLang
+    const targetLang = lang || window.currentLang || 'zh-CN';    
+    console.log(`[DEBUG] 提取关键词 - 分类: ${category}, 语言: ${targetLang}`);
     
     const masters = getMastersByCategory(category);
     if (!masters.length) return [];
@@ -47,12 +48,19 @@ function extractCommonFieldKeywords(category, lang) {
     const keywordCount = new Map();
     
     masters.forEach(master => {
-       // 1. 优先读取目标语言字段
-        let text = master.field?.[targetLang];
-
-        // 2. 只有在非中文模式下且该字段为空时，才不回退（宁愿为空也不要混杂中文），
-        // 或者你可以根据需求决定是否回退：
-        // text = text || master.field?.['zh-CN']; // 如果想强制回退中文解开这行
+       // 1. 尝试获取对应语言的字段
+        let text = master.field?.[targetLang];        
+        // 【关键修复】如果英文为空，是否回退到中文？
+        // 如果您的数据结构里 field 只是字符串而不是对象（例如 field: "物理"），
+        // 那么 master.field['en'] 会是 undefined。
+        // 如果数据只有中文，这里必须做兼容，否则英文模式下全是空的
+        if (!text && typeof master.field === 'string') {
+            // 如果 field 是纯字符串，说明没有多语言支持，直接使用
+            text = master.field;
+        } else if (!text && targetLang === 'en') {
+            // 如果是对象但没有英文，回退到中文 (可选)
+            // text = master.field?.['zh-CN']; 
+        }
         
         if (!text) return;        
         
