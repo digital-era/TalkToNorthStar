@@ -282,6 +282,14 @@ function filterModernGrid(trigger, category = null) {
         });
     }
 
+    // [新增/确认]：渲染完成后，检查是否需要显示左右箭头
+    // 稍微延迟一点，确保DOM渲染计算出宽度
+    setTimeout(() => {
+        if (typeof updateScrollButtonStates === 'function') {
+            updateScrollButtonStates(grid); 
+        }
+    }, 100);
+
     updateScrollButtonStates?.(grid);
 }
 
