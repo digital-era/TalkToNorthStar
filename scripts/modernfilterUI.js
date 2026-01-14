@@ -38,52 +38,48 @@ function getMastersByCategory(category) {
 // 2. 从 field 提取关键词
 // ──────────────────────────────────────────────
 function extractCommonFieldKeywords(category, lang) {
-    // 1. 确定目标语言，优先使用传入的 lang
+    // 1. 确保获取目标语言，优先使用传入参数，其次全局变量，最后兜底 zh-CN
     const targetLang = lang || window.currentLang || 'zh-CN';
     
-    console.log(`[DEBUG] 提取关键词 - 分类: ${category}, 语言: ${targetLang}`);
-    
+    // 2. 获取数据
     const masters = getMastersByCategory(category);
-    if (!masters.length) return [];
+    if (!masters || !masters.length) return [];
     
     const keywordCount = new Map();
     
     masters.forEach(master => {
+        // 3. 【核心优化】稳健的数据读取逻辑
+        // 即使 targetLang 是 'en'，如果数据只有 'zh-CN'，也回退显示中文，防止按钮区一片空白
         let text = '';
-        
-        // --- 核心修复：多语言字段读取逻辑 ---
         if (master.field && typeof master.field === 'object') {
-            // 优先级：当前语言 -> 英文 -> 中文 -> 空字符串
-            // 这样如果你加了日语(ja)，但某些数据只有英文，它会显示英文而不是空白
             text = master.field[targetLang] || master.field['en'] || master.field['zh-CN'] || '';
         } else if (typeof master.field === 'string') {
-            // 兼容旧数据（纯字符串）
             text = master.field;
         }
-        
+
         if (!text) return;        
         
-        // --- 核心修复：关键词分割逻辑 ---
-        // 使用正则分割：
-        // 1. 中文标点：、 ， ； （ ）
-        // 2. 英文标点：, ; ( ) [ ]
-        // 3. 注意：不要把空格(\s)作为分割符，因为英文 "Artificial Intelligence" 中间有空格
-        const parts = text.split(/[()（）\[\]、,，；;]+/) 
+        // 4. 【核心优化】分割逻辑（参考了你提供的成功案例）
+        // 关键点：
+        // (1) 不包含 \s (空格)，确保 "Artificial Intelligence" 不会被拆散。
+        // (2) 包含 / (斜杠)，兼容 "物理/化学" 这种写法。
+        // (3) 包含中英文常见标点。
+        const parts = text.split(/[()（）\[\]、,，；;./]+/) 
             .map(p => {
                 // 去除首尾空格，并去除尾部可能的句号
                 return p.trim().replace(/[。.。]+$/, '');
             })
             .filter(p => {
-                // 长度过滤：
-                // 中文至少2个字，英文至少2个字符
-                // 英文最长放宽到 50 (例如 "Reinforcement Learning from Human Feedback")
-                return p && p.length >= 2 && p.length <= 50;
+                // 5. 长度过滤
+                // 长度 >= 2 排除单个字母或无意义单字
+                // 长度 <= 60 允许较长的英文专有名词
+                return p && p.length >= 2 && p.length <= 60;
             });
 
         parts.forEach(k => {
-            // 排除纯数字或纯特殊符号
-            if (!/^[\d\s\W]+$/.test(k)) {
-                // 统一转小写来统计频率，但存储原名（为了显示好看，取第一次出现的大小写格式）
+            // 排除纯数字
+            if (!/^[\d\s]+$/.test(k)) {
+                // 统计逻辑：统一用小写做 Key 统计频率，但保存原文本 Text 用于展示
                 const keyLower = k.toLowerCase();
                 if (!keywordCount.has(keyLower)) {
                     keywordCount.set(keyLower, { text: k, count: 0 });
@@ -93,14 +89,14 @@ function extractCommonFieldKeywords(category, lang) {
         });
     });
 
-    // --- 排序与输出 ---
-    // 按频率降序，频率相同按长度降序
-    const keywords = [...keywordCount.values()]
+    // 6. 输出结果
+    // 移除 slice 限制，返回所有结果，按频率排序
+    const result = [...keywordCount.values()]
         .sort((a, b) => b.count - a.count || b.text.length - a.text.length)
-        .slice(0, 8) // 取前8个
         .map(item => item.text);
         
-    return keywords;
+    // console.log(`[DEBUG] 提取结果 (${category} - ${targetLang}):`, result);
+    return result;
 }
 
 // ──────────────────────────────────────────────
