@@ -161,6 +161,9 @@ function openTab(evt, tabName) {
         clearSelection();
     }
     updateAllScrollButtonStates();
+
+    //现代界面风格
+    onTabChanged();
 }
 
 function populateLeaders() {
