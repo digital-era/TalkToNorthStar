@@ -385,25 +385,42 @@ function onTabChanged() {
 }
 
 function onLanguageChanged() {
+    console.log('[DEBUG] onLanguageChanged 被触发，当前全局语言:', window.currentLang);
+
     // 仅在现代模式下处理
-    if (localStorage.getItem('northstarUIStyle') === 'modern') {
+    const currentStyle = localStorage.getItem('northstarUIStyle');
+    if (currentStyle === 'modern') {
         
-        // 1. 重新生成胶囊按钮 (确保按钮文字变成当前语言)
+        // 1. 重新生成胶囊按钮 (确保分类名称变成英文)
         refreshChipsForActiveTab();
 
         // 2. 强制刷新网格内容 (解决卡片消失问题)
-        const tab = document.querySelector('.tab-content.active');
-        if (tab) {
-            // 找到刚才生成的“全部/All”按钮
-            const allBtn = tab.querySelector('.chip[data-filter="all"]');
+        const activeTab = document.querySelector('.tab-content.active');
+        if (activeTab) {
+            // 找到刚才新生成的“全部/All”按钮
+            const allBtn = activeTab.querySelector('.chip[data-filter="all"]');
             
-            // 如果找到了按钮，手动触发一次过滤逻辑
             if (allBtn) {
-                console.log(`[DEBUG] 语言切换：触发 ${tab.id} 的重绘`);
-                // 传入 null 作为 trigger，但指定 category，或者直接传 allBtn
-                // 这里建议传 allBtn 以便让它高亮
-                filterModernGrid(allBtn, tab.id); 
+                console.log(`[DEBUG] 触发重绘: ${activeTab.id}`);
+                
+                // 【关键操作】模拟点击或直接调用过滤
+                // 必须传入 allBtn 作为 trigger，这样 filterModernGrid 才知道要显示“全部”
+                // 并且这会重置内部的 filterVal 为 'all'
+                allBtn.classList.add('active'); // 视觉上激活
+                filterModernGrid(allBtn, activeTab.id); 
+            } else {
+                console.warn('[DEBUG] 未找到 All 按钮，尝试直接刷新');
+                // 如果找不到按钮，手动调用一次生成全部数据的逻辑
+                const grid = activeTab.querySelector('.leader-grid');
+                if(grid) grid.innerHTML = ''; // 先清空
+                // 传 null 表示没有特定过滤词，默认显示全部
+                filterModernGrid({ dataset: { filter: 'all' } }, activeTab.id);
             }
+        }
+    } else {
+        // 传统模式也可能需要刷新
+        if (typeof populateLeaders === 'function') {
+            // populateLeaders();
         }
     }
 }
