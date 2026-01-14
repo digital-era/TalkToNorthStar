@@ -132,3 +132,39 @@
     border-color: transparent;
     box-shadow: 0 2px 8px rgba(0, 223, 216, 0.3);
 }
+
+/* 1. 先重置一下基础样式，防止旧的 transition 干扰 */
+.modern-mode .leader-card {
+    /* 移除旧的 transition，完全交给 animation 控制 */
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important; 
+    /* 这里的 transition 只保留 hover 效果，入场动画由下面控制 */
+}
+
+/* 2. 定义入场动画样式 */
+.leader-card.stagger-animate {
+    opacity: 0; /* 初始状态隐藏 */
+    
+    /* 动画配置：名称 | 时长 | 缓动曲线(快速切入缓慢停止) | 停留在最后一帧 */
+    animation: slideInRight 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    
+    /* 核心：根据 JS 传过来的索引 --i 计算延迟，形成流水线效果 */
+    /* 0.05s 是每张卡片的间隔，越小越快 */
+    animation-delay: calc(var(--i, 0) * 0.05s);
+    
+    /* 优化：启用硬件加速，防止卡顿 */
+    will-change: transform, opacity;
+}
+
+/* 3. 定义关键帧：从右往左滑入 */
+@keyframes slideInRight {
+    0% {
+        opacity: 0;
+        /* 从右侧 50px 的位置开始，配合你的横向胶囊，视觉流线很顺畅 */
+        transform: translateX(50px); 
+    }
+    100% {
+        opacity: 1;
+        /* 回到原位 */
+        transform: translateX(0);
+    }
+}
