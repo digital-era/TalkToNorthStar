@@ -867,54 +867,102 @@ window.addEventListener('click', function(event) {
 
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. 【优先】初始化语言设置
+    // 先确定语言，防止后续渲染时语言不正确导致二次刷新
     const preferredLang = localStorage.getItem('preferredLang');
     const browserLang = navigator.language || navigator.userLanguage;
+    let targetLang = 'zh-CN';
 
     if (preferredLang && translations[preferredLang]) {
-        currentLang = preferredLang;
+        targetLang = preferredLang;
     } else if (browserLang.startsWith('en') && translations['en']) {
-        currentLang = 'en';
-    } else {
-        currentLang = 'zh-CN';
+        targetLang = 'en';
     }
     
-    // 2. 【关键修复】强制更新全局 currentLang，确保 modern-filter.js 能读到
-    window.currentLang = currentLang;
-    
-    document.getElementById('languageSelector').value = currentLang;
+    // 更新全局变量
+    window.currentLang = targetLang;
+    const langSelect = document.getElementById('languageSelector');
+    if (langSelect) langSelect.value = targetLang;
 
-    // Load API settings early to ensure endpoint and model are set up before other UI elements might need them
-    // Note: populateEndpointSelect and updateModelSelectByEndpoint are called within loadApiSettings now
-    loadApiSettings();
+    // 2. 加载 API 设置 (不影响 UI渲染，可并行)
+    if (typeof loadApiSettings === 'function') {
+        loadApiSettings();
+    }
 
-    setLanguage(currentLang);
-    
-    // 现代界面风格【关键修复】确保 onLanguageChanged 存在再调用，并增加日志
-    console.log('[Main] 准备调用 onLanguageChanged，当前语言:', window.currentLang);    
-    if (typeof window.onLanguageChanged === 'function') {
-        window.onLanguageChanged();
-    } else {
-        console.error('[Main] 错误：onLanguageChanged 函数未定义，请检查 modern-filter.js 是否已加载');
+    // 3. 设置语言文本 (静态文本替换)
+    if (typeof setLanguage === 'function') {
+        setLanguage(targetLang);
+    }
+
+    // 4. 【关键】处理 Tab 状态
+    // 确保在渲染网格前，Tab 已经是 active 状态，否则 filterModernGrid 找不到容器会报错或渲染为空
+    if (typeof openTab === 'function') {
+        // 默认打开 AI，或者恢复上次的 Tab（如果有相关逻辑）
+        openTab(null, 'ai'); 
     }
     
-    openTab(null, 'ai');
-    const firstTabButton = document.querySelector('.tab-button');
-    if (firstTabButton && !firstTabButton.classList.contains('active')) {
+    // 确保 Tab 按钮状态同步
+    const firstTabButton = document.querySelector('.tab-button[onclick*="ai"]');
+    if (firstTabButton && !document.querySelector('.tab-button.active')) {
          firstTabButton.classList.add('active');
     }
-    updateAllScrollButtonStates();
+
+    // 5. 【核心修复】初始化 UI 风格与数据渲染
+    // 这一步会根据 localStorage 判断是 'modern' 还是 'traditional'
+    // switchUIStyle 内部会触发 filterModernGrid，所以我们不需要手动调 onLanguageChanged 了
+    initUIStyle(); 
+
+    // 6. 绑定搜索框与按钮事件 (防止重复绑定)
+    bindModernEvents();
+
+    // 7. 【致命冲突修复】仅在“非现代模式”下调用旧的 populateLeaders
+    const currentStyle = localStorage.getItem('northstarUIStyle');
+    if (currentStyle !== 'modern' && typeof populateLeaders === 'function') {
+        console.log('[Init] 传统模式，执行 populateLeaders');
+        populateLeaders();
+    } else {
+        console.log('[Init] 现代模式，跳过 populateLeaders，由 switchUIStyle 接管渲染');
+    }
+
+    // 8. 绑定 API 下拉框事件
+    const endpointSelect = document.getElementById('apiEndpointSelect');
+    const modelSelect = document.getElementById('apiModelSelect');
+    if (endpointSelect && typeof updateModelSelectByEndpoint === 'function') {
+        endpointSelect.addEventListener('change', function() {
+            updateModelSelectByEndpoint(this.value);
+        });
+    }
+    if (modelSelect && typeof updateEndpointByModel === 'function') {
+        modelSelect.addEventListener('change', function() {
+            updateEndpointByModel(this.value);
+        });
+    }
+
+    // 9. 处理窗口调整
     window.addEventListener('resize', updateAllScrollButtonStates);
-
-    apiEndpointSelect.addEventListener('change', function() {
-        updateModelSelectByEndpoint(this.value);
-    });
-    apiModelSelect.addEventListener('change', function() {
-        updateEndpointByModel(this.value);
-    });
-
-    // Populate leaders after language is set and settings are loaded
-    populateLeaders();
 });
+
+// 辅助函数：将事件绑定逻辑抽离，避免闭包重复引用
+function bindModernEvents() {
+    document.querySelectorAll('.modern-search-input').forEach(el => {
+        // 移除旧监听器比较麻烦，这里利用 dataset 标记防止重复绑定
+        if (el.dataset.bound) return;
+        el.addEventListener('input', (e) => {
+            filterModernGrid(e.target);
+        });
+        el.dataset.bound = 'true';
+    });
+
+    document.querySelectorAll('.search-icon').forEach(el => {
+        if (el.dataset.bound) return;
+        el.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleModernSearch(el);
+        });
+        el.dataset.bound = 'true';
+    });
+}
 
 /* --- 音乐播放控制逻辑 --- */
 // 1. 主按钮点击：播放/暂停指定音乐
