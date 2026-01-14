@@ -884,6 +884,8 @@ document.addEventListener('DOMContentLoaded', () => {
     loadApiSettings();
 
     setLanguage(currentLang);
+    //现代界面风格
+    onLanguageChanged();
 
     openTab(null, 'ai');
     const firstTabButton = document.querySelector('.tab-button');
