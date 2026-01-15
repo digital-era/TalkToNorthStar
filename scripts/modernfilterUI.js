@@ -314,10 +314,17 @@ function filterModernGrid(trigger, category = null) {
         });
     }
     
-    // 5. 更新滚动按钮状态
+    // 5. 更新滚动按钮状态 (修改版)
+    // 第一步：利用 requestAnimationFrame 确保在 DOM 刚刚渲染后立即检查一次
+    requestAnimationFrame(() => {
+        if(typeof updateScrollButtonStates === 'function') updateScrollButtonStates(grid);
+    });
+
+    // 第二步：延迟检查，确保 CSS 动画（如 stagger-animate）完全结束后再次修正
+    // 将延迟时间由 100 改为 500（假设动画在 0.5秒内结束），防止动画过程中尺寸变化导致误判
     setTimeout(() => {
         if(typeof updateScrollButtonStates === 'function') updateScrollButtonStates(grid);
-    }, 100);
+    }, 500);
 }
 
 
