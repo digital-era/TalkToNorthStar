@@ -925,13 +925,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 8. 绑定 API 下拉框事件
-    const endpointSelect = document.getElementById('apiEndpointSelect');
-    const modelSelect = document.getElementById('apiModelSelect');
-    if (endpointSelect && typeof updateModelSelectByEndpoint === 'function') {
-        endpointSelect.addEventListener('change', function() {
+    // 直接使用文件最上方定义的正确变量，或者用 getElementById('apiEndpoint')
+    if (apiEndpointSelect && typeof updateModelSelectByEndpoint === 'function') {
+        apiEndpointSelect.addEventListener('change', function() {
             updateModelSelectByEndpoint(this.value);
         });
     }
+    
     if (modelSelect && typeof updateEndpointByModel === 'function') {
         modelSelect.addEventListener('change', function() {
             updateEndpointByModel(this.value);
