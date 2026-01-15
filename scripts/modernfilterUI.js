@@ -349,10 +349,13 @@ function toggleModernSearch(iconElement) {
         if (input) input.focus();
     } else {
         if (input) {
-            input.value = '';
+            // 修改处 1：不要清空输入框的值
+            // input.value = ''; 
+            
             input.blur();
-            // 搜索框收起时，重置过滤
-            filterModernGrid(input); 
+            
+            // 修改处 2：收起时不要重新触发过滤（防止结果重置为全部）
+            // filterModernGrid(input); 
         }
     }
 }
