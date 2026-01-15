@@ -679,7 +679,7 @@ const endpointModelMap = {
         { value: "deepseek-chat", labelKey: "modelDeepSeekV3" }
     ],
     // 新增：你的自定义 Cloudflare Gemin代理接入点
-    "https://api.aivibeinvest.com": [
+    "https://geminiapi.aivibeinvest.com": [
         { value: "gemini-2.5-flash@proxy", labelKey: "modelGeminiFlash" },
     ],
     "https://generativelanguage.googleapis.com": [
