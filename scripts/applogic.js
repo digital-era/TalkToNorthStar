@@ -1103,7 +1103,7 @@ function openElegantMode() {
         // 如果 raw 为空，说明还没生成，或者生成函数没保存 raw
         // 尝试回退读取 innerText，但效果可能不好
         if (aiResponseEl.innerText.trim() === "") {
-             alert("请先获取北极星的回复，才能开启沉浸阅读模式。");
+             alert("请先获取北极星的回复，才能开启星语阅读模式。");
              return;
         }
     }
