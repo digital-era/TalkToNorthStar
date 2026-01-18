@@ -478,6 +478,21 @@ const artMasters = [
         "en": "Contemporary sci-fi giant, advanced visual and narrative depth integration."
       }
     },
+    {
+        id: "vince_gilligan", name: "Vince Gilligan (文斯·吉里根)",
+        contribution: {
+            "zh-CN": "创作《绝命毒师》《风骚律师》《同乐者》，以复杂人物塑造与道德叙事革新电视剧。",
+            "en": "Created Breaking Bad, Better Call Saul, Pluribus, revolutionized television with complex character development and moral narratives."
+        },
+        field: {
+            "zh-CN": "电视剧创作、剧情片、犯罪剧。",
+            "en": "Television Creation, Drama, Crime."
+        },
+        remarks: {
+            "zh-CN": "当代电视剧大师，推动长篇叙事与伦理探讨深度。",
+            "en": "Contemporary television master, advanced long-form storytelling and ethical explorations."
+        }
+    },
     {id: "ennio_morricone",  name: "Ennio Morricone (恩尼奥·莫里康内)",
         contribution: {
         "zh-CN": "创作《黄金三镖客》《教会》《美国往事》配乐，以非传统乐器和旋律创新革新电影音乐。",
