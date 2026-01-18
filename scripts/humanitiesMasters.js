@@ -475,6 +475,34 @@ const humanitiesMasters = [
         "en": "Father of Chinese historiography, narrative shaped Asian historical writing."
       }
     },
+    { id: "sima_guang", name: "司马光 (Sima Guang)",
+      contribution: {
+        "zh-CN": "主持编纂《资治通鉴》，中国第一部编年体通史，以“鉴于往事，有资于治道”为修史宗旨。",
+        "en": "Compiled Zizhi Tongjian (Comprehensive Mirror in Aid of Governance), China's first comprehensive chronological history, aiming to reflect on the past to aid in governance."
+      },
+      field: {
+        "zh-CN": "编年体史学。",
+        "en": "Chronological Historiography."
+      },
+      remarks: {
+        "zh-CN": "北宋史学家，与司马迁并称“两司马”，其著作被视为历代帝王必读教科书。",
+        "en": "Northern Song historian, paired with Sima Qian as 'The Two Simas,' his work is considered a mandatory textbook for emperors."
+      }
+    },
+    { id: "meng_sen", name: "孟森 (Meng Sen)",
+      contribution: {
+        "zh-CN": "撰写《明史讲义》，将现代史学方法与传统考据相结合，深刻剖析明清政治制度与历史脉络。",
+        "en": "Authored Ming History Lectures, combined modern historical methods with traditional textual criticism, deeply analyzed Ming-Qing political systems and historical contexts."
+      },
+      field: {
+        "zh-CN": "明清史学。",
+        "en": "Ming-Qing Historiography."
+      },
+      remarks: {
+        "zh-CN": "近代明清史研究鼻祖，确立该领域学术范式，有“想懂明史，必先读孟森”之誉。",
+        "en": "Progenitor of modern Ming-Qing history research, established academic paradigms, famed by the saying 'to understand Ming history, one must read Meng Sen first.'"
+      }
+    },
     { id: "cao_xueqin", name: "曹雪芹 (Cao Xueqin)",
       contribution: {
         "zh-CN": "创作《红楼梦》，历经十年增删五次，描绘封建社会衰落与家族兴衰，探索人性、爱情与社会批判。",
