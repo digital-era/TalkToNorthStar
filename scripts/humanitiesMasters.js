@@ -321,7 +321,7 @@ const humanitiesMasters = [
         "en": "Austrian psychology titan, popularized works profoundly shaped modern motivational and humanistic thought."
       }
     },
-    { id: "yuval_noah_harari", name: "Yuval Noah Harari (尤瓦尔·诺亚·哈拉里)",
+    { id: "yuval_noah_harari", name: "Yuval Noah Harari (尤瓦尔·诺亚·赫拉利)",
       contribution: {
         "zh-CN": "著有《人类简史》《未来简史》，剖析人类历史、科技与伦理交汇，探讨信息网络与人工智能未来。",
         "en": "Authored Sapiens, Homo Deus, analyzed human history, technology, and ethics intersections, explored information networks and AI futures."
