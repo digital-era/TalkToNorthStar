@@ -481,8 +481,8 @@ const humanitiesMasters = [
         "en": "Compiled Zizhi Tongjian (Comprehensive Mirror in Aid of Governance), China's first comprehensive chronological history, aiming to reflect on the past to aid in governance."
       },
       field: {
-        "zh-CN": "编年体史学。",
-        "en": "Chronological Historiography."
+        "zh-CN": "历史传记、史学。",
+        "en": "Historical Biography, Historiography."
       },
       remarks: {
         "zh-CN": "北宋史学家，与司马迁并称“两司马”，其著作被视为历代帝王必读教科书。",
@@ -495,8 +495,8 @@ const humanitiesMasters = [
         "en": "Authored Ming History Lectures, combined modern historical methods with traditional textual criticism, deeply analyzed Ming-Qing political systems and historical contexts."
       },
       field: {
-        "zh-CN": "明清史学。",
-        "en": "Ming-Qing Historiography."
+        "zh-CN": "历史传记、史学。",
+        "en": "Historical Biography, Historiography."
       },
       remarks: {
         "zh-CN": "近代明清史研究鼻祖，确立该领域学术范式，有“想懂明史，必先读孟森”之誉。",
