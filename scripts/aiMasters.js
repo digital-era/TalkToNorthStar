@@ -589,8 +589,8 @@ const aiMasters = [
     },
     {id: "justin_welsh", name: "Justin Welsh (贾斯汀·韦尔什)",
       contribution: {
-        "zh-CN": "一人企业主领域最具代表性的实践者，著有内容操作系统课程与模板，推广可复制的社交媒体增长、内容生产与数字产品销售模式。",
-        "en": "Most representative practitioner in the solopreneur space; offers courses and templates on replicable social media growth, content production, and digital product sales."
+        "zh-CN": "一人企业主领域最具代表性的实践者，著有内容操作系统课程，推广可复制的社交媒体增长、内容生产与数字产品销售模式。",
+        "en": "Most representative practitioner in the solopreneur space; offers courses on replicable social media growth, content production, and digital product sales."
       },
       field: {
         "zh-CN": "数字创业（一人企业、个人品牌、内容创作）、在线教育与创作者变现。",
