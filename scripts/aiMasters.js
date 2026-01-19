@@ -589,7 +589,7 @@ const aiMasters = [
     },
     {id: "justin_welsh", name: "Justin Welsh (贾斯汀·韦尔什)",
       contribution: {
-        "zh-CN": "一人企业主领域最具代表性的实践者，通过LinkedIn内容系统与Newsletter构建一人企业；著有内容操作系统课程与模板，推广可复制的社交媒体增长、内容生产与数字产品销售模式。",
+        "zh-CN": "一人企业主领域最具代表性的实践者，著有内容操作系统课程与模板，推广可复制的社交媒体增长、内容生产与数字产品销售模式。",
         "en": "Most representative practitioner in the solopreneur space; offers courses and templates on replicable social media growth, content production, and digital product sales."
       },
       field: {
@@ -597,14 +597,14 @@ const aiMasters = [
         "en": "Digital Entrepreneurship (One-Person Business, Content Creation, Personal Branding), Online Education and Creator Monetization."
       },
       remarks: {
-        "zh-CN": "以LinkedIn为核心平台，通过课程与模板订阅实现高利润率营收（常年维持90%以上利润率），其务实、可执行的框架被视为solopreneur增长的标准教科书。",
+        "zh-CN": "以LinkedIn为核心平台，通过课程与模板订阅实现高利润率营收，其务实、可执行的框架被视为个人企业增长的标准教科书。",
         "en": "Centered on LinkedIn with over 750K followers and Newsletter exceeding 250K subscribers, achieves high-margin revenue through courses and template subscriptions (consistently maintaining over 90% profit margins); his practical, executable frameworks are regarded as the standard playbook for solopreneur growth."
       }
 },
 {id: "alex_hormozi",   name: "Alex Hormozi (亚历克斯·霍莫齐)",
   contribution: {
-    "zh-CN": "通过Gym Launch等多公司退出与Acquisition.com投资模式，实现个人与公司超1亿美元营收；免费分享高价值内容并销售高客单价课程，推动offer设计、销售漏斗与业务规模化。",
-    "en": "Achieved over $100M in personal/company revenue through multiple business exits (e.g., Gym Launch) and Acquisition.com investment model; authored bestsellers '$100M Offers' and '$100M Leads,' shares high-value free content while selling premium courses, advancing offer engineering, sales funnels, and business scaling."
+    "zh-CN": "免费分享高价值内容并销售高客单价课程，推动offer设计、销售漏斗与业务规模化。",
+    "en": Shares high-value free content while selling premium courses, advancing offer engineering, sales funnels, and business scaling."
   },
   field: {
     "zh-CN": "数字创业（一人企业、高利润offer、销售心理学、业务杠杆化）、在线教育与投资。",
