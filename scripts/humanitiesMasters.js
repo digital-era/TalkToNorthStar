@@ -671,10 +671,10 @@ const humanitiesMasters = [
         "en": "Leaders in business and tech podcasting, providing valuable knowledge to listeners through exhaustive research and professional analysis."
       }
     },
-    {id: "chamath_jason_sacks_friedberg", name: "Chamath Palihapitiya, Jason Calacanis, David Sacks & David Friedberg (查马斯·帕利哈皮蒂亚, 杰森·卡拉卡尼斯, 大卫·萨克斯 & 大卫·弗里德伯格)",
+    {id: "chamath_jason_sacks_friedberg", name: "Chamath, Jason, Sacks & Friedberg (查马斯, 杰森, 萨克斯 & 弗里德伯格)",
       contribution: {
-        "zh-CN": "通过《All-In Podcast》，四位硅谷资深投资人与企业家以圆桌辩论形式，直率剖析科技趋势、宏观经济、政治政策与创业动态，提供硅谷内部视角与激烈观点碰撞。",
-        "en": "Through the 'All-In Podcast', four prominent Silicon Valley investors and entrepreneurs engage in roundtable debates, candidly analyzing tech trends, macroeconomics, politics, policy, and startup dynamics, offering insider perspectives and sharp viewpoint clashes."
+        "zh-CN": "通过《All-In Podcast》，四位硅谷资深投资人与企业家以圆桌辩论形式，直率剖析科技趋势、宏观经济、政治政策与创业动态。",
+        "en": "Through the 'All-In Podcast', four prominent Silicon Valley investors and entrepreneurs engage in roundtable debates, candidly analyzing tech trends, macroeconomics, politics, policy, and startup dynamics."
       },
       field: {
         "zh-CN": "播客、科技投资、宏观经济、政治政策、创业。",
@@ -687,8 +687,8 @@ const humanitiesMasters = [
     },
     {id: "peter_diamandis_dave_blundin", name: "Peter Diamandis & Dave Blundin (彼得·戴曼迪斯 & 戴夫·布伦丁)",
       contribution: {
-        "zh-CN": "通过《Moonshots Podcast》，彼得·戴曼迪斯与联合主持人深度访谈前沿科技领袖，探讨AI、AGI、能源、长寿、丰裕时代等未来主义议题，推动对人类指数级技术进步的乐观理解。",
-        "en": "Through the 'Moonshots Podcast', Peter Diamandis and co-hosts conduct in-depth interviews with frontier technology leaders, exploring futurist topics such as AI, AGI, energy, longevity, and the era of abundance, fostering an optimistic understanding of humanity's exponential technological progress."
+        "zh-CN": "通过《Moonshots Podcast》，深度访谈前沿科技领袖，探讨AI、AGI、能源、长寿、丰裕时代等未来主义议题，推动对人类指数级技术进步的乐观理解。",
+        "en": "Through the 'Moonshots Podcast', conduct in-depth interviews with frontier technology leaders, exploring futurist topics such as AI, AGI, energy, longevity, and the era of abundance, fostering an optimistic understanding of humanity's exponential technological progress."
       },
       field: {
         "zh-CN": "播客、未来科技、指数级创新、人工智能、能源与丰裕。",
