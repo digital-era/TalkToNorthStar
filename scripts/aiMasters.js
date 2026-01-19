@@ -601,7 +601,7 @@ const aiMasters = [
         "en": "Centered on LinkedIn with over 750K followers and Newsletter exceeding 250K subscribers, achieves high-margin revenue through courses and template subscriptions (consistently maintaining over 90% profit margins); his practical, executable frameworks are regarded as the standard playbook for solopreneur growth."
       }
 },
-{id": "alex_hormozi",   name: "Alex Hormozi (亚历克斯·霍莫齐)",
+{id: "alex_hormozi",   name: "Alex Hormozi (亚历克斯·霍莫齐)",
   contribution: {
     "zh-CN": "通过Gym Launch等多公司退出与Acquisition.com投资模式，实现个人与公司超1亿美元营收；免费分享高价值内容并销售高客单价课程，推动offer设计、销售漏斗与业务规模化。",
     "en": "Achieved over $100M in personal/company revenue through multiple business exits (e.g., Gym Launch) and Acquisition.com investment model; authored bestsellers '$100M Offers' and '$100M Leads,' shares high-value free content while selling premium courses, advancing offer engineering, sales funnels, and business scaling."
@@ -614,4 +614,5 @@ const aiMasters = [
     "zh-CN": "其书籍与框架影响全球数百万创业者；强调价值先行、杠杆增长与可规模化系统，代表一人/小型团队实现巨额营收的巅峰范式。",
     "en": "Emphasizes value-first approach, leveraged growth, and scalable systems, exemplifying the pinnacle paradigm for achieving massive revenue with solo/small teams."
   }
+}     
 ];
