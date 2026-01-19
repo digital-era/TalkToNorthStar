@@ -604,7 +604,7 @@ const aiMasters = [
 {id: "alex_hormozi",   name: "Alex Hormozi (亚历克斯·霍莫齐)",
   contribution: {
     "zh-CN": "免费分享高价值内容并销售高客单价课程，推动offer设计、销售漏斗与业务规模化。",
-    "en": Shares high-value free content while selling premium courses, advancing offer engineering, sales funnels, and business scaling."
+    "en": "Shares high-value free content while selling premium courses, advancing offer engineering, sales funnels, and business scaling."
   },
   field: {
     "zh-CN": "数字创业（一人企业、高利润offer、销售心理学、业务杠杆化）、在线教育与投资。",
