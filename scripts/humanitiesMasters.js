@@ -687,8 +687,8 @@ const humanitiesMasters = [
     },
     {id: "peter_diamandis_dave_blundin", name: "Peter Diamandis & Dave Blundin (彼得·戴曼迪斯 & 戴夫·布伦丁)",
       contribution: {
-        "zh-CN": "通过《Moonshots Podcast》，深度访谈前沿科技领袖，探讨AI、AGI、能源、长寿、丰裕时代等未来主义议题，推动对人类指数级技术进步的乐观理解。",
-        "en": "Through the 'Moonshots Podcast', conduct in-depth interviews with frontier technology leaders, exploring futurist topics such as AI, AGI, energy, longevity, and the era of abundance, fostering an optimistic understanding of humanity's exponential technological progress."
+        "zh-CN": "通过《Moonshots Podcast》，深度访谈前沿科技领袖，探讨AI、AGI、能源、长寿、丰裕时代等未来主义议题。",
+        "en": "Through the 'Moonshots Podcast', conduct in-depth interviews with frontier technology leaders, exploring futurist topics such as AI, AGI, energy, longevity, and the era of abundance."
       },
       field: {
         "zh-CN": "播客、未来科技、指数级创新、人工智能、能源与丰裕。",
@@ -702,7 +702,7 @@ const humanitiesMasters = [
     {
       id: "david_macaulay", name: "David Macaulay (大卫·麦考利)",
       contribution: {
-        "zh-CN": "创作《大教堂》《城堡》《金字塔》系列及《万物运转的秘密》，以精湛插图详尽再现建筑与机械建造过程，普及工程与科技原理。",
+        "zh-CN": "创作《大教堂》《城堡》系列及《万物运转的秘密》，以精湛插图详尽再现建筑与机械建造过程，普及工程与科技原理。",
         "en": "Authored the Cathedral, Castle, Pyramid series and The Way Things Work, meticulously illustrated construction processes of architecture and machines, popularized engineering and scientific principles."
       },
       field: {
