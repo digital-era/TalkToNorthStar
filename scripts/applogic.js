@@ -932,8 +932,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    if (modelSelect && typeof updateEndpointByModel === 'function') {
-        modelSelect.addEventListener('change', function() {
+    if (apiModelSelect && typeof updateEndpointByModel === 'function') {
+        apiModelSelect.addEventListener('change', function() {
             updateEndpointByModel(this.value);
         });
     }
