@@ -1361,37 +1361,37 @@ function addToInspiration(event, text) {
 
     const sidebar = document.getElementById('inspirationSidebar');
     const notesDiv = document.getElementById('notesContainer');
+    console.log("笔记功能，未来考虑");
+    // // 1. 确保侧边栏滑出
+    // if(!sidebar.classList.contains('open')) {
+    //     sidebar.classList.add('open');
+    // }
 
-    // 1. 确保侧边栏滑出
-    if(!sidebar.classList.contains('open')) {
-        sidebar.classList.add('open');
-    }
+    // // 2. 创建精美的笔记块
+    // const noteBlock = document.createElement('div');
+    // noteBlock.className = 'inspiration-note-block'; // 对应上面的CSS
+    // noteBlock.contentEditable = "false"; // 建议设为 false，防止用户不小心把格式删乱了，用户可以在块外面打字
+    
+    // // 截取文本
+    // const snippet = text.length > 100 ? text.substring(0, 100) + "..." : text;
+    // noteBlock.innerText = snippet;
+    
+    // // 3. 处理 contenteditable 的插入逻辑
+    // // 如果容器是空的（显示placeholder），先清空内容
+    // if (notesDiv.innerText.trim() === "") {
+    //     notesDiv.innerHTML = "";
+    // }
+    
+    // // 插入笔记块
+    // notesDiv.appendChild(noteBlock);
+    
+    // // 4. 插入一个换行符，方便用户在引用后面打字
+    // const spacer = document.createElement('div');
+    // spacer.innerHTML = "<br>";
+    // notesDiv.appendChild(spacer);
 
-    // 2. 创建精美的笔记块
-    const noteBlock = document.createElement('div');
-    noteBlock.className = 'inspiration-note-block'; // 对应上面的CSS
-    noteBlock.contentEditable = "false"; // 建议设为 false，防止用户不小心把格式删乱了，用户可以在块外面打字
-    
-    // 截取文本
-    const snippet = text.length > 100 ? text.substring(0, 100) + "..." : text;
-    noteBlock.innerText = snippet;
-    
-    // 3. 处理 contenteditable 的插入逻辑
-    // 如果容器是空的（显示placeholder），先清空内容
-    if (notesDiv.innerText.trim() === "") {
-        notesDiv.innerHTML = "";
-    }
-    
-    // 插入笔记块
-    notesDiv.appendChild(noteBlock);
-    
-    // 4. 插入一个换行符，方便用户在引用后面打字
-    const spacer = document.createElement('div');
-    spacer.innerHTML = "<br>";
-    notesDiv.appendChild(spacer);
-
-    // 5. 滚动到底部
-    notesDiv.scrollTop = notesDiv.scrollHeight;
+    // // 5. 滚动到底部
+    // notesDiv.scrollTop = notesDiv.scrollHeight;
 }
 
 // 监听窗口大小变化重绘连线
