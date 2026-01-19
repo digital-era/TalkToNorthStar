@@ -572,5 +572,19 @@ const aiMasters = [
         "zh-CN": "代表去中心化AI的先锋视角，补充AGI多样性。",
         "en": "Represents a pioneering perspective on decentralized AI, adding to the diversity of AGI discussions."
       }
+    },
+    {id: "dan_koe",   name: "Dan Koe (丹·科)",
+      contribution: {
+        "zh-CN": "当代一人企业（one-person business）与数字创作者模式的代表人物，著有《The Art of Focus》与《Purpose & Profit》，通过Newsletter、社交媒体与Kortex平台（Eden的前身或关联产品）推广专注力训练、内容系统化与基于真实自我的可持续在线商业模式，实现年收入数百万美元规模。",
+        "en": "Leading figure in the one-person business and modern creator economy, author of 'The Art of Focus' and 'Purpose & Profit,' promotes focus training, systematized content creation, and sustainable internet businesses built on authentic self via Newsletter, social media, and Kortex (or related Eden platform), achieving multi-million dollar annual revenue."
+      },
+      field: {
+        "zh-CN": "数字创业（一人企业、内容创作、个人品牌）、自我提升与生产力哲学。",
+        "en": "Digital Entrepreneurship (One-Person Business, Content Creation, Personal Branding), Self-Improvement and Productivity Philosophy."
+      },
+      remarks: {
+        "zh-CN": "倡导每日仅需少量专注写作即可构建高利润率在线业务（常提及2小时写作驱动数百万收入与98%利润率模式），其体系影响大量追求自主生活与财务自由的创作者与solopreneur；Kortex作为面向创作者的AI增强知识与生产力工具，进一步扩展其在数字工具与创作者经济基础设施的影响力。",
+        "en": "Advocates building high-margin online businesses through minimal daily focused writing (often citing 2-hour writing days driving multi-million revenue at 98% profit margins), influencing a large cohort of creators and solopreneurs seeking autonomy and financial freedom; Kortex, as an AI-enhanced knowledge and productivity tool for creators, further extends his impact on digital tooling and creator economy infrastructure."
+      }
     }
 ];
