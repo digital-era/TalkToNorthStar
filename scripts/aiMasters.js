@@ -575,7 +575,7 @@ const aiMasters = [
     },
     {id: "dan_koe",   name: "Dan Koe (丹·科)",
       contribution: {
-        "zh-CN": "当代一人企业与数字创作者模式的代表人物，著有《The Art of Focus》与《Purpose & Profit》，推广专注力训练、内容系统化与基于真实自我的可持续在线商业模式。",
+        "zh-CN": "当代一人企业与数字创作者模式的代表人物，推广专注力训练、内容系统化与基于真实自我的可持续在线商业模式。",
         "en": "Leading figure in the one-person business and modern creator economy, author of 'The Art of Focus' and 'Purpose & Profit,' promotes focus training, systematized content creation, and sustainable internet businesses built on authentic self."
       },
       field: {
@@ -583,8 +583,8 @@ const aiMasters = [
         "en": "Digital Entrepreneurship (One-Person Business, Content Creation, Personal Branding), Self-Improvement and Productivity Philosophy."
       },
       remarks: {
-        "zh-CN": "倡导每日仅需少量专注写作即可构建高利润率在线业务，其体系影响大量追求自主生活与财务自由的创作者与solopreneur；Kortex作为面向创作者的AI增强知识与生产力工具，进一步扩展其在数字工具与创作者经济基础设施的影响力。",
-        "en": "Advocates building high-margin online businesses through minimal daily focused writing , influencing a large cohort of creators and solopreneurs seeking autonomy and financial freedom; Kortex, as an AI-enhanced knowledge and productivity tool for creators, further extends his impact on digital tooling and creator economy infrastructure."
+        "zh-CN": "倡导每日仅需少量专注写作即可构建高利润率在线业务，其体系影响大量追求自主生活与财务自由的创作者和个体经营者。",
+        "en": "Advocates building high-margin online businesses through minimal daily focused writing , influencing a large cohort of creators and solopreneurs seeking autonomy and financial freedom."
       }
     }
 ];
