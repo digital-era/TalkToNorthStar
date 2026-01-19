@@ -196,20 +196,102 @@ const artMasters = [
         "en": "Romantic piano master, shaped modern piano technique."
       }
     },
-    {
-      "id": "johannes_brahms",
-      "name": "Johannes Brahms (约翰内斯·勃拉姆斯)",
-      "contribution": {
+    { id: "johannes_brahms",  name: "Johannes Brahms (约翰内斯·勃拉姆斯)",
+      contribution: {
         "zh-CN": "创作四首交响曲《德意志安魂曲》《c小调第一交响曲》，融合古典结构与浪漫情感，延续贝多芬传统。",
         "en": "Composed four symphonies, German Requiem, Symphony No. 1 in C minor, blended Classical structure with Romantic emotion, continuing Beethoven's tradition."
       },
-      "field": {
+      field: {
         "zh-CN": "交响乐、室内乐、钢琴音乐、浪漫主义音乐。",
         "en": "Symphony, Chamber Music, Piano Music, Romantic Music."
       },
-      "remarks": {
+      remarks: {
         "zh-CN": "古典形式在浪漫时期的伟大继承者，作品严谨深刻，被誉为“三B”之一。",
         "en": "Great heir of Classical forms in the Romantic era, rigorous and profound works, regarded as one of the 'Three Bs'."
+      }
+    },
+    { id: "pyotr_ilyich_tchaikovsky",   name: "Pyotr Ilyich Tchaikovsky (彼得·伊里奇·柴可夫斯基)",
+      contribution: {
+        "zh-CN": "创作《天鹅湖》《胡桃夹子》《悲怆交响曲》，以抒情旋律与戏剧张力融合俄罗斯民间元素与浪漫主义传统。",
+        "en": "Composed Swan Lake, The Nutcracker, Symphony No. 6 'Pathétique'; blended Russian folk elements with Romantic tradition through lyrical melody and dramatic intensity."
+      },
+      field: {
+        "zh-CN": "芭蕾音乐、交响乐、浪漫主义音乐。",
+        "en": "Ballet Music, Symphony, Romantic Music."
+      },
+      remarks: {
+        "zh-CN": "俄罗斯浪漫主义代表，其情感深度与旋律魅力使其作品成为古典音乐中最受欢迎的作曲家之一。",
+        "en": "Leading Russian Romantic composer; emotional depth and melodic appeal make his works among the most beloved in classical music."
+      }
+    },
+    { id: "johann_strauss_ii",   name: "Johann Strauss II (小约翰·施特劳斯)",
+      contribution: {
+        "zh-CN": "创作《蓝色多瑙河》《皇帝圆舞曲》《蝙蝠》，以维也纳圆舞曲与轻歌剧确立“圆舞曲之王”地位。",
+        "en": "Composed The Blue Danube, Kaiser-Walzer, Die Fledermaus; established 'Waltz King' status through Viennese waltzes and operettas."
+      },
+      field: {
+        "zh-CN": "圆舞曲、轻歌剧、维也纳舞曲。",
+        "en": "Waltz, Operetta, Viennese Dance Music."
+      },
+      remarks: {
+        "zh-CN": "维也纳圆舞曲之王，其优雅旋律与轻快节奏象征19世纪维也纳音乐黄金时代。",
+        "en": "Waltz King of Vienna; elegant melodies and lively rhythms symbolize the golden age of 19th-century Viennese music."
+      }
+    },
+    { id: "richard_wagner",   name: "Richard Wagner (理查德·瓦格纳)",
+      contribution: {
+        "zh-CN": "创作《尼伯龙根的指环》《特里斯坦与伊索尔德》《帕西法尔》，创立乐剧与总体艺术作品概念，革新歌剧形式并扩展和声语言。",
+        "en": "Composed Der Ring des Nibelungen, Tristan und Isolde, Parsifal; founded Musikdrama and Gesamtkunstwerk, revolutionized opera form and expanded harmonic language."
+      },
+      field: {
+        "zh-CN": "歌剧、乐剧、浪漫主义音乐。",
+        "en": "Opera, Musikdrama, Romantic Music."
+      },
+      remarks: {
+        "zh-CN": "歌剧史上最具革命性人物，其主导动机技法与戏剧理念深刻影响现代音乐发展。",
+        "en": "Most revolutionary figure in opera history; leitmotif technique and dramatic ideals profoundly shaped modern music."
+      }
+    },
+    {id: "igor_stravinsky",   name: "Igor Stravinsky (伊戈尔·斯特拉文斯基)",
+      contribution: {
+        "zh-CN": "创作《春之祭》《火鸟》《彼得鲁什卡》，以节奏革新与原始主义开启现代音乐，后转向新古典主义与序列主义。",
+        "en": "Composed The Rite of Spring, The Firebird, Petrushka; revolutionized rhythm and primitivism to usher in modern music, later embraced neoclassicism and serialism."
+      },
+      field: {
+        "zh-CN": "芭蕾音乐、现代音乐、新古典主义、序列主义。",
+        "en": "Ballet Music, Modern Music, Neoclassicism, Serialism."
+      },
+      remarks: {
+        "zh-CN": "20世纪现代音乐之父，其节奏解放与风格多变影响深远，被誉为现代主义关键人物。",
+        "en": "Father of 20th-century modern music; rhythm liberation and stylistic versatility had profound impact, regarded as a key modernist figure."
+      }
+    },
+    { id: "philip_glass",   name: "Philip Glass (菲利普·格拉斯)",
+      contribution: {
+        "zh-CN": "创作《海滩上的爱因斯坦》《Koyaanisqatsi》，以重复结构与渐进过程定义当代简约主义音乐。",
+        "en": "Composed Einstein on the Beach, Koyaanisqatsi; defined contemporary minimalism through repetitive structures and additive processes."
+      },
+      field: {
+        "zh-CN": "简约主义音乐、歌剧、电影配乐。",
+        "en": "Minimalist Music, Opera, Film Scores."
+      },
+      remarks: {
+        "zh-CN": "简约主义代表作曲家，其催眠式重复与跨界影响扩展至流行与电影音乐。",
+        "en": "Leading minimalist composer; hypnotic repetition and cross-genre influence extended to popular and film music."
+      }
+    },
+    { id: "claude_debussy",   name: "Claude Debussy (克劳德·德彪西)",
+      contribution: {
+        "zh-CN": "创作《牧神午后前奏曲》《大海》《佩利亚斯与梅丽桑德》，以全音音阶与色彩和声开创印象主义音乐。",
+        "en": "Composed Prélude à l'après-midi d'un faune, La Mer, Pelléas et Mélisande; pioneered Impressionism with whole-tone scales and coloristic harmony."
+      },
+      field: {
+        "zh-CN": "印象主义音乐、管弦乐、钢琴音乐、歌剧。",
+        "en": "Impressionist Music, Orchestral Music, Piano Music, Opera."
+      },
+      remarks: {
+        "zh-CN": "印象主义音乐奠基人，其音色创新与氛围描绘标志从浪漫主义向现代主义的转折。",
+        "en": "Founder of Impressionist music; timbral innovation and atmospheric depiction marked the transition from Romanticism to modernism."
       }
     },
     { id: "paul_rand", name: "Paul Rand (保罗·兰德)",
