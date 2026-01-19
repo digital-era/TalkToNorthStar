@@ -1403,8 +1403,7 @@ window.addEventListener('resize', () => {
 
 // 1. 删除单个节点功能
 function deleteNode(event, index) {
-    // 1. 阻止事件冒泡 (非常重要)
-    // 防止点击删除按钮时，同时触发底下的“点击摘录到灵感手稿”功能
+    // 1. 阻止事件冒泡 (防止误触其他功能)
     if (event) {
         event.stopPropagation();
     }
@@ -1414,12 +1413,26 @@ function deleteNode(event, index) {
 
     // 3. 用户点击“确定”后执行
     if (isConfirmed) {
-        // ★ 新增：操作当前显示的历史
-        const history = getMergedHistory(importedHistory, conversationHistory);
-        // 从数组中删除指定索引的元素
-        conversationHistory.splice(index, 1);
+        // 获取导入历史的长度（防止为null报错，默认为0）
+        const importedLen = (importedHistory && Array.isArray(importedHistory)) ? importedHistory.length : 0;
+
+        // 【核心修复】判断 index 落在哪个数组里
+        if (index < importedLen) {
+            // 情况 A: 索引小于导入长度，说明点击的是【导入历史】里的节点
+            // 直接从 importedHistory 数组中移除该元素
+            importedHistory.splice(index, 1);
+        } else {
+            // 情况 B: 索引大于等于导入长度，说明点击的是【当前新对话】里的节点
+            // 计算它在 conversationHistory 中的相对位置
+            const relativeIndex = index - importedLen;
+            
+            // 安全检查并删除
+            if (conversationHistory && conversationHistory[relativeIndex]) {
+                conversationHistory.splice(relativeIndex, 1);
+            }
+        }
         
-        // 重新渲染画布 (这会自动更新SVG连线)
+        // 4. 重新渲染画布 (这时候数据源已经真的变少了)
         renderDialogueCanvas();
     }
 }
