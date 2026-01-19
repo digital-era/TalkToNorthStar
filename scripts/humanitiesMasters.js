@@ -677,8 +677,8 @@ const humanitiesMasters = [
         "en": "Through the 'All-In Podcast', four prominent Silicon Valley investors and entrepreneurs engage in roundtable debates, candidly analyzing tech trends, macroeconomics, politics, policy, and startup dynamics."
       },
       field: {
-        "zh-CN": "播客、科技投资、宏观经济、政治政策、创业。",
-        "en": "Podcast, Technology Investment, Macroeconomics, Politics and Policy, Entrepreneurship."
+        "zh-CN": "播客、科技投资、宏观经济、政治。",
+        "en": "Podcast, Technology Investment, Macroeconomics, Politics."
       },
       remarks: {
         "zh-CN": "硅谷精英圈最具代表性的多人辩论播客，以坦诚争论和深度内部洞见著称，已成为科技与政策交汇领域的重要参考窗口。",
@@ -691,8 +691,8 @@ const humanitiesMasters = [
         "en": "Through the 'Moonshots Podcast', conduct in-depth interviews with frontier technology leaders, exploring futurist topics such as AI, AGI, energy, longevity, and the era of abundance."
       },
       field: {
-        "zh-CN": "播客、未来科技、指数级创新、人工智能、能源与丰裕。",
-        "en": "Podcast, Future Technology, Exponential Innovation, Artificial Intelligence, Energy and Abundance."
+        "zh-CN": "播客、未来科技、指数级创新、能源。",
+        "en": "Podcast, Future Technology, Exponential Innovation, Energy."
       },
       remarks: {
         "zh-CN": "以大胆未来愿景和顶尖嘉宾对话为核心，节目激励听众拥抱技术变革，已成为追踪指数级科技前沿与人类命运交汇的重要平台。",
