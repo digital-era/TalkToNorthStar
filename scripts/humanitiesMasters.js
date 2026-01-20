@@ -561,12 +561,12 @@ const humanitiesMasters = [
     },
     {id: "frank_mclynn", name: "Frank McLynn (弗兰克·麦克林)",
       contribution: {
-        "zh-CN": "撰写《拿破仑传》《成吉思汗：他的征服、帝国与遗产》等多部人物传记，以心理分析与历史语境相结合的手法，刻画复杂领袖与探险家的生平与时代影响。",
-        "en": "Authored acclaimed biographies including Napoleon: A Biography, Genghis Khan: His Conquests, His Empire, His Legacy: A Biography, blending psychological insight with historical context to portray complex leaders and explorers."
+        "zh-CN": "撰写《拿破仑传》《成吉思汗：他的征服、帝国与遗产》等多部人物传记，刻画复杂领袖与探险家的生平与时代影响。",
+        "en": "Authored acclaimed biographies including Napoleon: A Biography, Genghis Khan: His Conquests, His Empire, His Legacy: A Biography, portray complex leaders and explorers."
       },
       field: {
-        "zh-CN": "历史传记、军事史、探险史、心理传记。",
-        "en": "Historical Biography, Military History, Exploration History, Psychological Biography."
+        "zh-CN": "历史传记、军事史、探险史。",
+        "en": "Historical Biography, Military History, Exploration History."
       },
       remarks: {
         "zh-CN": "当代英国最具生产力的传记历史学家之一，以叙事张力与多学科视角著称，其作品兼顾学术深度与可读性，多次获专业评论肯定。",
