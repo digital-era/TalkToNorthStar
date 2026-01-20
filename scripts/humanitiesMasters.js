@@ -559,6 +559,20 @@ const humanitiesMasters = [
         "en": "Roman biography icon, influenced European historical and political narrative."
       }
     },
+    {id: "frank_mclynn", name: "Frank McLynn (弗兰克·麦克林)",
+      contribution: {
+        "zh-CN": "撰写《拿破仑传》《成吉思汗：他的征服、帝国与遗产》等多部人物传记，以心理分析与历史语境相结合的手法，刻画复杂领袖与探险家的生平与时代影响。",
+        "en": "Authored acclaimed biographies including Napoleon: A Biography, Genghis Khan: His Conquests, His Empire, His Legacy: A Biography, blending psychological insight with historical context to portray complex leaders and explorers."
+      },
+      field: {
+        "zh-CN": "历史传记、军事史、探险史、心理传记。",
+        "en": "Historical Biography, Military History, Exploration History, Psychological Biography."
+      },
+      remarks: {
+        "zh-CN": "当代英国最具生产力的传记历史学家之一，以叙事张力与多学科视角著称，其作品兼顾学术深度与可读性，多次获专业评论肯定。",
+        "en": "One of the most prolific contemporary British biographers and historians, renowned for narrative drive and multidisciplinary perspective; his works balance scholarly depth with readability and receive consistent critical acclaim."
+      }
+    },
     { id: "marco_polo", name: "Marco Polo (马可·波罗)",
       contribution: {
         "zh-CN": "撰写《马可波罗游记》，记录亚洲地理与文化，激发西方对东方的探索。",
