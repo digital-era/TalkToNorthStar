@@ -251,6 +251,34 @@ const humanitiesMasters = [
         "en": "Founder of ancient biography, shaped Western historical and literary narrative."
       }
     },
+    { id: "edward_gibbon", name: "爱德华·吉本 (Edward Gibbon)",
+      contribution: {
+        "zh-CN": "撰写《罗马帝国衰亡史》，以理性批判精神系统叙述罗马帝国从鼎盛到灭亡的全过程，深刻分析基督教兴起对古典文明的影响。",
+        "en": "Authored The History of the Decline and Fall of the Roman Empire, systematically narrated the rise and fall of the Roman Empire with rational and critical spirit, profoundly analyzing the impact of Christianity's rise on classical civilization."
+      },
+      field: {
+        "zh-CN": "史学、古典史、启蒙史学。",
+        "en": "Historiography, Classical History, Enlightenment Historiography."
+      },
+      remarks: {
+        "zh-CN": "18世纪最伟大的历史学家，其优雅文体与广阔视野使该书成为西方史学经典，对理性主义史观影响深远。",
+        "en": "The greatest historian of the 18th century; his elegant style and broad perspective made the work a classic of Western historiography, profoundly influencing rationalist historical views."
+      }
+    },
+    {id: "jacob_burckhardt", name: "雅各布·布克哈特 (Jacob Burckhardt)",
+      contribution: {
+        "zh-CN": "撰写《意大利文艺复兴时期的文化》，开创文化史研究范式，首次系统描绘文艺复兴时期意大利人的精神面貌、生活方式与艺术成就。",
+        "en": "Authored The Civilization of the Renaissance in Italy, pioneered the paradigm of cultural history, and was the first to systematically depict the spiritual outlook, way of life, and artistic achievements of Italians during the Renaissance."
+      },
+      field: {
+        "zh-CN": "史学、文化史、文艺复兴研究。",
+        "en": " Historiography, Cultural History, Renaissance Studies."
+      },
+      remarks: {
+        "zh-CN": "现代文化史之父，其著作奠定了‘文艺复兴’作为独立历史时期的经典概念，对19–20世纪欧洲文化史研究影响巨大。",
+        "en": "Father of modern cultural history; his work established the classic concept of the 'Renaissance' as a distinct historical period, exerting immense influence on European cultural history studies in the 19th and 20th centuries."
+      }
+    },
     { id: "plato", name: "Plato (柏拉图)",
       contribution: {
         "zh-CN": "提出理念论，著《理想国》，创立西方第一所高等学府阿卡德米学园，奠定形而上学与政治哲学根基。",
