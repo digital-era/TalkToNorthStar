@@ -279,6 +279,20 @@ const humanitiesMasters = [
         "en": "Father of modern cultural history; his work established the classic concept of the 'Renaissance' as a distinct historical period, exerting immense influence on European cultural history studies in the 19th and 20th centuries."
       }
     },
+    {id: "jill_lepore",  name: "Jill Lepore (吉尔·莱波雷)",
+      contribution: {
+        "zh-CN": "撰写《These Truths: A History of the United States》，以单卷本形式系统叙述美国从殖民地时期至当代的全史，强调事实、真相与民主理念的张力；同时著有《The Secret History of Wonder Woman》等作品，将流行文化、性别、科技与政治史相结合。",
+        "en": "Authored These Truths: A History of the United States, a single-volume comprehensive history of the United States from colonial times to the present, emphasizing tensions between facts, truth, and democratic ideals; also wrote The Secret History of Wonder Woman and other works integrating popular culture, gender, technology, and political history."
+      },
+      field: {
+        "zh-CN": "美国史、政治史、文化史、性别史、科技史、公共历史写作。",
+        "en": "American History, Political History, Cultural History, Gender History, History of Technology, Public History Writing."
+      },
+      remarks: {
+        "zh-CN": "当代最具影响力的美国历史学家与公共知识分子之一，以清晰、优雅且面向广大读者的叙事风格著称；长期担任《纽约客》撰稿人，将严谨学术研究与公共议题紧密结合，对美国民主、真相与历史记忆的讨论具有广泛影响力。",
+        "en": "One of the most influential contemporary American historians and public intellectuals; renowned for clear, elegant, and broadly accessible narrative style; long-time staff writer at The New Yorker, seamlessly bridging rigorous scholarship with public discourse, exerting wide influence on discussions of American democracy, truth, and historical memory."
+      }
+    },
     { id: "plato", name: "Plato (柏拉图)",
       contribution: {
         "zh-CN": "提出理念论，著《理想国》，创立西方第一所高等学府阿卡德米学园，奠定形而上学与政治哲学根基。",
