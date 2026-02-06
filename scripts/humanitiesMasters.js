@@ -293,6 +293,22 @@ const humanitiesMasters = [
         "en": "One of the most influential contemporary American historians and public intellectuals; renowned for clear, elegant, and broadly accessible narrative style."
       }
     },
+    {
+        id: "socrates",
+        name: "Socrates (苏格拉底)",
+        contribution: {
+        "zh-CN": "发展苏格拉底方法，通过对话质疑假设与追求真理，奠定西方伦理学与辩证法基础。",
+        "en": "Developed the Socratic method, questioning assumptions and pursuing truth through dialogue, establishing foundations of Western ethics and dialectics."
+        },
+        field: {
+        "zh-CN": "伦理学、认识论、政治哲学。",
+        "en": "Ethics, Epistemology, Political Philosophy."
+        },
+        remarks: {
+        "zh-CN": "西方哲学之父，虽未著书，其思想通过柏拉图与色诺芬记录流传，影响深远。",
+        "en": "Father of Western philosophy; though he wrote nothing, his ideas endure through Plato and Xenophon, profoundly influential."
+        }
+    },
     { id: "plato", name: "Plato (柏拉图)",
       contribution: {
         "zh-CN": "提出理念论，著《理想国》，创立西方第一所高等学府阿卡德米学园，奠定形而上学与政治哲学根基。",
@@ -334,6 +350,70 @@ const humanitiesMasters = [
         "zh-CN": "近代哲学的转折点与集大成者，后世所有重要哲学流派皆须回应其体系。",
         "en": "The watershed and culmination of modern philosophy; all subsequent major schools must respond to his system."
       }
+    },
+    {
+        id: "bertrand_russell",
+        name: "Bertrand Russell (伯特兰·罗素)",
+        contribution: {
+        "zh-CN": "与怀特海合著《数学原理》，推进逻辑主义与分析哲学，贡献类型论与和平主义思想。",
+        "en": "Co-authored Principia Mathematica with Whitehead, advanced logicism and analytic philosophy, contributed theory of types and pacifist ideas."
+        },
+        field: {
+        "zh-CN": "分析哲学、逻辑学、认识论、伦理学、政治哲学。",
+        "en": "Analytic Philosophy, Logic, Epistemology, Ethics, Political Philosophy."
+        },
+        remarks: {
+        "zh-CN": "20世纪最著名哲学家之一，诺贝尔文学奖得主，其作品影响现代逻辑、数学与社会思想。",
+        "en": "One of the 20th century’s most renowned philosophers, Nobel laureate in literature, whose works shaped modern logic, mathematics, and social thought."
+        }
+    },
+    {
+        id: "arthur_schopenhauer",
+        name: "Arthur Schopenhauer (阿图尔·叔本华)",
+        contribution: {
+        "zh-CN": "著《作为意志和表象的世界》，提出意志形而上学与悲观主义哲学，融合东方思想如佛教与印度哲学。",
+        "en": "Authored The World as Will and Representation, proposed metaphysics of the will and pessimistic philosophy, integrating Eastern ideas like Buddhism and Indian philosophy."
+        },
+        field: {
+        "zh-CN": "形而上学、伦理学、美学、东方哲学影响。",
+        "en": "Metaphysics, Ethics, Aesthetics, Influence of Eastern Philosophy."
+        },
+        remarks: {
+        "zh-CN": "后康德哲学的重要人物，影响尼采、弗洛伊德与现代存在主义，其悲观主义挑战西方乐观传统。",
+        "en": "Key post-Kantian thinker, influenced Nietzsche, Freud, and modern existentialism; his pessimism challenged Western optimistic traditions."
+        }
+    },
+    {
+        id: "voltaire",
+        name: "Voltaire (伏尔泰)",
+        contribution: {
+        "zh-CN": "倡导启蒙运动，著《老实人》讽刺乐观主义，推动言论自由、宗教宽容与理性批判。",
+        "en": "Championed the Enlightenment, authored Candide satirizing optimism, promoted freedom of speech, religious tolerance, and rational critique."
+        },
+        field: {
+        "zh-CN": "启蒙哲学、政治哲学、伦理学、文学哲学。",
+        "en": "Enlightenment Philosophy, Political Philosophy, Ethics, Philosophy of Literature."
+        },
+        remarks: {
+        "zh-CN": "法国启蒙运动的象征人物，其机智与批判精神影响现代民主与人权思想。",
+        "en": "Emblematic figure of the French Enlightenment, whose wit and critical spirit shaped modern democratic and human rights thought."
+        }
+    },
+    {
+        id: "hegel",
+        name: "Hegel (黑格尔)",
+        contribution: {
+        "zh-CN": "发展辩证法与绝对唯心主义，著《精神现象学》，构建历史与逻辑统一体系。",
+        "en": "Developed dialectics and absolute idealism, authored Phenomenology of Spirit, constructed a system unifying history and logic."
+        },
+        field: {
+        "zh-CN": "形而上学、历史哲学、政治哲学、逻辑学。",
+        "en": "Metaphysics, Philosophy of History, Political Philosophy, Logic."
+        },
+        remarks: {
+        "zh-CN": "德国古典哲学集大成者，影响马克思主义、存在主义与后现代思想，其辩证法成为哲学核心工具。",
+        "en": "Culmination of German classical philosophy, influenced Marxism, existentialism, and postmodern thought; his dialectics became a core philosophical tool."
+        }
     },
     { id: "ludwig_wittgenstein", name: "Ludwig Wittgenstein (路德维希·维特根斯坦)",
       contribution: {
