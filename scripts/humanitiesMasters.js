@@ -887,7 +887,7 @@ const humanitiesMasters = [
         "en": "Authored works including 'The Spring and Autumn of the Losers,' 'The Divergent Paths of Warring States,' and 'Sima Qian’s Field of Memory' ; retold pre-Qin to Han history with gentle, humorous prose."
       },
       field: {
-        "zh-CN": "历史普及、先秦两汉史、历史叙事文学。",
+        "zh-CN": "历史普及、先秦两汉史、历史叙事。",
         "en": "Popular History, Pre-Qin and Han Dynasty Studies, Historical Narrative Literature."
       },
       remarks: {
