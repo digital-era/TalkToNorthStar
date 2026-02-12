@@ -928,7 +928,7 @@ const humanitiesMasters = [
     {
       id: "shi_zhan",   name: "施展 (Shi Zhan)",
       contribution: {
-        "zh-CN": "在得到App《枢纽》专栏及《世界史纲40讲》等作品中，以大视野与中国坐标重新审视世界历史，探讨中国与全球文明的互动关系及结构性逻辑。",
+        "zh-CN": "在得到App《枢纽》专栏及《世界史纲40讲》等作品中，以大视野与中国坐标重新审视世界历史。",
         "en": "In the 'Hub' column on Dedao App and 'Outline of World History in 40 Lectures', re-examines world history from a grand perspective and Chinese coordinates."
       },
       field: {
