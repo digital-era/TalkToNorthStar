@@ -853,46 +853,46 @@ const humanitiesMasters = [
     {
       id: "yi_zhongtian",  name: "易中天 (Yi Zhongtian)",
       contribution: {
-        "zh-CN": "通过《百家讲坛》主讲《品三国》《汉代风云人物》等系列，以及著述《易中天中华史》（全24卷），以通俗生动语言重述中国历史，普及历史知识并注入人性与制度分析。",
-        "en": "Through CCTV's Lecture Room series including 'Analysis of the Three Kingdoms' and 'Han Dynasty Figures,' and the 24-volume 'Yi Zhongtian’s History of China,' popularized Chinese history with accessible, vivid narration while incorporating analyses of human nature and institutions."
+        "zh-CN": "通过《百家讲坛》主讲《品三国》《汉代风云人物》等系列，以通俗生动语言重述中国历史。",
+        "en": "Through CCTV's Lecture Room series including 'Analysis of the Three Kingdoms' and 'Han Dynasty Figures', popularized Chinese history with accessible, vivid narration."
       },
       field: {
         "zh-CN": "历史普及、史学解读、文化评论。",
         "en": "Popular History, Historical Interpretation, Cultural Commentary."
       },
       remarks: {
-        "zh-CN": "当代最具影响力的历史科普学者之一，将学术深度融入生活化表达，开创‘聊天式’讲史风潮，其作品兼具可读性与思辨性，被誉为连接专业史学与大众阅读的桥梁。",
-        "en": "One of the most influential popular history scholars in contemporary China, blending academic depth with conversational style; pioneered the trend of 'chat-like' historical narration, renowned for balancing readability with reflective insight and bridging professional historiography and public readership."
+        "zh-CN": "当代最具影响力的历史科普学者之一，将学术深度融入生活化表达，开创‘聊天式’讲史风潮",
+        "en": "One of the most influential popular history scholars in contemporary China, blending academic depth with conversational style; pioneered the trend of 'chat-like' historical narration."
       }
     },
     {
       id: "dang_nian_ming_yue", name: "当年明月 (Shi Yue)",
       contribution: {
-        "zh-CN": "创作《明朝那些事儿》（全7册），以网络连载形式开启通俗历史写作新潮流，用幽默吐槽与现代视角重现明朝近三百年兴衰，推动历史从学术象牙塔走向大众阅读。",
-        "en": "Authored 'Those Ming Dynasty Things' (7 volumes), initiating a new wave of popular history writing via online serialization; employed humorous commentary and modern perspectives to vividly recount nearly three centuries of Ming Dynasty rise and fall, bringing history from academic ivory towers to mass readership."
+        "zh-CN": "创作《明朝那些事儿》（全7册），以网络连载形式开启通俗历史写作新潮流，用幽默吐槽与现代视角重现明朝近三百年兴衰。",
+        "en": "Authored 'Those Ming Dynasty Things' (7 volumes), initiating a new wave of popular history writing via online serialization; employed humorous commentary and modern perspectives to vividly recount nearly three centuries of Ming Dynasty rise and fall."
       },
       field: {
         "zh-CN": "历史普及、网络历史写作、明史解读。",
         "en": "Popular History, Online Historical Writing, Ming Dynasty Studies."
       },
       remarks: {
-        "zh-CN": "网络时代通俗历史写作的开创者与代表人物，其作品销量超千万册，连续多年登上中国作家富豪榜，以‘段子式’叙事让历史变得生动有趣，同时引发对权力、人性与制度的广泛讨论。",
-        "en": "Pioneer and iconic figure in online popular history writing; with sales exceeding ten million copies and repeated rankings on China’s Writers Rich List, his works use anecdote-driven narration to make history engaging while sparking broad reflections on power, human nature, and institutions."
+        "zh-CN": "网络时代通俗历史写作的开创者与代表人物，其作品销量超千万册，以‘段子式’叙事让历史变得生动有趣。",
+        "en": "Pioneer and iconic figure in online popular history writing; with sales exceeding ten million copies, his works use anecdote-driven narration to make history engaging."
       }
     },
     {
       id: "liu_bo", name: "刘勃 (Liu Bo)",
       contribution: {
-        "zh-CN": "著有《失败者的春秋》《战国歧途》《司马迁的记忆之野》（历史三部曲）等作品，以亲切幽默笔调重述先秦至汉代历史，关注失败者与普通人在时代洪流中的命运与挣扎。",
-        "en": "Authored works including 'The Spring and Autumn of the Losers,' 'The Divergent Paths of Warring States,' and 'Sima Qian’s Field of Memory' (historical trilogy); retold pre-Qin to Han history with gentle, humorous prose, focusing on the fates and struggles of losers and ordinary individuals amid grand historical tides."
+        "zh-CN": "著有《失败者的春秋》《战国歧途》《司马迁的记忆之野》（历史三部曲）等作品，以亲切幽默笔调重述先秦至汉代历史。",
+        "en": "Authored works including 'The Spring and Autumn of the Losers,' 'The Divergent Paths of Warring States,' and 'Sima Qian’s Field of Memory' ; retold pre-Qin to Han history with gentle, humorous prose."
       },
       field: {
         "zh-CN": "历史普及、先秦两汉史、历史叙事文学。",
         "en": "Popular History, Pre-Qin and Han Dynasty Studies, Historical Narrative Literature."
       },
       remarks: {
-        "zh-CN": "当代历史写作中最具文学质感与人文关怀的作者之一，用通俗语言书写沉重主题，擅长呈现‘被时代碾压的个体’，其作品在轻松阅读中蕴含深刻洞见，被誉为‘笑中带泪的历史叙事’。",
-        "en": "Among contemporary historical writers, one of the most literary and humanistic; employs accessible language to address weighty themes, excelling at portraying individuals crushed by their eras. His works blend light reading with profound insights, often described as 'history narrated with laughter through tears.'"
+        "zh-CN": "当代历史写作中最具文学质感与人文关怀的作者之一，用通俗语言书写沉重主题，其作品在轻松阅读中蕴含深刻洞见。",
+        "en": "Among contemporary historical writers, one of the most literary and humanistic; employs accessible language to address weighty themes. His works blend light reading with profound insights."
       }
     }
 ];
