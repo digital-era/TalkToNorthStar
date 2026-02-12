@@ -861,7 +861,7 @@ const humanitiesMasters = [
         "en": "Popular History, Historical Interpretation, Cultural Commentary."
       },
       remarks: {
-        "zh-CN": "当代最具影响力的历史科普学者之一，将学术深度融入生活化表达，开创‘聊天式’讲史风潮",
+        "zh-CN": "当代最具影响力的历史科普学者之一，将学术深度融入生活化表达，开创聊天式讲史风潮。",
         "en": "One of the most influential popular history scholars in contemporary China, blending academic depth with conversational style; pioneered the trend of 'chat-like' historical narration."
       }
     },
