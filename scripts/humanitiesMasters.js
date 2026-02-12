@@ -898,46 +898,46 @@ const humanitiesMasters = [
     {
       id: "ya_sha_long", name: "押沙龙 (Ya Shalang)",
       contribution: {
-        "zh-CN": "创作《押沙龙讲世界史》系列音频及文字作品、《少年世界史》等，以小说般的叙事节奏讲述世界历史五大进程，注重因果链条与反常识视角。",
-        "en": "Authored the 'Ya Shalang Tells World History' audio and text series, 'A Teenager's World History', etc.; narrates the five major processes of world history with novel-like pacing, emphasizing causal chains and counter-intuitive perspectives."
+        "zh-CN": "创作《押沙龙讲世界史》系列音频及文字作品等，以小说般的叙事节奏讲述世界历史五大进程。",
+        "en": "Authored the 'Ya Shalang Tells World History' audio and text series; narrates the five major processes of world history with novel-like pacing."
       },
       field: {
-        "zh-CN": "世界历史普及、叙事性历史讲述、全球文明进程解读。",
-        "en": "Popular World History, Narrative Historical Presentation, Interpretation of Global Civilizational Processes."
+        "zh-CN": "世界历史普及、叙事性历史讲述。",
+        "en": "Popular World History, Narrative Historical Presentation."
       },
       remarks: {
-        "zh-CN": "当代中文世界史讲述中最擅长故事化与沉浸式表达的创作者，将复杂历史进程转化为富有画面感与逻辑张力的连续剧式叙述，常引发听众对历史必然性与人性深层机制的长时间反思。",
-        "en": "Among contemporary Chinese-language world history narrators, the most skilled in story-driven and immersive presentation; transforms complex historical processes into dramatically continuous, visually rich narratives that often provoke prolonged reflection on historical inevitability and deep human mechanisms."
+        "zh-CN": "当代中文世界史讲述中最擅长故事化与沉浸式表达的创作者，将复杂历史进程转化为富有画面感与逻辑张力的连续剧式叙述。",
+        "en": "Among contemporary Chinese-language world history narrators, the most skilled in story-driven and immersive presentation; transforms complex historical processes into dramatically continuous, visually rich narratives."
       }
     },
     {
       id: "liu_shen_lei_lei", name: "六神磊磊 (Liu Shen Lei Lei)",
       contribution: {
-        "zh-CN": "通过短视频、直播及专栏，以金庸武侠语言系统解读世界历史与国际政治，将罗马、蒙古、十字军等重大事件类比为门派恩怨与气运之争。",
-        "en": "Via short videos, live streams, and columns, interprets world history and international politics using the linguistic system of Jin Yong's martial arts novels; analogizes major events such as Rome, the Mongols, and the Crusades to sect rivalries and contests of destiny."
+        "zh-CN": "通过短视频、直播及专栏，以金庸武侠语言系统解读世界历史与国际政治，将重大事件类比为门派恩怨与气运之争。",
+        "en": "Via short videos, live streams, and columns, interprets world history and international politics using the linguistic system of Jin Yong's martial arts novels; analogizes major events to sect rivalries and contests of destiny."
       },
       field: {
-        "zh-CN": "历史普及、武侠式历史叙事、国际政治通俗解读。",
-        "en": "Popular History, Martial Arts-Style Historical Narration, Accessible Interpretation of International Politics."
+        "zh-CN": "历史普及、武侠式历史叙事。",
+        "en": "Popular History, Martial Arts-Style Historical Narration."
       },
       remarks: {
-        "zh-CN": "当代最富创意与传播力的历史讲述者之一，将严肃世界史转化为段子式、情绪化的江湖传奇，在幽默共情中揭示权力、人性与文明兴衰的底层逻辑，让历史变得极易记忆与分享。",
-        "en": "One of the most creative and widely disseminated contemporary history narrators; converts serious world history into anecdote-driven, emotionally charged martial-arts legends, revealing underlying logics of power, humanity, and civilizational rise and fall through humor and empathy, making history highly memorable and shareable."
+        "zh-CN": "当代最富创意与传播力的历史讲述者之一，将严肃世界史转化为段子式、情绪化的江湖传奇。",
+        "en": "One of the most creative and widely disseminated contemporary history narrators; converts serious world history into anecdote-driven, emotionally charged martial-arts legends."
       }
     },
     {
       id: "shi_zhan",   name: "施展 (Shi Zhan)",
       contribution: {
         "zh-CN": "在得到App《枢纽》专栏及《世界史纲40讲》等作品中，以大视野与中国坐标重新审视世界历史，探讨中国与全球文明的互动关系及结构性逻辑。",
-        "en": "In the 'Hub' column on Dedao App and 'Outline of World History in 40 Lectures', re-examines world history from a grand perspective and Chinese coordinates; explores interactive relationships and structural logics between China and global civilizations."
+        "en": "In the 'Hub' column on Dedao App and 'Outline of World History in 40 Lectures', re-examines world history from a grand perspective and Chinese coordinates."
       },
       field: {
-        "zh-CN": "世界历史框架构建、地缘文明史、中国与世界关系研究。",
-        "en": "Construction of World Historical Frameworks, Geopolitical and Civilizational History, Studies on China-World Relations."
+        "zh-CN": "世界历史框架构建、地缘文明史。",
+        "en": "Construction of World Historical Frameworks, Geopolitical and Civilizational History."
       },
       remarks: {
-        "zh-CN": "当代最具战略格局与框架感的历史讲解者，通过双向互鉴的视角，将中国置于世界坐标系中重新定位，反过来以全球史照见中国命运；其讲述逻辑严密、结构清晰，常引导听众建立完整的历史认知体系并产生对文明偶然性与必然性的深刻敬畏。",
-        "en": "Among contemporary history explainers, possesses the strongest strategic vision and structural clarity; through bidirectional mutual illumination, repositions China within the global coordinate system while using world history to reflect on China's fate. His narration is logically rigorous and structurally clear, often guiding audiences to build a comprehensive historical cognitive framework and fostering profound awe toward the contingency and inevitability of civilizations."
+        "zh-CN": "当代最具战略格局与框架感的历史讲解者，通过双向互鉴的视角，将中国置于世界坐标系中重新定位，反过来以全球史照见中国命运。",
+        "en": "Among contemporary history explainers, possesses the strongest strategic vision and structural clarity; through bidirectional mutual illumination, repositions China within the global coordinate system while using world history to reflect on China's fate."
       }
     }
 ];
