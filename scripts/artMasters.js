@@ -301,12 +301,12 @@ const artMasters = [
         "en": "Performed and arranged classics such as Ballade pour Adeline and Lyphard Melody, pioneering the popular piano music trend and making classical music accessible to mass audiences; dedicated to Sino-Western musical exchange."
         },
         "field": {
-        "zh-CN": "通俗钢琴音乐、轻音乐、跨界音乐、新世纪音乐。",
-        "en": "Popular Piano Music, Easy Listening, Crossover Music, New Age Music."
+        "zh-CN": "通俗钢琴音乐、轻音乐、跨界音乐。",
+        "en": "Popular Piano Music, Easy Listening, Crossover Music."
         },
         "remarks": {
-        "zh-CN": "全球唱片销量最高的钢琴家之一，以浪漫抒情的演奏风格和亲和力征服数亿听众，被誉为“浪漫钢琴王子”。",
-        "en": "One of the best-selling pianists worldwide, known for his romantic and lyrical style and approachability, captivating hundreds of millions; often dubbed the 'Prince of Romance'."
+        "zh-CN": "以浪漫抒情的演奏风格和亲和力征服数亿听众，被誉为“浪漫钢琴王子”。",
+        "en": "Known for his romantic and lyrical style and approachability, captivating hundreds of millions; often dubbed the 'Prince of Romance'."
         }
     },
     { id: "paul_rand", name: "Paul Rand (保罗·兰德)",
