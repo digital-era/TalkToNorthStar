@@ -121,8 +121,8 @@ const financeMasters = [
         "en": "Quantitative Investing, Asset Management, Venture Capital."
         },
         "remarks": {
-        "zh-CN": "其公司于2021年被富兰克林邓普顿收购，现领导欧沙那希风险投资公司，强调终身学习和创新。",
-        "en": "His firm was acquired by Franklin Templeton in 2021; now leads O'Shaughnessy Ventures, emphasizing lifelong learning and innovation."
+        "zh-CN": "其公司于2021年被富兰克林收购，现领导欧沙那希风险投资公司，强调终身学习和创新。",
+        "en": "His firm was acquired by Franklin in 2021; now leads O'Shaughnessy Ventures, emphasizing lifelong learning and innovation."
         }
     },
     { id: "vinod_khosla", name: "Vinod Khosla (维诺德·科斯拉)",
