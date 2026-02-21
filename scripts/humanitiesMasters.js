@@ -429,6 +429,22 @@ const humanitiesMasters = [
         "en": "Among 20th century’s greatest philosophers, impacted logic, AI, and contemporary cultural critique."
       }
     },
+    {
+        "id": "laozi",
+        "name": "Laozi (老子)",
+        "contribution": {
+        "zh-CN": "著《道德经》，创立道家哲学，提出‘道’作为宇宙本原与‘无为’治理原则。",
+        "en": "Authored the Tao Te Ching, founded Daoist philosophy, proposed 'Dao' as the cosmic origin and 'wu wei' as a principle of governance."
+        },
+        "field": {
+        "zh-CN": "道家哲学、形而上学、伦理学、政治哲学。",
+        "en": "Daoist Philosophy, Metaphysics, Ethics, Political Philosophy."
+        },
+        "remarks": {
+        "zh-CN": "中国古代哲学奠基人，影响道教、儒家与东方思想，其智慧强调和谐与自然。",
+        "en": "Foundational figure in ancient Chinese philosophy, influencing Daoism, Confucianism, and Eastern thought; his wisdom emphasizes harmony and naturalness."
+        }
+    },
     { id: "alfred_adler", name: "Alfred Adler (阿尔弗雷德·阿德勒)",
       contribution: {
         "zh-CN": "著有《自卑与超越》，创立个体心理学，探讨自卑补偿与社会兴趣。",
