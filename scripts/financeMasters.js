@@ -111,6 +111,20 @@ const financeMasters = [
         "en": "As a world-class mathematician (co-creator of Chern-Simons form), he revolutionized Wall Street trading."
       }
     },
+    {"id": "jim_oshaughnessy", "name": "Jim O'Shaughnessy (吉姆·欧沙那希)",
+        "contribution": {
+        "zh-CN": "欧沙那希资产管理公司创始人，量化权益分析先驱，著有多本投资书籍，推动数据驱动的投资策略和创新项目支持。",
+        "en": "Founder of O'Shaughnessy Asset Management, pioneer in quantitative equity analysis, author of several investment books, promoting data-driven investment strategies and support for innovative projects."
+        },
+        "field": {
+        "zh-CN": "量化投资、资产管理、风险投资。",
+        "en": "Quantitative Investing, Asset Management, Venture Capital."
+        },
+        "remarks": {
+        "zh-CN": "其公司于2021年被富兰克林邓普顿收购，现领导欧沙那希风险投资公司，强调终身学习和创新。",
+        "en": "His firm was acquired by Franklin Templeton in 2021; now leads O'Shaughnessy Ventures, emphasizing lifelong learning and innovation."
+        }
+    },
     { id: "vinod_khosla", name: "Vinod Khosla (维诺德·科斯拉)",
       contribution: {
         "zh-CN": "Khosla Ventures创始人，投资支持多家AI与量子计算初创公司（如OpenAI早期投资），推动前沿技术商业化与可持续发展。",
