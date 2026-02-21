@@ -294,6 +294,21 @@ const artMasters = [
         "en": "Founder of Impressionist music; timbral innovation and atmospheric depiction marked the transition from Romanticism to modernism."
       }
     },
+    {
+        "id": "richard_clayderman", "name": "Richard Clayderman (理查德·克莱德曼)",
+        "contribution": {
+        "zh-CN": "演奏并改编《水边的阿狄丽娜》《星空》等作品，开创通俗钢琴音乐新潮流，促进古典音乐大众化；长期致力于中西方音乐交流。",
+        "en": "Performed and arranged classics such as Ballade pour Adeline and Lyphard Melody, pioneering the popular piano music trend and making classical music accessible to mass audiences; dedicated to Sino-Western musical exchange."
+        },
+        "field": {
+        "zh-CN": "通俗钢琴音乐、轻音乐、跨界音乐、新世纪音乐。",
+        "en": "Popular Piano Music, Easy Listening, Crossover Music, New Age Music."
+        },
+        "remarks": {
+        "zh-CN": "全球唱片销量最高的钢琴家之一，以浪漫抒情的演奏风格和亲和力征服数亿听众，被誉为“浪漫钢琴王子”。",
+        "en": "One of the best-selling pianists worldwide, known for his romantic and lyrical style and approachability, captivating hundreds of millions; often dubbed the 'Prince of Romance'."
+        }
+    },
     { id: "paul_rand", name: "Paul Rand (保罗·兰德)",
       contribution: {
         "zh-CN": "设计IBM、UPS等标志性标识与书籍海报，创立极简主义布局与视觉美学原则。",
