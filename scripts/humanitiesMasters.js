@@ -473,6 +473,68 @@ const humanitiesMasters = [
         "en": "Israeli historian and global thought leader, Sapiens series sold over 50 million copies, shaping contemporary philosophical reflections on human destiny."
       }
     },
+    {
+        id: "rick_warren",
+        name: "Rick Warren (里克·沃伦)",
+        contribution: {
+            "zh-CN": "创立马鞍峰教会，著《标竿人生》，提出目的导向生活与教会成长模式，将复杂神学原则转化为当代实用教导。",
+            "en": "Founded Saddleback Church, authored The Purpose Driven Life, proposed purpose-driven living and church growth model, translating complex theological principles into accessible contemporary guidance."
+        },
+        field: {
+            "zh-CN": "福音派基督教、教会成长、灵修实践、应用神学。",
+            "en": "Evangelical Christianity, Church Growth, Spiritual Practices, Applied Theology."
+        },
+        remarks: {
+            "zh-CN": "当代最具影响力的福音派牧师之一，其著作被译成多种语言，推动全球教会事工与个人灵命成长，被誉为目的导向运动的开创者。",
+            "en": "One of the most influential evangelical pastors today; his works translated into multiple languages, advancing global church ministry and personal spiritual growth, renowned as the pioneer of the purpose-driven movement."
+        }
+    },
+    {
+        id: "yasir_qadhi", name: "Yasir Qadhi (雅西尔·卡迪)",
+        contribution: {
+            "zh-CN": "美国伊斯兰学者，著有多部著作与广泛讲座，结合传统伊斯兰知识与当代议题，担任伊斯兰美洲神学院院长。",
+            "en": "Prominent American Islamic scholar, authored numerous works and delivered extensive lectures, integrating traditional Islamic knowledge with contemporary issues; Dean of The Islamic Seminary of America."
+        },
+        field: {
+            "zh-CN": "伊斯兰神学、圣训学、法学、当代穆斯林议题。",
+            "en": "Islamic Theology, Hadith Studies, Fiqh, Contemporary Muslim Issues."
+        },
+        remarks: {
+            "zh-CN": "北美最具影响力的穆斯林学者之一，其学术背景（耶鲁大学博士）与传统训练相结合，促进伊斯兰与现代社会的对话。",
+            "en": "One of the most influential Muslim scholars in North America; combining Yale PhD academic background with classical training, fostering dialogue between Islam and modern society."
+        }
+    },
+    {
+        id: "swami_mukundananda",
+        name: "Swami Mukundananda (斯瓦米·穆昆达南达)",
+        contribution: {
+            "zh-CN": "创立JKYog体系，融合业瑜伽、智瑜伽与奉爱瑜伽，著有对《薄伽梵歌》的注释与多部心灵管理书籍。",
+            "en": "Founded the JKYog system integrating Karma Yoga, Jnana Yoga, and Bhakti Yoga; authored commentaries on the Bhagavad Gita and books on mind management."
+        },
+        field: {
+            "zh-CN": "奉爱瑜伽、心灵管理、吠陀哲学、瑜伽科学。",
+            "en": "Bhakti Yoga, Mind Management, Vedic Philosophy, Yoga Science."
+        },
+        remarks: {
+            "zh-CN": "当代印度教灵性导师与JKYog创始人，推动瑜伽作为身心灵魂整体修行的全球传播。",
+            "en": "Contemporary Hindu spiritual teacher and founder of JKYog; advancing yoga as holistic body-mind-soul practice worldwide."
+        }
+    },
+    {
+        id: "yongey_mingyur_rinpoche", name: "Yongey Mingyur Rinpoche (永依·明就仁波切)",
+        contribution: {
+            "zh-CN": "藏传佛教噶举与宁玛传承上师，著《活出喜悦》等畅销书，将传统冥想与现代神经科学融合，推动正念与情绪管理的全球实践。",
+            "en": "Master of Karma Kagyu and Nyingma lineages in Tibetan Buddhism; authored bestsellers like The Joy of Living, integrating traditional meditation with modern neuroscience to advance global practices of mindfulness and emotional management."
+        },
+        field: {
+            "zh-CN": "藏传佛教冥想、大手印、大圆满、科学与佛教对话。",
+            "en": "Tibetan Buddhist Meditation, Mahamudra, Dzogchen, Science-Buddhism Dialogue."
+        },
+        remarks: {
+            "zh-CN": "当代最具影响力的藏传佛教教师之一，通过Tergar冥想社区传播觉醒与慈悲，桥接东方智慧与西方科学。",
+            "en": "One of the most influential contemporary Tibetan Buddhist teachers; spreading awakening and compassion via the Tergar Meditation Community while bridging Eastern wisdom and Western science."
+        }
+    },
     { id: "lars_tvede", name: "Lars Tvede (拉尔斯·特韦德)",
       contribution: {
         "zh-CN": "著有《超智能未来》，分析从宇宙起源到人工智能文明的智能演化，预测科技趋势对社会影响。",
