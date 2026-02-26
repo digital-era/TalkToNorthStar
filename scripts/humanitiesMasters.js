@@ -605,6 +605,21 @@ const humanitiesMasters = [
         "en": "Contemporary American sci-fi author, advanced educational science fiction, works successfully adapted into films."
       }
     },
+    {
+      id: "wang_bo", name: "王勃 (Wang Bo)",
+      contribution: {
+        "zh-CN": "创作《滕王阁序》《送杜少府之任蜀州》，初唐四杰之首，革新骈文与五律，开启盛唐气象。",
+        "en": "Authored Tengwangge Xu and Song Du Shaofu Zhi Ren Shuzhou, head of the Four Outstanding Figures of Early Tang, reformed parallel prose and regulated verse, heralding the盛唐 poetic style."
+      },
+      field: {
+        "zh-CN": "骈文、五言律诗、初唐诗歌革新。",
+        "en": "Parallel Prose, Five-Character Regulated Verse, Early Tang Poetic Innovation."
+      },
+      remarks: {
+        "zh-CN": "初唐天才诗人，英年早逝，才华横溢，突破齐梁绮靡文风，推动唐诗由宫廷向江山广阔领域的转变。",
+        "en": "Early Tang genius poet, died young with extraordinary talent, broke from Southern Dynasties ornate style, propelled Tang poetry toward broader landscapes and themes."
+      }
+    },
     { id: "li_bai", name: "李白 (Li Bai)",
       contribution: {
         "zh-CN": "创作《蜀道难》《将进酒》，浪漫主义巅峰，抒发豪迈情怀与自然意象。",
@@ -647,6 +662,21 @@ const humanitiesMasters = [
         "en": "Tang Dynasty New Yuefu representative, advanced poetry’s popularization and social critique."
       }
     },
+    {
+      id: "fan_zhongyan", name: "范仲淹 (Fan Zhongyan)",
+      contribution: {
+        "zh-CN": "撰写《岳阳楼记》，提出“先天下之忧而忧，后天下之乐而乐”，主持庆历新政。",
+        "en": "Authored Yueyang Lou Ji, advanced 'worry before the world worries, rejoice after the world rejoices,' led the Qingli Reforms."
+      },
+      field: {
+        "zh-CN": "散文、词、政论与改革思想。",
+        "en": "Prose, Ci Poetry, Political Commentary and Reform Thought."
+      },
+      remarks: {
+        "zh-CN": "北宋名臣、以天下为己任，忧国忧民情怀深刻影响后世士大夫精神。",
+        "en": "Prominent Northern Song statesman, embodied 'taking the world as one's responsibility,' profoundly shaped later literati ethos with patriotic and altruistic ideals."
+      }
+    },
     { id: "su_dongpo", name: "苏东坡 (Su Dongpo)",
       contribution: {
         "zh-CN": "撰写《水调歌头》《念奴娇·赤壁怀古》，豪放词风，融合哲理与旷达胸怀。",
@@ -660,7 +690,7 @@ const humanitiesMasters = [
         "zh-CN": "北宋文学巨匠，多才艺影响词体发展与文人生活美学。",
         "en": "Northern Song literary master, versatile talents shaped ci form and literati aesthetic life."
       }
-    },
+    },    
     { id: "sima_qian", name: "司马迁 (Si Maqian)",
       contribution: {
         "zh-CN": "撰写《史记》，开创中国纪传体史学，记录帝王与英雄生平。",
