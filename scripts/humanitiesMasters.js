@@ -481,12 +481,12 @@ const humanitiesMasters = [
             "en": "Founded Saddleback Church, authored The Purpose Driven Life, proposed purpose-driven living and church growth model, translating complex theological principles into accessible contemporary guidance."
         },
         field: {
-            "zh-CN": "福音派基督教、教会成长、灵修实践、应用神学。",
-            "en": "Evangelical Christianity, Church Growth, Spiritual Practices, Applied Theology."
+            "zh-CN": "福音派基督教、灵修实践、应用神学。",
+            "en": "Evangelical Christianity, Spiritual Practices, Applied Theology."
         },
         remarks: {
-            "zh-CN": "当代最具影响力的福音派牧师之一，其著作被译成多种语言，推动全球教会事工与个人灵命成长，被誉为目的导向运动的开创者。",
-            "en": "One of the most influential evangelical pastors today; his works translated into multiple languages, advancing global church ministry and personal spiritual growth, renowned as the pioneer of the purpose-driven movement."
+            "zh-CN": "当代最具影响力的福音派牧师之一，推动全球教会事工与个人灵命成长。",
+            "en": "One of the most influential evangelical pastors today; advancing global church ministry and personal spiritual growth."
         }
     },
     {
@@ -496,12 +496,12 @@ const humanitiesMasters = [
             "en": "Prominent American Islamic scholar, authored numerous works and delivered extensive lectures, integrating traditional Islamic knowledge with contemporary issues; Dean of The Islamic Seminary of America."
         },
         field: {
-            "zh-CN": "伊斯兰神学、圣训学、法学、当代穆斯林议题。",
-            "en": "Islamic Theology, Hadith Studies, Fiqh, Contemporary Muslim Issues."
+            "zh-CN": "伊斯兰神学、圣训学、当代穆斯林。",
+            "en": "Islamic Theology, Hadith Studies, Contemporary Muslim."
         },
         remarks: {
-            "zh-CN": "北美最具影响力的穆斯林学者之一，其学术背景（耶鲁大学博士）与传统训练相结合，促进伊斯兰与现代社会的对话。",
-            "en": "One of the most influential Muslim scholars in North America; combining Yale PhD academic background with classical training, fostering dialogue between Islam and modern society."
+            "zh-CN": "北美最具影响力的穆斯林学者之一，促进伊斯兰与现代社会的对话。",
+            "en": "One of the most influential Muslim scholars in North America; fostering dialogue between Islam and modern society."
         }
     },
     {
@@ -512,8 +512,8 @@ const humanitiesMasters = [
             "en": "Founded the JKYog system integrating Karma Yoga, Jnana Yoga, and Bhakti Yoga; authored commentaries on the Bhagavad Gita and books on mind management."
         },
         field: {
-            "zh-CN": "奉爱瑜伽、心灵管理、吠陀哲学、瑜伽科学。",
-            "en": "Bhakti Yoga, Mind Management, Vedic Philosophy, Yoga Science."
+            "zh-CN": "奉爱瑜伽、吠陀、瑜伽科学。",
+            "en": "Bhakti Yoga, Vedic, Yoga Science."
         },
         remarks: {
             "zh-CN": "当代印度教灵性导师与JKYog创始人，推动瑜伽作为身心灵魂整体修行的全球传播。",
@@ -527,12 +527,12 @@ const humanitiesMasters = [
             "en": "Master of Karma Kagyu and Nyingma lineages in Tibetan Buddhism; authored bestsellers like The Joy of Living, integrating traditional meditation with modern neuroscience to advance global practices of mindfulness and emotional management."
         },
         field: {
-            "zh-CN": "藏传佛教冥想、大手印、大圆满、科学与佛教对话。",
-            "en": "Tibetan Buddhist Meditation, Mahamudra, Dzogchen, Science-Buddhism Dialogue."
+            "zh-CN": "藏传佛教冥想、大手印、大圆满。",
+            "en": "Tibetan Buddhist Meditation, Mahamudra, Dzogchen."
         },
         remarks: {
-            "zh-CN": "当代最具影响力的藏传佛教教师之一，通过Tergar冥想社区传播觉醒与慈悲，桥接东方智慧与西方科学。",
-            "en": "One of the most influential contemporary Tibetan Buddhist teachers; spreading awakening and compassion via the Tergar Meditation Community while bridging Eastern wisdom and Western science."
+            "zh-CN": "当代最具影响力的藏传佛教教师之一，通过Tergar冥想社区传播觉醒与慈悲。",
+            "en": "One of the most influential contemporary Tibetan Buddhist teachers; spreading awakening and compassion via the Tergar Meditation Community."
         }
     },
     { id: "lars_tvede", name: "Lars Tvede (拉尔斯·特韦德)",
