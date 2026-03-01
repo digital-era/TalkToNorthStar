@@ -1047,5 +1047,20 @@ const humanitiesMasters = [
         "zh-CN": "当代最具战略格局与框架感的历史讲解者，通过双向互鉴的视角，将中国置于世界坐标系中重新定位，反过来以全球史照见中国命运。",
         "en": "Among contemporary history explainers, possesses the strongest strategic vision and structural clarity; through bidirectional mutual illumination, repositions China within the global coordinate system while using world history to reflect on China's fate."
       }
+    },
+    {
+      id: "chen_hao_wu", name: "陈浩武 (Chen Haowu)",
+      contribution: {
+        "zh-CN": "著有《从长安到罗马》等作品，实地考察八十多个国家和地区，以亲历视角与文明互鉴的方法讲述人类文明三千年演进。",
+        "en": "Authored works including 'From Chang'an to Rome' , Through fieldwork in over 80 countries and regions, narrates the 3,000-year evolution of human civilization from a firsthand perspective and through the lens of mutual learning among civilizations."
+      },
+      field: {
+        "zh-CN": "人类文明史、文明比较研究、历史实地考察与讲述。",
+        "en": "History of Human Civilization, Comparative Civilizational Studies, Fieldwork-Based Historical Narration."
+      },
+      remarks: {
+        "zh-CN": "从金融家到文明探索者，在时空交织中勾勒人类文明的脉络与交融。",
+        "en": "From financier to civilizational explorer, trace the threads and interweavings of human civilization across time and space."
+      }
     }
 ];
