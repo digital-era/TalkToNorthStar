@@ -459,6 +459,21 @@ const humanitiesMasters = [
         "en": "Austrian psychology titan, popularized works profoundly shaped modern motivational and humanistic thought."
       }
     },
+    {
+        id: "zhuangzi", name: "Zhuangzi (庄子)",
+        contribution: {
+        "zh-CN": "发展道家哲学，提出‘齐物论’与‘逍遥游’，主张万物平等、精神自由与顺应自然。",
+        "en": "Advanced Daoist philosophy, proposed the 'Qi Wu Lun'  and 'Xiao Yao You', advocating equality of all beings, spiritual freedom, and harmony with nature."
+        },
+        field: {
+            zh-CN: "道家哲学、形而上学、伦理学",
+            en: "Daoist Philosophy, Metaphysics, Ethicse"
+        },
+        "remarks": {
+        "zh-CN": "道家学派核心代表，著《庄子》，其寓言风格与相对主义思想深刻影响中国文学、艺术、禅宗及后世哲学传统。",
+        "en": "Central representative of the Daoist school, Authored the Zhuangzi; his fable-like style and relativist thought profoundly shaped Chinese literature, art, Zen Buddhism, and subsequent philosophical traditions."
+        }
+    },
     { id: "yuval_noah_harari", name: "Yuval Noah Harari (尤瓦尔·诺亚·赫拉利)",
       contribution: {
         "zh-CN": "著有《人类简史》《未来简史》，剖析人类历史、科技与伦理交汇，探讨信息网络与人工智能未来。",
