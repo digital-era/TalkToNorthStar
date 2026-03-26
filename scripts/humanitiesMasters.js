@@ -430,19 +430,33 @@ const humanitiesMasters = [
       }
     },
     {
-        "id": "laozi",
-        "name": "Laozi (老子)",
-        "contribution": {
+        id: "laozi", name: "Laozi (老子)",
+        contribution: {
         "zh-CN": "著《道德经》，创立道家哲学，提出‘道’作为宇宙本原与‘无为’治理原则。",
         "en": "Authored the Tao Te Ching, founded Daoist philosophy, proposed 'Dao' as the cosmic origin and 'wu wei' as a principle of governance."
         },
-        "field": {
+        field: {
         "zh-CN": "道家哲学、形而上学、伦理学、政治哲学。",
         "en": "Daoist Philosophy, Metaphysics, Ethics, Political Philosophy."
         },
-        "remarks": {
+        remarks: {
         "zh-CN": "中国古代哲学奠基人，影响道教、儒家与东方思想，其智慧强调和谐与自然。",
         "en": "Foundational figure in ancient Chinese philosophy, influencing Daoism, Confucianism, and Eastern thought; his wisdom emphasizes harmony and naturalness."
+        }
+    },
+    {
+        id: "zhuangzi", name: "Zhuangzi (庄子)",
+        contribution: {
+        "zh-CN": "发展道家哲学，提出‘齐物论’与‘逍遥游’，主张万物平等、精神自由与顺应自然。",
+        "en": "Advanced Daoist philosophy, proposed the 'Qi Wu Lun'  and 'Xiao Yao You', advocating equality of all beings, spiritual freedom, and harmony with nature."
+        },
+        field: {
+            zh-CN: "道家哲学、形而上学、伦理学",
+            en: "Daoist Philosophy, Metaphysics, Ethicse"
+        },
+        remarks: {
+        "zh-CN": "道家学派核心代表，著《庄子》，其寓言风格与相对主义思想深刻影响中国文学、艺术、禅宗及后世哲学传统。",
+        "en": "Central representative of the Daoist school, Authored the Zhuangzi; his fable-like style and relativist thought profoundly shaped Chinese literature, art, Zen Buddhism, and subsequent philosophical traditions."
         }
     },
     { id: "alfred_adler", name: "Alfred Adler (阿尔弗雷德·阿德勒)",
@@ -458,21 +472,6 @@ const humanitiesMasters = [
         "zh-CN": "奥地利心理学巨擘，作品通俗化深刻影响现代励志与人文思想。",
         "en": "Austrian psychology titan, popularized works profoundly shaped modern motivational and humanistic thought."
       }
-    },
-    {
-        id: "zhuangzi", name: "Zhuangzi (庄子)",
-        contribution: {
-        "zh-CN": "发展道家哲学，提出‘齐物论’与‘逍遥游’，主张万物平等、精神自由与顺应自然。",
-        "en": "Advanced Daoist philosophy, proposed the 'Qi Wu Lun'  and 'Xiao Yao You', advocating equality of all beings, spiritual freedom, and harmony with nature."
-        },
-        field: {
-            zh-CN: "道家哲学、形而上学、伦理学",
-            en: "Daoist Philosophy, Metaphysics, Ethicse"
-        },
-        "remarks": {
-        "zh-CN": "道家学派核心代表，著《庄子》，其寓言风格与相对主义思想深刻影响中国文学、艺术、禅宗及后世哲学传统。",
-        "en": "Central representative of the Daoist school, Authored the Zhuangzi; his fable-like style and relativist thought profoundly shaped Chinese literature, art, Zen Buddhism, and subsequent philosophical traditions."
-        }
     },
     { id: "yuval_noah_harari", name: "Yuval Noah Harari (尤瓦尔·诺亚·赫拉利)",
       contribution: {
