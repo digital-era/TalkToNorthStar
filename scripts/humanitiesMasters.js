@@ -451,8 +451,8 @@ const humanitiesMasters = [
         "en": "Advanced Daoist philosophy, proposed the 'Qi Wu Lun'  and 'Xiao Yao You', advocating equality of all beings, spiritual freedom, and harmony with nature."
         },
         field: {
-            zh-CN: "道家哲学、形而上学、伦理学",
-            en: "Daoist Philosophy, Metaphysics, Ethicse"
+            "zh-CN": "道家哲学、形而上学、伦理学",
+            "en": "Daoist Philosophy, Metaphysics, Ethicse"
         },
         remarks: {
         "zh-CN": "道家学派核心代表，著《庄子》，其寓言风格与相对主义思想深刻影响中国文学、艺术、禅宗及后世哲学传统。",
