@@ -455,7 +455,7 @@ const humanitiesMasters = [
             "en": "Daoist Philosophy, Metaphysics, Ethicse"
         },
         remarks: {
-        "zh-CN": "道家学派核心代表，著《庄子》，其寓言风格与相对主义思想深刻影响中国文学、艺术、禅宗及后世哲学传统。",
+        "zh-CN": "道家学派核心代表，著《庄子》，其寓言风格与相对主义思想深刻影响中国哲学传统。",
         "en": "Central representative of the Daoist school, Authored the Zhuangzi; his fable-like style and relativist thought profoundly shaped Chinese literature, art, Zen Buddhism, and subsequent philosophical traditions."
         }
     },
