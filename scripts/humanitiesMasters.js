@@ -1073,7 +1073,7 @@ const humanitiesMasters = [
         "en": "Multi-dimensional Space Theory, Generalized Spatiotemporal Energetics, Mutual Validation of Science and Eastern Wisdom."
       },
       remarks: {
-        "zh-CN": "以提升意识维度作为解码宇宙与人生的密匙，搭建起严密科学逻辑与深邃心灵智慧之间的跨界桥梁。",
+        "zh-CN": "以提升意识维度作为解码宇宙与人生的密匙，搭建严密科学与深邃心灵之间的跨界桥梁。",
         "en": "Uses elevating the dimension of consciousness as the key to decoding the universe and life, building a cross-disciplinary bridge between rigorous scientific logic and profound spiritual wisdom."
       }
     },
