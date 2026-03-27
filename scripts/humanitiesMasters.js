@@ -1063,6 +1063,22 @@ const humanitiesMasters = [
       }
     },
     {
+      id: "liu_feng", 
+      name: "刘丰 (Liu Feng)",
+      contribution: {
+        "zh-CN": 系统提出多维空间与意识提升的框架，用数学、量子力学视角重新阐释佛道儒等东方传统智慧。",
+        "en": "Systematically proposes a framework of multi-dimensional space and consciousness elevation, reinterpreting Eastern traditional wisdom such as Buddhism, Taoism, and Confucianism through the lens of mathematics and quantum mechanics."
+      },
+      "field": {
+        "zh-CN": "多维空间理论、广义时空能量学、科学与东方智慧互证。",
+        "en": "Multi-dimensional Space Theory, Generalized Spatiotemporal Energetics, Mutual Validation of Science and Eastern Wisdom."
+      },
+      "remarks": {
+        "zh-CN": 以“提升意识维度”作为解码宇宙与人生的密匙，搭建起严密科学逻辑与深邃心灵智慧之间的跨界桥梁。",
+        "en": "Uses 'elevating the dimension of consciousness' as the key to decoding the universe and life, building a cross-disciplinary bridge between rigorous scientific logic and profound spiritual wisdom."
+      }
+    },
+    {
       id: "chen_hao_wu", name: "陈浩武 (Chen Haowu)",
       contribution: {
         "zh-CN": "著有《从长安到罗马》等作品，实地考察八十多个国家和地区，以亲历视角与文明互鉴的方法讲述人类文明三千年演进。",
