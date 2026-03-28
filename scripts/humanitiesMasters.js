@@ -1,4 +1,34 @@
 const humanitiesMasters = [
+    {
+      id: "liu_feng", name: "刘丰 (Liu Feng)",
+      contribution: {
+        "zh-CN": "系统提出多维空间与意识提升的框架，用数学、量子力学视角重新阐释佛道儒等东方传统智慧。",
+        "en": "Systematically proposes a framework of multi-dimensional space and consciousness elevation, reinterpreting Eastern traditional wisdom such as Buddhism, Taoism, and Confucianism through the lens of mathematics and quantum mechanics."
+      },
+      field: {
+        "zh-CN": "多维空间理论、广义时空能量学、科学与东方智慧互证。",
+        "en": "Multi-dimensional Space Theory, Generalized Spatiotemporal Energetics, Mutual Validation of Science and Eastern Wisdom."
+      },
+      remarks: {
+        "zh-CN": "以提升意识维度作为解码宇宙与人生的密匙，搭建严密科学与深邃心灵之间的跨界桥梁。",
+        "en": "Uses elevating the dimension of consciousness as the key to decoding the universe and life, building a cross-disciplinary bridge between rigorous scientific logic and profound spiritual wisdom."
+      }
+    },
+    {
+      id: "chen_hao_wu", name: "陈浩武 (Chen Haowu)",
+      contribution: {
+        "zh-CN": "著有《从长安到罗马》等作品，实地考察八十多个国家和地区，以亲历视角与文明互鉴的方法讲述人类文明三千年演进。",
+        "en": "Authored works including 'From Chang'an to Rome' , Through fieldwork in over 80 countries and regions, narrates the 3,000-year evolution of human civilization from a firsthand perspective and through the lens of mutual learning among civilizations."
+      },
+      field: {
+        "zh-CN": "人类文明史、文明比较研究、历史实地考察与讲述。",
+        "en": "History of Human Civilization, Comparative Civilizational Studies, Fieldwork-Based Historical Narration."
+      },
+      remarks: {
+        "zh-CN": "从金融家到文明探索者，在时空交织中勾勒人类文明的脉络与交融。",
+        "en": "From financier to civilizational explorer, trace the threads and interweavings of human civilization across time and space."
+      }
+    },
     { id: "william_shakespeare", name: "William Shakespeare (威廉·莎士比亚)",
       contribution: {
         "zh-CN": "创作《哈姆雷特》《罗密欧与朱丽叶》，革新英语戏剧形式，探索人性与命运。",
@@ -1060,36 +1090,6 @@ const humanitiesMasters = [
       remarks: {
         "zh-CN": "当代最具战略格局与框架感的历史讲解者，通过双向互鉴的视角，将中国置于世界坐标系中重新定位，反过来以全球史照见中国命运。",
         "en": "Among contemporary history explainers, possesses the strongest strategic vision and structural clarity; through bidirectional mutual illumination, repositions China within the global coordinate system while using world history to reflect on China's fate."
-      }
-    },
-    {
-      id: "liu_feng", name: "刘丰 (Liu Feng)",
-      contribution: {
-        "zh-CN": "系统提出多维空间与意识提升的框架，用数学、量子力学视角重新阐释佛道儒等东方传统智慧。",
-        "en": "Systematically proposes a framework of multi-dimensional space and consciousness elevation, reinterpreting Eastern traditional wisdom such as Buddhism, Taoism, and Confucianism through the lens of mathematics and quantum mechanics."
-      },
-      field: {
-        "zh-CN": "多维空间理论、广义时空能量学、科学与东方智慧互证。",
-        "en": "Multi-dimensional Space Theory, Generalized Spatiotemporal Energetics, Mutual Validation of Science and Eastern Wisdom."
-      },
-      remarks: {
-        "zh-CN": "以提升意识维度作为解码宇宙与人生的密匙，搭建严密科学与深邃心灵之间的跨界桥梁。",
-        "en": "Uses elevating the dimension of consciousness as the key to decoding the universe and life, building a cross-disciplinary bridge between rigorous scientific logic and profound spiritual wisdom."
-      }
-    },
-    {
-      id: "chen_hao_wu", name: "陈浩武 (Chen Haowu)",
-      contribution: {
-        "zh-CN": "著有《从长安到罗马》等作品，实地考察八十多个国家和地区，以亲历视角与文明互鉴的方法讲述人类文明三千年演进。",
-        "en": "Authored works including 'From Chang'an to Rome' , Through fieldwork in over 80 countries and regions, narrates the 3,000-year evolution of human civilization from a firsthand perspective and through the lens of mutual learning among civilizations."
-      },
-      field: {
-        "zh-CN": "人类文明史、文明比较研究、历史实地考察与讲述。",
-        "en": "History of Human Civilization, Comparative Civilizational Studies, Fieldwork-Based Historical Narration."
-      },
-      remarks: {
-        "zh-CN": "从金融家到文明探索者，在时空交织中勾勒人类文明的脉络与交融。",
-        "en": "From financier to civilizational explorer, trace the threads and interweavings of human civilization across time and space."
       }
     }
 ];
