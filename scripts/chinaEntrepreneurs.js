@@ -166,5 +166,20 @@ const chinaEntrepreneurs = [
                 "zh-CN": "2024年10月带领地平线香港上市，2025年征程系列计算方案累计出货量突破1000万套，成为国内首家达成该里程碑的智驾科技企业。",
                 "en": "Led Horizon Robotics to list in Hong Kong in October 2024; in 2025, the Journey series computing solutions exceeded 10 million cumulative shipments, making Horizon the first intelligent driving tech company in China to reach this milestone."
               }
+            },
+            {
+              id: "yu_donglai", name: "于东来 (Yu Donglai)",
+              contribution: {
+                "zh-CN": "胖东来商贸集团创始人兼董事长，以‘自由·爱’为核心价值观，打造中国零售业人文关怀标杆，坚持高品质商品、极致服务与员工福利优先的经营模式。",
+                "en": "Founder and Chairman of Pang Donglai Commercial Trade Group, with 'Freedom · Love' as core values, created a humanistic benchmark in China's retail industry, adhering to a business model prioritizing high-quality goods, ultimate service, and employee welfare."
+              },
+              field: {
+                "zh-CN": "零售商贸、连锁超市、企业管理、人文关怀。",
+                "en": "Retail Commerce, Supermarket Chain, Corporate Management, Humanistic Care."
+              },
+              remarks: {
+                "zh-CN": "2023年起逐步淡出日常管理，转向企业文化传承与公益事业。",
+                "en": "Since 2023, gradually stepping back from daily operations to focus on corporate culture inheritance and philanthropy."
+              }
             }
         ];
