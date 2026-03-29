@@ -53,17 +53,9 @@ function checkActionAuth(actionName) {
         }
     }
 
-    const logBox = document.getElementById('userQuestion');
     if (!isLoggedIn) {
-        // 如果未登录，在日志框输出红色报错信息并直接返回 false
-        if (logBox) {
-            const line = document.createElement('div');
-            line.className = 'log-line';
-            line.style.color = '#EF4444'; 
-            line.innerText = `> [DENIED] 操作被拒绝: 执行 ${actionName} 前请先在 Settings 中完成登录验证。`;
-            logBox.appendChild(line);
-            logBox.scrollTop = logBox.scrollHeight;
-        }
+        // 如果未登录，通过 alert 弹出报错信息并直接返回 false
+        alert(`> [DENIED] 操作被拒绝: 执行 ${actionName} 前请先在 Settings 中完成登录验证。`);
         return false;
     }
 
