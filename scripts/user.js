@@ -14,13 +14,24 @@ function switchSettingsTab(tabName) {
     document.getElementById('auth-status-msg').innerText = ''; // 切换时清空消息
 }
 
-/* 移到applogic
-function openSettingsAndCheckAuth() {
-    if(typeof openSettings === 'function') openSettings(); // 调用你外部JS的函数展示窗口
-    else document.getElementById('settingsModal').style.display = 'flex'; // 降级方案
+// ================= UTILS =================
+function log(msg, color="#0f0") {
+    const box = document.getElementById('systemLog');
+    // 直接指定时区输出字符串
+    const time = new Date().toLocaleTimeString('en-US', {
+        hour12: false, 
+        timeZone: 'Asia/Shanghai' // 【修改点】强制显示中国时间
+    });
+    const div = document.createElement('div');
+    div.className = 'log-line';
+    div.innerHTML = `<span style="color:#666">[${time}]</span> <span style="color:${color}">${msg}</span>`;
+    box.prepend(div);
+}
+
+function openSettingsAndCheckAuth(event) {
+    openApiSettingsModal(event) 
     checkAuthStatus(); // 更新面板状态
 }
-*/
 
 // ==========================================
 // 操作权限拦截检查机制 (新增)
