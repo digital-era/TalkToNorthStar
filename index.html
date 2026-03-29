@@ -408,45 +408,114 @@
     <div id="apiSettingsModal" class="modal">
         <div class="modal-content">
             <span class="close-button" onclick="closeApiSettingsModal()">×</span>
-            <!-- 模态框标题的 data-i18n-key 应该在 h2 上，因为它可能没有内部的 span -->
-            <h2 data-i18n-key="modalTitle"><i class="fas fa-cog"></i> API及模型设置</h2> 
-            <div class="settings-form">
-                <div class="form-group">
-                    <label for="apiEndpoint" style="display: flex; align-items: center;">
-                        <i class="fas fa-server" style="margin-right: 8px;"></i> 
-                        <span data-i18n-key="labelApiEndpoint">模型接入点:</span>
-                    </label>
-                    <select id="apiEndpoint">
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="apiKey" style="display: flex; align-items: center;">
-                        <i class="fas fa-key" style="margin-right: 8px;"></i> 
-                        <span data-i18n-key="labelApiKey">API Key :</span>
-                    </label>
-                    <input type="password" id="apiKey" data-i18n-key="placeholderApiKey" data-i18n-target="placeholder">
-                </div>
-                <div class="form-group">
-                    <label for="apiModel" style="display: flex; align-items: center;">
-                        <i class="fas fa-robot" style="margin-right: 8px;"></i> 
-                        <span data-i18n-key="labelApiModel">模型选择:</span>
-                    </label>
-                    <select id="apiModel">
-                    </select>
-                </div>
-                <!-- 设为默认模型选项 (这个已经正常显示，无需更改) -->
-                <div class="form-group">
-                    <label style="display: flex; align-items: center;">
-                        <i class="fas fa-star" style="margin-right: 8px; color: gold;"></i> 
-                        <span data-i18n-key="labelSetDefaultModel">设为默认模型</span>
-                        <input type="checkbox" id="apiDefaultModelCheck" style="margin-left: 10px;">
-                    </label>
-                </div>
-                <button onclick="saveApiSettings()" class="save-btn">
-                    <i class="fas fa-save"></i> 
-                    <span data-i18n-key="saveBtnText">保存设置</span>
+
+            <!-- 新增：模态框顶部标签页导航 -->
+            <div class="settings-tabs-nav">
+                <button class="settings-tab-btn active" onclick="switchSettingsTab(event, 'tab-api')">
+                    <i class="fas fa-cog"></i> <span data-i18n-key="modalTitle">API及模型设置</span>
+                </button>
+                <button class="settings-tab-btn" onclick="switchSettingsTab(event, 'tab-user')">
+                    <i class="fas fa-user"></i> <span>账号登录</span>
                 </button>
             </div>
+
+            <!-- 标签页 1：API 及模型设置 (原代码1内容) -->
+            <div id="tab-api" class="settings-tab-content" style="display: block;">
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label for="apiEndpoint" style="display: flex; align-items: center;">
+                            <i class="fas fa-server" style="margin-right: 8px;"></i>
+                            <span data-i18n-key="labelApiEndpoint">模型接入点:</span>
+                        </label>
+                        <select id="apiEndpoint"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="apiKey" style="display: flex; align-items: center;">
+                            <i class="fas fa-key" style="margin-right: 8px;"></i>
+                            <span data-i18n-key="labelApiKey">API Key :</span>
+                        </label>
+                        <input type="password" id="apiKey" data-i18n-key="placeholderApiKey" data-i18n-target="placeholder">
+                    </div>
+                    <div class="form-group">
+                        <label for="apiModel" style="display: flex; align-items: center;">
+                            <i class="fas fa-robot" style="margin-right: 8px;"></i>
+                            <span data-i18n-key="labelApiModel">模型选择:</span>
+                        </label>
+                        <select id="apiModel"></select>
+                    </div>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center;">
+                            <i class="fas fa-star" style="margin-right: 8px; color: gold;"></i>
+                            <span data-i18n-key="labelSetDefaultModel">设为默认模型</span>
+                            <input type="checkbox" id="apiDefaultModelCheck" style="margin-left: 10px;">
+                        </label>
+                    </div>
+                    <button onclick="saveApiSettings()" class="save-btn">
+                        <i class="fas fa-save"></i>
+                        <span data-i18n-key="saveBtnText">保存设置</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 标签页 2：用户登录与密码修改 (融入代码2内容，并适配了代码1的UI风格) -->
+            <div id="tab-user" class="settings-tab-content" style="display: none;">
+
+                <!-- 未登录时显示：登录表单 -->
+                <div id="loginSection" class="settings-form">
+                    <div class="form-group">
+                        <label for="auth_username" style="display: flex; align-items: center;">
+                            <i class="fas fa-user-circle" style="margin-right: 8px;"></i> 用户名:
+                        </label>
+                        <input type="text" id="auth_username" placeholder="输入用户名">
+                    </div>
+                    <div class="form-group">
+                        <label for="auth_password" style="display: flex; align-items: center;">
+                            <i class="fas fa-lock" style="margin-right: 8px;"></i> 密码:
+                        </label>
+                        <input type="password" id="auth_password" placeholder="输入密码">
+                    </div>
+                    <button onclick="handleLogin()" class="save-btn" style="margin-top: 10px;">
+                        <i class="fas fa-sign-in-alt"></i> 登录
+                    </button>
+                </div>
+
+                <!-- 登录后显示：用户信息、修改密码与退出系统 -->
+                <div id="cpwSection" class="settings-form auth-hidden">
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <span style="color: #10B981; font-weight: bold;"><i class="fas fa-check-circle"></i> [ 已认证 ]</span><br>
+                        <span id="loggedInUser" style="color:#d4af37; font-size: 1.2em; font-weight: bold; margin-top: 5px; display:inline-block;"></span>
+                    </div>
+
+                    <hr style="border: none; border-top: 1px dashed #ccc; margin-bottom: 15px;">
+
+                    <div class="form-group">
+                        <label for="cpw_old" style="display: flex; align-items: center;">
+                            <i class="fas fa-key" style="margin-right: 8px;"></i> 旧密码:
+                        </label>
+                        <input type="password" id="cpw_old" placeholder="当前密码">
+                    </div>
+                    <div class="form-group">
+                        <label for="cpw_new" style="display: flex; align-items: center;">
+                            <i class="fas fa-key" style="margin-right: 8px;"></i> 新密码:
+                        </label>
+                        <input type="password" id="cpw_new" placeholder="新密码">
+                    </div>
+
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <!-- 退出按钮改用稍暗的颜色以示区分 -->
+                        <button onclick="handleLogout()" class="save-btn" style="flex: 1; background-color: #6c757d;">
+                            <i class="fas fa-sign-out-alt"></i> 退出
+                        </button>
+                        <button onclick="handleChangePassword()" class="save-btn" style="flex: 1;">
+                            <i class="fas fa-edit"></i> 修改密码
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 登录报错状态提示区 -->
+                <div id="auth-status-msg" style="height: 20px; margin-top: 15px; font-size: 0.9em; color: #EF4444; text-align:center;"></div>
+            </div>
+
         </div>
     </div>
 
