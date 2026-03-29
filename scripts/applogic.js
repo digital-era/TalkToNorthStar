@@ -16,6 +16,11 @@ const apiModelSelect = document.getElementById('apiModel');       // Changed ID 
 const apiDefaultModelCheck = document.getElementById('apiDefaultModelCheck'); // Added checkbox
 
 function openApiSettingsModal(event) {
+    openApiSettingsModal(event) 
+    checkAuthStatus(); // 更新面板状态
+}
+
+function openApiSettingsModal(event) {
     if (event) event.preventDefault(); // Prevent default anchor behavior
     if (apiSettingsModal) apiSettingsModal.style.display = 'block';
     loadApiSettings(); // Load settings when modal opens
