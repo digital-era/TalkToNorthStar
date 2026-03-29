@@ -375,7 +375,7 @@
             
             <div class="interaction-buttons">
                 <button onclick="if(checkActionAuth('1. 生成 问题')) generateAndShowPrompt()" data-i18n-key="btnGeneratePrompt">1. 生成 问题</button>
-                <button id="getAIResponseButton" onclick=if(checkActionAuth('2. 获取 北极星 回复')) getAIResponse()()>
+                <button id="getAIResponseButton" onclick=if(checkActionAuth('2. 获取 北极星 回复')) getAIResponse()" >
                     <span data-i18n-key="btnGetAiResponse">2. 获取 北极星 回复</span>
                     <span id="loadingIndicator" style="display:none;" class="loading-spinner"></span>
                 </button>
