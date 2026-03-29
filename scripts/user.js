@@ -16,16 +16,15 @@ function switchSettingsTab(tabName) {
 
 // ================= UTILS =================
 function log(msg, color="#0f0") {
-    const box = document.getElementById('systemLog');
-    // 直接指定时区输出字符串
+    // 获取指定时区的时间字符串
     const time = new Date().toLocaleTimeString('en-US', {
         hour12: false, 
-        timeZone: 'Asia/Shanghai' // 【修改点】强制显示中国时间
+        timeZone: 'Asia/Shanghai' // 强制显示中国时间
     });
-    const div = document.createElement('div');
-    div.className = 'log-line';
-    div.innerHTML = `<span style="color:#666">[${time}]</span> <span style="color:${color}">${msg}</span>`;
-    box.prepend(div);
+    
+    // 使用 console.log 配合 %c 占位符输出带颜色的文本
+    // 第一个 %c 对应时间戳的样式，第二个 %c 对应消息的样式
+    console.log(`%c[${time}] %c${msg}`, "color: #666;", `color: ${color};`);
 }
 
 function openSettingsAndCheckAuth(event) {
