@@ -53,7 +53,7 @@ function checkActionAuth(actionName) {
         }
     }
 
-    const logBox = document.getElementById('prompt-display-area');
+    const logBox = document.getElementById('userQuestion');
     if (!isLoggedIn) {
         // 如果未登录，在日志框输出红色报错信息并直接返回 false
         if (logBox) {
