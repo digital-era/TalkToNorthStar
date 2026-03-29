@@ -15,11 +15,6 @@ const apiKeyInput = document.getElementById('apiKey');           // Changed ID t
 const apiModelSelect = document.getElementById('apiModel');       // Changed ID to match HTML
 const apiDefaultModelCheck = document.getElementById('apiDefaultModelCheck'); // Added checkbox
 
-function openSettingsAndCheckAuth(event) {
-    openApiSettingsModal(event) 
-    checkAuthStatus(); // 更新面板状态
-}
-
 function openApiSettingsModal(event) {
     if (event) event.preventDefault(); // Prevent default anchor behavior
     if (apiSettingsModal) apiSettingsModal.style.display = 'block';
