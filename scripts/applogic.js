@@ -1002,6 +1002,28 @@ function playRandomMusic(event) {
     // audio.play();
 }
 
+// 设置模态框内部标签页切换
+function switchSettingsTab(event, tabId) {
+    // 阻止默认事件
+    event.preventDefault();
+
+    // 隐藏所有设置标签页内容
+    const tabContents = document.querySelectorAll('.settings-tab-content');
+    tabContents.forEach(content => {
+        content.style.display = 'none';
+    });
+
+    // 移除所有按钮的 active 状态
+    const tabBtns = document.querySelectorAll('.settings-tab-btn');
+    tabBtns.forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    // 显示目标标签页，激活对应按钮
+    document.getElementById(tabId).style.display = 'block';
+    event.currentTarget.classList.add('active');
+}
+
 
 /* --- [新增] 优雅阅读模式逻辑 --- */
 // 【新增辅助函数】安全解析 Markdown，保护数学公式不被 marked.js 破坏
