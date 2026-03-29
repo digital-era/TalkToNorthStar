@@ -14,11 +14,13 @@ function switchSettingsTab(tabName) {
     document.getElementById('auth-status-msg').innerText = ''; // 切换时清空消息
 }
 
+/* 移到applogic
 function openSettingsAndCheckAuth() {
     if(typeof openSettings === 'function') openSettings(); // 调用你外部JS的函数展示窗口
     else document.getElementById('settingsModal').style.display = 'flex'; // 降级方案
     checkAuthStatus(); // 更新面板状态
 }
+*/
 
 // ==========================================
 // 操作权限拦截检查机制 (新增)
