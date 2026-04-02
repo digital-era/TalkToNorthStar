@@ -63,8 +63,69 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
+    <!-- 封面动画专属样式：3D 向右翻页画卷效果 -->
+    <style>
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #050505; /* 极深的暗色底 */
+            z-index: 999999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            
+            /* 【核心】3D 翻页设置 */
+            /* 设置翻转的基准轴心为屏幕的最右侧中间 */
+            transform-origin: 100% 50%; 
+            /* 保持子元素的 3D 空间感 */
+            transform-style: preserve-3d; 
+            
+            /* 使用贝塞尔曲线，模拟纸张/画卷起步稍慢、中间丝滑、结尾干脆的物理受力感，时长1.5秒 */
+            transition: transform 1.5s cubic-bezier(0.645, 0.045, 0.355, 1),
+                        opacity 1.3s cubic-bezier(0.645, 0.045, 0.355, 1) 0.2s, /* 透明度延迟0.2秒开始，避免过早穿帮 */
+                        visibility 1.5s; 
+        }
+
+        #splash-screen img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* 保持轻微的呼吸感，赋予图片生命力 */
+            animation: cinematicZoom 6s linear forwards; 
+        }
+
+        @keyframes cinematicZoom {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.06); }
+        }
+
+        /* 触发翻页/画卷拉开时的类 */
+        .splash-hidden {
+            /* 
+               perspective(2000px): 给浏览者创造空间纵深感
+               rotateY(75deg): 让画卷左侧向屏幕深处（向右后方）翻转75度
+               translateX(20%): 整体向右滑动，产生抽离感
+            */
+            transform: perspective(2000px) rotateY(75deg) translateX(20%);
+            opacity: 0 !important;
+            visibility: hidden;
+        }
+        
+        /* 封面显示期间锁死页面滚动 */
+        body.splash-active {
+            overflow: hidden; 
+        }
+    </style>
 </head>
 <body>
+    <!-- [新增] 3D 画卷翻页进入封面 -->
+    <div id="splash-screen">
+        <img src="images/CoverTalkToNorthStar-cn.jpg" alt="对话北极星 - 封面">
+    </div>
 
   <header>
         <div class="logo-container">
@@ -717,6 +778,31 @@
         });      
 
     </script>
-    
+    <!-- [新增] 封面动画控制脚本 -->
+    <script>
+        // 立即锁定背景滚动
+        document.body.classList.add('splash-active');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const splashScreen = document.getElementById('splash-screen');
+            
+            // 设定画卷停留时间：3.8秒 (3800毫秒)
+            setTimeout(() => {
+                // 1. 触发 3D 向右翻页/画卷拉开效果
+                splashScreen.classList.add('splash-hidden');
+                
+                // 2. 立刻解锁页面滚动
+                document.body.classList.remove('splash-active');
+                
+                // 3. 等待翻页动画(1.5秒 = 1500毫秒)彻底完成后，清理 DOM
+                setTimeout(() => {
+                    if (splashScreen) {
+                        splashScreen.remove();
+                    }
+                }, 1500); 
+                
+            }, 3800);
+        });
+    </script>
 </body>
 </html>
