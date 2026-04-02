@@ -71,52 +71,54 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: #050505; /* 极深的暗色底 */
+            background-color: #050505; /* 极深的暗色底，完美融合手机端的上下黑边 */
             z-index: 999999;
             display: flex;
             justify-content: center;
             align-items: center;
             opacity: 1;
             
-            /* 【核心修改】将翻转的基准轴心设为屏幕的最左侧 (0%) */
+            /* 将翻转的基准轴心设为屏幕的最左侧 (0%) */
             transform-origin: 0% 50%; 
-            /* 保持子元素的 3D 空间感 */
             transform-style: preserve-3d; 
             
-            /* 使用贝塞尔曲线，模拟真实纸张翻动的物理受力感，时长1.5秒 */
+            /* 模拟真实纸张翻动的物理受力感 */
             transition: transform 1.5s cubic-bezier(0.645, 0.045, 0.355, 1),
                         opacity 1.3s cubic-bezier(0.645, 0.045, 0.355, 1) 0.2s, 
                         visibility 1.5s; 
         }
-
+    
         #splash-screen img {
             width: 100%;
             height: 100%;
+            /* 电脑端默认铺满 */
             object-fit: cover;
             /* 保持轻微的呼吸感放大 */
             animation: cinematicZoom 6s linear forwards; 
         }
-
+    
         @keyframes cinematicZoom {
             0% { transform: scale(1); }
             100% { transform: scale(1.06); }
         }
-
+    
         /* 触发向左翻页时的类 */
         .splash-hidden {
-            /* 
-               perspective(2000px): 给浏览者创造空间纵深感
-               rotateY(-75deg): 【核心修改】负角度，让画卷右侧向屏幕深处（向左后方）翻转
-               translateX(-20%): 整体向左滑动，产生抽离感
-            */
             transform: perspective(2000px) rotateY(-75deg) translateX(-20%);
             opacity: 0 !important;
             visibility: hidden;
         }
         
-        /* 封面显示期间锁死页面滚动 */
         body.splash-active {
             overflow: hidden; 
+        }
+    
+        /* ======== 【核心修改】手机端(竖屏)专属优化 ======== */
+        @media (max-width: 768px), (orientation: portrait) {
+            #splash-screen img {
+                /* 手机上改为 contain，完整显示横图，上下留出黑边，不裁剪任何画面 */
+                object-fit: contain;
+            }
         }
     </style>
 </head>
