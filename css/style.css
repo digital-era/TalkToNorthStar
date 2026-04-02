@@ -1659,14 +1659,14 @@
   
       /* 2. 强制设定按钮尺寸和样式 */
       .icon-btn {
-          width: 32px !important;  /* 稍微给大一点点触控面积 */
-          height: 32px !important;
+          width: 30px !important;  /* 稍微给大一点点触控面积 */
+          height: 30px !important;
           /* === 新增：PC端防止被拉伸的关键 === */        
           flex: 0 0 32px !important;;        /* 强制 flex 占用空间 */
-          min-width: 32px !important;;       /* 强制最小宽度 */
-          max-width: 32px !important;;       /* 强制最大宽度 */
+          min-width: 30px !important;;       /* 强制最小宽度 */
+          max-width: 30px !important;;       /* 强制最大宽度 */
           /* ================================ */
-          font-size: 0.9rem !important; /* 字体大小适配 */
+          font-size: 0.85rem !important; /* 字体大小适配 */
           border-width: 1px !important; /* 边框清晰化 */
           flex-shrink: 0 !important;    /* 核心：禁止压缩 */
           display: flex !important;     /* 确保 Flex 居中生效 */
