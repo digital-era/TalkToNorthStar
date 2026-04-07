@@ -38,7 +38,7 @@ function openSettingsAndCheckAuth(event) {
 function checkActionAuth(actionName) {
 
     if (!currentSelectedLeader) {
-        alert(translations[lang].alertSelectLeaderFirst);
+        alert(translations[currentLang].alertSelectLeaderFirst);
         return "";
     }
     
