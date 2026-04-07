@@ -1800,17 +1800,38 @@
 }
 
 /* 6. 答案文本 (核心排版区) */
-#elegantAnswerText strong {
+/* 答案文本整体基础排版 (控制所有正常文字) */
+#elegantAnswerText {
     font-family: 'Noto Serif SC', 'Playfair Display', serif;
-    font-size: 1.15rem; /* 不宜过大，1.15rem 刚刚好 */
-    line-height: 2.1;   /* 极度宽松的行高，减少压迫感 */
-    color: #4facfe; /* 推荐：极具灵性的星辰蓝（比纯蓝更优雅）*/
+    font-size: 1.15rem; 
+    line-height: 2.1;   /* 宽松行高 */
+    color: rgba(230, 230, 230, 0.9); /* 正常文字为淡灰白色 */
     text-align: justify; 
-    font-weight: 600;
-    /* 给蓝色加上极淡的同色系发光效果，绝美 */
-    text-shadow: 0 0 8px rgba(79, 172, 254, 0.4); 
+    font-weight: 400;
 }
 
+/* 7. 仅仅针对加粗文本(strong)进行“发光星辰蓝”渲染 */
+#elegantAnswerText strong {
+    color: #4facfe; /* 核心灵性星辰蓝 */
+    font-weight: 600;
+    
+    /* 【关键魔法】多层阴影叠加，打造真正的沉浸式物理发光感 */
+    text-shadow: 
+        0 0 2px rgba(79, 172, 254, 0.9),  /* 核心层：让文字边缘显得锐利且高亮 */
+        0 0 8px rgba(79, 172, 254, 0.6),  /* 泛光层：形成主要的蓝色光晕 */
+        0 0 16px rgba(79, 172, 254, 0.3); /* 漫射层：在暗背景下向外散发极淡的星光 */
+        
+    /* 可选：加上极其微弱的过渡动画，当鼠标滑过粗体时，光芒会轻微呼吸 */
+    transition: text-shadow 0.3s ease;
+}
+
+/* 鼠标悬浮在发光字上的互动小彩蛋 */
+#elegantAnswerText strong:hover {
+    text-shadow: 
+        0 0 4px rgba(79, 172, 254, 1),
+        0 0 12px rgba(79, 172, 254, 0.8),
+        0 0 24px rgba(79, 172, 254, 0.5);
+}
 
 /* --- 【关键】Markdown 元素的沉浸式美化 --- */
 #elegantAnswerText p { 
