@@ -1133,7 +1133,7 @@ async function openElegantMode() {
     }
 
     // 2. 填充内容
-    elegantQuestionBox.innerText = userQuestionEl?.value || "「 探寻宇宙与内心的共鸣 」";
+    elegantQuestionBox.innerText = userQuestionEl?.value || "「 探寻北极星视角的深度洞见 」";
     
     // 【关键】确保 parseMarkdownWithMath 函数处理完毕
     elegantAnswerBox.innerHTML = parseMarkdownWithMath(rawAiContent);
