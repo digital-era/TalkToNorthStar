@@ -1680,187 +1680,192 @@
       }
   }
 
-  /* === [新增] Begin 优雅阅读模式 (Celestial Manuscript Mode) === */
-  /* 1. 模态框背景：极深色，高模糊，营造专注感 */
-  .elegant-modal {
-      background-color: rgba(10, 10, 10, 0.95); /* 比普通模态框更黑 */
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      display: none; /* 默认隐藏 */
-      opacity: 0;
-      transition: opacity 0.4s ease; /* 淡入淡出 */
-  }
-  
-  .elegant-modal.show {
-      opacity: 1;
-  }
-  
-  /* 2. 核心容器：模拟悬浮的手稿/卡片 */
-  .elegant-container {
-      width: 90%;
-      max-width: 800px; /* 类似A4纸或书籍宽度 */
-      height: 85vh;     /* 占据大部分屏幕高度 */
-      margin: 5vh auto; /* 垂直居中 */
-      
-      /* 核心质感：深色磨砂 + 极细光边 */
-      background: linear-gradient(145deg, rgba(30, 30, 30, 0.9), rgba(20, 20, 20, 0.95));
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 
-          0 20px 60px rgba(0, 0, 0, 0.8),         /* 深邃投影 */
-          0 0 0 1px rgba(0, 223, 216, 0.1),       /* 极细青色外框 */
-          inset 0 0 30px rgba(0, 223, 216, 0.05); /* 内部微光 */
-          
-      border-radius: 12px;
-      position: relative;
-      overflow: hidden; /* 裁剪内部溢出 */
-      transform: scale(0.95);
-      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* 弹性放大效果 */
-  }
-  
-  .elegant-modal.show .elegant-container {
-      transform: scale(1);
-  }
-  
-  /* 3. 关闭按钮：特殊设计，位于右上角 */
-  .elegant-close {
-      position: absolute;
-      top: 15px;
-      right: 20px;
-      font-size: 32px;
-      color: rgba(255, 255, 255, 0.3);
-      z-index: 10;
-      transition: all 0.3s;
-  }
-  .elegant-close:hover {
-      color: var(--dark-accent);
-      transform: rotate(90deg);
-  }
-  
-  /* 4. 内容滚动区 */
-  .elegant-content {
-      height: 100%;
-      overflow-y: auto;
-      padding: 60px 50px; /* 宽敞的内边距，类似书籍留白 */
-      box-sizing: border-box;
-      
-      /* 隐藏滚动条但保留功能 */
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255,255,255,0.1) transparent;
-  }
-  .elegant-content::-webkit-scrollbar { width: 6px; }
-  .elegant-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
-  
-  /* 5. 装饰星号 */
-  .decoration-star {
-      text-align: center;
-      color: var(--dark-accent);
-      font-size: 1.2rem;
-      opacity: 0.8;
-      margin-bottom: 30px;
-      animation: pulseStar 3s infinite ease-in-out;
-  }
-  @keyframes pulseStar { 0%, 100% { opacity: 0.4; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.1); } }
-  
-  /* 6. 标签小字 (Question / Insight) */
-  .elegant-label {
-      font-family: 'Cinzel', serif; /* 使用已引入的衬线大写字体 */
-      font-size: 0.8rem;
-      letter-spacing: 3px;
-      color: rgba(255, 255, 255, 0.6);
-      text-align: center;
-      margin-bottom: 15px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      display: inline-block;
-      padding-bottom: 5px;
-      position: relative;
-      left: 50%;
-      transform: translateX(-50%);
-  }
-  
-  /* 7. 问题文本 */
-  #elegantQuestionText {
-      font-family: 'Noto Serif SC', 'Playfair Display', serif; /* 宋体/衬线体 */
-      font-style: italic;
-      color: #e0e0e0;
-      font-size: 1.1rem;
-      line-height: 1.6;
-      text-align: center;
-      max-width: 80%;
-      margin: 0 auto;
-  }
-  
-  /* 8. 分割线 */
-  .elegant-divider {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(0, 223, 216, 0.4), transparent);
-      margin: 40px auto;
-      width: 60%;
-  }
-  
-  /* 9. 答案文本 (核心) */
-  #elegantAnswerText {
-      font-family: 'Noto Serif SC', 'Playfair Display', serif; /* 核心阅读字体 */
-      font-size: 1.25rem; /* 字号较大 */
-      line-height: 2;     /* 宽松行高，极大提升阅读感 */
-      color: #e0e0e0;
-      text-align: justify; /* 两端对齐 */
-      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-  }
-  
-  /* 增加段落间距 */
-  #elegantAnswerText p { margin-bottom: 1.5em; }
-  /* 强调重点 */
-  #elegantAnswerText strong { color: var(--dark-accent); font-weight: 700; }
+/* ===Begin 优雅阅读模式 (Celestial Manuscript Mode) === */
 
-  /* 确保公式过长时可以横向滚动，而不是撑乱布局 */
-  .elegant-content #elegantAnswerText {
-      overflow-x: auto; /* 允许横向滚动 */
-      line-height: 1.8; /* 增加行高，避免公式上下打架 */
-  }
-  
-  /* 针对 MathJax 生成的容器进行优化 */
-  mjx-container {
-      overflow-x: auto;
-      overflow-y: hidden;
-      max-width: 100%;
-      vertical-align: middle; 
-  }
-  
-  /* 10. 底部 Logo */
-  .elegant-footer {
-      margin-top: 60px;
-      text-align: center;
-      font-family: 'Cinzel', serif;
-      font-size: 0.9rem;
-      color: rgba(255, 255, 255, 0.6);
-  }
-  
-  /* === 移动端适配 === */
-  @media (max-width: 768px) {
-      .elegant-container {
-          width: 100%;
-          height: 100%;
-          margin: 0;
-          border-radius: 0; /* 全屏模式 */
-          border: none;
-      }
-      .elegant-content {
-          padding: 40px 20px; /* 减少内边距 */
-      }
-      #elegantQuestionText {
-          font-size: 1rem;
-          max-width: 100%;
-      }
-      #elegantAnswerText {
-          font-size: 1.1rem;
-          line-height: 1.8;
-      }
-      .elegant-close {
-          top: 20px;
-          right: 20px;
-      }
-  }
-  /* ===END [新增] Begin 优雅阅读模式 (Celestial Manuscript Mode) === */
+/* 1. 模态框背景：暗室聚焦效应 (Vignette) */
+.elegant-modal {
+    /* 使用径向渐变：中心略透，四周极暗，营造聚光灯/深空感 */
+    background: radial-gradient(circle at center, rgba(15, 15, 15, 0.85) 0%, rgba(0, 0, 0, 0.98) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: none; 
+    align-items: center; /* 配合 JS 中的 display: flex */
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 9999;
+}
+
+.elegant-modal.show {
+    opacity: 1;
+}
+
+/* 2. 核心容器：悬浮的黑曜石手稿 */
+.elegant-container {
+    width: 90%;
+    max-width: 700px; /* 【黄金阅读宽度】收窄宽度，减少眼球横向疲劳 */
+    height: 85vh;
+    
+    background: linear-gradient(145deg, rgba(25, 25, 25, 0.95), rgba(15, 15, 15, 0.98));
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 
+        0 30px 80px rgba(0, 0, 0, 0.9),         
+        0 0 0 1px rgba(0, 223, 216, 0.05),       
+        inset 0 0 40px rgba(0, 223, 216, 0.03); /* 极弱的星光内晕 */
+        
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+    
+    /* 入场呼吸感：稍微上浮并放大 */
+    transform: translateY(20px) scale(0.98);
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); 
+}
+
+.elegant-modal.show .elegant-container {
+    transform: translateY(0) scale(1);
+}
+
+/* 3. 内容滚动区 & 优雅的滚动条 */
+.elegant-content {
+    height: 100%;
+    overflow-y: auto;
+    padding: 10vh 8%; /* 使用相对单位，动态留白 */
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+    
+    /* 开启文本终极渲染优化 */
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* 隐藏滚动条但保留功能，鼠标悬浮时微微显现 */
+.elegant-content::-webkit-scrollbar { width: 4px; }
+.elegant-content::-webkit-scrollbar-track { background: transparent; }
+.elegant-content::-webkit-scrollbar-thumb { 
+    background: rgba(255,255,255,0.0); 
+    border-radius: 4px; 
+    transition: background 0.3s;
+}
+.elegant-content:hover::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); }
+
+/* 4. 问题与标签：神圣感 */
+.elegant-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: rgba(0, 223, 216, 0.6); /* 使用主题青色作为点缀 */
+    text-align: center;
+    margin-bottom: 20px;
+    display: block;
+}
+
+#elegantQuestionText {
+    font-family: 'Noto Serif SC', 'Playfair Display', serif;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.15rem;
+    line-height: 1.8;
+    text-align: center;
+    font-weight: 300;
+}
+
+/* 5. 渐隐分割线 */
+.elegant-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    margin: 3rem auto;
+    width: 40%;
+}
+
+/* 6. 答案文本 (核心排版区) */
+#elegantAnswerText {
+    font-family: 'Noto Serif SC', 'Playfair Display', serif;
+    font-size: 1.15rem; /* 不宜过大，1.15rem 刚刚好 */
+    line-height: 2.1;   /* 极度宽松的行高，减少压迫感 */
+    color: rgba(230, 230, 230, 0.9);
+    text-align: justify; 
+    font-weight: 400;
+}
+
+/* --- 【关键】Markdown 元素的沉浸式美化 --- */
+#elegantAnswerText p { 
+    margin-bottom: 2em; /* 段落间要有充分的呼吸空间 */
+}
+
+#elegantAnswerText strong { 
+    color: #fff; 
+    font-weight: 600;
+    text-shadow: 0 0 8px rgba(255,255,255,0.2); /* 微光强调 */
+}
+
+/* 引用块（箴言感） */
+#elegantAnswerText blockquote {
+    margin: 2.5em 0;
+    padding: 1.5em 2em;
+    border-left: 2px solid rgba(0, 223, 216, 0.5);
+    background: linear-gradient(90deg, rgba(0, 223, 216, 0.03), transparent);
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.7);
+    border-radius: 0 8px 8px 0;
+}
+
+/* 层级标题 */
+#elegantAnswerText h1, #elegantAnswerText h2, #elegantAnswerText h3 {
+    font-family: 'Cinzel', 'Noto Serif SC', serif;
+    color: #fff;
+    font-weight: normal;
+    margin-top: 2.5em;
+    margin-bottom: 1em;
+}
+#elegantAnswerText h2 { font-size: 1.5rem; text-align: center; }
+#elegantAnswerText h3 { font-size: 1.25rem; color: rgba(0, 223, 216, 0.9); }
+
+/* 列表美化 */
+#elegantAnswerText ul, #elegantAnswerText ol {
+    margin-bottom: 2em;
+    padding-left: 1.5em;
+    color: rgba(230, 230, 230, 0.85);
+}
+#elegantAnswerText li { margin-bottom: 0.8em; }
+
+/* 7. 关闭按钮：极简设计 */
+.elegant-close {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    font-size: 28px;
+    font-weight: 100;
+    color: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.4s ease;
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+}
+.elegant-close:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(90deg);
+}
+
+/* === 移动端无缝适配 === */
+@media (max-width: 768px) {
+    .elegant-container {
+        width: 100%; height: 100vh;
+        max-width: 100%; border-radius: 0; border: none;
+        transform: translateY(0) scale(1);
+    }
+    .elegant-content { padding: 8vh 6%; }
+    #elegantAnswerText { font-size: 1.05rem; line-height: 1.9; }
+    #elegantAnswerText p { margin-bottom: 1.5em; }
+}
+/* ===END [新增] Begin 优雅阅读模式 (Celestial Manuscript Mode) === */
 
 
 /* --- 对话画布 (Dialogue Canvas) v2.0 重制版 --- */
