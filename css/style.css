@@ -1783,6 +1783,11 @@
 }
 
 /* 【星星居中且保持原有主题色】 */
+.decoration-star::before {
+    content: "\f005";                    /* Font Awesome 實心星星的 Unicode */
+    font-family: "Font Awesome 6 Free";  /* 免費版字型家族 */
+    font-weight: 900;
+}
 .decoration-star {
     display: block;        /* 强制独占一行，确保完美居中 */
     text-align: center;
