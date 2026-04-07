@@ -1782,25 +1782,39 @@
     width: 40%;
 }
 
+/* 【星星居中且保持原有主题色】 */
+.decoration-star {
+    display: block;        /* 强制独占一行，确保完美居中 */
+    text-align: center;
+    color: var(--dark-accent, #00DFD8); /* 保持您的原有变量色 */
+    font-size: 1.2rem;
+    opacity: 0.8;
+    margin: 20px auto 30px auto; /* 左右 auto 实现绝对居中 */
+    animation: pulseStar 3s infinite ease-in-out;
+}
+
+/* 星星的呼吸动画（如果您之前也丢了，请一起带上） */
+@keyframes pulseStar { 
+    0%, 100% { opacity: 0.4; transform: scale(0.8); } 
+    50% { opacity: 1; transform: scale(1.1); } 
+}
+
 /* 6. 答案文本 (核心排版区) */
-#elegantAnswerText {
+#elegantAnswerText strong {
     font-family: 'Noto Serif SC', 'Playfair Display', serif;
     font-size: 1.15rem; /* 不宜过大，1.15rem 刚刚好 */
     line-height: 2.1;   /* 极度宽松的行高，减少压迫感 */
-    color: rgba(230, 230, 230, 0.9);
+    color: #4facfe; /* 推荐：极具灵性的星辰蓝（比纯蓝更优雅）*/
     text-align: justify; 
-    font-weight: 400;
+    font-weight: 600;
+    /* 给蓝色加上极淡的同色系发光效果，绝美 */
+    text-shadow: 0 0 8px rgba(79, 172, 254, 0.4); 
 }
+
 
 /* --- 【关键】Markdown 元素的沉浸式美化 --- */
 #elegantAnswerText p { 
     margin-bottom: 2em; /* 段落间要有充分的呼吸空间 */
-}
-
-#elegantAnswerText strong { 
-    color: #fff; 
-    font-weight: 600;
-    text-shadow: 0 0 8px rgba(255,255,255,0.2); /* 微光强调 */
 }
 
 /* 引用块（箴言感） */
@@ -1852,6 +1866,19 @@
     color: #fff;
     background: rgba(255, 255, 255, 0.1);
     transform: rotate(90deg);
+}
+
+/* 【点 3：底部羽毛与文字强制居中】 */
+.elegant-footer {
+    display: block;
+    width: 100%;
+    margin-top: 70px;      /* 与正文拉开呼吸距离 */
+    margin-bottom: 20px; 
+    text-align: center !important; /* 强制绝对居中，不受外部影响 */
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 2px;
 }
 
 /* === 移动端无缝适配 === */
