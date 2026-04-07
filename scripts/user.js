@@ -36,6 +36,11 @@ function openSettingsAndCheckAuth(event) {
 // 操作权限拦截检查机制 (新增)
 // ==========================================
 function checkActionAuth(actionName) {
+
+    if (!currentSelectedLeader) {
+        alert(translations[lang].alertSelectLeaderFirst);
+        return "";
+    }
     
     if (currentSelectedLeader.name == "Elon Musk (马斯克)") {
         return true;
