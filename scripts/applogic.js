@@ -1115,6 +1115,7 @@ function escapeHtml(text) {
 }
 
 
+async function openElegantMode() {
     if (isElegantModeOpen) return;
     
     const userQuestionEl = document.getElementById('userQuestion');
