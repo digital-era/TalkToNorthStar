@@ -8,6 +8,9 @@ let conversationHistory = []; // 存储 {role, text, leaderName, timestamp}
 let importedHistory = null;  
 let isCanvasModeOpen = false;
 
+// 优雅模式状态锁，防止频繁点击
+let isElegantModeOpen = false;
+
 // --- NEW: Modal Control ---
 const apiSettingsModal = document.getElementById('apiSettingsModal');
 const apiEndpointSelect = document.getElementById('apiEndpoint'); // Changed ID to match HTML
@@ -1111,57 +1114,64 @@ function escapeHtml(text) {
         .replace(/'/g, "&#039;");
 }
 
-function openElegantMode() {
-    // 1. 获取元素
-    const userQuestion = document.getElementById('userQuestion').value;
-    const aiResponseEl = document.getElementById('aiResponseText');
-    
-    // 【关键】必须从 dataset.raw 获取原始纯文本
-    // 如果 dataset.raw 为空（修正前的代码会导致为空），逻辑就无法进行
-    const rawAiContent = aiResponseEl.dataset.raw; 
 
-    // 2. 校验
-    if (!rawAiContent) {
-        // 如果 raw 为空，说明还没生成，或者生成函数没保存 raw
-        // 尝试回退读取 innerText，但效果可能不好
-        if (aiResponseEl.innerText.trim() === "") {
-             alert("请先获取北极星的回复，才能开启星语阅读模式。");
-             return;
-        }
+    if (isElegantModeOpen) return;
+    
+    const userQuestionEl = document.getElementById('userQuestion');
+    const aiResponseEl = document.getElementById('aiResponseText');
+    const elegantQuestionBox = document.getElementById('elegantQuestionText');
+    const elegantAnswerBox = document.getElementById('elegantAnswerText');
+    const modal = document.getElementById('elegantModal');
+
+    // 1. 数据校验与提取
+    const rawAiContent = aiResponseEl.dataset.raw || aiResponseEl.innerText;
+    if (!rawAiContent || rawAiContent.trim() === "") {
+        // 使用更优雅的提示（可替换为您自定义的 Toast）
+        alert("✦ 星辰尚未汇聚，请先获取北极星的指引。");
+        return;
     }
 
-    // 3. 填充问题
-    document.getElementById('elegantQuestionText').innerText = userQuestion || "（北极星指引）";
-
-    // 4. 填充答案 (使用保护函数)
-    const elegantAnswerBox = document.getElementById('elegantAnswerText');
+    // 2. 填充内容
+    elegantQuestionBox.innerText = userQuestionEl?.value || "「 探寻宇宙与内心的共鸣 」";
     
-    // 这里传入原始文本，先保护公式，再转 MD，再恢复公式
-    elegantAnswerBox.innerHTML = parseMarkdownWithMath(rawAiContent || aiResponseEl.innerText);
+    // 【关键】确保 parseMarkdownWithMath 函数处理完毕
+    elegantAnswerBox.innerHTML = parseMarkdownWithMath(rawAiContent);
 
-    // 5. 显示模态框
-    const modal = document.getElementById('elegantModal');
-    modal.style.display = 'block';
-    modal.offsetHeight; // 强制重绘
-    modal.classList.add('show');
-    document.body.style.overflow = 'hidden';
+    // 3. 丝滑展开动效
+    modal.style.display = 'flex'; // 推荐 CSS 中用 flex 替代 block，方便完美居中
+    
+    // 使用双 requestAnimationFrame 确保过渡动画完美触发
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+            isElegantModeOpen = true;
+        });
+    });
 
-    // 6. 触发 MathJax 渲染
-    if (window.MathJax) {
-        // 针对模态框区域重新渲染
-        MathJax.typesetPromise([elegantAnswerBox]).catch(err => console.error('Modal MathJax error:', err));
+    // 4. 异步且安全地触发 MathJax 渲染
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        try {
+            await MathJax.typesetPromise([elegantAnswerBox]);
+        } catch (err) {
+            console.warn('✦ 星语公式渲染出现微小扰动:', err);
+        }
     }
 }
 
 function closeElegantMode() {
+    if (!isElegantModeOpen) return;
+    
     const modal = document.getElementById('elegantModal');
     modal.classList.remove('show');
     
-    // 等待动画结束后隐藏
-    setTimeout(() => {
+    // 监听动画结束事件，比硬编码 setTimeout 更优雅准确
+    modal.addEventListener('transitionend', function handler() {
         modal.style.display = 'none';
-        document.body.style.overflow = 'auto'; // 恢复滚动
-    }, 400);
+        document.body.style.overflow = ''; // 恢复默认滚动
+        modal.removeEventListener('transitionend', handler);
+        isElegantModeOpen = false;
+    }, { once: true });
 }
 
 // 点击模态框背景关闭
@@ -1171,6 +1181,10 @@ document.getElementById('elegantModal').addEventListener('click', function(e) {
     if (e.target === this) {
         closeElegantMode();
     }
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isElegantModeOpen) closeElegantMode();
 });
 
 
