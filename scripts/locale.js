@@ -112,7 +112,7 @@
                 "manifestoPara8": "你无需穷尽所有数据，也无需在噪音中苦寻信号。在这里，你的每一个问题，都将得到北极星般的回应。每一次提问，都可能激发你内心深处未曾触及的创新火花；每一次对话，都将拓展你认知世界的边界，推动你个人成长的进程。",
                 "manifestoConclusion": "我们使命是以AI原生智慧，书写思想旋律，点燃探索火花——让深度对话触手可及。",
 
-                "immersiveTitle": "《对话北极星》深度沉浸模式：以多模态旋律，重谱信念的乐章",
+                "immersiveTitle": "《对话北极星》深度沉浸模式：以多模态旋律，重谱思想的乐章",
                 "immersiveCoreTitle": "[核心理念]",
                 "immersiveCoreText": "文字，仅仅是思想的影子。真正的智慧信仰，流淌在声音的起伏中，凝结在岁月的深邃里，共振于环境的氛围间。我们将AI化作感官的笔触，为您重建那座失落的巴别塔。",
                 "immersiveFuncTitle": "[功能诗篇]",
@@ -234,7 +234,7 @@
                 "manifestoPara8": "You don't need to exhaust all data, nor search tirelessly for signals amidst the noise. Here, every question you ask will receive a NorthStar-like response. Every inquiry may spark innovative fires previously untouched deep within you; every dialogue will expand the boundaries of your perception of the world and propel your personal growth.",
                 "manifestoConclusion": "Our mission is to Compose the melody of thought, ignite the spark of exploration with AI-native wisdom— Bring deep conversations to your fingertips.",
 
-                "immersiveTitle": "NorthStar Dialogue Immersive Mode: Recomposing the Melody of Belief",
+                "immersiveTitle": "NorthStar Dialogue Immersive Mode: Recomposing the Melody of thought",
                 "immersiveCoreTitle": "[Core Philosophy]",
                 "immersiveCoreText": "Words are merely shadows of thought. True wisdom flows in the undulations of sound, condenses in the depths of time, and resonates within the atmosphere. We use AI as sensory brushstrokes to rebuild that lost Tower of Babel for you.",
                 "immersiveFuncTitle": "[Functional Verses]",
