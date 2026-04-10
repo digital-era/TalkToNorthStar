@@ -1033,6 +1033,21 @@ const humanitiesMasters = [
       }
     },
     {
+        id: "han_han", name: "韩寒 (Han Han)",
+        contribution: {
+        "zh-CN": "17岁创作长篇小说《三重门》，以半自传形式深刻刻画应试教育体制下的高中生态，开启中国当代80后青春文学潮流。",
+        "en": "At the age of 17, authored the full-length novel 'Three Gates,' which, in semi-autobiographical form, vividly depicts high-school life under the exam-oriented education system; pioneered the wave of post-1980s Chinese youth literature."
+        },
+        field: {
+        "zh-CN": "青春文学、校园小说、社会批判写作。",
+        "en": "Youth Literature, Campus Novels, Social Critique Writing."
+        },
+        remarks: {
+        "zh-CN": "以犀利幽默且富有批判性的笔触揭示教育困境与代际冲突，成为一代青年声音的标志性符号。",
+        "en": "His works employ sharp, humorous, and critically incisive prose to expose educational predicaments and generational conflicts, becoming an iconic symbol of a generation’s voice."
+        }
+    },
+    {
       id: "liu_bo", name: "刘勃 (Liu Bo)",
       contribution: {
         "zh-CN": "著有《失败者的春秋》《战国歧途》《司马迁的记忆之野》（历史三部曲）等作品，以亲切幽默笔调重述先秦至汉代历史。",
