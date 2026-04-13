@@ -1922,6 +1922,34 @@
     #elegantAnswerText { font-size: 1.05rem; line-height: 1.9; }
     #elegantAnswerText p { margin-bottom: 1.5em; }
 }
+
+/* === [新增] 文字流动/星雾凝结 动画 === */
+
+/* 定义流动入场的关键帧：从轻微模糊、透明、偏下，平滑浮现 */
+@keyframes celestialFlowUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+        filter: blur(5px); /* 星雾凝结效果 */
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+/* 隐藏准备流动的顶层元素 */
+#elegantAnswerText.flowing-ready > * {
+    opacity: 0; 
+    /* 确保在动画触发前完全不可见 */
+}
+
+/* 触发流动的类（通过 JS 动态添加） */
+.flow-animate {
+    /* 使用你原有的优雅贝塞尔曲线 */
+    animation: celestialFlowUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
 /* ===END [新增] Begin 优雅阅读模式 (Celestial Manuscript Mode) === */
 
 
