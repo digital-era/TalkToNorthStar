@@ -1114,6 +1114,43 @@ function escapeHtml(text) {
         .replace(/'/g, "&#039;");
 }
 
+/* --- [新增] 文字流动控制函数 --- */
+function triggerTextFlowEffect(containerId, scrollContainerId) {
+    const container = document.getElementById(containerId);
+    const scrollArea = document.getElementById(scrollContainerId);
+    if (!container || !scrollArea) return;
+
+    // 获取所有顶层区块（段落、标题、列表、引用等）
+    const elements = container.children;
+    
+    // 使用 IntersectionObserver 监听元素是否进入视口
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                // 元素进入视口，触发流动动画
+                entry.target.classList.add('flow-animate');
+                // 触发后停止观察，保持常驻
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        root: scrollArea, // 监听滚动区域
+        threshold: 0.1,   // 露出10%就开始流动
+        rootMargin: "0px 0px -30px 0px" // 底部视口稍微往上一点触发，更有流动感
+    });
+
+    Array.from(elements).forEach((el, index) => {
+        // 首屏可见的元素（假设前5个），给予阶梯式延迟，产生“哗啦啦”流下来的感觉
+        if (index < 6) {
+            el.style.animationDelay = `${index * 0.15}s`;
+        } else {
+            // 滚动出来的元素，仅给微小延迟
+            el.style.animationDelay = `0.1s`;
+        }
+        // 开始观察
+        observer.observe(el);
+    });
+}
 
 async function openElegantMode() {
     if (isElegantModeOpen) return;
@@ -1124,24 +1161,20 @@ async function openElegantMode() {
     const elegantAnswerBox = document.getElementById('elegantAnswerText');
     const modal = document.getElementById('elegantModal');
 
-    // 1. 数据校验与提取
     const rawAiContent = aiResponseEl.dataset.raw || aiResponseEl.innerText;
     if (!rawAiContent || rawAiContent.trim() === "") {
-        // 使用更优雅的提示（可替换为您自定义的 Toast）
         alert("✦ 星辰尚未汇聚，请先获取北极星的指引。");
         return;
     }
 
-    // 2. 填充内容
     elegantQuestionBox.innerText = userQuestionEl?.value || "「 探寻北极星视角的深度洞见 」";
     
-    // 【关键】确保 parseMarkdownWithMath 函数处理完毕
+    // 【修改点1】在解析前，先给容器加上准备流动的 class
+    elegantAnswerBox.classList.add('flowing-ready');
     elegantAnswerBox.innerHTML = parseMarkdownWithMath(rawAiContent);
 
-    // 3. 丝滑展开动效
-    modal.style.display = 'flex'; // 推荐 CSS 中用 flex 替代 block，方便完美居中
+    modal.style.display = 'flex'; 
     
-    // 使用双 requestAnimationFrame 确保过渡动画完美触发
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
             modal.classList.add('show');
@@ -1158,6 +1191,15 @@ async function openElegantMode() {
             console.warn('✦ 星语公式渲染出现微小扰动:', err);
         }
     }
+    
+    // 【修改点2】确保 MathJax 渲染完成（高度撑开）后，再触发文字流动，防止排版跳动
+    // 传入 答案容器ID 和 滚动区域ID (.elegant-content)
+    // 请确保你的 .elegant-content 有一个 id="elegantContentArea" 
+    // 如果没有，我在下面给了兼容写法，直接传 class 选择器获取
+    const scrollContainer = document.querySelector('.elegant-content');
+    if (!scrollContainer.id) scrollContainer.id = 'elegantContentArea'; // 临时赋个ID
+    
+    triggerTextFlowEffect('elegantAnswerText', 'elegantContentArea');
 }
 
 function closeElegantMode() {
