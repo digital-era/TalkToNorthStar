@@ -2474,6 +2474,10 @@
    对话北极星 PDF导出：商业级白皮书样式
    ========================================== */
 
+/* ==========================================
+   对话北极星 PDF导出：典雅商业白皮书样式 (修正排版与背景版)
+   ========================================== */
+
 /* --- 1. 打印替身的基础设置 --- */
 #print-overlay {
     position: fixed; top: -9999px; left: -9999px; width: 100vw; z-index: -1;
@@ -2481,7 +2485,7 @@
 
 /* --- 2. 页面设置：A4 标准留白 --- */
 @page {
-    /* 上下留 15mm，左右留 12mm，这是高端画册的标准留白 */
+    /* 上下留 15mm，左右留 12mm */
     margin: 15mm 12mm; 
     size: A4 auto; 
 }
@@ -2508,7 +2512,8 @@
         color: #222222 !important;
         font-family: 'Noto Serif SC', 'SimSun', 'Times New Roman', serif !important;
         font-size: 11pt !important; 
-        line-height: 1.75 !important; 
+        /* 【修改点】：整体行高从 1.75 微微收紧到 1.6，更适合大量文本阅读 */
+        line-height: 1.6 !important; 
     }
 
     /* 角色标题样式 */
@@ -2520,67 +2525,72 @@
         letter-spacing: 0.5px !important;
     }
     #print-overlay .user-role { color: #1a2a3a !important; }
-    #print-overlay .ai-role { color: #b8860b !important; } 
+    #print-overlay .ai-role { color: #b8860b !important; } /* 北极星暗金色 */
 
     /* --- 对话气泡全局容器 --- */
     #print-overlay .thought-node {
         position: relative;
         width: 100% !important; max-width: 100% !important;
         page-break-inside: avoid !important; 
-        margin-bottom: 25px !important; 
+        /* 【修改点】：缩小气泡底部距离，让对话更连贯 */
+        margin-bottom: 20px !important; 
         padding: 20px 25px !important; 
         border-radius: 8px !important;
-        box-shadow: none !important; /* 强制去除网页阴影 */
+        box-shadow: none !important; 
         white-space: pre-wrap !important; 
         box-sizing: border-box !important; 
         text-align: left !important;
     }
 
     /* ==========================================
-       核弹级修复：User 提问区块，解决字发白发虚问题
+       User 提问区块 
        ========================================== */
     #print-overlay .question-node {
-        background-color: #f4f6f9 !important; /* 稍有质感的灰蓝色底 */
+        /* 【修改点】：恢复北极星专属的极浅莫兰迪灰蓝色，告别冷灰白 */
+        background-color: #f7f9fa !important; 
         border-left: 4px solid #34495e !important; 
         border-top: 1px solid #eef1f5 !important;
         border-right: 1px solid #eef1f5 !important;
         border-bottom: 1px solid #eef1f5 !important;
     }
     
-    /* 强制清除所有 Webkit 文字特效、渐变、描边和发光 */
     #print-overlay .question-node,
     #print-overlay .question-node *,
     #print-overlay .question-node p {
-        color: #1a252f !important; /* 强制纯深色 */
-        -webkit-text-fill-color: #1a252f !important; /* 覆盖可能存在的透明渐变 */
-        text-shadow: none !important; /* 彻底清除发光或白边 */
-        -webkit-text-stroke: 0 !important; /* 清除文字描边 */
-        background-image: none !important; /* 清除背景渐变裁切 */
+        color: #1a252f !important; 
+        -webkit-text-fill-color: #1a252f !important; 
+        text-shadow: none !important; 
+        -webkit-text-stroke: 0 !important; 
+        background-image: none !important; 
         background-clip: border-box !important; 
         -webkit-background-clip: border-box !important;
         font-family: -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif !important; 
-        font-weight: 600 !important; /* 略微加粗，极其清晰 */
+        font-weight: 600 !important; 
         font-size: 11pt !important;
         letter-spacing: normal !important;
     }
 
-    /* --- North Star 回答区块：古典典雅 --- */
+    /* ==========================================
+       North Star 回答区块 (恢复古典暖色调)
+       ========================================== */
     #print-overlay .answer-node {
+        /* 【修改点】：恢复古色古香的极淡香槟米黄底色 */
         background-color: #fffcf8 !important; 
         border: 1px solid #f2e9d3 !important; 
         border-top: 3px solid #D4AF37 !important; 
     }
 
-    /* --- 排版细节：段落与列表 --- */
+    /* --- 排版细节：段落与列表 (核心修复间距) --- */
     #print-overlay .thought-node * {
         margin-top: 0 !important;
         box-shadow: none !important; 
     }
 
     #print-overlay .thought-node p {
-        margin-bottom: 12px !important; 
+        /* 【修改点】：段落间距从 12px 减小到 6px */
+        margin-bottom: 6px !important; 
         text-align: justify !important; 
-        line-height: 1.75 !important;
+        line-height: 1.6 !important;
     }
     
     #print-overlay .thought-node p:last-child { margin-bottom: 0 !important; }
@@ -2588,17 +2598,31 @@
     
     #print-overlay .thought-node ul, 
     #print-overlay .thought-node ol {
-        margin-bottom: 12px !important; padding-left: 25px !important; 
+        margin-top: 4px !important;
+        /* 【修改点】：列表整体底部留白缩小 */
+        margin-bottom: 8px !important; 
+        padding-left: 20px !important; 
     }
+    
     #print-overlay .thought-node li {
-        margin-bottom: 6px !important; line-height: 1.75 !important;
+        /* 【修改点】：每个列表项之间间距收紧到 4px */
+        margin-bottom: 4px !important; 
+        line-height: 1.6 !important;
+    }
+    
+    /* 【核弹级修改】：强制剥夺列表中 <p> 标签的边距！
+       防止 Markdown 渲染出 <li><p>文本</p></li> 导致的边距双重叠加 */
+    #print-overlay .thought-node li p {
+        margin-bottom: 0 !important;
+        display: inline !important; 
     }
     
     #print-overlay .thought-node h1, #print-overlay .thought-node h2, #print-overlay .thought-node h3 {
         font-family: -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif !important;
         color: #111111 !important;
-        margin-top: 15px !important; margin-bottom: 10px !important;
-        padding-bottom: 5px !important;
+        margin-top: 15px !important; 
+        margin-bottom: 8px !important; /* 标题下方留白稍微收紧 */
+        padding-bottom: 4px !important;
         border-bottom: 1px solid #eeeeee !important; 
     }
     
@@ -2615,7 +2639,7 @@
     /* --- 标志与领域标签修正 --- */
     #print-overlay .badge-field {
         background: transparent !important;
-        color: #b8860b !important; 
+        color: #b8860b !important; /* 北极星金 */
         font-weight: 700 !important;
         font-family: -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif !important;
         border: 1px solid #ebdcb5 !important;
@@ -2628,7 +2652,7 @@
         height: 1px !important;
         background: linear-gradient(to right, transparent, #D4AF37, transparent) !important;
         opacity: 0.4 !important;
-        margin: 20px 0 !important; 
+        margin: 15px 0 !important; 
         border: none !important;
     }
 }
