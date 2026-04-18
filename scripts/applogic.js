@@ -1694,12 +1694,15 @@ function exportToPDF() {
         roleTitle.style.fontSize = '12px';
 
         if (node.classList.contains('question-node')) {
+            // 给角色标题加上 class，移除 JS 里的硬编码 style，交给 CSS 控制
+            let roleTitle = document.createElement('div');
+            roleTitle.className = 'print-role-title user-role';
             roleTitle.innerText = "🧑 User"; 
-            roleTitle.style.color = '#0056b3';
             node.insertBefore(roleTitle, node.firstChild);
         } else if (node.classList.contains('answer-node')) {
-            roleTitle.innerText = "🤖 North Star"; 
-            roleTitle.style.color = '#b8860b';
+            let roleTitle = document.createElement('div');
+            roleTitle.className = 'print-role-title ai-role';
+            roleTitle.innerText = "✦ North Star"; // 换一个更优雅的图标
             node.insertBefore(roleTitle, node.firstChild);
         }
     }
