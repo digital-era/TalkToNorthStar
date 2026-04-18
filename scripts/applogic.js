@@ -1654,27 +1654,63 @@ function exportToPDF() {
     `;
     overlay.appendChild(style);
 
-    // --- 步骤 B: 第一页 (图1在上，图2在下) ---
+    // --- 步骤 B: 第一页 商业级封面排版 ---
     const coverPage1 = document.createElement('div');
     coverPage1.className = 'print-cover-page';
-    coverPage1.style.breakAfter = 'page'; 
+    // 使用精准的 A4 内容高度(扣除边距)，深色星空背景，Flex 纵向无缝贴合
+    coverPage1.style.cssText = 'break-after: page; width: 100%; height: 260mm; display: flex; flex-direction: column; justify-content: center; background-color: #0b111e; margin-bottom: 20px;'; 
 
     const img1 = document.createElement('img');
     img1.src = 'images/对话北极星Cover1.jpg'; 
-    img1.style.position = 'absolute'; img1.style.top = '0'; img1.style.left = '0';
-    img1.style.width = '100%'; img1.style.height = '48%'; 
-    img1.style.objectFit = 'contain'; img1.style.objectPosition = 'center 40%'; 
+    // 采用 contain 保证文字不被裁剪，同时背景色融为一体，底部负边距消除缝隙
+    img1.style.cssText = 'width: 100%; height: 50%; object-fit: contain; object-position: bottom; margin: 0; padding: 0; display: block; margin-bottom: -1px;'; 
     imagePromises.push(trackImageLoad(img1));
     coverPage1.appendChild(img1);
 
     const img2 = document.createElement('img');
     img2.src = 'images/对话北极星Cover2.jpg'; 
-    img2.style.position = 'absolute'; img2.style.bottom = '0'; img2.style.left = '0';
-    img2.style.width = '100%'; img2.style.height = '48%'; 
-    img2.style.objectFit = 'contain'; img2.style.objectPosition = 'center 60%'; 
+    img2.style.cssText = 'width: 100%; height: 50%; object-fit: contain; object-position: top; margin: 0; padding: 0; display: block; margin-top: -1px;'; 
     imagePromises.push(trackImageLoad(img2));
     coverPage1.appendChild(img2);
     overlay.appendChild(coverPage1);
+
+    // --- (步骤C 保持你原有的逻辑不变) ---
+    // ... 原有的 步骤 C 代码 ...
+
+    // --- 步骤 D: 最后一页 商业级封底排版 ---
+// --- 步骤 B: 第一页 商业级封面排版 ---
+    const coverPage1 = document.createElement('div');
+    coverPage1.className = 'print-cover-page';
+    // 使用精准的 A4 内容高度(扣除边距)，深色星空背景，Flex 纵向无缝贴合
+    coverPage1.style.cssText = 'break-after: page; width: 100%; height: 260mm; display: flex; flex-direction: column; justify-content: center; background-color: #0b111e; margin-bottom: 20px;'; 
+
+    const img1 = document.createElement('img');
+    img1.src = 'images/对话北极星Cover1.jpg'; 
+    // 采用 contain 保证文字不被裁剪，同时背景色融为一体，底部负边距消除缝隙
+    img1.style.cssText = 'width: 100%; height: 50%; object-fit: contain; object-position: bottom; margin: 0; padding: 0; display: block; margin-bottom: -1px;'; 
+    imagePromises.push(trackImageLoad(img1));
+    coverPage1.appendChild(img1);
+
+    const img2 = document.createElement('img');
+    img2.src = 'images/对话北极星Cover2.jpg'; 
+    img2.style.cssText = 'width: 100%; height: 50%; object-fit: contain; object-position: top; margin: 0; padding: 0; display: block; margin-top: -1px;'; 
+    imagePromises.push(trackImageLoad(img2));
+    coverPage1.appendChild(img2);
+    overlay.appendChild(coverPage1);
+
+    // --- 步骤 D: 最后一页 商业级封底排版 ---
+    const backCoverWrapper = document.createElement('div');
+    backCoverWrapper.className = 'print-cover-page';
+    // 完美居中，深色背景延伸
+    backCoverWrapper.style.cssText = 'break-before: page; width: 100%; height: 260mm; display: flex; align-items: center; justify-content: center; background-color: #0f1524;'; 
+    
+    const img3 = document.createElement('img');
+    img3.src = 'images/对话北极星Cover3.jpg';
+    img3.style.cssText = 'width: 100%; max-height: 85%; object-fit: contain;'; 
+    imagePromises.push(trackImageLoad(img3));
+    backCoverWrapper.appendChild(img3);
+    
+    overlay.appendChild(backCoverWrapper);
 
     // --- 步骤 C: 处理对话内容 ---
     const contentWrapper = document.createElement('div');
