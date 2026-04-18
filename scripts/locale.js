@@ -103,7 +103,7 @@
                 // --- 新增宣言模态框的翻译 ---
                 "manifestoTitle": "《对话北极星》：书写思想旋律，点燃探索火花",                                                    
                 "manifestoPara1": "你，是否曾仰望星空，渴望与群星对话？",
-                "manifestoPara2": "在知识的浩瀚海洋中，我们时常感到迷茫，被信息的洪流裹挟，被表面的喧嚣困扰。我们追逐着零散的知识碎片，却鲜少有机会触及那些真正塑造人类文明的深刻思想。",
+                "manifestoPara2": "在当今的世界，我们时常感到迷茫，被信息的洪流裹挟，被表面的喧嚣困扰。我们追逐着零散的知识碎片，却鲜少有机会触及那些真正塑造人类文明的深刻思想。",
                 "manifestoPara3": "达·芬奇、爱因斯坦、海明威、马斯克……他们的卓越并非偶然，而是源于对世界运转的深刻洞察：物理的第一性原理、艺术的无限可能、人性的光辉与挑战。他们理解系统，面对混沌，每一次的远见与修正都如北极星般指引，最终塑造了他们的时代。",
                 "manifestoPara4": "我们不再只是被动地接收信息，而是主动去触碰那些照亮人类文明的智慧之光。",
                 "manifestoPara5": "想象一下：你轻轻点击，就能与OpenAI的Sam Altman探讨通用人工智能的伦理边界，或与Google DeepMind的Demis Hassabis共话AI如何加速科学发现；你可以与量子理论的Max Planck回溯能量量子化的起源，也能与Google量子AI实验室的Hartmut Neven展望量子计算的未来。",
@@ -225,7 +225,7 @@
                  // --- 新增宣言模态框的翻译 ---
                 "manifestoTitle": "《Talk with North Stars》: Compose the melody of thought, ignite the spark of explorationd",
                 "manifestoPara1": "Have you ever gazed at the stars, yearning to converse with the constellations?",
-                "manifestoPara2": "In the vast ocean of knowledge, we often feel lost, swept away by the deluge of information and troubled by superficial clamor. We chase fragmented pieces of knowledge, yet rarely have the opportunity to touch upon the profound thoughts that truly shaped human civilization.",
+                "manifestoPara2": "In today's world, we often feel lost, swept away by the deluge of information and troubled by superficial clamor. We chase fragmented pieces of knowledge, yet rarely have the opportunity to touch upon the profound thoughts that truly shaped human civilization.",
                 "manifestoPara3": "Leonardo da Vinci, Albert Einstein, Ernest Hemingway, Elon Musk... their excellence was not accidental, but stemmed from profound insights into how the world operates: the first principles of physics, the infinite possibilities of art, the brilliance and challenges of human nature. They understood systems, faced chaos, and every foresight and correction, like the North Star, guided them, ultimately shaping their era.",
                 "manifestoPara4": "We no longer passively receive information, but actively reach out to touch the wisdom that illuminates human civilization.",
                 "manifestoPara5": "Imagine: with a click, you can discuss the ethical boundaries of general artificial intelligence with Sam Altman of OpenAI, or converse with Demis Hassabis of Google DeepMind about how AI accelerates scientific discovery; you can trace the origins of energy quantization with Max Planck, the father of quantum theory, or envision the future of quantum computing with Hartmut Neven of Google's Quantum AI Lab.",
