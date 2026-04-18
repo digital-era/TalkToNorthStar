@@ -1613,6 +1613,7 @@ function createCoverPage(imagePath, type) {
 }
 
 /* --- PDF导出最终版 --- */
+/* --- PDF导出最终版 (彻底修复重名冲突与封面排版) --- */
 function exportToPDF() {
     console.group("🚀 [PDF Export] Start");
     
@@ -1639,30 +1640,25 @@ function exportToPDF() {
     const overlay = document.createElement('div');
     overlay.id = 'print-overlay';
 
-    // --- 关键步骤 A: 注入 Named Page 样式 (CSS逻辑无误) ---
+    // --- 步骤 A: 注入 Named Page 样式 ---
     const style = document.createElement('style');
     style.innerHTML = `
         @page cover-layout { margin: 0 !important; size: auto; }
-        @page { margin: 15mm 5mm; }
-
         @media print {
             html, body { height: auto !important; overflow: visible !important; margin: 0 !important; }
-            #print-overlay { position: absolute !important; top: 0 !important; left: 0 !important; width: 100% !important; height: auto !important; overflow: visible !important; display: block !important; }
-            .print-cover-page { page: cover-layout; width: 100vw !important; height: 100vh !important; margin: 0 !important; padding: 0 !important; position: relative !important; overflow: hidden !important; break-inside: avoid !important; break-after: page !important; }
-            #print-content-wrapper { page: auto; break-before: page; position: relative; width: 100%; height: auto !important; overflow: visible !important; display: block !important; }
+            #print-overlay { position: absolute !important; top: 0 !important; left: 0 !important; width: 100% !important; display: block !important; }
+            #print-content-wrapper { page: auto; break-before: page; position: relative; width: 100%; display: block !important; }
         }
     `;
     overlay.appendChild(style);
 
     // --- 步骤 B: 第一页 商业级封面排版 ---
     const coverPage1 = document.createElement('div');
-    coverPage1.className = 'print-cover-page';
-    // 使用精准的 A4 内容高度(扣除边距)，深色星空背景，Flex 纵向无缝贴合
+    // 强制内联样式，完美融合深空背景
     coverPage1.style.cssText = 'break-after: page; width: 100%; height: 260mm; display: flex; flex-direction: column; justify-content: center; background-color: #0b111e; margin-bottom: 20px;'; 
 
     const img1 = document.createElement('img');
     img1.src = 'images/对话北极星Cover1.jpg'; 
-    // 采用 contain 保证文字不被裁剪，同时背景色融为一体，底部负边距消除缝隙
     img1.style.cssText = 'width: 100%; height: 50%; object-fit: contain; object-position: bottom; margin: 0; padding: 0; display: block; margin-bottom: -1px;'; 
     imagePromises.push(trackImageLoad(img1));
     coverPage1.appendChild(img1);
@@ -1672,45 +1668,8 @@ function exportToPDF() {
     img2.style.cssText = 'width: 100%; height: 50%; object-fit: contain; object-position: top; margin: 0; padding: 0; display: block; margin-top: -1px;'; 
     imagePromises.push(trackImageLoad(img2));
     coverPage1.appendChild(img2);
-    overlay.appendChild(coverPage1);
-
-    // --- (步骤C 保持你原有的逻辑不变) ---
-    // ... 原有的 步骤 C 代码 ...
-
-    // --- 步骤 D: 最后一页 商业级封底排版 ---
-// --- 步骤 B: 第一页 商业级封面排版 ---
-    const coverPage1 = document.createElement('div');
-    coverPage1.className = 'print-cover-page';
-    // 使用精准的 A4 内容高度(扣除边距)，深色星空背景，Flex 纵向无缝贴合
-    coverPage1.style.cssText = 'break-after: page; width: 100%; height: 260mm; display: flex; flex-direction: column; justify-content: center; background-color: #0b111e; margin-bottom: 20px;'; 
-
-    const img1 = document.createElement('img');
-    img1.src = 'images/对话北极星Cover1.jpg'; 
-    // 采用 contain 保证文字不被裁剪，同时背景色融为一体，底部负边距消除缝隙
-    img1.style.cssText = 'width: 100%; height: 50%; object-fit: contain; object-position: bottom; margin: 0; padding: 0; display: block; margin-bottom: -1px;'; 
-    imagePromises.push(trackImageLoad(img1));
-    coverPage1.appendChild(img1);
-
-    const img2 = document.createElement('img');
-    img2.src = 'images/对话北极星Cover2.jpg'; 
-    img2.style.cssText = 'width: 100%; height: 50%; object-fit: contain; object-position: top; margin: 0; padding: 0; display: block; margin-top: -1px;'; 
-    imagePromises.push(trackImageLoad(img2));
-    coverPage1.appendChild(img2);
-    overlay.appendChild(coverPage1);
-
-    // --- 步骤 D: 最后一页 商业级封底排版 ---
-    const backCoverWrapper = document.createElement('div');
-    backCoverWrapper.className = 'print-cover-page';
-    // 完美居中，深色背景延伸
-    backCoverWrapper.style.cssText = 'break-before: page; width: 100%; height: 260mm; display: flex; align-items: center; justify-content: center; background-color: #0f1524;'; 
     
-    const img3 = document.createElement('img');
-    img3.src = 'images/对话北极星Cover3.jpg';
-    img3.style.cssText = 'width: 100%; max-height: 85%; object-fit: contain;'; 
-    imagePromises.push(trackImageLoad(img3));
-    backCoverWrapper.appendChild(img3);
-    
-    overlay.appendChild(backCoverWrapper);
+    overlay.appendChild(coverPage1);
 
     // --- 步骤 C: 处理对话内容 ---
     const contentWrapper = document.createElement('div');
@@ -1724,13 +1683,7 @@ function exportToPDF() {
         const node = nodes[i];
         if (!node.classList.contains('thought-node')) continue;
 
-        let roleTitle = document.createElement('div');
-        roleTitle.style.fontWeight = 'bold';
-        roleTitle.style.marginBottom = '2px';
-        roleTitle.style.fontSize = '12px';
-
         if (node.classList.contains('question-node')) {
-            // 给角色标题加上 class，移除 JS 里的硬编码 style，交给 CSS 控制
             let roleTitle = document.createElement('div');
             roleTitle.className = 'print-role-title user-role';
             roleTitle.innerText = "🧑 User"; 
@@ -1738,39 +1691,37 @@ function exportToPDF() {
         } else if (node.classList.contains('answer-node')) {
             let roleTitle = document.createElement('div');
             roleTitle.className = 'print-role-title ai-role';
-            roleTitle.innerText = "✦ North Star"; // 换一个更优雅的图标
+            roleTitle.innerText = "✦ North Star"; 
             node.insertBefore(roleTitle, node.firstChild);
         }
     }
     contentWrapper.appendChild(contentClone);
     overlay.appendChild(contentWrapper);
 
-    // --- 步骤 D: 最后一页 (保留特殊排版) ---
-    const backCover = createCoverPage('images/对话北极星Cover3.jpg', 'back');
-    backCover.style.justifyContent = 'flex-start'; 
-    backCover.style.paddingTop = '10vh'; 
+    // --- 步骤 D: 最后一页 商业级封底排版 ---
+    const backCoverWrapper = document.createElement('div');
+    // 强制内联样式，深色背景延伸，居中显示
+    backCoverWrapper.style.cssText = 'break-before: page; width: 100%; height: 260mm; display: flex; align-items: center; justify-content: center; background-color: #0f1524;'; 
     
-    const img3 = backCover.querySelector('img');
-    if (img3) {
-        img3.style.height = 'auto'; img3.style.maxHeight = '60vh'; 
-        imagePromises.push(trackImageLoad(img3));
-    }
-    overlay.appendChild(backCover);
+    const img3 = document.createElement('img');
+    img3.src = 'images/对话北极星Cover3.jpg';
+    img3.style.cssText = 'width: 100%; max-height: 85%; object-fit: contain;'; 
+    imagePromises.push(trackImageLoad(img3));
+    backCoverWrapper.appendChild(img3);
+    
+    overlay.appendChild(backCoverWrapper);
 
     // 3. 挂载
     document.body.appendChild(overlay);
 
-    // 4. 执行打印 (核心修复：使用 onafterprint 事件)
+    // 4. 执行打印
     console.log(`⏳ 等待 ${imagePromises.length} 张图片资源...`);
     const timeoutPromise = new Promise(resolve => setTimeout(resolve, 5000));
     
     Promise.race([Promise.all(imagePromises), timeoutPromise]).then(() => {
-        
-        // 备份旧标题
         const originalTitle = document.title;
         
-        // --- 1. 计算新文件名 ---
-        // 确保 finalName 绝对不为空
+        // 文件名设定
         let finalName = "对话记录";
         if (typeof getExportFileName === 'function') {
             finalName = getExportFileName();
@@ -1780,87 +1731,43 @@ function exportToPDF() {
             finalName = `对话北极星_${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}`;
         }
 
-        // --- 2. 设置新标题 ---
         document.title = finalName;
         console.log("📄 文件名已设置为:", finalName);
 
-        // --- 3. 使用media query监听打印状态（修正版）---
-        // 创建媒体查询对象
         const mediaQueryList = window.matchMedia('print');
         
-        // --- 4. 添加备用清理机制（防止监听器不触发）---
+        // 备用清理机制
         const backupCleanup = setTimeout(() => {
-            console.log("⚠️ 备用清理机制触发");
             document.title = originalTitle;
-            if (document.body.contains(overlay)) {
-                document.body.removeChild(overlay);
-            }
-            if (mediaQueryList.removeEventListener) {
-                mediaQueryList.removeEventListener('change', handlePrintChange);
-            } else {
-                mediaQueryList.removeListener(handlePrintChange);
-            }
+            if (document.body.contains(overlay)) document.body.removeChild(overlay);
+            if (mediaQueryList.removeEventListener) mediaQueryList.removeEventListener('change', handlePrintChange);
+            else mediaQueryList.removeListener(handlePrintChange);
             console.groupEnd();
-        }, 10000); // 10秒后备清理
+        }, 10000); 
         
-        // 定义处理函数
         const handlePrintChange = (event) => {
             if (!event.matches) {
-                console.log("🖨️ 打印完成或取消，开始清理...");
-                
-                // 清除备用定时器
                 clearTimeout(backupCleanup);
-                
-                // 使用setTimeout确保清理在所有打印任务完成后执行
                 setTimeout(() => {
-                    // 恢复标题
                     document.title = originalTitle;
-                    console.log("✅ 标题已恢复为:", originalTitle);
-                    
-                    // 清理DOM元素
-                    if (document.body.contains(overlay)) {
-                        document.body.removeChild(overlay);
-                        console.log("🗑️ 打印层已移除");
-                    }
-                    
-                    // 清理内存
+                    if (document.body.contains(overlay)) document.body.removeChild(overlay);
                     overlay.innerHTML = "";
-                    
-                    // 移除事件监听器
-                    if (mediaQueryList.removeEventListener) {
-                        mediaQueryList.removeEventListener('change', handlePrintChange);
-                    } else {
-                        mediaQueryList.removeListener(handlePrintChange);
-                    }
-                    
-                    // 结束日志分组
+                    if (mediaQueryList.removeEventListener) mediaQueryList.removeEventListener('change', handlePrintChange);
+                    else mediaQueryList.removeListener(handlePrintChange);
                     console.groupEnd();
-                }, 500); // 500ms延迟确保完全清理
+                }, 500); 
             }
         };
         
-        // 添加事件监听器（使用现代语法）
-        if (mediaQueryList.addEventListener) {
-            mediaQueryList.addEventListener('change', handlePrintChange);
-        } else {
-            // 兼容旧版浏览器
-            mediaQueryList.addListener(handlePrintChange);
-        }
+        if (mediaQueryList.addEventListener) mediaQueryList.addEventListener('change', handlePrintChange);
+        else mediaQueryList.addListener(handlePrintChange);
         
-        // --- 5. 延迟确保标题更新，然后打印 ---
-        console.log("⏳ 等待300ms确保浏览器更新标题...");
         setTimeout(() => {
-            // 再次确认标题
-            if (document.title !== finalName) {
-                document.title = finalName;
-                console.log("🔄 重新确认标题为:", finalName);
-            }
-            
-            console.log("🖨️ 触发打印对话框...");
+            if (document.title !== finalName) document.title = finalName;
             window.print();
         }, 300);
     });
-} 
+}
 
 /* --- 新增：导出为 HTML 功能 --- */
 function exportToHTML() {
