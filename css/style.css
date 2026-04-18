@@ -2491,179 +2491,169 @@
 }
 
 /* --- 2. 打印媒体查询 (完整修正版) --- */
-@media print {
-    /* 1. 隐藏非打印内容 */
-    body > *:not(#print-overlay) {
-        display: none !important;
-    }
+/* --- 1. 打印替身的基础设置 --- */
+#print-overlay {
+    position: fixed;
+    top: -9999px;
+    left: -9999px;
+    width: 100vw;
+    z-index: -1;
+}
 
-    /* 2. Body 设置 */
+/* --- 2. 页面设置：增加呼吸感 --- */
+@page {
+    /* 上下留白容纳页眉页脚，左右留白 12mm 增加高级感，不再贴边 */
+    margin: 15mm 12mm; 
+    size: A4 auto; /* 明确指定 A4 尺寸 */
+}
+
+/* --- 3. 打印媒体查询 --- */
+@media print {
+    /* 隐藏非打印内容 */
+    body > *:not(#print-overlay) { display: none !important; }
+
+    /* 初始化 Body */
     body {
-        background: #fff !important;
+        background: #ffffff !important;
         margin: 0 !important;
         padding: 0 !important;
-    }
-  
-    /* 3. 打印容器复位 - 【核心修改：全宽 + 紧凑】 */
-    #print-overlay {
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        /* 强制覆盖可能的 max-width 限制 */
-        max-width: 100% !important; 
-        z-index: 99999 !important;
-        
-        /* 去除所有内边距，让 @page 控制边缘 */
-        padding: 0 !important; 
-        margin: 0 !important;
-        
-        background: #fff !important;
-        
-        /* 字体设置：纯黑 + 极度紧凑 */
-        color: #000000 !important;
-        /*font-family: "Microsoft YaHei", "Segoe UI", sans-serif;*/
-        font-family: 'Noto Serif SC', 'Cinzel', serif;
-        font-size: 12px !important; /* 字体稍微调小一点点以容纳更多内容 */
-        line-height: 1.25 !important; /* 【关键】：进一步压缩行高 (原1.35) */
-    }
-
-    /* 4. 对话气泡容器 - 【核心修改：强制撑满宽度】 */
-    #print-overlay .thought-node {
-        position: relative;
-        /* 关键：强制气泡宽度 100%，解决“内容宽度被压缩” */
-        width: 100% !important;
-        max-width: 100% !important;
-        
-        page-break-inside: avoid !important;
-        margin-bottom: 5px !important; /* 气泡间距再压缩 */
-        padding: 5px 8px !important;   /* 内边距压缩 */
-        
-        border-radius: 4px !important;
-        border: 1px solid #ddd;       
-        white-space: pre-wrap !important; 
-        box-sizing: border-box !important; /* 防止边框撑破布局 */
-    }
-
-    /* --- 5. 【核心修改：暴力压缩段落与空隙】 --- */
-    
-    #print-overlay .thought-node * {
-        margin-top: 0 !important;
-        color: #000000 !important;
-    }
-
-    /* 压缩 P 标签：间距改为 1px */
-    #print-overlay .thought-node p {
-        margin-bottom: 1px !important; 
-        text-align: justify;
-        line-height: 1.25 !important;
-    }
-    
-    /* 隐藏空段落 (Markdown解析常出现多余空行) */
-    #print-overlay .thought-node p:empty {
-        display: none !important;
-    }
-    
-    /* 列表极致紧凑 */
-    #print-overlay .thought-node ul, 
-    #print-overlay .thought-node ol {
-        margin-bottom: 1px !important;
-        padding-left: 15px !important; 
-    }
-    #print-overlay .thought-node li {
-        margin-bottom: 0px !important;
-        line-height: 1.25 !important;
-    }
-    
-    /* 标题加粗 */
-    #print-overlay .thought-node h1,
-    #print-overlay .thought-node h2,
-    #print-overlay .thought-node strong,
-    #print-overlay .thought-node b {
-        font-weight: 800 !important;
-        color: #000 !important;
-        margin-bottom: 2px !important;
-    }
-
-    /* --- 6. 角色样式 (统一香槟色边线) --- */
-    
-    /* User: 浅灰底 + 香槟色线 (修改了原来的蓝色) */
-    #print-overlay .question-node {
-        background-color: #f0f6ff !important; /* 浅蓝底 */
-        border-left: 4px solid #0056b3 !important; /* 深蓝线，更清晰 */
-        border: 1px solid #eee;
-        font-weight: 500 !important;
-        /* --- 新增以下两行关键代码 --- */
-        -webkit-print-color-adjust: exact !important; /* 针对 Chrome, Safari, Edge */
-        print-color-adjust: exact !important;         /* 标准属性 */
-    }
-    
-    /* North Star: 纯白底 + 香槟色线 */
-    #print-overlay .answer-node {
-       /* 使用极淡的米黄色，配合金色边框非常高级 */
-        background-color: #FFFAF0 !important; 
-        /* 修复了之前的语法错误 */
-        border-left: 1px solid #D4AF37 !important; 
-        border: 1px solid #D4AF37 !important; 
-        /* 记得加上这个，否则打印时没有背景色 */
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
+  
+    /* 打印容器复位 */
+    #print-overlay {
+        position: absolute !important;
+        top: 0 !important; left: 0 !important;
+        width: 100% !important; max-width: 100% !important; 
+        z-index: 99999 !important;
+        background: #ffffff !important;
+        
+        /* 全局字体：主文本使用优雅的宋体/衬线体组合 */
+        color: #222222 !important;
+        font-family: 'Noto Serif SC', 'SimSun', 'Times New Roman', serif !important;
+        font-size: 11pt !important; /* 适合打印的字号 */
+        line-height: 1.7 !important; /* 【关键】恢复呼吸感，1.7 是书籍排版的黄金比例 */
+        letter-spacing: normal !important;
+    }
 
-    /* --- 7. 隐藏无关元素 --- */
+    /* 角色标题样式 */
+    #print-overlay .print-role-title {
+        font-family: -apple-system, "Microsoft YaHei", sans-serif !important;
+        font-size: 10pt !important;
+        font-weight: 600 !important;
+        margin-bottom: 8px !important;
+        letter-spacing: 0.5px !important;
+    }
+    #print-overlay .user-role { color: #1a2a3a !important; } /* 深邃的夜空蓝 */
+    #print-overlay .ai-role { color: #b8860b !important; } /* 暗金色 */
+
+    /* --- 对话气泡全局容器 --- */
+    #print-overlay .thought-node {
+        position: relative;
+        width: 100% !important;
+        max-width: 100% !important;
+        page-break-inside: avoid !important; /* 尽量保持在一个页面内 */
+        margin-bottom: 25px !important; /* 气泡间距 */
+        padding: 20px 25px !important; /* 增加内边距，告别拥挤 */
+        border-radius: 6px !important;
+        box-shadow: none !important; /* 【关键】强制去除网页端带来的阴影 */
+        white-space: pre-wrap !important; 
+        box-sizing: border-box !important; 
+        
+        /* 强制修复高度和对齐问题，防止 User 提问占满一页 */
+        height: auto !important;
+        min-height: auto !important;
+        text-align: left !important;
+    }
+
+    /* --- User 提问区块：现代、简洁、不突兀 --- */
+    #print-overlay .question-node {
+        background-color: #f7f9fa !important; /* 非常浅的灰蓝色 */
+        border-left: 4px solid #34495e !important; /* 莫兰迪深灰蓝边线 */
+        border-top: 1px solid #eeeeee !important;
+        border-right: 1px solid #eeeeee !important;
+        border-bottom: 1px solid #eeeeee !important;
+        /* 强制修复诡异字体：提问使用黑体/无衬线体，显得现代直白 */
+        font-family: -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif !important; 
+        font-weight: 400 !important;
+        letter-spacing: normal !important;
+    }
+    
+    /* --- North Star 回答区块：古典、典雅 --- */
+    #print-overlay .answer-node {
+        background-color: #fffcf8 !important; /* 极淡的香槟/米黄色 */
+        border: 1px solid #e8dec1 !important; /* 柔和的暗金边框 */
+        border-top: 3px solid #D4AF37 !important; /* 顶部金线提气 */
+    }
+
+    /* --- 排版细节：段落与列表 --- */
+    #print-overlay .thought-node * {
+        margin-top: 0 !important;
+        color: inherit !important; /* 继承父级颜色，避免花里胡哨 */
+        box-shadow: none !important; /* 清除所有子元素阴影 */
+    }
+
+    /* 段落间距恢复正常 */
+    #print-overlay .thought-node p {
+        margin-bottom: 12px !important; 
+        text-align: justify !important; /* 两端对齐，看起来像书 */
+        line-height: 1.7 !important;
+    }
+    
+    #print-overlay .thought-node p:last-child { margin-bottom: 0 !important; }
+    #print-overlay .thought-node p:empty { display: none !important; }
+    
+    /* 列表排版优化 */
+    #print-overlay .thought-node ul, 
+    #print-overlay .thought-node ol {
+        margin-bottom: 12px !important;
+        padding-left: 25px !important; 
+    }
+    #print-overlay .thought-node li {
+        margin-bottom: 6px !important;
+        line-height: 1.7 !important;
+    }
+    
+    /* 强调与标题 */
+    #print-overlay .thought-node h1, #print-overlay .thought-node h2, #print-overlay .thought-node h3 {
+        font-family: -apple-system, "Microsoft YaHei", sans-serif !important;
+        color: #111111 !important;
+        margin-top: 15px !important;
+        margin-bottom: 10px !important;
+        padding-bottom: 5px !important;
+        border-bottom: 1px solid #eee !important; /* 给标题加轻微下划线分隔 */
+    }
+    
+    #print-overlay .thought-node strong, #print-overlay .thought-node b {
+        font-weight: bold !important;
+        color: #222 !important;
+    }
+
+    /* --- 隐藏无关元素 --- */
     #print-overlay .node-delete-btn,
     #print-overlay .action-bar,
     #print-overlay button {
         display: none !important;
     }
   
-   /* --- 8. 北极星与领域样式修正 --- */
-    /* 标志颜色 */
-    #print-overlay .star-decoration-top,
-    #print-overlay .star-decoration-top i,
-    #print-overlay .star-decoration-bottom i {
-        color: #D4AF37 !important; 
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-    }
-
-    /* 领域标签优化 */
+    /* --- 北极星独有装饰修正 --- */
     #print-overlay .badge-field {
         background: transparent !important;
-        color: #000000 !important; 
-        font-weight: bold !important;
-        border: 1px solid #D4AF37 !important;
-        padding: 1px 5px !important; /* 稍微再紧凑一点 */
+        color: #b8860b !important; /* 金色字体 */
+        font-weight: 600 !important;
+        font-family: -apple-system, "Microsoft YaHei", sans-serif !important;
+        border: 1px solid #e8dec1 !important;
+        padding: 3px 8px !important; 
         border-radius: 4px !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
+        font-size: 9pt !important;
     }
     
-    /* 分割线 */
     #print-overlay .node-divider {
+        height: 1px !important;
         background: linear-gradient(to right, transparent, #D4AF37, transparent) !important;
-        opacity: 1 !important;
-        margin: 5px 0 !important; /* 减少分割线上下间距 */
-    }
-}
-
-/* 适配移动端 */
-@media (max-width: 768px) {
-    .thought-stream {
-        padding: 60px 20px;
-        gap: 50px;
-    }
-    .thought-node {
-        max-width: 90%;
-    }
-    .thought-node.question-node {
-        align-self: center;
-        margin-right: auto;
-        border-radius: 10px;
-    }
-    .thought-node.answer-node {
-        align-self: center;
-        margin-left: auto;
+        opacity: 0.5 !important;
+        margin: 15px 0 !important; 
     }
 }
 
