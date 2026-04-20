@@ -81,7 +81,7 @@
           90deg,               
           #007CF0, /* Bright Blue */
           #00DFD8, /* Bright Cyan */
-          #007CF0  /* Bright Blue - repeat first color for smooth loop */        #007CF0, /* Bright Blue */
+          #007CF0  /* Bright Blue - repeat first color for smooth loop */       
       );
       background-size: 200% auto;
       color: transparent;
@@ -278,7 +278,7 @@
           90deg,               
           #007CF0, /* Bright Blue */
           #00DFD8, /* Bright Cyan */
-          #007CF0  /* Bright Blue - repeat first color for smooth loop */        #007CF0, /* Bright Blue */
+          #007CF0  /* Bright Blue - repeat first color for smooth loop */        
       );
       background-size: 200% auto;
       color: transparent;
