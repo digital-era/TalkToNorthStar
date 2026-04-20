@@ -80,7 +80,7 @@
       background: linear-gradient(
           90deg,               
           #007CF0, /* Bright Blue */
-          #00DFD8, /* Bright Cyan */
+          #00D4FF, /* Bright Cyan */
           #007CF0  /* Bright Blue - repeat first color for smooth loop */       
       );
       background-size: 200% auto;
@@ -277,7 +277,7 @@
       background: linear-gradient(
           90deg,               
           #007CF0, /* Bright Blue */
-          #00DFD8, /* Bright Cyan */
+          #00D4FF, /* Bright Cyan */
           #007CF0  /* Bright Blue - repeat first color for smooth loop */        
       );
       background-size: 200% auto;
