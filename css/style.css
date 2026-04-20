@@ -273,7 +273,7 @@
       line-height: 1.3;    /* 稍微收紧行高，防止两行标题时中间空隙太大 */
       
       /* 使用您标志性的渐变色 */
-      /*background: linear-gradient(90deg, #00DFD8, #7928CA);*/
+      /*background: linear-gradient(90deg, #00D4FF, #7928CA);*/
       background: linear-gradient(
           90deg,               
           #007CF0, /* Bright Blue */
@@ -780,7 +780,7 @@
   
   /* 针对“获取北极星回复”按钮，做强调处理（更亮的渐变） */
   .interaction-area button#getAIResponseButton {
-      background: linear-gradient(135deg, #00DFD8 0%, #007cf0 100%); /* 青到蓝的渐变，呼应北极星主题 */
+      background: linear-gradient(135deg, #00D4FF 0%, #007cf0 100%); /* 青到蓝的渐变，呼应北极星主题 */
       color: #000; /* 亮背景配深色字更易读 */
       font-weight: 700;
   }
@@ -979,7 +979,7 @@
       font-weight: 700;
       
       /* 使用您标志性的渐变色 */
-      background: linear-gradient(90deg, #00DFD8, #7928CA);
+      background: linear-gradient(90deg, #00D4FF, #7928CA);
       background-size: 200% auto;
       color: transparent;
       -webkit-background-clip: text;
@@ -1096,7 +1096,7 @@
       letter-spacing: 1px;
       
       /* 渐变流光 */
-      background: linear-gradient(90deg, #00DFD8, #7928CA);
+      background: linear-gradient(90deg, #00D4FF, #7928CA);
       background-size: 200% auto;
       
       color: transparent;
@@ -1200,7 +1200,7 @@
       padding: 12px;
       
       /* 渐变背景 */
-      background: linear-gradient(135deg, #00DFD8 0%, #4a90e2 100%);
+      background: linear-gradient(135deg, #00D4FF 0%, #4a90e2 100%);
       
       color: #000; /* 亮背景配深色字 */
       font-weight: 700;
