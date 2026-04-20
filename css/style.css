@@ -80,7 +80,7 @@
       background: linear-gradient(
           90deg,               
           #00DFD8, /* 亮青色 */
-          #7928CA  /* 紫色 */
+          //#7928CA  /* 紫色 */
       );
       background-size: 200% auto;
       color: transparent;
@@ -272,7 +272,8 @@
       line-height: 1.3;    /* 稍微收紧行高，防止两行标题时中间空隙太大 */
       
       /* 使用您标志性的渐变色 */
-      background: linear-gradient(90deg, #00DFD8, #7928CA);
+      //background: linear-gradient(90deg, #00DFD8, #7928CA);
+      background: linear-gradient(90deg, #00DFD8, #00DFD8);
       background-size: 200% auto;
       color: transparent;
       -webkit-background-clip: text;
