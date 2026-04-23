@@ -309,6 +309,48 @@ const artMasters = [
         "en": "Known for his romantic and lyrical style and approachability, captivating hundreds of millions; often dubbed the 'Prince of Romance'."
         }
     },
+    { id: "bob_dylan",   name: "Bob Dylan (鲍勃·迪伦)",
+      contribution: {
+        "zh-CN": "创作《Blowin' in the Wind》，将意识流、象征主义与社会现实主义引入歌词，彻底重塑了流行音乐的表达边界。",
+        "en": "Penned 'Blowin' in the Wind'; introduced stream-of-consciousness, symbolism, and social realism into lyrics, radically reshaping the expressive boundaries of popular music."
+      },
+      field: {
+        "zh-CN": "民谣、摇滚、抗议音乐、流行乐作词与作曲。",
+        "en": "Folk, Rock, Protest Music, Pop Music Songwriting."
+      },
+      remarks: {
+        "zh-CN": "歌词的诗意与哲学深度影响了整个二十世纪的流行文化。",
+        "en": "The poetic and philosophical depth of his lyrics profoundly influenced 20th-century pop culture."
+      }
+    },
+    { id: "leonard_cohen",   name: "Leonard Cohen (莱昂纳德·科恩)",
+      contribution: {
+        "zh-CN": "创作《Hallelujah》，以极具文学性与隐喻的语言，深刻探讨了爱情、信仰、性欲、死亡与救赎等宏大主题。",
+        "en": "Composed 'Hallelujah'; profoundly explored grand themes like love, faith, sexuality, death, and redemption through highly literary and metaphorical language."
+      },
+      field: {
+        "zh-CN": "民谣、诗歌、摇滚、文学创作。",
+        "en": "Folk, Poetry, Rock, Literary Writing."
+      },
+      remarks: {
+        "zh-CN": "诗人与小说家出身的音乐巨匠，被称为“摇滚乐界的拜伦”。他的词作如手术刀般精准，同时又充满了深邃的悲悯与神圣感。",
+        "en": "A poet and novelist turned musical titan, often referred to as the 'Byron of Rock'. His lyrics are surgically precise, yet imbued with profound compassion and a sense of the sacred."
+      }
+    },
+    { id: "john_lennon",   name: "John Lennon (约翰·列侬)",
+      contribution: {
+        "zh-CN": "创作《Imagine》，从早期的英伦流行情歌跨越到充满超现实主义、和平主义与极致内省的深刻表达。",
+        "en": "Penned 'Imagine'; transitioned from early British pop love songs to profound expressions of surrealism, pacifism, and ultimate introspection."
+      },
+      field: {
+        "zh-CN": "摇滚乐、流行音乐、迷幻摇滚。",
+        "en": "Rock, Pop Music, Psychedelic Rock."
+      },
+      remarks: {
+        "zh-CN": "披头士乐队的核心灵魂之一，他的歌词是时代的精神坐标。",
+        "en": "A core soul of The Beatles and one of the greatest songwriters in pop history. His lyrics serve as a cultural compass of his era."
+      }
+    },
     { id: "lin_xi",   name: "Lin Xi (林夕)",
       contribution: {
         "zh-CN": "创作《红豆》等数千首经典词作，将古典诗词意境、现代都市情感与佛教哲理完美融合。",
