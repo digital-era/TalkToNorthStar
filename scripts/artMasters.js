@@ -361,7 +361,7 @@ const artMasters = [
         "en": "Pop Music Lyrics, Cantopop/Mandopop, Literary Writing."
       },
       remarks: {
-        "zh-CN": 以细腻入骨、充满禅意与哲理的唯美词风深刻影响了一代人的情感表达。",
+        "zh-CN": "以细腻入骨、充满禅意与哲理的唯美词风深刻影响了一代人的情感表达。",
         "en": "Delicate, Zen-infused, and philosophically aesthetic style deeply influenced a generation's emotional expression."
       }
     },
