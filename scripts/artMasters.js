@@ -309,6 +309,48 @@ const artMasters = [
         "en": "Known for his romantic and lyrical style and approachability, captivating hundreds of millions; often dubbed the 'Prince of Romance'."
         }
     },
+    { id: "lin_xi",   name: "Lin Xi (林夕)",
+      contribution: {
+        "zh-CN": "创作《红豆》等数千首经典词作，将古典诗词意境、现代都市情感与佛教哲理完美融合。",
+        "en": "Penned thousands of classic lyrics including Red Bean; perfectly blended classical poetic imagery, modern urban emotions, and Buddhist philosophy."
+      },
+      field: {
+        "zh-CN": "流行音乐作词、粤语/华语流行曲、文学创作。",
+        "en": "Pop Music Lyrics, Cantopop/Mandopop, Literary Writing."
+      },
+      remarks: {
+        "zh-CN": 以细腻入骨、充满禅意与哲理的唯美词风深刻影响了一代人的情感表达。",
+        "en": "Delicate, Zen-infused, and philosophically aesthetic style deeply influenced a generation's emotional expression."
+      }
+    },
+    { id: "jonathan_lee",   name: "Jonathan Lee (李宗盛)",
+      contribution: {
+        "zh-CN": "创作《山丘》等经典，开创白话写实与散文化歌词流派，深刻剖析人性软弱与人生沧桑。",
+        "en": "Composed classics like Hills; pioneered a colloquial, prose-like lyricism that deeply dissects human vulnerability and the vicissitudes of life."
+      },
+      field: {
+        "zh-CN": "流行音乐作词、作曲、音乐制作。",
+        "en": "Pop Music Lyrics, Composition, Music Production."
+      },
+      remarks: {
+        "zh-CN": "华语乐坛“音乐教父”，被誉为最懂人性的词人，其口语化且字字诛心的现实主义词风具有极高的传唱度与共鸣感。",
+        "en": "The 'Godfather' of C-pop and a master of human nature; his colloquial yet piercingly realistic lyrics boast immense popularity and unparalleled emotional resonance."
+      }
+    },
+    { id: "vincent_fang",   name: "Vincent Fang (方文山)",
+      contribution: {
+        "zh-CN": "创作《青花瓷》等经典，将中国古典诗词、历史典故与现代R&B及说唱无缝结合。",
+        "en": "Penned classics like Blue and White Porcelain; seamlessly integrated classical Chinese poetry and historical allusions with modern R&B and rap."
+      },
+      field: {
+        "zh-CN": "流行音乐作词、中国风音乐、国学文化推广。",
+        "en": "Pop Music Lyrics, Chinese Style Music, Traditional Culture Promotion."
+      },
+      remarks: {
+        "zh-CN": "以极具画面感的蒙太奇手法与华丽工整的韵脚重塑了现代中国风流行歌词的文学性。",
+        "en": "Reshaped the literary quality of modern Chinese style pop lyrics with cinematic montage techniques and ornate, meticulous rhymes."
+      }
+    },
     { id: "paul_rand", name: "Paul Rand (保罗·兰德)",
       contribution: {
         "zh-CN": "设计IBM、UPS等标志性标识与书籍海报，创立极简主义布局与视觉美学原则。",
