@@ -471,7 +471,7 @@ const financeMasters = [
     "en": "Public Finance, Tax Policy, Geopolitical Economics."
     },
     "remarks": {
-    "zh-CN": "主张推行直接税立法以调节贫富差距，批判美元霸权和资本外流现象，观点鲜明且富有争议性。",
+    "zh-CN": "主张直接税立法以调节贫富差距，批判美元霸权和资本外流现象，观点鲜明且有争议性。",
     "en": "Advocates for direct tax legislation to address wealth inequality, critiques US dollar hegemony and capital outflows, known for his sharp and controversial views."
     }
 }
