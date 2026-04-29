@@ -114,7 +114,10 @@
     margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px;
 }
 
+.filter-chips-container::-webkit-scrollbar { display: none; }
+
 #wheel-selection-info p {
     text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
     letter-spacing: 2px;
 }
+
