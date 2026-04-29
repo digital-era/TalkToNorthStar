@@ -127,6 +127,11 @@ function initWheelUI() {
     // 绑定按钮
     document.getElementById('btn-spin').onclick = () => wheelInstance.spin();
     document.getElementById('btn-stop').onclick = () => wheelInstance.stop();
+
+    // 显示转盘区域，隐藏左右布局和原有交互区
+    document.getElementById('wheel-of-destiny').style.display = 'flex'; // 注意用 flex 以保持内部居中
+    document.getElementById('category-layout-container').style.display = 'none';
+    document.querySelector('.container').style.display = 'none';
 }
 
 // ──────────────────────────────────────────────
@@ -154,6 +159,10 @@ function selectCategory(category) {
         selectLeader(leaders[0], category, null);
         updateSingleCard(leaders[0]);
     }
+
+    document.getElementById('wheel-of-destiny').style.display = 'none';
+    document.getElementById('category-layout-container').style.display = 'flex';
+    document.querySelector('.container').style.display = 'block'; // 交互区重新可见
 }
 
 // ──────────────────────────────────────────────
