@@ -43,6 +43,7 @@ class DestinyWheel {
         this.touchStartY = 0;
         
         this.locked = false;   // 手动选择后锁定转盘        
+        this.isPointerDown = false; // 明确记录鼠标/手指是否按下
 
         // 【方案3】动态设置 Canvas 物理尺寸
         this._resizeCanvas();
@@ -212,7 +213,7 @@ class DestinyWheel {
         // 仅当触摸/点击发生在画布上才处理
         if (e.target !== this.canvas) return;
         if (!this._isInsideWheel(e)) return;   // 不在圆形内，忽略
-         if (this.locked) return;   // 锁定时禁止任何拖拽
+        if (this.locked || this.spinning) return; // 锁定时直接无视       
         
         e.preventDefault();
         if (this.spinning) {
@@ -222,7 +223,8 @@ class DestinyWheel {
         const pt = this._getClientPoint(e);   // 复用已有的 _getMouseAngle 中的坐标提取，我们简化：直接用 e.touches ? e.touches[0] : e
         this.touchStartX = e.touches ? e.touches[0].clientX : e.clientX;
         this.touchStartY = e.touches ? e.touches[0].clientY : e.clientY;
-        this.dragging = false;
+        this.isPointerDown = true; // 标志按下
+        this.dragging = false;  // 重置拖拽状态
         this.lastMouseAngle = null;
         this.clearPending();
     }
@@ -230,6 +232,8 @@ class DestinyWheel {
     _onDragMove(e) {
         if (e.target !== this.canvas) return;  // 新增
         if (!this._isInsideWheel(e)) return;
+        // 核心改进：如果没有按下，或者已经锁定，直接返回，不进行任何计算
+        if (!this.isPointerDown || this.locked) return;
         
         if (this.dragging) {
             e.preventDefault();
@@ -258,6 +262,7 @@ class DestinyWheel {
 
     _onDragEnd(e) {
         if (e.target !== this.canvas) return;  // 新增
+        this.isPointerDown = false; 
         
         if (!this.dragging) return;
         this.dragging = false;
