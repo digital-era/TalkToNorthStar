@@ -29,6 +29,12 @@ class DestinyWheel {
         this.targetAngle = 0;
         this.onSelect = null;
         this.draw();
+        this.spinSpeed = 0;          // 当前角速度
+        this.maxSpeed = 0.35;        // 初始最大速度
+        this.minSpeed = 0.02;        // 末尾最小速度
+        this.deceleration = 0.0005;  // 减速系数
+    }
+
     }
 
     draw() {
@@ -69,23 +75,36 @@ class DestinyWheel {
         ctx.stroke();
     }
 
+    // 重写 spin()
     spin() {
         if (this.spinning) return;
         this.spinning = true;
-        this.targetAngle = this.angle + Math.random() * 10 + 15;  // 至少转两圈
+        // 随机目标总旋转弧度：至少 50 弧度（约8圈），最多 80 弧度（约13圈）
+        this.targetAngle = this.angle + Math.random() * 30 + 50;
+        this.spinSpeed = this.maxSpeed;
         this.animate();
     }
 
+    // 重写 animate()，加入减速
     animate() {
         if (!this.spinning) return;
-        this.angle += 0.25;
-        this.draw();
+
+        // 速度递减，直到不低于最小速度
+        if (this.spinSpeed > this.minSpeed) {
+            this.spinSpeed -= this.deceleration;
+        }
+
+        this.angle += this.spinSpeed;
+
+        // 如果已经达到或超过目标角度，精确停到目标角度并结束
         if (this.angle >= this.targetAngle) {
             this.angle = this.targetAngle % (2 * Math.PI);
             this.spinning = false;
             this.selectByAngle();
             return;
         }
+
+        this.draw();
         this.animId = requestAnimationFrame(() => this.animate());
     }
 
