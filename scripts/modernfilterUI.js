@@ -35,6 +35,9 @@ function getMastersByCategory(category) {
 // ──────────────────────────────────────────────
 // 2. 从 field 提取关键词 (最终融合版)
 // ──────────────────────────────────────────────
+// ──────────────────────────────────────────────
+// 2. 从 field 提取关键词 (最终融合版)
+// ──────────────────────────────────────────────
 function extractCommonFieldKeywords(category, lang) {
     const targetLang = lang || window.currentLang || 'zh-CN';
     const masters = getMastersByCategory(category);
@@ -43,10 +46,13 @@ function extractCommonFieldKeywords(category, lang) {
     const keywordCount = new Map();
     
     masters.forEach(master => {
-        // 稳健的数据读取
+        // 【修复】优先读取当前目标语言的 field
         let text = '';
         if (master.field && typeof master.field === 'object') {
-            text = master.field[targetLang] || master.field['en'] || master.field['zh-CN'] || '';
+            // 关键修复：先尝试目标语言，再回退
+            text = master.field[targetLang] || 
+                   master.field['en'] || 
+                   master.field['zh-CN'] || '';
         } else if (typeof master.field === 'string') {
             text = master.field;
         }
@@ -100,7 +106,7 @@ function generateChipsForCategory(category, container) {
     allBtn.addEventListener('click', () => filterModernGrid(allBtn, category));
     container.appendChild(allBtn);
 
-    // 生成关键词按钮
+    // 【修复】传入当前语言参数，确保提取对应语言的 field
     const keywords = extractCommonFieldKeywords(category, lang);
     
     if (keywords.length > 0) {
@@ -184,7 +190,7 @@ function switchUIStyle(style) {
             if (tabContent) {
                 const chipsContainer = tabContent.querySelector('.filter-chips-container');
                 if (chipsContainer && typeof generateChipsForCategory === 'function') {
-                    // 重新生成胶囊（自动清空旧内容）
+                    // 【修复】传入当前语言，确保重新生成对应语言的胶囊
                     generateChipsForCategory(tabContent.id, chipsContainer);
                 }
                 // 强制单行样式（防止被其他 CSS 覆盖）
@@ -452,6 +458,10 @@ function onLanguageChanged() {
             }
         }, 50);
     } else {
+        // 【修复】传统模式下也要重新生成胶囊
+        if (typeof refreshChipsForActiveTab === 'function') {
+            refreshChipsForActiveTab();
+        }
         if (typeof populateLeaders === 'function') populateLeaders();
     }
 }
