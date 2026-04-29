@@ -240,3 +240,269 @@
 * {
     box-sizing: border-box;
 }
+
+
+/* ============ 转盘界面视觉优化补充 ============ */
+
+/* ── 1. 解决电脑端两侧黑边突兀：全屏渐变背景 + 星空装饰 ── */
+.wheel-section {
+    /* 替换原来的纯色背景，使用径向渐变营造深邃感 */
+    background: radial-gradient(ellipse at center, #1a2332 0%, #0f1620 40%, #080c14 100%);
+    position: relative;
+}
+
+/* 星空背景层（仅电脑端显示） */
+.wheel-section::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(1.5px 1.5px at 10% 20%, rgba(0, 223, 216, 0.4), transparent),
+        radial-gradient(1px 1px at 20% 80%, rgba(255, 255, 255, 0.3), transparent),
+        radial-gradient(2px 2px at 80% 10%, rgba(0, 223, 216, 0.2), transparent),
+        radial-gradient(1px 1px at 90% 60%, rgba(255, 215, 0, 0.3), transparent),
+        radial-gradient(1.5px 1.5px at 50% 50%, rgba(0, 223, 216, 0.15), transparent);
+    background-size: 250px 250px, 300px 300px, 200px 200px, 350px 350px, 400px 400px;
+    pointer-events: none;
+    z-index: 0;
+    animation: twinkle 8s ease-in-out infinite alternate;
+}
+
+@keyframes twinkle {
+    0% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+
+/* 内容层提升z-index */
+.wheel-container,
+.wheel-controls,
+#wheel-selection-info {
+    position: relative;
+    z-index: 1;
+}
+
+/* ── 2. 转盘容器扩大（电脑端） ── */
+@media (min-width: 768px) {
+    .wheel-container {
+        max-width: 520px;  /* 从400px增大 */
+    }
+    
+    /* 指针同步放大 */
+    .wheel-pointer {
+        font-size: 48px;
+        top: -20px;
+    }
+}
+
+/* ── 3. 转盘外圈发光效果（替代黑边） ── */
+.wheel-container::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100% + 40px);
+    height: calc(100% + 40px);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0, 223, 216, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* ── 4. 选中状态信息框美化 ── */
+#wheel-selection-info {
+    margin-top: 25px;
+    padding: 15px 30px;
+    background: rgba(0, 223, 216, 0.1);
+    border: 1px solid rgba(0, 223, 216, 0.3);
+    border-radius: 30px;
+    backdrop-filter: blur(10px);
+    display: none; /* 默认隐藏，JS控制显示 */
+}
+
+#wheel-selection-info p {
+    margin: 0;
+    font-size: 18px;
+    color: #00dfd8;
+    font-family: 'Noto Serif SC', serif;
+    text-shadow: 0 0 15px rgba(0, 223, 216, 0.6);
+    letter-spacing: 3px;
+}
+
+/* ── 5. 按钮组优化 ── */
+.wheel-controls {
+    margin-top: 40px;
+    gap: 20px;
+}
+
+/* 主按钮（缘动）增强 */
+#btn-spin {
+    background: linear-gradient(135deg, #00dfd8, #007cf0);
+    border: none;
+    border-radius: 50px;
+    padding: 14px 48px;
+    color: white;
+    font-size: 20px;
+    font-family: 'Noto Serif SC', serif;
+    cursor: pointer;
+    box-shadow: 
+        0 4px 20px rgba(0, 223, 216, 0.4),
+        0 0 30px rgba(0, 223, 216, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+#btn-spin::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 70%
+    );
+    transform: rotate(45deg);
+    transition: all 0.5s;
+}
+
+#btn-spin:hover {
+    transform: scale(1.05);
+    box-shadow: 
+        0 6px 30px rgba(0, 223, 216, 0.6),
+        0 0 50px rgba(0, 223, 216, 0.2);
+}
+
+#btn-spin:hover::before {
+    left: 100%;
+}
+
+/* 确认按钮 */
+#btn-confirm-category {
+    background: transparent;
+    border: 2px solid #ffd700;
+    border-radius: 50px;
+    padding: 12px 36px;
+    color: #ffd700;
+    font-size: 16px;
+    font-family: 'Noto Serif SC', serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#btn-confirm-category:hover {
+    background: rgba(255, 215, 0, 0.1);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+/* ── 6. 标题区域优化 ── */
+.wheel-section h1,
+.wheel-section .main-title {
+    font-family: 'Noto Serif SC', 'Cinzel', serif;
+    font-size: clamp(24px, 5vw, 42px);
+    color: #00dfd8;
+    text-align: center;
+    margin: 20px 0 10px;
+    text-shadow: 0 0 20px rgba(0, 223, 216, 0.3);
+    letter-spacing: 4px;
+}
+
+.wheel-section .sub-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: clamp(14px, 3vw, 20px);
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    margin-bottom: 30px;
+    font-style: italic;
+}
+
+/* ── 7. 转盘拖拽时的视觉反馈 ── */
+#wheelCanvas:active {
+    cursor: grabbing;
+    filter: brightness(1.1);
+}
+
+/* ── 8. 响应式微调 ── */
+@media (max-width: 768px) {
+    .wheel-section::before {
+        display: none; /* 手机端隐藏星空，保持简洁 */
+    }
+    
+    .wheel-container {
+        max-width: 320px;
+    }
+    
+    .wheel-pointer {
+        font-size: 32px;
+        top: -12px;
+    }
+    
+    #wheel-selection-info {
+        padding: 10px 20px;
+    }
+    
+    #wheel-selection-info p {
+        font-size: 16px;
+        letter-spacing: 2px;
+    }
+    
+    .wheel-controls {
+        margin-top: 25px;
+        gap: 15px;
+    }
+    
+    #btn-spin {
+        padding: 12px 36px;
+        font-size: 18px;
+    }
+}
+
+/* ── 9. 左右布局背景优化（解决进入分类后的黑边） ── */
+#category-layout-container {
+    /* 添加背景避免纯黑 */
+    background: linear-gradient(135deg, #0a0e17 0%, #121a2b 50%, #0a0e17 100%);
+}
+
+.layout-left {
+    position: relative;
+}
+
+.layout-left::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        to right,
+        transparent 0%,
+        rgba(10, 14, 23, 0.3) 100%
+    );
+    pointer-events: none;
+}
+
+/* ── 10. 全局滚动条美化 ── */
+.wheel-section::-webkit-scrollbar {
+    width: 6px;
+}
+
+.wheel-section::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.wheel-section::-webkit-scrollbar-thumb {
+    background: rgba(0, 223, 216, 0.3);
+    border-radius: 3px;
+}
+
+.wheel-section::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 223, 216, 0.5);
+}
