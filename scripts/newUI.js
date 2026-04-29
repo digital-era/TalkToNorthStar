@@ -369,6 +369,7 @@ function renderCategoryLayout(category) {
     const container = document.getElementById('category-layout-container');
     const lang = currentLang || 'zh-CN';
     const ambientSrc = `images/ambient-${category}.jpg`;
+    const placeholderText = (window.translations && window.translations[lang]?.search) || '搜索...';
 
     container.innerHTML = `
         <div class="layout-left">
@@ -376,16 +377,13 @@ function renderCategoryLayout(category) {
         </div>
         <div class="layout-right">
             <div class="card-stage">
-                <!-- 搜索与缘动按钮同一行 -->
                 <div class="search-and-random">
-                    <input type="text" class="modern-search-input" id="newUI-search" placeholder="${translations[lang]?.placeholderUserQuestion || '输入关键词...'}">
+                    <input type="text" class="modern-search-input" id="newUI-search" placeholder="${placeholderText}">
                     <button class="magic-btn small" id="btn-random-leader">✦ 缘动</button>
                 </div>
-                <!-- 北极星大卡片 -->
                 <div id="single-northstar-card" class="northstar-single-card"></div>
             </div>
             <div class="card-controls">
-                <!-- 子类胶囊（可横向滑动） -->
                 <div class="filter-chips-container" id="chips-${category}" style="
                     display: flex;
                     flex-wrap: nowrap;
@@ -400,7 +398,6 @@ function renderCategoryLayout(category) {
         </div>
     `;
 
-    // 生成子类胶囊
     const chipsContainer = document.getElementById(`chips-${category}`);
     if (typeof generateChipsForCategory === 'function' && chipsContainer) {
         generateChipsForCategory(category, chipsContainer);
@@ -408,22 +405,37 @@ function renderCategoryLayout(category) {
             chip.addEventListener('click', function() {
                 chipsContainer.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
                 this.classList.add('active');
+                showFirstCandidate(category);
             });
         });
     }
 
-    // 绑定随机按钮
-    const randomBtn = document.getElementById('btn-random-leader');
-    if (randomBtn) {
-        randomBtn.onclick = () => randomSelectLeader(category);
+    const searchInput = document.getElementById('newUI-search');
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            showFirstCandidate(category);
+        });
     }
 
-    // 默认选中第一位北极星
+    const randomBtn = document.getElementById('btn-random-leader');
+    if (randomBtn) {
+        randomBtn.onclick = () => {
+            const candidates = getFilteredCandidates(category);
+            if (candidates.length === 0) {
+                alert(translations[lang]?.noMatchingLeader || '无匹配的北极星');
+                return;
+            }
+            const random = candidates[Math.floor(Math.random() * candidates.length)];
+            selectLeader(random, category, null);
+            updateSingleCard(random);
+        };
+    }
+
+    // 默认显示第一个
     const leaders = allData[category];
     if (leaders && leaders.length > 0) {
-        const first = leaders[0];
-        selectLeader(first, category, null);
-        updateSingleCard(first);
+        selectLeader(leaders[0], category, null);
+        updateSingleCard(leaders[0]);
     }
 }
 
@@ -447,24 +459,18 @@ function updateSingleCard(leader) {
     `;
 }
 
-// ──────────────────────────────────────────────
-// 随机选择（缘动）
-// ──────────────────────────────────────────────
-function randomSelectLeader(category) {
-    const lang = currentLang || 'zh-CN';
+
+// 获取当前 category 过滤后的候选人数组（结合子类激活胶囊 + 搜索框文本）
+function getFilteredCandidates(category) {
+    const lang = window.currentLang || 'zh-CN';
     const chipsContainer = document.getElementById(`chips-${category}`);
     let activeSub = null;
-
     if (chipsContainer) {
-        // 查找激活且不是“全部”的胶囊
         const activeChip = Array.from(chipsContainer.querySelectorAll('.chip.active'))
             .find(chip => chip.dataset.filter && chip.dataset.filter !== 'all');
         if (activeChip) activeSub = activeChip.dataset.filter;
     }
-
     let candidates = (allData[category] || []).slice();
-
-    // 子类过滤
     if (activeSub) {
         const q = activeSub.toLowerCase();
         candidates = candidates.filter(m => {
@@ -472,8 +478,6 @@ function randomSelectLeader(category) {
             return f.includes(q);
         });
     }
-
-    // 搜索框过滤
     const searchInput = document.getElementById('newUI-search');
     if (searchInput && searchInput.value.trim()) {
         const sq = searchInput.value.trim().toLowerCase();
@@ -486,15 +490,18 @@ function randomSelectLeader(category) {
             return searchStr.includes(sq);
         });
     }
+    return candidates;
+}
 
-    if (candidates.length === 0) {
-        alert(translations[lang]?.noMatchingLeader || '无匹配的北极星');
-        return;
+function showFirstCandidate(category) {
+    const candidates = getFilteredCandidates(category);
+    if (candidates.length > 0) {
+        selectLeader(candidates[0], category, null);
+        updateSingleCard(candidates[0]);
+    } else {
+        const card = document.getElementById('single-northstar-card');
+        if (card) card.innerHTML = `<p style="color:#aaa;text-align:center;">无匹配北极星</p>`;
     }
-
-    const random = candidates[Math.floor(Math.random() * candidates.length)];
-    selectLeader(random, category, null);
-    updateSingleCard(random);
 }
 
 // ──────────────────────────────────────────────
