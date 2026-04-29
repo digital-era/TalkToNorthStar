@@ -135,17 +135,17 @@ function switchUIStyle(style) {
     localStorage.setItem('northstarUIStyle', style);
 
     if (style === 'traditional') {
-        // 恢复标签页（如果之前被隐藏）
+        // 恢复标签页
         const tabsBar = document.querySelector('.tabs');
-        if (tabsBar) tabsBar.style.display = 'flex';  // 或 'block'，根据原样式
-        
+        if (tabsBar) tabsBar.style.display = 'flex';
+
         // ════════════════════════════════════════
         // “传统模式”实际执行原现代界面的行为
         // （搜索 + 过滤胶囊 + 横向滚动网格）
         // ════════════════════════════════════════
-        document.body.classList.add('modern-mode');   // 为 CSS 提供 hook
+        document.body.classList.add('modern-mode');
 
-        // 1. 隐藏新 UI 的相关元素（如果存在）
+        // 1. 隐藏新 UI 的相关元素
         const wheel = document.getElementById('wheel-of-destiny');
         if (wheel) wheel.style.display = 'none';
         const layout = document.getElementById('category-layout-container');
@@ -177,18 +177,34 @@ function switchUIStyle(style) {
             }
         });
 
-        // 4. 显示过滤栏并生成胶囊
-        document.querySelectorAll('.modern-filter-bar').forEach(bar => bar.style.display = 'flex');
-        refreshChipsForActiveTab();
+        // 4. ★ 修复：为所有 Tab 生成子类胶囊并强制单行横向滚动
+        document.querySelectorAll('.modern-filter-bar').forEach(bar => {
+            bar.style.display = 'flex';
+            const tabContent = bar.closest('.tab-content');
+            if (tabContent) {
+                const chipsContainer = tabContent.querySelector('.filter-chips-container');
+                if (chipsContainer && typeof generateChipsForCategory === 'function') {
+                    // 重新生成胶囊（自动清空旧内容）
+                    generateChipsForCategory(tabContent.id, chipsContainer);
+                }
+                // 强制单行样式（防止被其他 CSS 覆盖）
+                if (chipsContainer) {
+                    chipsContainer.style.flexWrap = 'nowrap';
+                    chipsContainer.style.overflowX = 'auto';
+                    chipsContainer.style.scrollbarWidth = 'none';
+                    chipsContainer.style.msOverflowStyle = 'none';
+                }
+            }
+        });
 
-        // 5. 激活当前选中的标签（默认 AI，或上一个激活的按钮）
+        // 5. 激活当前选中的标签
         const activeBtn = document.querySelector('.tab-button.active') || document.querySelector('.tab-button');
         if (activeBtn) {
             const match = activeBtn.getAttribute('onclick').match(/'([^']+)'/);
             if (match) openTab(null, match[1]);
         }
 
-        // 6. 刷新网格（全部显示）
+        // 6. 刷新当前网格
         const activeTab = document.querySelector('.tab-content.active');
         if (activeTab) {
             filterModernGrid(null, activeTab.id);
@@ -197,7 +213,7 @@ function switchUIStyle(style) {
         // 现代模式：隐藏标签页
         const tabsBar = document.querySelector('.tabs');
         if (tabsBar) tabsBar.style.display = 'none';
-        
+
         // ════════════════════════════════════════
         // “现代模式”执行全新界面
         // （转盘 + 左右布局 + 缘动随机）
@@ -208,7 +224,7 @@ function switchUIStyle(style) {
         document.querySelectorAll('.modern-filter-bar').forEach(bar => bar.style.display = 'none');
         document.querySelectorAll('.leader-scroll-container').forEach(container => container.style.display = 'none');
         document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
-        document.querySelector('.container').style.display = 'none';   // 交互区暂时隐藏，等大类选定后再显示
+        document.querySelector('.container').style.display = 'none';
 
         // 2. 显示转盘，隐藏左右布局
         const wheel = document.getElementById('wheel-of-destiny');
@@ -216,7 +232,7 @@ function switchUIStyle(style) {
         const layout = document.getElementById('category-layout-container');
         if (layout) layout.style.display = 'none';
 
-        // 3. 调用新 UI 初始化（确保转盘已绘制、事件已绑定）
+        // 3. 调用新 UI 初始化
         if (typeof initWheelUI === 'function') {
             initWheelUI();
         }
