@@ -1003,6 +1003,54 @@ const humanitiesMasters = [
       }
     },
     {
+      id: "jin_yong",
+      name: "金庸 (Jin Yong / Louis Cha)",
+      contribution: {
+        "zh-CN": "将传统武侠类型提升至具有深刻人文内涵与文学高度的境界，融合历史背景、人物成长与家国情怀。",
+        "en": "Elevating traditional wuxia fiction to a level of profound humanistic depth and literary sophistication by integrating historical settings, character development, and national sentiment."
+      },
+      field: {
+        "zh-CN": "新派武侠小说、武侠文学现代化、人文历史叙事。",
+        "en": "New School Wuxia Fiction, Modernization of Wuxia Literature, Humanistic Historical Narration."
+      },
+      remarks: {
+        "zh-CN": "新派武侠小说最杰出的代表与集大成者，被誉为“武侠小说一代宗师”。",
+        "en": "The foremost representative and culminating figure of New School wuxia fiction, widely regarded as the greatest master of the genre. "
+      }
+    },
+    {
+      id: "gu_long",
+      name: "古龙 (Gu Long / Xiong Yaohua)",
+      contribution: {
+        "zh-CN": "以简洁诗化语言和蒙太奇手法，深刻刻画江湖中人的孤独、友情与人性困境，革新武侠小说的叙事风格与人物塑造。",
+        "en": "Employing concise, poetic language and montage techniques to profoundly depict the loneliness, friendship, and human dilemmas of jianghu figures, revolutionizing the narrative style and character portrayal in wuxia fiction."
+      },
+      field: {
+        "zh-CN": "新派武侠小说、人性心理刻画、现代主义武侠叙事。",
+        "en": "New School Wuxia Fiction, Psychological Portrayal of Human Nature, Modernist Wuxia Narration."
+      },
+      remarks: {
+        "zh-CN": "新派武侠小说中风格最为独特的一位大师，将武侠从“写事”转向“写人”，强调个体精神风貌与存在主义式的孤独感。",
+        "en": "One of the most stylistically distinctive masters of New School wuxia fiction. He shifted the genre from 'plot-driven' to 'character-driven', emphasizing individual spirit and existential loneliness. "
+      }
+    },
+    {
+      id: "liang_yusheng",
+      name: "梁羽生 (Liang Yusheng / Chen Wentong)",
+      contribution: {
+        "zh-CN": "融合历史背景、诗词意境与“以侠胜武”的理念。",
+        "en": "Blending historical settings, poetic ambiance, and the philosophy of 'letting chivalry prevail over martial prowess'."
+      },
+      field: {
+        "zh-CN": "新派武侠小说开创、历史武侠、诗词融入武侠。",
+        "en": "Pioneer of New School Wuxia Fiction, Historical Wuxia, Integration of Classical Poetry into Wuxia."
+      },
+      remarks: {
+        "zh-CN": "新派武侠小说的开山鼻祖，被公认为“开风气者”。其作品注重历史真实感与文人侠骨，强调侠义精神与道德理想。",
+        "en": "The founding pioneer of New School wuxia fiction, widely recognized as the one who 'opened the trend'. His works emphasize historical authenticity and the scholarly chivalric spirit, highlighting moral ideals and righteousness. "
+      }
+    },
+    {
       id: "yi_zhongtian",  name: "易中天 (Yi Zhongtian)",
       contribution: {
         "zh-CN": "通过《百家讲坛》主讲《品三国》《汉代风云人物》等系列，以通俗生动语言重述中国历史。",
