@@ -32,20 +32,39 @@ class DestinyWheel {
         this.minSpeed = 0.02;
         this.deceleration = 0.0005;
         this.onSelect = null;
-        this.onPendingSelect = null;      // 新增：待确认回调
+        this.onPendingSelect = null;
         this.pendingCategory = null;
         this.dragging = false;
         this.lastMouseAngle = 0;
+        this.alignDuration = 400;  // 对齐动画时长，保留但未启用
 
+        // 【方案3】动态设置 Canvas 物理尺寸
+        this._resizeCanvas();
         this.draw();
         this._bindDragEvents();
         this._bindConfirmButton();
     }
 
+    // 新增：根据容器宽度动态调整画布大小
+    _resizeCanvas() {
+        const parent = this.canvas.parentElement;
+        const containerWidth = parent ? parent.clientWidth : window.innerWidth;
+        const size = Math.min(400, Math.max(280, containerWidth - 20)); // 两侧留白
+        this.canvas.width = size;
+        this.canvas.height = size;
+        this._radius = size / 2 - 10; // 半径留边距
+    }
+
+    // 获取当前实际半径（供 draw 使用）
+    get radius() {
+        return this._radius || 180;
+    }
+
     draw() {
         const ctx = this.ctx;
         const w = this.canvas.width / 2;
-        const r = Math.min(w, this.canvas.height / 2) - 10;
+        const h = this.canvas.height / 2;
+        const r = this.radius;
         const slice = (2 * Math.PI) / this.categories.length;
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -53,11 +72,11 @@ class DestinyWheel {
             const start = this.angle + i * slice;
             const end = start + slice;
             ctx.beginPath();
-            ctx.moveTo(w, w);
-            ctx.arc(w, w, r, start, end);
-            // 如果当前类别是待确认的，给予特殊高亮颜色
+            ctx.moveTo(w, h);
+            ctx.arc(w, h, r, start, end);
+            // 待确认扇区高亮
             if (this.pendingCategory === this.categories[i]) {
-                ctx.fillStyle = '#3a5a7c'; // 高亮
+                ctx.fillStyle = '#3a5a7c';
             } else {
                 ctx.fillStyle = i % 2 === 0 ? '#1e2b3c' : '#2c3e50';
             }
@@ -67,18 +86,20 @@ class DestinyWheel {
             ctx.stroke();
 
             ctx.save();
-            ctx.translate(w, w);
+            ctx.translate(w, h);
             ctx.rotate(start + slice / 2);
             ctx.textAlign = 'center';
             ctx.fillStyle = '#fff';
-            ctx.font = 'bold 16px "Noto Serif SC", "Poppins"';
-            ctx.fillText(this.namesMap[this.categories[i]] || '', r * 0.7, 6);
+            // 字体大小根据半径动态缩放
+            const fontSize = Math.max(12, r * 0.09);
+            ctx.font = `bold ${fontSize}px "Noto Serif SC", "Poppins"`;
+            ctx.fillText(this.namesMap[this.categories[i]] || '', r * 0.65, 6);
             ctx.restore();
         }
 
-        // 中心圆
+        // 中心装饰圆
         ctx.beginPath();
-        ctx.arc(w, w, 20, 0, 2 * Math.PI);
+        ctx.arc(w, h, r * 0.08, 0, 2 * Math.PI);
         ctx.fillStyle = '#050a14';
         ctx.fill();
         ctx.strokeStyle = '#00dfd8';
@@ -87,7 +108,7 @@ class DestinyWheel {
 
     spin() {
         if (this.spinning) return;
-        this.clearPending();          // 清除之前的待确认状态
+        this.clearPending();
         this.spinning = true;
         this.targetAngle = this.angle + Math.random() * 30 + 50;
         this.spinSpeed = this.maxSpeed;
@@ -114,60 +135,23 @@ class DestinyWheel {
         if (!this.spinning) return;
         this.spinning = false;
         cancelAnimationFrame(this.animId);
-        this.clearPending();   // 清除旧的待确认，重新选择
+        this.clearPending();
         this.selectByAngle();
     }
 
     selectByAngle() {
         const norm = ((this.angle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
         const slice = (2 * Math.PI) / this.categories.length;
-        // 指针固定在顶部（-π/2 方向，即 3π/2）
-        const pointerAngle = 3 * Math.PI / 2;
-        // 指针相对于起始角度的偏移（确保非负）
+        const pointerAngle = 3 * Math.PI / 2; // 顶部指针
         const relative = (pointerAngle - norm + 2 * Math.PI) % (2 * Math.PI);
         const idx = Math.floor(relative / slice) % this.categories.length;
         const selectedCat = this.categories[idx];
         this.pendingCategory = selectedCat;
-        this.draw();   // 重绘高亮
+        this.draw();
         if (this.onPendingSelect) this.onPendingSelect(selectedCat);
     }
 
-    // 待确认 UI 控制
-    showPendingUI(categoryName) {
-        const infoDiv = document.getElementById('wheel-selection-info');
-        const nameSpan = document.getElementById('selected-category-name');
-        if (infoDiv && nameSpan) {
-            nameSpan.textContent = categoryName;
-            infoDiv.style.display = 'block';
-        }
-    }
-
-    hidePendingUI() {
-        const infoDiv = document.getElementById('wheel-selection-info');
-        if (infoDiv) infoDiv.style.display = 'none';
-    }
-
-    clearPending() {
-        this.pendingCategory = null;
-        this.hidePendingUI();
-        this.draw(); // 重绘去掉高亮
-    }
-
-    // 确认按钮事件
-    _bindConfirmButton() {
-        const confirmBtn = document.getElementById('btn-confirm-category');
-        if (confirmBtn) {
-            confirmBtn.addEventListener('click', () => {
-                if (this.pendingCategory && this.onSelect) {
-                    this.onSelect(this.pendingCategory);
-                    this.pendingCategory = null;
-                    this.hidePendingUI();
-                }
-            });
-        }
-    }
-
-    // 手动拖拽支持
+    // 手动拖拽方法 (已包含缩放换算)
     _bindDragEvents() {
         this.canvas.addEventListener('mousedown', (e) => this._onDragStart(e));
         window.addEventListener('mousemove', (e) => this._onDragMove(e));
@@ -181,6 +165,8 @@ class DestinyWheel {
 
     _getMouseAngle(e) {
         const rect = this.canvas.getBoundingClientRect();
+        const scaleX = this.canvas.width / rect.width;
+        const scaleY = this.canvas.height / rect.height;
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
         let clientX, clientY;
@@ -191,8 +177,8 @@ class DestinyWheel {
             clientX = e.clientX;
             clientY = e.clientY;
         }
-        const dx = clientX - centerX;
-        const dy = clientY - centerY;
+        const dx = (clientX - centerX) * scaleX;
+        const dy = (clientY - centerY) * scaleY;
         return Math.atan2(dy, dx);
     }
 
@@ -205,7 +191,7 @@ class DestinyWheel {
         this.dragging = true;
         this.canvas.style.cursor = 'grabbing';
         this.lastMouseAngle = this._getMouseAngle(e);
-        this.clearPending();   // 开始拖拽时清除待确认
+        this.clearPending();
     }
 
     _onDragMove(e) {
@@ -224,7 +210,40 @@ class DestinyWheel {
         if (!this.dragging) return;
         this.dragging = false;
         this.canvas.style.cursor = 'grab';
-        this.selectByAngle();   // 松手后进入待确认
+        this.selectByAngle();
+    }
+
+    showPendingUI(categoryName) {
+        const infoDiv = document.getElementById('wheel-selection-info');
+        const nameSpan = document.getElementById('selected-category-name');
+        if (infoDiv && nameSpan) {
+            nameSpan.textContent = categoryName;
+            infoDiv.style.display = 'block';
+        }
+    }
+
+    hidePendingUI() {
+        const infoDiv = document.getElementById('wheel-selection-info');
+        if (infoDiv) infoDiv.style.display = 'none';
+    }
+
+    clearPending() {
+        this.pendingCategory = null;
+        this.hidePendingUI();
+        this.draw();
+    }
+
+    _bindConfirmButton() {
+        const confirmBtn = document.getElementById('btn-confirm-category');
+        if (confirmBtn) {
+            confirmBtn.addEventListener('click', () => {
+                if (this.pendingCategory && this.onSelect) {
+                    this.onSelect(this.pendingCategory);
+                    this.pendingCategory = null;
+                    this.hidePendingUI();
+                }
+            });
+        }
     }
 }
 
