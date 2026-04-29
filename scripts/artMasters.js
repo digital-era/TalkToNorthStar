@@ -954,6 +954,38 @@ const artMasters = [
         "en": "Master of contemporary game aesthetics; reshaped high-difficulty challenges and world design."
       }
     },
+    {
+      id: "beyond",
+      name: "Beyond乐队 (Beyond Band)",
+      contribution: {
+        "zh-CN": "将摇滚精神与社会关怀、理想主义结合，突破香港乐坛改编歌为主的格局，推动粤语原创摇滚流行化。",
+        "en": "Fused rock spirit with social concern and idealism, breaking the dominance of cover songs in Hong Kong's music scene and popularizing Cantonese original rock."
+      },
+      field: {
+        "zh-CN": "香港摇滚乐、粤语原创音乐、社会批判摇滚、乐队音乐。",
+        "en": "Hong Kong Rock, Cantonese Original Music, Socially Conscious Rock, Band Music."
+      },
+      remarks: {
+        "zh-CN": "其音乐超越时代，至今仍广为传唱，尤其黄家驹主唱时期的作品成为几代人的集体记忆，对华语摇滚与青年文化产生深远影响。",
+        "en": "Their music transcends eras and remains widely sung today; the works from Wong Ka Kui's era have become collective memories across generations, exerting profound influence on Chinese rock and youth culture."
+      }
+    },
+    {
+      id: "dao_lang",
+      name: "刀郎 (Dao Lang / Luo Lin)",
+      contribution: {
+        "zh-CN": "早期融合新疆西域民歌风情与流行音乐，后期深度融合中国传统民间音乐元素，创作大量具有故事性与人文内涵的作品。",
+        "en": "His early work blended Xinjiang Western Region folk styles with pop music; in later , he deeply integrated traditional Chinese folk elements, while transforming classical literature  into contemporary pop songs rich in narrative and humanistic depth."
+      },
+      field: {
+        "zh-CN": "华语流行音乐、西域民歌融合、新国风音乐、民间音乐现代化、唱作人。",
+        "en": "Chinese Pop Music, Western Region Folk-Pop Fusion, New National Style Music, Modernization of Folk Music, Singer-Songwriter."
+      },
+      remarks: {
+        "zh-CN": "其音乐以沧桑独特的嗓音、浓郁的地域与民族风情，以及对传统文化的创造性转化著称。",
+        "en": "Known for his distinctive hoarse voice, rich regional and ethnic flavors, and creative integration of traditional Chinese culture.."
+      }
+    },
     { id: "luciano_pavarotti", name: "Luciano Pavarotti (卢西亚诺·帕瓦罗蒂)",
       contribution: {
         "zh-CN": "意大利男高音，演唱《今夜无人入睡》，推广歌剧大众化，获格莱美奖。",
