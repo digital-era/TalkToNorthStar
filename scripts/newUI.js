@@ -362,8 +362,7 @@ function selectCategory(category) {
 function renderCategoryLayout(category) {
     const container = document.getElementById('category-layout-container');
     const lang = currentLang || 'zh-CN';
-
-    const ambientSrc = `images/ambient-${category}.jpg`;  // 意境图命名规则
+    const ambientSrc = `images/ambient-${category}.jpg`;
 
     container.innerHTML = `
         <div class="layout-left">
@@ -376,7 +375,16 @@ function renderCategoryLayout(category) {
             </div>
             <div class="card-controls">
                 <input type="text" class="modern-search-input" placeholder="搜索..." id="newUI-search">
-                <div class="filter-chips-container" id="chips-${category}"></div>
+                <div class="filter-chips-container" id="chips-${category}" style="
+                    display: flex;
+                    flex-wrap: nowrap;
+                    overflow-x: auto;
+                    gap: 8px;
+                    padding: 10px 0;
+                    scrollbar-width: none;
+                    -ms-overflow-style: none;
+                    -webkit-overflow-scrolling: touch;
+                "></div>
             </div>
         </div>
     `;
@@ -385,7 +393,7 @@ function renderCategoryLayout(category) {
     const chipsContainer = document.getElementById(`chips-${category}`);
     if (typeof generateChipsForCategory === 'function' && chipsContainer) {
         generateChipsForCategory(category, chipsContainer);
-        // 给每个 chip 添加事件：选中后更新随机候选池，但不自动换人
+        // 胶囊选中高亮
         chipsContainer.querySelectorAll('.chip').forEach(chip => {
             chip.addEventListener('click', function() {
                 chipsContainer.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
@@ -394,15 +402,21 @@ function renderCategoryLayout(category) {
         });
     }
 
-    // 搜索框事件：过滤的是当前可用于“手动翻阅”的候选列表，也可用于随机
-    document.getElementById('newUI-search').addEventListener('input', function() {
-        // 这里仅用于标记，实际随机选择时会读取搜索框内容
-    });
+    // 搜索框事件（无需额外代码，randomSelectLeader 会读取它的值）
 
     // 绑定随机按钮
-    document.getElementById('btn-random-leader').onclick = () => randomSelectLeader(category);
-}
+    const randomBtn = document.getElementById('btn-random-leader');
+    if (randomBtn) {
+        randomBtn.onclick = () => randomSelectLeader(category);
+    }
 
+    // 默认选中第一位北极星并更新卡片
+    const leaders = allData[category];
+    if (leaders && leaders.length > 0) {
+        selectLeader(leaders[0], category, null);
+        updateSingleCard(leaders[0]);
+    }
+}
 // ──────────────────────────────────────────────
 // 更新大卡片
 // ──────────────────────────────────────────────
@@ -410,15 +424,15 @@ function updateSingleCard(leader) {
     const card = document.getElementById('single-northstar-card');
     if (!card) return;
     const lang = currentLang || 'zh-CN';
-    const contrib = leader.contribution ? (leader.contribution[lang] || leader.contribution['zh-CN']) : '';
-    const field = leader.field ? (leader.field[lang] || leader.field['zh-CN']) : '';
-    const remarks = leader.remarks ? (leader.remarks[lang] || leader.remarks['zh-CN']) : '';
-
+    const t = translations[lang] || {};
+    const contrib = leader.contribution ? (leader.contribution[lang] || leader.contribution['zh-CN'] || '') : '';
+    const field = leader.field ? (leader.field[lang] || leader.field['zh-CN'] || '') : '';
+    const remarks = leader.remarks ? (leader.remarks[lang] || leader.remarks['zh-CN'] || '') : '';
     card.innerHTML = `
         <h2>${leader.name}</h2>
-        <p class="contribution"><strong>${translations[lang].labelContribution || '贡献'}</strong> ${contrib}</p>
-        <p class="field"><strong>${translations[lang].labelField || '领域'}</strong> ${field}</p>
-        ${remarks ? `<p class="remarks"><strong>${translations[lang].labelRemarks || '评注'}</strong> ${remarks}</p>` : ''}
+        <p class="contribution"><strong>${t.labelContribution || '贡献'}</strong> ${contrib}</p>
+        <p class="field"><strong>${t.labelField || '领域'}</strong> ${field}</p>
+        ${remarks ? `<p class="remarks"><strong>${t.labelRemarks || '评注'}</strong> ${remarks}</p>` : ''}
     `;
 }
 
@@ -433,37 +447,30 @@ function randomSelectLeader(category) {
         const activeChip = chipsContainer.querySelector('.chip.active[data-filter!="all"]');
         if (activeChip) activeSub = activeChip.dataset.filter;
     }
-
-    let candidates = allData[category] || [];
-    
-    // 子类过滤
+    let candidates = (allData[category] || []).slice();
     if (activeSub) {
         const q = activeSub.toLowerCase();
         candidates = candidates.filter(m => {
-            const f = m.field ? (m.field[lang] || m.field['zh-CN'] || '') : '';
-            return f.toLowerCase().includes(q);
+            const f = m.field ? (m.field[lang] || m.field['zh-CN'] || '').toLowerCase() : '';
+            return f.includes(q);
         });
     }
-
-    // 搜索框文本过滤
     const searchInput = document.getElementById('newUI-search');
     if (searchInput && searchInput.value.trim()) {
         const sq = searchInput.value.trim().toLowerCase();
         candidates = candidates.filter(m => {
             const searchStr = [
                 m.name,
-                (m.contribution && (m.contribution[lang] || m.contribution['zh-CN'] || '')),
-                (m.field && (m.field[lang] || m.field['zh-CN'] || ''))
+                m.contribution ? (m.contribution[lang] || m.contribution['zh-CN'] || '') : '',
+                m.field ? (m.field[lang] || m.field['zh-CN'] || '') : ''
             ].join(' ').toLowerCase();
             return searchStr.includes(sq);
         });
     }
-
     if (candidates.length === 0) {
-        alert(translations[lang].noMatchingLeader || '无匹配的北极星');
+        alert(translations[lang]?.noMatchingLeader || '无匹配的北极星');
         return;
     }
-
     const random = candidates[Math.floor(Math.random() * candidates.length)];
     selectLeader(random, category, null);
     updateSingleCard(random);
