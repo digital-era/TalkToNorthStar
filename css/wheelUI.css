@@ -13,9 +13,23 @@
 
 .wheel-container {
     position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+#wheelCanvas {
+    display: block;
+    max-width: 100%;
+    height: auto;        /* 保持比例，但物理尺寸由 JS 控制 */
+    cursor: grab;
+}
+
+#wheelCanvas:active {
+    cursor: grabbing;
 }
 
 .wheel-pointer {
@@ -96,13 +110,6 @@
 }
 .filter-chips-container {
     margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px;
-}
-
-#wheelCanvas {
-    cursor: grab;
-}
-#wheelCanvas:active {
-    cursor: grabbing;
 }
 
 #wheel-selection-info p {
