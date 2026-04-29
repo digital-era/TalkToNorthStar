@@ -168,7 +168,8 @@ class DestinyWheel {
         window.addEventListener('touchmove', (e) => this._onDragMove(e), { passive: false });
         window.addEventListener('touchend', (e) => this._onDragEnd(e));
         this.canvas.style.touchAction = 'none';
-        this.canvas.style.userSelect = 'none';
+        this.canvas.style.userSelect = 'none';        
+        this.canvas.style.cursor = 'grab';
     }
 
     _getMouseAngle(e) {
@@ -208,59 +209,53 @@ class DestinyWheel {
         const dy = (clientY - centerY) * scaleY;
         return Math.sqrt(dx*dx + dy*dy) <= this._radius;
     }
-
-    // 辅助方法：统一获取坐标
-    _getEventPos(e) {
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        return { x: clientX, y: clientY };
-    }
-
+    
     _onDragStart(e) {
-        // 仅当触摸/点击发生在画布上才处理
-        if (e.target !== this.canvas) return;
-        if (!this._isInsideWheel(e)) return;   // 不在圆形内，忽略
-        if (this.locked || this.spinning) return; // 锁定时直接无视       
+        // 1. 只有在圆圈内按下才开始
+        if (!this._isInsideWheel(e)) return;
+        if (this.locked || this.spinning) return; 
         
-        e.preventDefault();
+        // 停止之前的动画
         if (this.spinning) {
             this.spinning = false;
             cancelAnimationFrame(this.animId);
         }
-        const pt = this._getClientPoint(e);   // 复用已有的 _getMouseAngle 中的坐标提取，我们简化：直接用 e.touches ? e.touches[0] : e
-        this.touchStartX = e.touches ? e.touches[0].clientX : e.clientX;
-        this.touchStartY = e.touches ? e.touches[0].clientY : e.clientY;
-        this.isPointerDown = true; // 标志按下
-        this.dragging = false;  // 重置拖拽状态
+
+        const pos = this._getEventPos(e);
+        this.touchStartX = pos.x;
+        this.touchStartY = pos.y;
+        
+        this.isPointerDown = true; 
+        this.dragging = false; 
         this.lastMouseAngle = this._getMouseAngle(e);
         this.clearPending();
     }
 
-    _onDragMove(e) {
-        if (e.target !== this.canvas) return;  // 新增
-        if (!this._isInsideWheel(e)) return;
-        // 核心改进：如果没有按下，或者已经锁定，直接返回，不进行任何计算
+     _onDragMove(e) {
+        // 核心修正：只要按下了，不需要 target 依然是 canvas，也不需要依然在圆圈内
         if (!this.isPointerDown || this.locked) return;
+
+        const pos = this._getEventPos(e);
         
         if (this.dragging) {
-            e.preventDefault();
+            // 已经在拖拽中
             const currentAngle = this._getMouseAngle(e);
             let delta = currentAngle - this.lastMouseAngle;
+            
+            // 处理跨越 -PI 到 PI 的突变
             if (delta > Math.PI) delta -= 2 * Math.PI;
             if (delta < -Math.PI) delta += 2 * Math.PI;
+            
             this.angle += delta;
             this.lastMouseAngle = currentAngle;
             this.draw();
+            e.preventDefault(); 
         } else {
-            e.preventDefault();
-            // 检查是否超过阈值
-            const x = e.touches ? e.touches[0].clientX : e.clientX;
-            const y = e.touches ? e.touches[0].clientY : e.clientY;
-            const dx = x - this.touchStartX;
-            const dy = y - this.touchStartY;
+            // 还没开始拖拽，检查是否移动超过阈值
+            const dx = pos.x - this.touchStartX;
+            const dy = pos.y - this.touchStartY;
             if (dx*dx + dy*dy > this.dragThreshold * this.dragThreshold) {
                 this.dragging = true;
-                e.preventDefault();               // 此刻才阻止滚动
                 this.canvas.style.cursor = 'grabbing';
                 this.lastMouseAngle = this._getMouseAngle(e);
             }
@@ -268,14 +263,28 @@ class DestinyWheel {
     }
 
     _onDragEnd(e) {
-        if (e.target !== this.canvas) return;  // 新增
-        this.isPointerDown = false; 
+        if (!this.isPointerDown) return;
         
-        if (!this.dragging) return;
-        this.dragging = false;
-        this.canvas.style.cursor = 'grab';
-        this.selectByAngle();
-        this.locked = true;   // 锁定转盘，禁止再次拖拽
+        this.isPointerDown = false; 
+        if (this.dragging) {
+            this.dragging = false;
+            this.canvas.style.cursor = 'grab';
+            this.selectByAngle();
+            
+            // 如果你希望用户可以多次手动调整，可以注释掉下面这行
+            // this.locked = true; 
+        }
+    }
+
+      // 统一获取位置的辅助函数
+    _getEventPos(e) {
+        if (e.touches && e.touches.length > 0) {
+            return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+        if (e.changedTouches && e.changedTouches.length > 0) {
+            return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+        }
+        return { x: e.clientX, y: e.clientY };
     }
 
     showPendingUI(categoryName) {
