@@ -204,6 +204,8 @@ class DestinyWheel {
     }
 
     _onDragMove(e) {
+        if (e.target !== this.canvas) return;  // 新增
+        
         if (this.dragging) {
             e.preventDefault();
             const currentAngle = this._getMouseAngle(e);
@@ -214,6 +216,7 @@ class DestinyWheel {
             this.lastMouseAngle = currentAngle;
             this.draw();
         } else {
+            e.preventDefault();
             // 检查是否超过阈值
             const x = e.touches ? e.touches[0].clientX : e.clientX;
             const y = e.touches ? e.touches[0].clientY : e.clientY;
@@ -229,6 +232,8 @@ class DestinyWheel {
     }
 
     _onDragEnd(e) {
+        if (e.target !== this.canvas) return;  // 新增
+        
         if (!this.dragging) return;
         this.dragging = false;
         this.canvas.style.cursor = 'grab';
