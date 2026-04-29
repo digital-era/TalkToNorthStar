@@ -97,3 +97,10 @@
 .filter-chips-container {
     margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px;
 }
+
+#wheelCanvas {
+    cursor: grab;
+}
+#wheelCanvas:active {
+    cursor: grabbing;
+}
