@@ -1,20 +1,69 @@
 /* ============ 转盘界面 ============ */
-.wheel-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: radial-gradient(circle, #0b101f 0%, #02040a 100%);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    z-index: 1000;
+/* ========== 转盘区域（普通流，不覆盖 Header） ========== */
+.wheel-section {
+    width: 100%;
+    min-height: calc(100vh - 100px); /* 扣除 header 高度，约 80~100px */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: transparent; /* 页面默认背景已足够 */
+    padding: 20px 0;
 }
+
 .wheel-container {
-    position: relative; display: flex; justify-content: center; align-items: center;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
+
 .wheel-pointer {
-    position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
-    font-size: 36px; color: #ffd700; text-shadow: 0 0 10px #ffd700; z-index: 10;
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 36px;
+    color: #ffd700;
+    text-shadow: 0 0 10px #ffd700;
+    z-index: 10;
 }
+
 .wheel-controls {
-    margin-top: 30px; display: flex; gap: 30px;
+    margin-top: 30px;
+    display: flex;
+    gap: 30px;
 }
+
+/* 左右布局（高度自适应，占满剩余空间） */
+#category-layout-container {
+    display: flex;
+    min-height: calc(100vh - 100px);
+}
+
+.layout-left {
+    flex: 1;
+    overflow: hidden;
+}
+
+.layout-left img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.8);
+}
+
+.layout-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: rgba(10,15,30,0.9);
+}
+
+/* 其余卡片、按钮样式保持不变（.magic-btn, .northstar-single-card 等） */
 .magic-btn {
     background: linear-gradient(135deg, #00dfd8, #007cf0);
     border: none; border-radius: 50px; padding: 12px 36px;
@@ -24,20 +73,6 @@
 .magic-btn:hover { transform: scale(1.05); }
 .magic-btn.small { padding: 8px 24px; font-size: 16px; }
 
-/* ============ 左右布局 ============ */
-#category-layout-container {
-    display: flex; height: calc(100vh - 80px); /* 减去 header */
-}
-.layout-left {
-    flex: 1; overflow: hidden;
-}
-.layout-left img {
-    width: 100%; height: 100%; object-fit: cover; filter: brightness(0.8);
-}
-.layout-right {
-    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 40px; background: rgba(10,15,30,0.9);
-}
 .card-stage {
     text-align: center; margin-bottom: 30px;
 }
