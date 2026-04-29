@@ -190,6 +190,7 @@ class DestinyWheel {
         // 仅当触摸/点击发生在画布上才处理
         if (e.target !== this.canvas) return;
         
+        e.preventDefault();
         if (this.spinning) {
             this.spinning = false;
             cancelAnimationFrame(this.animId);
