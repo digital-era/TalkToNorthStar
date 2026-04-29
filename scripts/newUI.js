@@ -18,13 +18,13 @@ function getCategoryName(cat) {
 // 转盘类
 // ──────────────────────────────────────────────
 class DestinyWheel {
-   constructor(canvas, categories, namesMap) {
+    constructor(canvas, categories, namesMap) {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
         this.categories = categories;
         this.namesMap = namesMap;
         this.angle = 0;
-        this.spinning = false;        // 是否正在自动旋转
+        this.spinning = false;
         this.animId = null;
         this.targetAngle = 0;
         this.spinSpeed = 0;
@@ -32,13 +32,14 @@ class DestinyWheel {
         this.minSpeed = 0.02;
         this.deceleration = 0.0005;
         this.onSelect = null;
-
-        // 手动拖拽相关
+        this.onPendingSelect = null;      // 新增：待确认回调
+        this.pendingCategory = null;
         this.dragging = false;
-        this.lastMouseAngle = 0;      // 上一次鼠标相对于圆心的极角
+        this.lastMouseAngle = 0;
 
         this.draw();
-        this._bindDragEvents();       // 绑定拖拽事件
+        this._bindDragEvents();
+        this._bindConfirmButton();
     }
 
     draw() {
@@ -54,7 +55,12 @@ class DestinyWheel {
             ctx.beginPath();
             ctx.moveTo(w, w);
             ctx.arc(w, w, r, start, end);
-            ctx.fillStyle = i % 2 === 0 ? '#1e2b3c' : '#2c3e50';
+            // 如果当前类别是待确认的，给予特殊高亮颜色
+            if (this.pendingCategory === this.categories[i]) {
+                ctx.fillStyle = '#3a5a7c'; // 高亮
+            } else {
+                ctx.fillStyle = i % 2 === 0 ? '#1e2b3c' : '#2c3e50';
+            }
             ctx.fill();
             ctx.strokeStyle = '#00dfd8';
             ctx.lineWidth = 1;
@@ -79,35 +85,27 @@ class DestinyWheel {
         ctx.stroke();
     }
 
-    // 重写 spin()
     spin() {
         if (this.spinning) return;
+        this.clearPending();          // 清除之前的待确认状态
         this.spinning = true;
-        // 随机目标总旋转弧度：至少 50 弧度（约8圈），最多 80 弧度（约13圈）
         this.targetAngle = this.angle + Math.random() * 30 + 50;
         this.spinSpeed = this.maxSpeed;
         this.animate();
     }
 
-    // 重写 animate()，加入减速
     animate() {
         if (!this.spinning) return;
-
-        // 速度递减，直到不低于最小速度
         if (this.spinSpeed > this.minSpeed) {
             this.spinSpeed -= this.deceleration;
         }
-
         this.angle += this.spinSpeed;
-
-        // 如果已经达到或超过目标角度，精确停到目标角度并结束
         if (this.angle >= this.targetAngle) {
             this.angle = this.targetAngle % (2 * Math.PI);
             this.spinning = false;
             this.selectByAngle();
             return;
         }
-
         this.draw();
         this.animId = requestAnimationFrame(() => this.animate());
     }
@@ -116,34 +114,66 @@ class DestinyWheel {
         if (!this.spinning) return;
         this.spinning = false;
         cancelAnimationFrame(this.animId);
+        this.clearPending();   // 清除旧的待确认，重新选择
         this.selectByAngle();
     }
 
     selectByAngle() {
-        // 指针朝上（-π/2 方向）
         const norm = ((this.angle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
         const slice = (2 * Math.PI) / this.categories.length;
-        // 指针在顶部，所以需要计算哪个扇区对准12点
-        // 扇区边界：从 angle 开始逆时针分布的切片
         const adjusted = (2 * Math.PI - norm + Math.PI / 2) % (2 * Math.PI);
         const idx = Math.floor(adjusted / slice) % this.categories.length;
-        if (this.onSelect) this.onSelect(this.categories[idx]);
+        const selectedCat = this.categories[idx];
+        this.pendingCategory = selectedCat;
+        this.draw();                    // 重绘以显示高亮
+        if (this.onPendingSelect) this.onPendingSelect(selectedCat);
     }
 
-        // ================= 新增：手动拖拽支持 =================
+    // 待确认 UI 控制
+    showPendingUI(categoryName) {
+        const infoDiv = document.getElementById('wheel-selection-info');
+        const nameSpan = document.getElementById('selected-category-name');
+        if (infoDiv && nameSpan) {
+            nameSpan.textContent = categoryName;
+            infoDiv.style.display = 'block';
+        }
+    }
+
+    hidePendingUI() {
+        const infoDiv = document.getElementById('wheel-selection-info');
+        if (infoDiv) infoDiv.style.display = 'none';
+    }
+
+    clearPending() {
+        this.pendingCategory = null;
+        this.hidePendingUI();
+        this.draw(); // 重绘去掉高亮
+    }
+
+    // 确认按钮事件
+    _bindConfirmButton() {
+        const confirmBtn = document.getElementById('btn-confirm-category');
+        if (confirmBtn) {
+            confirmBtn.addEventListener('click', () => {
+                if (this.pendingCategory && this.onSelect) {
+                    this.onSelect(this.pendingCategory);
+                    this.pendingCategory = null;
+                    this.hidePendingUI();
+                }
+            });
+        }
+    }
+
+    // 手动拖拽支持
     _bindDragEvents() {
-        const canvas = this.canvas;
-        // 鼠标事件
-        canvas.addEventListener('mousedown', (e) => this._onDragStart(e));
+        this.canvas.addEventListener('mousedown', (e) => this._onDragStart(e));
         window.addEventListener('mousemove', (e) => this._onDragMove(e));
         window.addEventListener('mouseup', (e) => this._onDragEnd(e));
-        // 触摸事件
-        canvas.addEventListener('touchstart', (e) => this._onDragStart(e), { passive: false });
+        this.canvas.addEventListener('touchstart', (e) => this._onDragStart(e), { passive: false });
         window.addEventListener('touchmove', (e) => this._onDragMove(e), { passive: false });
         window.addEventListener('touchend', (e) => this._onDragEnd(e));
-        // 防止画布上的默认拖拽行为（如图片拖拽）
-        canvas.style.touchAction = 'none';
-        canvas.style.userSelect = 'none';
+        this.canvas.style.touchAction = 'none';
+        this.canvas.style.userSelect = 'none';
     }
 
     _getMouseAngle(e) {
@@ -160,12 +190,11 @@ class DestinyWheel {
         }
         const dx = clientX - centerX;
         const dy = clientY - centerY;
-        return Math.atan2(dy, dx);   // 返回极角，范围 -PI ~ PI
+        return Math.atan2(dy, dx);
     }
 
     _onDragStart(e) {
         e.preventDefault();
-        // 如果正在自动旋转，立刻停止
         if (this.spinning) {
             this.spinning = false;
             cancelAnimationFrame(this.animId);
@@ -173,17 +202,16 @@ class DestinyWheel {
         this.dragging = true;
         this.canvas.style.cursor = 'grabbing';
         this.lastMouseAngle = this._getMouseAngle(e);
+        this.clearPending();   // 开始拖拽时清除待确认
     }
 
     _onDragMove(e) {
         if (!this.dragging) return;
         e.preventDefault();
         const currentAngle = this._getMouseAngle(e);
-        // 计算角度差（处理穿越 ±PI 边界的情况）
         let delta = currentAngle - this.lastMouseAngle;
         if (delta > Math.PI) delta -= 2 * Math.PI;
         if (delta < -Math.PI) delta += 2 * Math.PI;
-        // 更新转盘角度（注意：转盘顺时针旋转对应角度增加）
         this.angle += delta;
         this.lastMouseAngle = currentAngle;
         this.draw();
@@ -193,8 +221,7 @@ class DestinyWheel {
         if (!this.dragging) return;
         this.dragging = false;
         this.canvas.style.cursor = 'grab';
-        // 停止拖拽时，立即根据当前角度选中大类
-        this.selectByAngle();
+        this.selectByAngle();   // 松手后进入待确认
     }
 }
 
@@ -205,18 +232,22 @@ function initWheelUI() {
     const canvas = document.getElementById('wheelCanvas');
     if (!canvas) return;
 
-    // 准备名称映射
     const namesMap = {};
     categories.forEach(cat => { namesMap[cat] = getCategoryName(cat); });
 
     wheelInstance = new DestinyWheel(canvas, categories, namesMap);
     wheelInstance.onSelect = (cat) => {
-        selectCategory(cat);
+        selectCategory(cat);   // 确认后进入下一代
+    };
+    wheelInstance.onPendingSelect = (cat) => {
+        wheelInstance.showPendingUI(getCategoryName(cat));
     };
 
-    // 绑定按钮
     document.getElementById('btn-spin').onclick = () => wheelInstance.spin();
-    document.getElementById('btn-stop').onclick = () => wheelInstance.stop();
+    //document.getElementById('btn-stop').onclick = () => wheelInstance.stop();
+
+    // 如果转盘已经显示，确保初始状态无 pending
+    wheelInstance.clearPending();
 
     // 显示转盘区域，隐藏左右布局和原有交互区
     document.getElementById('wheel-of-destiny').style.display = 'flex'; // 注意用 flex 以保持内部居中
