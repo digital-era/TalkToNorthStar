@@ -121,3 +121,33 @@
     letter-spacing: 2px;
 }
 
+/* 搜索框与缘动按钮同行 */
+.search-and-random {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 450px;
+}
+
+.search-and-random .modern-search-input {
+    flex: 1;
+    padding: 10px 15px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.search-and-random .modern-search-input:focus {
+    outline: none;
+    border-color: #00dfd8;
+}
+
+.search-and-random .magic-btn.small {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
