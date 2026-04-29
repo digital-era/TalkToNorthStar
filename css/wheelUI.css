@@ -153,3 +153,90 @@
     white-space: nowrap;
     flex-shrink: 0;
 }
+
+/* ============ 响应式修复 ============ */
+
+/* 1. 整体布局调整：手机端从左右改为上下 */
+@media (max-width: 768px) {
+    #category-layout-container {
+        flex-direction: column; /* 纵向排列 */
+        min-height: auto;
+    }
+
+    .layout-left {
+        width: 100%;
+        height: 180px; /* 手机端顶部背景图高度固定，避免占满全屏 */
+        flex: none;
+    }
+
+    .layout-right {
+        width: 100%;
+        flex: none;
+        padding: 20px 15px; /* 大幅缩小手机端内边距 */
+        box-sizing: border-box;
+        justify-content: flex-start;
+    }
+
+    /* 2. 搜索区域适配 */
+    .search-and-random {
+        max-width: 100%;
+        gap: 8px;
+    }
+
+    .search-and-random .modern-search-input {
+        font-size: 13px; /* 稍微缩小字号防止挤压 */
+        padding: 8px 12px;
+    }
+
+    .search-and-random .magic-btn.small {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+
+    /* 3. 北极星大卡片适配 (最核心修复) */
+    .northstar-single-card {
+        min-width: 0 !important; /* 强制取消 320px 的最小宽度限制 */
+        width: 100%;             /* 宽度改为自适应 */
+        max-width: 100%;
+        padding: 20px;           /* 缩小卡片内边距 */
+        margin-top: 15px;
+        box-sizing: border-box;  /* 确保 padding 不撑开容器 */
+    }
+
+    .northstar-single-card h2 {
+        font-size: 22px;         /* 缩小标题字号 */
+    }
+
+    .northstar-single-card p {
+        font-size: 14px;         /* 缩小正文字号 */
+        line-height: 1.5;
+    }
+
+    /* 4. 控制区域（胶囊按钮） */
+    .card-controls {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* 5. 转盘控制按钮 */
+    .wheel-controls {
+        gap: 15px;
+        margin-top: 20px;
+    }
+}
+
+/* 针对超小屏幕（如 iPhone SE）的额外微调 */
+@media (max-width: 360px) {
+    .search-and-random {
+        flex-direction: row; /* 依然保持同行，但进一步压缩 */
+    }
+    .search-and-random .magic-btn.small {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+}
+
+/* 确保所有元素计算宽度时包含 padding */
+* {
+    box-sizing: border-box;
+}
