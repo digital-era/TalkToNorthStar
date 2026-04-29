@@ -370,11 +370,16 @@ function renderCategoryLayout(category) {
         </div>
         <div class="layout-right">
             <div class="card-stage">
-                <button class="magic-btn small" id="btn-random-leader">✦ 缘动</button>
+                <!-- 搜索与缘动按钮同一行 -->
+                <div class="search-and-random">
+                    <input type="text" class="modern-search-input" id="newUI-search" placeholder="${translations[lang]?.placeholderUserQuestion || '输入关键词...'}">
+                    <button class="magic-btn small" id="btn-random-leader">✦ 缘动</button>
+                </div>
+                <!-- 北极星大卡片 -->
                 <div id="single-northstar-card" class="northstar-single-card"></div>
             </div>
             <div class="card-controls">
-                <input type="text" class="modern-search-input" placeholder="搜索..." id="newUI-search">
+                <!-- 子类胶囊（可横向滑动） -->
                 <div class="filter-chips-container" id="chips-${category}" style="
                     display: flex;
                     flex-wrap: nowrap;
@@ -407,20 +412,15 @@ function renderCategoryLayout(category) {
         randomBtn.onclick = () => randomSelectLeader(category);
     }
 
-    // 选中并显示第一位北极星（确保数据存在）
+    // 默认选中第一位北极星
     const leaders = allData[category];
     if (leaders && leaders.length > 0) {
         const first = leaders[0];
-        // 调用 selectLeader 设置全局变量和顶部名称
         selectLeader(first, category, null);
-        // 更新右侧大卡片
         updateSingleCard(first);
-    } else {
-        // 无数据时给出提示
-        const card = document.getElementById('single-northstar-card');
-        if (card) card.innerHTML = `<p style="color:#aaa;text-align:center;">暂无北极星数据</p>`;
     }
 }
+
 // ──────────────────────────────────────────────
 // 更新大卡片
 // ──────────────────────────────────────────────
@@ -513,3 +513,26 @@ if (typeof onLanguageChanged === 'function') {
         }
     };
 }
+
+// 在文件末尾或初始化部分添加：
+(function() {
+    const origLangChanged = window.onLanguageChanged;
+    window.onLanguageChanged = function() {
+        if (origLangChanged && typeof origLangChanged === 'function') {
+            origLangChanged();
+        }
+        // 如果当前是新 UI 并且已经进入北极星选择界面，重新绘制
+        const layout = document.getElementById('category-layout-container');
+        if (layout && layout.style.display !== 'none' && currentSelectedCategory) {
+            renderCategoryLayout(currentSelectedCategory);
+            // 重新高亮当前已选中的北极星（如果存在）
+            if (currentSelectedLeader && currentSelectedLeaderCategory === currentSelectedCategory) {
+                updateSingleCard(currentSelectedLeader);
+            }
+        }
+        // 如果在转盘页面，更新转盘文字
+        if (typeof updateWheelLanguage === 'function' && wheelInstance) {
+            updateWheelLanguage();
+        }
+    };
+})();
