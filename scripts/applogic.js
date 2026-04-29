@@ -221,32 +221,41 @@ function clearSelection() {
 }
 
 function selectLeader(leader, category, cardElement) {
+    // 清除之前选中的高亮（仅当有 cardElement 时才操作 DOM）
     if (currentSelectedLeader) {
-         const prevSelectedCard = document.querySelector(`.leader-card.selected[data-category='${currentSelectedLeaderCategory}']`);
-         if (prevSelectedCard) {
+        const prevSelectedCard = document.querySelector(
+            `.leader-card.selected[data-category='${currentSelectedLeaderCategory}']`
+        );
+        if (prevSelectedCard) {
             prevSelectedCard.classList.remove('selected');
-         }
+        }
     }
 
+    // 设置新的全局状态
     currentSelectedLeader = leader;
     currentSelectedLeaderCategory = category;
     document.getElementById('selectedLeaderName').textContent = leader.name;
-    cardElement.classList.add('selected');
+
+    // 如果有新的卡片元素，高亮它（新 UI 中 cardElement 为 null，跳过）
+    if (cardElement) {
+        cardElement.classList.add('selected');
+    }
+
+    // 重置提示区和回复区（原有逻辑保持不变）
     currentGeneratedPrompt = '';
     document.getElementById('prompt-display-area').style.display = 'none';
-     // --- 新增：重置折叠状态 ---
     document.getElementById('prompt-collapsible-content').style.display = 'none';
     const toggleIcon = document.getElementById('prompt-toggle-icon');
-    if(toggleIcon) toggleIcon.classList.remove('icon-rotated');
-    
+    if (toggleIcon) toggleIcon.classList.remove('icon-rotated');
     document.getElementById('ai-response-area').style.display = 'none';
     document.getElementById('generatedPromptText').value = '';
     document.getElementById('aiResponseText').textContent = '';
 
+    // 自动切换到对应标签页（如果当前标签页未激活）
     if (!document.getElementById(category).classList.contains('active')) {
-        const tabButtons = document.getElementsByClassName("tab-button");
-        for(let btn of tabButtons) {
-            if(btn.onclick.toString().includes(category)){
+        const tabButtons = document.getElementsByClassName('tab-button');
+        for (let btn of tabButtons) {
+            if (btn.onclick && btn.onclick.toString().includes(category)) {
                 btn.click();
                 break;
             }
