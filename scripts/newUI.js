@@ -38,6 +38,10 @@ class DestinyWheel {
         this.lastMouseAngle = 0;
         this.alignDuration = 400;  // 对齐动画时长，保留但未启用
 
+        this.dragThreshold = 5;   // 移动超过 5px 才算拖拽
+        this.touchStartX = 0;
+        this.touchStartY = 0;
+
         // 【方案3】动态设置 Canvas 物理尺寸
         this._resizeCanvas();
         this.draw();
@@ -183,27 +187,41 @@ class DestinyWheel {
     }
 
     _onDragStart(e) {
-        e.preventDefault();
         if (this.spinning) {
             this.spinning = false;
             cancelAnimationFrame(this.animId);
         }
-        this.dragging = true;
-        this.canvas.style.cursor = 'grabbing';
-        this.lastMouseAngle = this._getMouseAngle(e);
+        const pt = this._getClientPoint(e);   // 复用已有的 _getMouseAngle 中的坐标提取，我们简化：直接用 e.touches ? e.touches[0] : e
+        this.touchStartX = e.touches ? e.touches[0].clientX : e.clientX;
+        this.touchStartY = e.touches ? e.touches[0].clientY : e.clientY;
+        this.dragging = false;
+        this.lastMouseAngle = null;
         this.clearPending();
     }
 
     _onDragMove(e) {
-        if (!this.dragging) return;
-        e.preventDefault();
-        const currentAngle = this._getMouseAngle(e);
-        let delta = currentAngle - this.lastMouseAngle;
-        if (delta > Math.PI) delta -= 2 * Math.PI;
-        if (delta < -Math.PI) delta += 2 * Math.PI;
-        this.angle += delta;
-        this.lastMouseAngle = currentAngle;
-        this.draw();
+        if (this.dragging) {
+            e.preventDefault();
+            const currentAngle = this._getMouseAngle(e);
+            let delta = currentAngle - this.lastMouseAngle;
+            if (delta > Math.PI) delta -= 2 * Math.PI;
+            if (delta < -Math.PI) delta += 2 * Math.PI;
+            this.angle += delta;
+            this.lastMouseAngle = currentAngle;
+            this.draw();
+        } else {
+            // 检查是否超过阈值
+            const x = e.touches ? e.touches[0].clientX : e.clientX;
+            const y = e.touches ? e.touches[0].clientY : e.clientY;
+            const dx = x - this.touchStartX;
+            const dy = y - this.touchStartY;
+            if (dx*dx + dy*dy > this.dragThreshold * this.dragThreshold) {
+                this.dragging = true;
+                e.preventDefault();               // 此刻才阻止滚动
+                this.canvas.style.cursor = 'grabbing';
+                this.lastMouseAngle = this._getMouseAngle(e);
+            }
+        }
     }
 
     _onDragEnd(e) {
