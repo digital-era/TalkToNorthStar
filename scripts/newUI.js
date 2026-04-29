@@ -41,6 +41,8 @@ class DestinyWheel {
         this.dragThreshold = 5;   // 移动超过 5px 才算拖拽
         this.touchStartX = 0;
         this.touchStartY = 0;
+        
+        this.locked = false;   // 手动选择后锁定转盘        
 
         // 【方案3】动态设置 Canvas 物理尺寸
         this._resizeCanvas();
@@ -112,6 +114,7 @@ class DestinyWheel {
 
     spin() {
         if (this.spinning) return;
+        this.locked = false;      // 解锁，允许重新拖拽
         this.clearPending();
         this.spinning = true;
         this.targetAngle = this.angle + Math.random() * 30 + 50;
@@ -209,6 +212,7 @@ class DestinyWheel {
         // 仅当触摸/点击发生在画布上才处理
         if (e.target !== this.canvas) return;
         if (!this._isInsideWheel(e)) return;   // 不在圆形内，忽略
+         if (this.locked) return;   // 锁定时禁止任何拖拽
         
         e.preventDefault();
         if (this.spinning) {
@@ -259,6 +263,7 @@ class DestinyWheel {
         this.dragging = false;
         this.canvas.style.cursor = 'grab';
         this.selectByAngle();
+        this.locked = true;   // 锁定转盘，禁止再次拖拽
     }
 
     showPendingUI(categoryName) {
