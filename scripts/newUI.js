@@ -121,11 +121,14 @@ class DestinyWheel {
     selectByAngle() {
         const norm = ((this.angle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
         const slice = (2 * Math.PI) / this.categories.length;
-        const adjusted = (2 * Math.PI - norm + Math.PI / 2) % (2 * Math.PI);
-        const idx = Math.floor(adjusted / slice) % this.categories.length;
+        // 指针固定在顶部（-π/2 方向，即 3π/2）
+        const pointerAngle = 3 * Math.PI / 2;
+        // 指针相对于起始角度的偏移（确保非负）
+        const relative = (pointerAngle - norm + 2 * Math.PI) % (2 * Math.PI);
+        const idx = Math.floor(relative / slice) % this.categories.length;
         const selectedCat = this.categories[idx];
         this.pendingCategory = selectedCat;
-        this.draw();                    // 重绘以显示高亮
+        this.draw();   // 重绘高亮
         if (this.onPendingSelect) this.onPendingSelect(selectedCat);
     }
 
