@@ -104,3 +104,8 @@
 #wheelCanvas:active {
     cursor: grabbing;
 }
+
+#wheel-selection-info p {
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    letter-spacing: 2px;
+}
