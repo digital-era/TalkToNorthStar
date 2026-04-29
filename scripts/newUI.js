@@ -27,9 +27,9 @@ class DestinyWheel {
     this.animId = null;
     this.targetAngle = 0;
     this.spinSpeed = 0;
-    this.maxSpeed = 0.35;
-    this.minSpeed = 0.002;
-    this.deceleration = 0.0005;
+    this.maxSpeed = 0.5;
+    this.stopThreshold = 0.003;
+    this.deceleration = 0.985;
     this.onSelect = null;
     this.onPendingSelect = null;
     this.pendingCategory = null;
@@ -179,23 +179,30 @@ class DestinyWheel {
     this.locked = false;
     this.clearPending();
     this.spinning = true;
-    this.targetAngle = this.angle + Math.random() * 30 + 50;
+    
+    const minSpins = 3;
+    const maxSpins = 6;
+    const spins = minSpins + Math.random() * (maxSpins - minSpins);
+    this.targetAngle = this.angle + spins * 2 * Math.PI;
+    
     this.spinSpeed = this.maxSpeed;
     this.animate();
   }
 
   animate() {
     if (!this.spinning) return;
-    if (this.spinSpeed > this.minSpeed) {
-      this.spinSpeed *= 0.995; // 指数减速更自然
-    }
+    
+    this.spinSpeed *= this.deceleration;
     this.angle += this.spinSpeed;
-    if (this.angle >= this.targetAngle) {
+    
+    if (this.spinSpeed < this.stopThreshold || this.angle >= this.targetAngle) {
       this.angle = this.targetAngle % (2 * Math.PI);
       this.spinning = false;
+      this.spinSpeed = 0;
       this.selectByAngle();
       return;
     }
+    
     this.draw();
     this.animId = requestAnimationFrame(() => this.animate());
   }
