@@ -1051,6 +1051,54 @@ const humanitiesMasters = [
       }
     },
     {
+      id: "zhang_ailing",
+      name: "张爱玲 (Eileen Chang / Zhang Ailing)",
+      contribution: {
+        "zh-CN": "以冷峻犀利的笔触描绘上海都市中旧家族的衰落、人性欲望与苍凉人生，融合中西文学技巧，展现现代都市的心理深度与细节美学。",
+        "en": "Depicted the decline of old families in Shanghai with a cool, incisive style, exploring human desires and desolate existence, blending Chinese and Western literary techniques to reveal the psychological depth and aesthetic of modern urban life."
+      },
+      field: {
+        "zh-CN": "现代都市小说、海派文学、女性心理书写、苍凉美学。",
+        "en": "Modern Urban Fiction, Shanghai School Literature, Female Psychological Writing, Aesthetics of Desolation."
+      },
+      remarks: {
+        "zh-CN": "以独特“张爱玲体”将通俗与纯文学融合，深刻揭示乱世中人性的荒凉与无奈，对后世华语文学影响深远。",
+        "en": "Fused popular and serious literature with her distinctive 'Chang style', profoundly revealing the desolation and helplessness of human nature in turbulent times, exerting lasting influence on Chinese-language literature."
+      }
+    },
+    {
+      id: "qian_zhongshu",
+      name: "钱钟书 (Qian Zhongshu)",
+      contribution: {
+        "zh-CN": "以讽刺幽默的笔法刻画知识分子在乱世中的困境与人性弱点，被视为中国现代文学中最用心经营的讽刺杰作。",
+        "en": "Using satirical and humorous prose to portray the predicaments and human weaknesses of intellectuals in turbulent times; regarded as the most meticulously crafted satirical masterpiece in modern Chinese literature."
+      },
+      field: {
+        "zh-CN": "现代讽刺小说、知识分子题材、文化批评。",
+        "en": "Modern Satirical Fiction, Intellectual Themes, Cultural Criticism."
+      },
+      remarks: {
+        "zh-CN": "以博学与机智著称，将西方文学技巧与中国传统智慧融合，成为20世纪中国文学的经典之作。",
+        "en": "Noted for its erudition and wit, blending Western techniques with Chinese traditional wisdom, and standing as a classic of 20th-century Chinese literature."
+      }
+    },
+    {
+      id: "shen_congwen",
+      name: "沈从文 (Shen Congwen)",
+      contribution: {
+        "zh-CN": "以诗意笔触描绘湘西乡村世界与人性纯朴，融合乡土文学与现代意识，展现中国底层社会的生命力与文化美。",
+        "en": "Portraying the rural world of western Hunan and the purity of human nature with poetic prose; blending native-soil literature with modern consciousness to reveal the vitality and cultural beauty of Chinese grassroots society."
+      },
+      field: {
+        "zh-CN": "乡土文学、抒情小说、少数民族文化书写。",
+        "en": "Native-Soil Literature, Lyrical Fiction, Ethnic Minority Cultural Writing."
+      },
+      remarks: {
+        "zh-CN": "其作品远离主流政治话语，以人性美与自然美对抗时代喧嚣，被视为中国现代文学中最具抒情性和人文温度的代表。",
+        "en": "His works distance themselves from mainstream political discourse, countering the era's clamor with the beauty of humanity and nature, regarded as the most lyrical and humanistic representative in modern Chinese literature."
+      }
+    },
+    {
       id: "yi_zhongtian",  name: "易中天 (Yi Zhongtian)",
       contribution: {
         "zh-CN": "通过《百家讲坛》主讲《品三国》《汉代风云人物》等系列，以通俗生动语言重述中国历史。",
