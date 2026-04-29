@@ -28,55 +28,86 @@ class DestinyWheel {
     this.targetAngle = 0;
     this.spinSpeed = 0;
     this.maxSpeed = 0.5;
-    this.stopThreshold = 0.003;
     this.deceleration = 0.985;
+    this.stopThreshold = 0.003;
     this.onSelect = null;
     this.onPendingSelect = null;
     this.pendingCategory = null;
     this.dragging = false;
     this.lastMouseAngle = 0;
-    this.alignDuration = 400;
     this.dragThreshold = 5;
     this.touchStartX = 0;
     this.touchStartY = 0;
     this.locked = false;
     this.isPointerDown = false;
-    
-    this._resizeCanvas();
+
+    // 【方案2核心】CSS 已控制尺寸，JS 只负责像素密度和绘制
+    // 初始化时直接设置画布像素，无需等待布局
+    this._initCanvas();
     this.draw();
+    
+    // 绑定 resize（防抖）
+    this._bindResize();
     this._bindDragEvents();
     this._bindConfirmButton();
   }
 
-  _resizeCanvas() {
-    const parent = this.canvas.parentElement;
-    const containerWidth = parent ? parent.clientWidth : window.innerWidth;
-    // 电脑端适当放大，手机端保持自适应
-    const isMobile = window.innerWidth < 768;
-    const maxSize = isMobile ? 360 : 520;
-    const size = Math.min(maxSize, Math.max(300, containerWidth - 40));
-    this.canvas.width = size * 2; // 使用高分辨率画布
-    this.canvas.height = size * 2;
-    this.canvas.style.width = size + 'px';
-    this.canvas.style.height = size + 'px';
-    this._radius = size - 20; // 半径留边距
+  // 【方案2核心】初始化 Canvas 像素尺寸
+  _initCanvas() {
+    const dpr = window.devicePixelRatio || 1;
+    
+    // 读取 CSS 渲染后的实际尺寸
+    const rect = this.canvas.getBoundingClientRect();
+    const displayWidth = rect.width;
+    const displayHeight = rect.height;
+    
+    // 设置画布实际像素（高分辨率）
+    this.canvas.width = displayWidth * dpr;
+    this.canvas.height = displayHeight * dpr;
+    
+    // 缩放上下文以匹配 CSS 像素
+    this.ctx.scale(dpr, dpr);
+    
+    // 计算半径（基于 CSS 尺寸，而非画布像素）
+    this._radius = (Math.min(displayWidth, displayHeight) / 2) - 10;
+  }
+
+  // 【方案2核心】窗口大小变化时重绘
+  _bindResize() {
+    let resizeTimer = null;
+    
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        // 重置变换矩阵
+        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+        // 重新初始化
+        this._initCanvas();
+        this.draw();
+      }, 200);
+    });
   }
 
   get radius() {
-    return this._radius || 360;
+    return this._radius || 150;
   }
 
+  // 绘制方法（与之前一致，使用 this.radius）
   draw() {
     const ctx = this.ctx;
-    const dpr = 2; // 因为我们设置了 width/height 为 style 的2倍
-    const w = this.canvas.width / 2;
-    const h = this.canvas.height / 2;
+    const dpr = window.devicePixelRatio || 1;
+    
+    // 计算中心点（基于 CSS 像素）
+    const cssWidth = this.canvas.width / dpr;
+    const cssHeight = this.canvas.height / dpr;
+    const w = cssWidth / 2;
+    const h = cssHeight / 2;
     const r = this.radius;
     const slice = (2 * Math.PI) / this.categories.length;
-    
-    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    
-    // 绘制外发光圆环背景（解决黑边突兀）
+
+    ctx.clearRect(0, 0, cssWidth, cssHeight);
+
+    // 外发光圆环
     ctx.save();
     ctx.shadowColor = 'rgba(0, 223, 216, 0.15)';
     ctx.shadowBlur = 40;
@@ -89,25 +120,22 @@ class DestinyWheel {
     for (let i = 0; i < this.categories.length; i++) {
       const start = this.angle + i * slice;
       const end = start + slice;
-      
+
       ctx.beginPath();
       ctx.moveTo(w, h);
       ctx.arc(w, h, r, start, end);
-      
-      // 待确认扇区高亮
+
       if (this.pendingCategory === this.categories[i]) {
         ctx.fillStyle = '#3a6a9c';
       } else {
         ctx.fillStyle = i % 2 === 0 ? '#1e2b3c' : '#2c3e50';
       }
       ctx.fill();
-      
-      // 扇形边框
+
       ctx.strokeStyle = '#00dfd8';
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // 绘制文字（沿弧度排列）
       this._drawSectorText(ctx, w, h, r, start, slice, this.categories[i]);
     }
 
@@ -119,7 +147,7 @@ class DestinyWheel {
     ctx.strokeStyle = '#00dfd8';
     ctx.lineWidth = 3;
     ctx.stroke();
-    
+
     // 中心小圆点
     ctx.beginPath();
     ctx.arc(w, h, r * 0.04, 0, 2 * Math.PI);
@@ -131,46 +159,37 @@ class DestinyWheel {
   _drawSectorText(ctx, cx, cy, r, startAngle, slice, category) {
     const text = this.namesMap[category] || '';
     const midAngle = startAngle + slice / 2;
-    
-    // 文字位置：距离中心 55% 半径处（避免边缘裁切）
     const textRadius = r * 0.55;
     const x = cx + Math.cos(midAngle) * textRadius;
     const y = cy + Math.sin(midAngle) * textRadius;
-    
+
     ctx.save();
     ctx.translate(x, y);
-    
-    // 旋转文字使其沿径向排列（更优雅）
-    // 文字始终朝上阅读：调整旋转角度
+
     let rotation = midAngle + Math.PI / 2;
-    // 确保文字不会倒置（超过90度时翻转）
     if (rotation > Math.PI / 2 && rotation < 3 * Math.PI / 2) {
       rotation += Math.PI;
     }
     ctx.rotate(rotation);
-    
+
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    
-    // 动态字体大小
+
     const fontSize = Math.max(16, r * 0.08);
     ctx.font = `bold ${fontSize}px "Noto Serif SC", "Poppins", sans-serif`;
-    
-    // 文字描边增强可读性
+
     ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
     ctx.lineWidth = fontSize * 0.15;
     ctx.lineJoin = 'round';
     ctx.strokeText(text, 0, 0);
-    
-    // 文字填充
+
     ctx.fillStyle = '#ffffff';
     ctx.fillText(text, 0, 0);
-    
-    // 微发光效果
+
     ctx.shadowColor = 'rgba(0, 223, 216, 0.4)';
     ctx.shadowBlur = 10;
     ctx.fillText(text, 0, 0);
-    
+
     ctx.restore();
   }
 
@@ -179,22 +198,22 @@ class DestinyWheel {
     this.locked = false;
     this.clearPending();
     this.spinning = true;
-    
+
     const minSpins = 3;
     const maxSpins = 6;
     const spins = minSpins + Math.random() * (maxSpins - minSpins);
     this.targetAngle = this.angle + spins * 2 * Math.PI;
-    
+
     this.spinSpeed = this.maxSpeed;
     this.animate();
   }
 
   animate() {
     if (!this.spinning) return;
-    
+
     this.spinSpeed *= this.deceleration;
     this.angle += this.spinSpeed;
-    
+
     if (this.spinSpeed < this.stopThreshold || this.angle >= this.targetAngle) {
       this.angle = this.targetAngle % (2 * Math.PI);
       this.spinning = false;
@@ -202,7 +221,7 @@ class DestinyWheel {
       this.selectByAngle();
       return;
     }
-    
+
     this.draw();
     this.animId = requestAnimationFrame(() => this.animate());
   }
