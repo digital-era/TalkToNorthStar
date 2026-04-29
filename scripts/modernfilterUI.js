@@ -135,6 +135,10 @@ function switchUIStyle(style) {
     localStorage.setItem('northstarUIStyle', style);
 
     if (style === 'traditional') {
+        // 恢复标签页（如果之前被隐藏）
+        const tabsBar = document.querySelector('.tabs');
+        if (tabsBar) tabsBar.style.display = 'flex';  // 或 'block'，根据原样式
+        
         // ════════════════════════════════════════
         // “传统模式”实际执行原现代界面的行为
         // （搜索 + 过滤胶囊 + 横向滚动网格）
@@ -190,6 +194,10 @@ function switchUIStyle(style) {
             filterModernGrid(null, activeTab.id);
         }
     } else {
+        // 现代模式：隐藏标签页
+        const tabsBar = document.querySelector('.tabs');
+        if (tabsBar) tabsBar.style.display = 'none';
+        
         // ════════════════════════════════════════
         // “现代模式”执行全新界面
         // （转盘 + 左右布局 + 缘动随机）
