@@ -201,6 +201,22 @@
         
     </header>
 
+	<!-- 新界面：转盘 + 左右布局 -->
+	<div id="wheel-of-destiny" class="wheel-overlay" style="display: none;">
+	  <div class="wheel-container">
+	    <canvas id="wheelCanvas" width="400" height="400"></canvas>
+	    <div class="wheel-pointer">▼</div>
+	  </div>
+	  <div class="wheel-controls">
+	    <button id="btn-spin" class="magic-btn">✦ 缘动 ✦</button>
+	    <button id="btn-stop" class="magic-btn">◼ 停</button>
+	  </div>
+	</div>
+	
+	<div id="category-layout-container" style="display: none;">
+	  <!-- 由 JS 动态渲染左右内容 -->
+	</div>
+
     <div class="container">
         <!-- ... rest of the body is unchanged ... -->
         <div class="tabs">
@@ -696,8 +712,11 @@
     <script src="scripts/chinaEntrepreneurs.js"></script>    
     <script src="scripts/masters.js"></script>    
     <script src="scripts/modernfilterUI.js"></script>
+	<script src="scripts/modernfilterUI.js"></script>
+	<script src="scripts/newUI.js"></script>
     <script src="scripts/applogic.js"></script>
     <script src="scripts/importmdfile.js"></script>
+	
     
     <footer>
         <p data-i18n-key="footerRight">© 2025 AI范式进化. 保留所有权利。</p>
