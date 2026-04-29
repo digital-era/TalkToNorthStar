@@ -186,9 +186,29 @@ class DestinyWheel {
         return Math.atan2(dy, dx);
     }
 
+    _isInsideWheel(e) {
+        const rect = this.canvas.getBoundingClientRect();
+        const scaleX = this.canvas.width / rect.width;
+        const scaleY = this.canvas.height / rect.height;
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        let clientX, clientY;
+        if (e.touches) {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        } else {
+            clientX = e.clientX;
+            clientY = e.clientY;
+        }
+        const dx = (clientX - centerX) * scaleX;
+        const dy = (clientY - centerY) * scaleY;
+        return Math.sqrt(dx*dx + dy*dy) <= this._radius;
+    }
+
     _onDragStart(e) {
         // 仅当触摸/点击发生在画布上才处理
         if (e.target !== this.canvas) return;
+        if (!this._isInsideWheel(e)) return;   // 不在圆形内，忽略
         
         e.preventDefault();
         if (this.spinning) {
@@ -205,6 +225,7 @@ class DestinyWheel {
 
     _onDragMove(e) {
         if (e.target !== this.canvas) return;  // 新增
+        if (!this._isInsideWheel(e)) return;
         
         if (this.dragging) {
             e.preventDefault();
