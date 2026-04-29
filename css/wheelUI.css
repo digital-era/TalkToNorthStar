@@ -2,13 +2,15 @@
 /* ========== 转盘区域（普通流，不覆盖 Header） ========== */
 .wheel-section {
     width: 100%;
-    min-height: calc(100vh - 100px); /* 扣除 header 高度，约 80~100px */
+    min-height: 100vh;          /* 改为占满视口，但可超出 */
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    background: transparent; /* 页面默认背景已足够 */
-    padding: 20px 0;
+    justify-content: flex-start; /* 从顶部开始排列，不再强制居中 */
+    padding: 20px 0 40px;        /* 底部留足空间 */
+    box-sizing: border-box;
+    overflow-y: auto;            /* 允许竖直滚动 */
+    -webkit-overflow-scrolling: touch;
 }
 
 .wheel-container {
