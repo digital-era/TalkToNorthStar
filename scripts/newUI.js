@@ -336,6 +336,12 @@ function selectCategory(category) {
     const layout = document.getElementById('category-layout-container');
     layout.style.display = 'flex';
 
+    // 隐藏原有的标签页按钮
+    const tabsBar = document.querySelector('.tabs');
+    if (tabsBar) tabsBar.style.display = 'none';
+    openTab(null, category);
+    document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
+
     // 2. 调用原有 openTab，保证后台状态一致
     openTab(null, category);
     // 强制隐藏所有原有 tab-content（避免网格闪现）
