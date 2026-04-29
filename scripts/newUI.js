@@ -18,23 +18,27 @@ function getCategoryName(cat) {
 // 转盘类
 // ──────────────────────────────────────────────
 class DestinyWheel {
-    constructor(canvas, categories, namesMap) {
+   constructor(canvas, categories, namesMap) {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
         this.categories = categories;
         this.namesMap = namesMap;
         this.angle = 0;
-        this.spinning = false;
+        this.spinning = false;        // 是否正在自动旋转
         this.animId = null;
         this.targetAngle = 0;
+        this.spinSpeed = 0;
+        this.maxSpeed = 0.35;
+        this.minSpeed = 0.02;
+        this.deceleration = 0.0005;
         this.onSelect = null;
-        this.draw();
-        this.spinSpeed = 0;          // 当前角速度
-        this.maxSpeed = 0.35;        // 初始最大速度
-        this.minSpeed = 0.02;        // 末尾最小速度
-        this.deceleration = 0.0005;  // 减速系数
-    }
 
+        // 手动拖拽相关
+        this.dragging = false;
+        this.lastMouseAngle = 0;      // 上一次鼠标相对于圆心的极角
+
+        this.draw();
+        this._bindDragEvents();       // 绑定拖拽事件
     }
 
     draw() {
@@ -124,6 +128,73 @@ class DestinyWheel {
         const adjusted = (2 * Math.PI - norm + Math.PI / 2) % (2 * Math.PI);
         const idx = Math.floor(adjusted / slice) % this.categories.length;
         if (this.onSelect) this.onSelect(this.categories[idx]);
+    }
+
+        // ================= 新增：手动拖拽支持 =================
+    _bindDragEvents() {
+        const canvas = this.canvas;
+        // 鼠标事件
+        canvas.addEventListener('mousedown', (e) => this._onDragStart(e));
+        window.addEventListener('mousemove', (e) => this._onDragMove(e));
+        window.addEventListener('mouseup', (e) => this._onDragEnd(e));
+        // 触摸事件
+        canvas.addEventListener('touchstart', (e) => this._onDragStart(e), { passive: false });
+        window.addEventListener('touchmove', (e) => this._onDragMove(e), { passive: false });
+        window.addEventListener('touchend', (e) => this._onDragEnd(e));
+        // 防止画布上的默认拖拽行为（如图片拖拽）
+        canvas.style.touchAction = 'none';
+        canvas.style.userSelect = 'none';
+    }
+
+    _getMouseAngle(e) {
+        const rect = this.canvas.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        let clientX, clientY;
+        if (e.touches) {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        } else {
+            clientX = e.clientX;
+            clientY = e.clientY;
+        }
+        const dx = clientX - centerX;
+        const dy = clientY - centerY;
+        return Math.atan2(dy, dx);   // 返回极角，范围 -PI ~ PI
+    }
+
+    _onDragStart(e) {
+        e.preventDefault();
+        // 如果正在自动旋转，立刻停止
+        if (this.spinning) {
+            this.spinning = false;
+            cancelAnimationFrame(this.animId);
+        }
+        this.dragging = true;
+        this.canvas.style.cursor = 'grabbing';
+        this.lastMouseAngle = this._getMouseAngle(e);
+    }
+
+    _onDragMove(e) {
+        if (!this.dragging) return;
+        e.preventDefault();
+        const currentAngle = this._getMouseAngle(e);
+        // 计算角度差（处理穿越 ±PI 边界的情况）
+        let delta = currentAngle - this.lastMouseAngle;
+        if (delta > Math.PI) delta -= 2 * Math.PI;
+        if (delta < -Math.PI) delta += 2 * Math.PI;
+        // 更新转盘角度（注意：转盘顺时针旋转对应角度增加）
+        this.angle += delta;
+        this.lastMouseAngle = currentAngle;
+        this.draw();
+    }
+
+    _onDragEnd(e) {
+        if (!this.dragging) return;
+        this.dragging = false;
+        this.canvas.style.cursor = 'grab';
+        // 停止拖拽时，立即根据当前角度选中大类
+        this.selectByAngle();
     }
 }
 
