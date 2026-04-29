@@ -389,11 +389,10 @@ function renderCategoryLayout(category) {
         </div>
     `;
 
-    // 生成子类胶囊（复用 modernfilterUI 的函数）
+    // 生成子类胶囊
     const chipsContainer = document.getElementById(`chips-${category}`);
     if (typeof generateChipsForCategory === 'function' && chipsContainer) {
         generateChipsForCategory(category, chipsContainer);
-        // 胶囊选中高亮
         chipsContainer.querySelectorAll('.chip').forEach(chip => {
             chip.addEventListener('click', function() {
                 chipsContainer.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
@@ -402,19 +401,24 @@ function renderCategoryLayout(category) {
         });
     }
 
-    // 搜索框事件（无需额外代码，randomSelectLeader 会读取它的值）
-
     // 绑定随机按钮
     const randomBtn = document.getElementById('btn-random-leader');
     if (randomBtn) {
         randomBtn.onclick = () => randomSelectLeader(category);
     }
 
-    // 默认选中第一位北极星并更新卡片
+    // 选中并显示第一位北极星（确保数据存在）
     const leaders = allData[category];
     if (leaders && leaders.length > 0) {
-        selectLeader(leaders[0], category, null);
-        updateSingleCard(leaders[0]);
+        const first = leaders[0];
+        // 调用 selectLeader 设置全局变量和顶部名称
+        selectLeader(first, category, null);
+        // 更新右侧大卡片
+        updateSingleCard(first);
+    } else {
+        // 无数据时给出提示
+        const card = document.getElementById('single-northstar-card');
+        if (card) card.innerHTML = `<p style="color:#aaa;text-align:center;">暂无北极星数据</p>`;
     }
 }
 // ──────────────────────────────────────────────
@@ -423,11 +427,12 @@ function renderCategoryLayout(category) {
 function updateSingleCard(leader) {
     const card = document.getElementById('single-northstar-card');
     if (!card) return;
-    const lang = currentLang || 'zh-CN';
-    const t = translations[lang] || {};
+    const lang = window.currentLang || 'zh-CN';
+    const t = (window.translations && window.translations[lang]) ? window.translations[lang] : {};
     const contrib = leader.contribution ? (leader.contribution[lang] || leader.contribution['zh-CN'] || '') : '';
     const field = leader.field ? (leader.field[lang] || leader.field['zh-CN'] || '') : '';
     const remarks = leader.remarks ? (leader.remarks[lang] || leader.remarks['zh-CN'] || '') : '';
+
     card.innerHTML = `
         <h2>${leader.name}</h2>
         <p class="contribution"><strong>${t.labelContribution || '贡献'}</strong> ${contrib}</p>
@@ -443,11 +448,17 @@ function randomSelectLeader(category) {
     const lang = currentLang || 'zh-CN';
     const chipsContainer = document.getElementById(`chips-${category}`);
     let activeSub = null;
+
     if (chipsContainer) {
-        const activeChip = chipsContainer.querySelector('.chip.active[data-filter!="all"]');
+        // 查找激活且不是“全部”的胶囊
+        const activeChip = Array.from(chipsContainer.querySelectorAll('.chip.active'))
+            .find(chip => chip.dataset.filter && chip.dataset.filter !== 'all');
         if (activeChip) activeSub = activeChip.dataset.filter;
     }
+
     let candidates = (allData[category] || []).slice();
+
+    // 子类过滤
     if (activeSub) {
         const q = activeSub.toLowerCase();
         candidates = candidates.filter(m => {
@@ -455,6 +466,8 @@ function randomSelectLeader(category) {
             return f.includes(q);
         });
     }
+
+    // 搜索框过滤
     const searchInput = document.getElementById('newUI-search');
     if (searchInput && searchInput.value.trim()) {
         const sq = searchInput.value.trim().toLowerCase();
@@ -467,10 +480,12 @@ function randomSelectLeader(category) {
             return searchStr.includes(sq);
         });
     }
+
     if (candidates.length === 0) {
         alert(translations[lang]?.noMatchingLeader || '无匹配的北极星');
         return;
     }
+
     const random = candidates[Math.floor(Math.random() * candidates.length)];
     selectLeader(random, category, null);
     updateSingleCard(random);
