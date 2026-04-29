@@ -209,6 +209,13 @@ class DestinyWheel {
         return Math.sqrt(dx*dx + dy*dy) <= this._radius;
     }
 
+    // 辅助方法：统一获取坐标
+    _getEventPos(e) {
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return { x: clientX, y: clientY };
+    }
+
     _onDragStart(e) {
         // 仅当触摸/点击发生在画布上才处理
         if (e.target !== this.canvas) return;
@@ -225,7 +232,7 @@ class DestinyWheel {
         this.touchStartY = e.touches ? e.touches[0].clientY : e.clientY;
         this.isPointerDown = true; // 标志按下
         this.dragging = false;  // 重置拖拽状态
-        this.lastMouseAngle = null;
+        this.lastMouseAngle = this._getMouseAngle(e);
         this.clearPending();
     }
 
