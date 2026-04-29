@@ -1,257 +1,28 @@
-/* ============ 转盘界面 ============ */
-/* ========== 转盘区域（普通流，不覆盖 Header） ========== */
-.wheel-section {
-    width: 100%;
-    min-height: 100vh;          /* 改为占满视口，但可超出 */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start; /* 从顶部开始排列，不再强制居中 */
-    padding: 20px 0 40px;        /* 底部留足空间 */
-    box-sizing: border-box;
-    overflow-y: auto;            /* 允许竖直滚动 */
-    -webkit-overflow-scrolling: touch;
-}
-
-.wheel-container {
-    position: relative;
-    width: 100%;
-    max-width: 400px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-#wheelCanvas {
-    display: block;
-    max-width: 100%;
-    height: auto;        /* 保持比例，但物理尺寸由 JS 控制 */
-    cursor: grab;
-}
-
-#wheelCanvas:active {
-    cursor: grabbing;
-}
-
-.wheel-pointer {
-    position: absolute;
-    top: -15px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 36px;
-    color: #ffd700;
-    text-shadow: 0 0 10px #ffd700;
-    z-index: 10;
-}
-
-.wheel-controls {
-    margin-top: 30px;
-    display: flex;
-    gap: 30px;
-}
-
-/* 左右布局（高度自适应，占满剩余空间） */
-#category-layout-container {
-    display: flex;
-    min-height: calc(100vh - 100px);
-}
-
-.layout-left {
-    flex: 1;
-    overflow: hidden;
-}
-
-.layout-left img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: brightness(0.8);
-}
-
-.layout-right {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 40px;
-    background: rgba(10,15,30,0.9);
-}
-
-/* 其余卡片、按钮样式保持不变（.magic-btn, .northstar-single-card 等） */
-.magic-btn {
-    background: linear-gradient(135deg, #00dfd8, #007cf0);
-    border: none; border-radius: 50px; padding: 12px 36px;
-    color: white; font-size: 18px; cursor: pointer; box-shadow: 0 4px 20px rgba(0,223,216,0.4);
-    transition: transform 0.2s;
-}
-.magic-btn:hover { transform: scale(1.05); }
-.magic-btn.small { padding: 8px 24px; font-size: 16px; }
-
-.card-stage {
-    text-align: center; margin-bottom: 30px;
-}
-.northstar-single-card {
-    background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
-    padding: 40px; min-width: 320px; max-width: 450px;
-    text-align: left; color: #eee;
-    margin-top: 20px;
-}
-.northstar-single-card h2 {
-    font-family: 'Cinzel', serif; font-size: 28px; color: #00dfd8; margin-bottom: 15px;
-    text-align: center;
-}
-.card-controls {
-    width: 100%; max-width: 450px; margin-top: 20px;
-}
-.card-controls .modern-search-input {
-    width: 100%; padding: 10px 15px; border-radius: 20px;
-    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;
-}
-.filter-chips-container {
-    margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px;
-}
-
-.filter-chips-container::-webkit-scrollbar { display: none; }
-
-#wheel-selection-info p {
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-    letter-spacing: 2px;
-}
-
-/* 搜索框与缘动按钮同行 */
-.search-and-random {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-    width: 100%;
-    max-width: 450px;
-}
-
-.search-and-random .modern-search-input {
-    flex: 1;
-    width: auto;               /* 清除原 width:0 */
-    opacity: 1;                /* 强制显示 */
-    padding: 10px 15px;
-    border-radius: 20px;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.2);
-    color: white;
-    font-size: 14px;
-    transition: border-color 0.3s;
-}
-
-.search-and-random .modern-search-input:focus {
-    outline: none;
-    border-color: #00dfd8;
-}
-
-.search-and-random .magic-btn.small {
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-/* ============ 响应式修复 ============ */
-
-/* 1. 整体布局调整：手机端从左右改为上下 */
-@media (max-width: 768px) {
-    #category-layout-container {
-        flex-direction: column; /* 纵向排列 */
-        min-height: auto;
-    }
-
-    .layout-left {
-        width: 100%;
-        height: 180px; /* 手机端顶部背景图高度固定，避免占满全屏 */
-        flex: none;
-    }
-
-    .layout-right {
-        width: 100%;
-        flex: none;
-        padding: 20px 15px; /* 大幅缩小手机端内边距 */
-        box-sizing: border-box;
-        justify-content: flex-start;
-    }
-
-    /* 2. 搜索区域适配 */
-    .search-and-random {
-        max-width: 100%;
-        gap: 8px;
-    }
-
-    .search-and-random .modern-search-input {
-        font-size: 13px; /* 稍微缩小字号防止挤压 */
-        padding: 8px 12px;
-    }
-
-    .search-and-random .magic-btn.small {
-        padding: 8px 16px;
-        font-size: 14px;
-    }
-
-    /* 3. 北极星大卡片适配 (最核心修复) */
-    .northstar-single-card {
-        min-width: 0 !important; /* 强制取消 320px 的最小宽度限制 */
-        width: 100%;             /* 宽度改为自适应 */
-        max-width: 100%;
-        padding: 20px;           /* 缩小卡片内边距 */
-        margin-top: 15px;
-        box-sizing: border-box;  /* 确保 padding 不撑开容器 */
-    }
-
-    .northstar-single-card h2 {
-        font-size: 22px;         /* 缩小标题字号 */
-    }
-
-    .northstar-single-card p {
-        font-size: 14px;         /* 缩小正文字号 */
-        line-height: 1.5;
-    }
-
-    /* 4. 控制区域（胶囊按钮） */
-    .card-controls {
-        width: 100%;
-        max-width: 100%;
-    }
-
-    /* 5. 转盘控制按钮 */
-    .wheel-controls {
-        gap: 15px;
-        margin-top: 20px;
-    }
-}
-
-/* 针对超小屏幕（如 iPhone SE）的额外微调 */
-@media (max-width: 360px) {
-    .search-and-random {
-        flex-direction: row; /* 依然保持同行，但进一步压缩 */
-    }
-    .search-and-random .magic-btn.small {
-        padding: 8px 10px;
-        font-size: 12px;
-    }
-}
-
-/* 确保所有元素计算宽度时包含 padding */
+/* ═══════════════════════════════════════════════
+   全局基础
+   ═══════════════════════════════════════════════ */
 * {
     box-sizing: border-box;
 }
 
-
-/* ============ 转盘界面视觉优化补充 ============ */
-
-/* ── 1. 解决电脑端两侧黑边突兀：全屏渐变背景 + 星空装饰 ── */
+/* ═══════════════════════════════════════════════
+   转盘界面
+   ═══════════════════════════════════════════════ */
 .wheel-section {
-    /* 替换原来的纯色背景，使用径向渐变营造深邃感 */
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px 0 40px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     background: radial-gradient(ellipse at center, #1a2332 0%, #0f1620 40%, #080c14 100%);
     position: relative;
 }
 
-/* 星空背景层（仅电脑端显示） */
+/* 星空背景层 */
 .wheel-section::before {
     content: '';
     position: fixed;
@@ -279,130 +50,15 @@
 /* 内容层提升z-index */
 .wheel-container,
 .wheel-controls,
-#wheel-selection-info {
+#wheel-selection-info,
+.wheel-section h1,
+.wheel-section .main-title,
+.wheel-section .sub-title {
     position: relative;
     z-index: 1;
 }
 
-/* ── 2. 转盘容器扩大（电脑端） ── */
-@media (min-width: 768px) {
-    .wheel-container {
-        max-width: 520px;  /* 从400px增大 */
-    }
-    
-    /* 指针同步放大 */
-    .wheel-pointer {
-        font-size: 48px;
-        top: -20px;
-    }
-}
-
-/* ── 3. 转盘外圈发光效果（替代黑边） ── */
-.wheel-container::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: calc(100% + 40px);
-    height: calc(100% + 40px);
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(0, 223, 216, 0.08) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: -1;
-}
-
-/* ── 4. 选中状态信息框美化 ── */
-#wheel-selection-info {
-    margin-top: 25px;
-    padding: 15px 30px;
-    background: rgba(0, 223, 216, 0.1);
-    border: 1px solid rgba(0, 223, 216, 0.3);
-    border-radius: 30px;
-    backdrop-filter: blur(10px);
-    display: none; /* 默认隐藏，JS控制显示 */
-}
-
-#wheel-selection-info p {
-    margin: 0;
-    font-size: 18px;
-    color: #00dfd8;
-    font-family: 'Noto Serif SC', serif;
-    text-shadow: 0 0 15px rgba(0, 223, 216, 0.6);
-    letter-spacing: 3px;
-}
-
-/* ── 5. 按钮组优化 ── */
-.wheel-controls {
-    margin-top: 40px;
-    gap: 20px;
-}
-
-/* 主按钮（缘动）增强 */
-#btn-spin {
-    background: linear-gradient(135deg, #00dfd8, #007cf0);
-    border: none;
-    border-radius: 50px;
-    padding: 14px 48px;
-    color: white;
-    font-size: 20px;
-    font-family: 'Noto Serif SC', serif;
-    cursor: pointer;
-    box-shadow: 
-        0 4px 20px rgba(0, 223, 216, 0.4),
-        0 0 30px rgba(0, 223, 216, 0.1);
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-#btn-spin::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(
-        45deg,
-        transparent 30%,
-        rgba(255, 255, 255, 0.1) 50%,
-        transparent 70%
-    );
-    transform: rotate(45deg);
-    transition: all 0.5s;
-}
-
-#btn-spin:hover {
-    transform: scale(1.05);
-    box-shadow: 
-        0 6px 30px rgba(0, 223, 216, 0.6),
-        0 0 50px rgba(0, 223, 216, 0.2);
-}
-
-#btn-spin:hover::before {
-    left: 100%;
-}
-
-/* 确认按钮 */
-#btn-confirm-category {
-    background: transparent;
-    border: 2px solid #ffd700;
-    border-radius: 50px;
-    padding: 12px 36px;
-    color: #ffd700;
-    font-size: 16px;
-    font-family: 'Noto Serif SC', serif;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-#btn-confirm-category:hover {
-    background: rgba(255, 215, 0, 0.1);
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-}
-
-/* ── 6. 标题区域优化 ── */
+/* 标题区域 */
 .wheel-section h1,
 .wheel-section .main-title {
     font-family: 'Noto Serif SC', 'Cinzel', serif;
@@ -423,73 +79,146 @@
     font-style: italic;
 }
 
-/* ── 7. 转盘拖拽时的视觉反馈 ── */
+/* 转盘容器 */
+.wheel-container {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 转盘外圈发光 */
+.wheel-container::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100% + 40px);
+    height: calc(100% + 40px);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0, 223, 216, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Canvas - CSS完全控制尺寸 */
+#wheelCanvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 520px;
+    max-height: 520px;
+    cursor: grab;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
 #wheelCanvas:active {
     cursor: grabbing;
     filter: brightness(1.1);
 }
 
-/* ── 8. 响应式微调 ── */
-@media (max-width: 768px) {
-    .wheel-section::before {
-        display: none; /* 手机端隐藏星空，保持简洁 */
-    }
-    
-    .wheel-container {
-        max-width: 320px;
-    }
-    
-    .wheel-pointer {
-        font-size: 32px;
-        top: -12px;
-    }
-    
-    #wheel-selection-info {
-        padding: 10px 20px;
-    }
-    
-    #wheel-selection-info p {
-        font-size: 16px;
-        letter-spacing: 2px;
-    }
-    
-    .wheel-controls {
-        margin-top: 25px;
-        gap: 15px;
-    }
-    
-    #btn-spin {
-        padding: 12px 36px;
-        font-size: 18px;
-    }
-}
-
-/* ── 9. 左右布局背景优化（解决进入分类后的黑边） ── */
-#category-layout-container {
-    /* 添加背景避免纯黑 */
-    background: linear-gradient(135deg, #0a0e17 0%, #121a2b 50%, #0a0e17 100%);
-}
-
-.layout-left {
-    position: relative;
-}
-
-.layout-left::after {
-    content: '';
+/* 指针 */
+.wheel-pointer {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(
-        to right,
-        transparent 0%,
-        rgba(10, 14, 23, 0.3) 100%
-    );
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 36px;
+    color: #ffd700;
+    text-shadow: 0 0 10px #ffd700;
+    z-index: 10;
     pointer-events: none;
 }
 
-/* ── 10. 全局滚动条美化 ── */
+/* 控制按钮区域 */
+.wheel-controls {
+    margin-top: 30px;
+    display: flex;
+    gap: 30px;
+}
+
+/* 选中信息框 */
+#wheel-selection-info {
+    margin-top: 25px;
+    padding: 15px 30px;
+    background: rgba(0, 223, 216, 0.1);
+    border: 1px solid rgba(0, 223, 216, 0.3);
+    border-radius: 30px;
+    backdrop-filter: blur(10px);
+    display: none;
+}
+
+#wheel-selection-info p {
+    margin: 0;
+    font-size: 18px;
+    color: #00dfd8;
+    font-family: 'Noto Serif SC', serif;
+    text-shadow: 0 0 15px rgba(0, 223, 216, 0.6);
+    letter-spacing: 3px;
+}
+
+/* 按钮样式 */
+#btn-spin {
+    background: linear-gradient(135deg, #00dfd8, #007cf0);
+    border: none;
+    border-radius: 50px;
+    padding: 14px 48px;
+    color: white;
+    font-size: 20px;
+    font-family: 'Noto Serif SC', serif;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0, 223, 216, 0.4), 0 0 30px rgba(0, 223, 216, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+#btn-spin::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+    transform: rotate(45deg);
+    transition: all 0.5s;
+}
+
+#btn-spin:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 30px rgba(0, 223, 216, 0.6), 0 0 50px rgba(0, 223, 216, 0.2);
+}
+
+#btn-spin:hover::before {
+    left: 100%;
+}
+
+#btn-confirm-category {
+    background: transparent;
+    border: 2px solid #ffd700;
+    border-radius: 50px;
+    padding: 12px 36px;
+    color: #ffd700;
+    font-size: 16px;
+    font-family: 'Noto Serif SC', serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#btn-confirm-category:hover {
+    background: rgba(255, 215, 0, 0.1);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+/* 滚动条美化 */
 .wheel-section::-webkit-scrollbar {
     width: 6px;
 }
@@ -505,4 +234,273 @@
 
 .wheel-section::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 223, 216, 0.5);
+}
+
+/* ═══════════════════════════════════════════════
+   左右布局
+   ═══════════════════════════════════════════════ */
+#category-layout-container {
+    display: flex;
+    min-height: calc(100vh - 100px);
+    background: linear-gradient(135deg, #0a0e17 0%, #121a2b 50%, #0a0e17 100%);
+}
+
+.layout-left {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+.layout-left img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.8);
+}
+
+.layout-left::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to right, transparent 0%, rgba(10, 14, 23, 0.3) 100%);
+    pointer-events: none;
+}
+
+.layout-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: rgba(10, 15, 30, 0.9);
+}
+
+/* ═══════════════════════════════════════════════
+   卡片与按钮
+   ═══════════════════════════════════════════════ */
+.magic-btn {
+    background: linear-gradient(135deg, #00dfd8, #007cf0);
+    border: none;
+    border-radius: 50px;
+    padding: 12px 36px;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0, 223, 216, 0.4);
+    transition: transform 0.2s;
+}
+
+.magic-btn:hover {
+    transform: scale(1.05);
+}
+
+.magic-btn.small {
+    padding: 8px 24px;
+    font-size: 16px;
+}
+
+.card-stage {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.northstar-single-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 40px;
+    min-width: 320px;
+    max-width: 450px;
+    text-align: left;
+    color: #eee;
+    margin-top: 20px;
+}
+
+.northstar-single-card h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 28px;
+    color: #00dfd8;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.card-controls {
+    width: 100%;
+    max-width: 450px;
+    margin-top: 20px;
+}
+
+.card-controls .modern-search-input,
+.search-and-random .modern-search-input {
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.search-and-random .modern-search-input {
+    flex: 1;
+    opacity: 1;
+}
+
+.card-controls .modern-search-input:focus,
+.search-and-random .modern-search-input:focus {
+    outline: none;
+    border-color: #00dfd8;
+}
+
+.filter-chips-container {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filter-chips-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* 搜索框与缘动按钮同行 */
+.search-and-random {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 450px;
+}
+
+.search-and-random .magic-btn.small {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════
+   响应式：手机端 (max-width: 768px)
+   ═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+    /* 隐藏星空 */
+    .wheel-section::before {
+        display: none;
+    }
+
+    /* 转盘缩小 */
+    .wheel-container {
+        max-width: 320px;
+    }
+
+    #wheelCanvas {
+        max-width: 320px;
+        max-height: 320px;
+    }
+
+    .wheel-pointer {
+        font-size: 28px;
+        top: -10px;
+    }
+
+    .wheel-controls {
+        margin-top: 20px;
+        gap: 15px;
+    }
+
+    #wheel-selection-info {
+        padding: 10px 20px;
+    }
+
+    #wheel-selection-info p {
+        font-size: 16px;
+        letter-spacing: 2px;
+    }
+
+    #btn-spin {
+        padding: 12px 36px;
+        font-size: 18px;
+    }
+
+    /* 左右布局改为上下 */
+    #category-layout-container {
+        flex-direction: column;
+        min-height: auto;
+    }
+
+    .layout-left {
+        width: 100%;
+        height: 180px;
+        flex: none;
+    }
+
+    .layout-right {
+        width: 100%;
+        flex: none;
+        padding: 20px 15px;
+        justify-content: flex-start;
+    }
+
+    /* 搜索区域 */
+    .search-and-random {
+        max-width: 100%;
+        gap: 8px;
+    }
+
+    .search-and-random .modern-search-input {
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+
+    .search-and-random .magic-btn.small {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+
+    /* 卡片适配 */
+    .northstar-single-card {
+        min-width: 0 !important;
+        width: 100%;
+        max-width: 100%;
+        padding: 20px;
+        margin-top: 15px;
+    }
+
+    .northstar-single-card h2 {
+        font-size: 22px;
+    }
+
+    .northstar-single-card p {
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .card-controls {
+        max-width: 100%;
+    }
+}
+
+/* ═══════════════════════════════════════════════
+   响应式：超小屏幕 (max-width: 360px)
+   ═══════════════════════════════════════════════ */
+@media (max-width: 360px) {
+    .search-and-random .magic-btn.small {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+}
+
+/* ═══════════════════════════════════════════════
+   响应式：电脑端增强 (min-width: 768px)
+   ═══════════════════════════════════════════════ */
+@media (min-width: 768px) {
+    .wheel-pointer {
+        font-size: 48px;
+        top: -20px;
+    }
 }
