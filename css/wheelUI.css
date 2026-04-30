@@ -617,7 +617,7 @@
 @media (min-width: 769px) {
     .back-to-wheel-btn {
         top: 16px;          /* 与 Logo (top:1px, height:70px) 垂直居中 */
-        left: 115px;        /* Logo left:20px + 宽度约 90px + 间距 5px */
+        left: 125px;        /* Logo left:20px + 宽度约 90px + 间距 5px */
         right: auto;
     }
 }
