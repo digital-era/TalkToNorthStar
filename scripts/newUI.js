@@ -592,9 +592,20 @@ function renderCategoryLayout(category) {
         </div>
         <div id="single-northstar-card" class="northstar-single-card"></div>
       </div>
-      ...
+      <div class="card-controls">
+        <div class="filter-chips-container" id="chips-${category}" style="
+          display: flex;
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          gap: 8px;
+          padding: 10px 0;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+          -webkit-overflow-scrolling: touch;
+        "></div>
+      </div>
     </div>
-  `;
+`;
   
   const chipsContainer = document.getElementById(`chips-${category}`);
   console.log('=== renderCategoryLayout ===');
