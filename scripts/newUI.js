@@ -477,7 +477,6 @@ function renderCategoryLayout(category) {
   const lang = currentLang || 'zh-CN';
   //const ambientSrc = `images/ambient-${category}.jpg`;
   const ambientSrc = categoryImages[category] || 'images/ambient-default.jpg';
-  const ambientSrc = `images/ambient-${category}.jpg`;
   const placeholderText = (window.translations && window.translations[lang]?.search) || '搜索...';
   
   container.innerHTML = `
