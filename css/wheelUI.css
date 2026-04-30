@@ -629,7 +629,7 @@
 @media (max-width: 768px) {
     .back-to-wheel-btn {
         top: 22px;          /* 与 Logo (top:15px, height:50px) 垂直居中 */
-        left: 62px;         /* Logo left:15px + 宽度约 50px + 间距 3px，稍微往左 */
+        left: 56px;         /* Logo left:15px + 宽度约 50px + 间距 3px，稍微往左 */
         right: auto;
         width: 36px;
         height: 36px;
