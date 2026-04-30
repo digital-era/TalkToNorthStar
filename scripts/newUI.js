@@ -258,47 +258,51 @@ class DestinyWheel {
     this.canvas.style.cursor = 'grab';
   }
 
-  _getMouseAngle(e) {
+  // 获取鼠标/触摸角度（同样去掉多余的 DPR 缩放）──
+ _getMouseAngle(e) {
     const rect = this.canvas.getBoundingClientRect();
-    const scaleX = this.canvas.width / rect.width;
-    const scaleY = this.canvas.height / rect.height;
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     let clientX, clientY;
-    if (e.touches) {
+    if (e.touches && e.touches.length > 0) {
       clientX = e.touches[0].clientX;
       clientY = e.touches[0].clientY;
     } else {
       clientX = e.clientX;
       clientY = e.clientY;
     }
-    const dx = (clientX - centerX) * scaleX;
-    const dy = (clientY - centerY) * scaleY;
+    const dx = clientX - centerX;
+    const dy = clientY - centerY;
     return Math.atan2(dy, dx);
-  }
+}
 
-  _isInsideWheel(e) {
+_isInsideWheel(e) {
     const rect = this.canvas.getBoundingClientRect();
-    const scaleX = this.canvas.width / rect.width;
-    const scaleY = this.canvas.height / rect.height;
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     let clientX, clientY;
-    if (e.touches) {
+    if (e.touches && e.touches.length > 0) {
       clientX = e.touches[0].clientX;
       clientY = e.touches[0].clientY;
     } else {
       clientX = e.clientX;
       clientY = e.clientY;
     }
-    const dx = (clientX - centerX) * scaleX;
-    const dy = (clientY - centerY) * scaleY;
-    return Math.sqrt(dx*dx + dy*dy) <= this._radius;
-  }
+    // 原来这里乘了 scaleX/scaleY（即 DPR），导致距离被放大
+    // 现在统一用 CSS 像素与 this.radius（CSS 像素半径）比较
+    const dx = clientX - centerX;
+    const dy = clientY - centerY;
+    return Math.sqrt(dx * dx + dy * dy) <= this.radius;
+}
 
-  _onDragStart(e) {
+// ── touchstart 里阻止浏览器默认行为（防止滚动/缩放抢事件）──
+_onDragStart(e) {
     if (!this._isInsideWheel(e)) return;
     if (this.locked || this.spinning) return;
+    
+    // 新增：阻止默认触摸行为，避免浏览器劫持事件
+    if (e.cancelable) e.preventDefault();
+
     if (this.spinning) {
       this.spinning = false;
       cancelAnimationFrame(this.animId);
@@ -310,10 +314,15 @@ class DestinyWheel {
     this.dragging = false;
     this.lastMouseAngle = this._getMouseAngle(e);
     this.clearPending();
-  }
+}
 
-  _onDragMove(e) {
+// ── touchmove 也要尽早 preventDefault ──
+_onDragMove(e) {
     if (!this.isPointerDown || this.locked) return;
+    
+    // 新增：始终阻止默认行为，防止页面滚动打断拖拽
+    if (e.cancelable) e.preventDefault();
+
     const pos = this._getEventPos(e);
     if (this.dragging) {
       const currentAngle = this._getMouseAngle(e);
@@ -323,17 +332,16 @@ class DestinyWheel {
       this.angle += delta;
       this.lastMouseAngle = currentAngle;
       this.draw();
-      e.preventDefault();
     } else {
       const dx = pos.x - this.touchStartX;
       const dy = pos.y - this.touchStartY;
-      if (dx*dx + dy*dy > this.dragThreshold * this.dragThreshold) {
+      if (dx * dx + dy * dy > this.dragThreshold * this.dragThreshold) {
         this.dragging = true;
         this.canvas.style.cursor = 'grabbing';
         this.lastMouseAngle = this._getMouseAngle(e);
       }
     }
-  }
+}
 
   _onDragEnd(e) {
     if (!this.isPointerDown) return;
