@@ -611,28 +611,26 @@
 }
 
 /* ═══════════════════════════════════════════════
-   电脑端：放在右上角，远离 Logo
+   电脑端：紧挨 Logo 右侧，避免重叠
+   Logo: left:20px, img height:70px, 估算宽度约 70-100px
    ═══════════════════════════════════════════════ */
 @media (min-width: 769px) {
     .back-to-wheel-btn {
-        top: 20px;
-        right: 20px;        /* 右上角 */
-        left: auto;
-    }
-    
-    .back-to-wheel-btn::after {
-        left: auto;
-        right: 50px;        /* tooltip 向左展开 */
+        top: 16px;          /* 与 Logo (top:1px, height:70px) 垂直居中 */
+        left: 115px;        /* Logo left:20px + 宽度约 90px + 间距 5px */
+        right: auto;
     }
 }
 
 /* ═══════════════════════════════════════════════
-   手机端：放在 Logo 右侧，紧凑排列
+   手机端：紧挨 Logo 右侧，稍微往左调一点
+   Logo: left:15px, img height:50px, 估算宽度约 50-60px
    ═══════════════════════════════════════════════ */
 @media (max-width: 768px) {
     .back-to-wheel-btn {
-        top: 22px;          /* 与手机 Logo (top:15px, height:50px) 垂直居中 */
-        left: 72px;         /* Logo left:15px + 宽度约50px + 间距7px */
+        top: 22px;          /* 与 Logo (top:15px, height:50px) 垂直居中 */
+        left: 68px;         /* Logo left:15px + 宽度约 50px + 间距 3px，稍微往左 */
+        right: auto;
         width: 36px;
         height: 36px;
     }
@@ -647,10 +645,10 @@
     }
 }
 
-/* 超小屏幕进一步微调 */
+/* 超小屏幕 */
 @media (max-width: 360px) {
     .back-to-wheel-btn {
-        left: 68px;
+        left: 65px;
         width: 32px;
         height: 32px;
     }
