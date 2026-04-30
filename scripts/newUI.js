@@ -410,62 +410,100 @@ _onDragMove(e) {
 
 // ──────────────────────────────────────────────
 // 初始化转盘界面
-// ──────────────────────────────────────────────
+// 修改 initWheelUI 函数（初始化时创建返回按钮）
+// ══════════════════════════════════════════════
 function initWheelUI() {
-  const canvas = document.getElementById('wheelCanvas');
-  if (!canvas) return;
-  
-  const namesMap = {};
-  categories.forEach(cat => {
-    namesMap[cat] = getCategoryName(cat);
-  });
-  
-  wheelInstance = new DestinyWheel(canvas, categories, namesMap);
-  wheelInstance.onSelect = (cat) => {
-    selectCategory(cat);
-  };
-  wheelInstance.onPendingSelect = (cat) => {
-    wheelInstance.showPendingUI(getCategoryName(cat));
-  };
-  
-  document.getElementById('btn-spin').onclick = () => wheelInstance.spin();
-  wheelInstance.clearPending();
-  
-  document.getElementById('wheel-of-destiny').style.display = 'flex';
-  document.getElementById('category-layout-container').style.display = 'none';
-  document.querySelector('.container').style.display = 'none';
+    const canvas = document.getElementById('wheelCanvas');
+    if (!canvas) return;
+    
+    // 【新增】创建返回按钮（如果不存在）
+    createBackButtonIfNeeded();
+    
+    const namesMap = {};
+    categories.forEach(cat => {
+        namesMap[cat] = getCategoryName(cat);
+    });
+    
+    wheelInstance = new DestinyWheel(canvas, categories, namesMap);
+    wheelInstance.onSelect = (cat) => {
+        selectCategory(cat);
+    };
+    wheelInstance.onPendingSelect = (cat) => {
+        wheelInstance.showPendingUI(getCategoryName(cat));
+    };
+    
+    document.getElementById('btn-spin').onclick = () => wheelInstance.spin();
+    wheelInstance.clearPending();
+    
+    document.getElementById('wheel-of-destiny').style.display = 'flex';
+    document.getElementById('category-layout-container').style.display = 'none';
+    document.querySelector('.container').style.display = 'none';
 }
 
 // ──────────────────────────────────────────────
 // 选择大类后：进入左右布局
-// ──────────────────────────────────────────────
+// 修改 selectCategory 函数（在显示布局后调用 showBackButton）
+// ══════════════════════════════════════════════
 function selectCategory(category) {
-  currentSelectedCategory = category;
-  
-  document.getElementById('wheel-of-destiny').style.display = 'none';
-  const layout = document.getElementById('category-layout-container');
-  layout.style.display = 'flex';
-  
-  const tabsBar = document.querySelector('.tabs');
-  if (tabsBar) tabsBar.style.display = 'none';
-  
-  openTab(null, category);
-  document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
-  
-  openTab(null, category);
-  document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
-  
-  renderCategoryLayout(category);
-  
-  const leaders = allData[category];
-  if (leaders && leaders.length > 0) {
-    selectLeader(leaders[0], category, null);
-    updateSingleCard(leaders[0]);
-  }
-  
-  document.getElementById('wheel-of-destiny').style.display = 'none';
-  document.getElementById('category-layout-container').style.display = 'flex';
-  document.querySelector('.container').style.display = 'block';
+    currentSelectedCategory = category;
+    
+    document.getElementById('wheel-of-destiny').style.display = 'none';
+    const layout = document.getElementById('category-layout-container');
+    layout.style.display = 'flex';
+    
+    const tabsBar = document.querySelector('.tabs');
+    if (tabsBar) tabsBar.style.display = 'none';
+    
+    openTab(null, category);
+    document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
+    
+    renderCategoryLayout(category);
+    
+    const leaders = allData[category];
+    if (leaders && leaders.length > 0) {
+        selectLeader(leaders[0], category, null);
+        updateSingleCard(leaders[0]);
+    }
+    
+    document.getElementById('wheel-of-destiny').style.display = 'none';
+    document.getElementById('category-layout-container').style.display = 'flex';
+    document.querySelector('.container').style.display = 'block';
+    
+    // 【新增】显示返回按钮
+    showBackButton();
+}
+
+// 【新增】动态创建返回按钮
+function createBackButtonIfNeeded() {
+    if (document.getElementById('backToWheelBtn')) {
+        initBackToWheel();
+        return;
+    }
+    
+    const btn = document.createElement('button');
+    btn.id = 'backToWheelBtn';
+    btn.className = 'back-to-wheel-btn';
+    btn.setAttribute('data-tooltip', currentLang === 'en' ? 'Back to Wheel' : '返回转盘');
+    btn.innerHTML = `
+        <svg viewBox="0 0 24 24">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+    `;
+    document.body.appendChild(btn);
+    
+    // 创建滑动提示
+    const hint = document.createElement('div');
+    hint.id = 'swipeBackHint';
+    hint.className = 'swipe-back-hint';
+    document.body.appendChild(hint);
+    
+    // 创建过渡遮罩
+    const overlay = document.createElement('div');
+    overlay.id = 'pageTransitionOverlay';
+    overlay.className = 'page-transition-overlay';
+    document.body.appendChild(overlay);
+    
+    initBackToWheel();
 }
 
 // ──────────────────────────────────────────────
@@ -612,6 +650,149 @@ function showFirstCandidate(category) {
   }
 }
 
+// ══════════════════════════════════════════════
+// 返回大类选择功能
+// ══════════════════════════════════════════════
+
+// 初始化返回按钮
+function initBackToWheel() {
+    const btn = document.getElementById('backToWheelBtn');
+    if (!btn) return;
+    
+    btn.addEventListener('click', () => {
+        backToWheelSelection();
+    });
+    
+    // 键盘快捷键：ESC 返回
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && currentSelectedCategory) {
+            backToWheelSelection();
+        }
+    });
+    
+    // 手机端手势返回
+    initSwipeBack();
+}
+
+// 返回转盘选择界面
+function backToWheelSelection() {
+    const overlay = document.getElementById('pageTransitionOverlay');
+    const layout = document.getElementById('category-layout-container');
+    const wheelSection = document.getElementById('wheel-of-destiny');
+    const mainContainer = document.querySelector('.container');
+    const backBtn = document.getElementById('backToWheelBtn');
+    
+    // 显示过渡遮罩
+    if (overlay) overlay.classList.add('active');
+    
+    setTimeout(() => {
+        // 隐藏左右布局
+        if (layout) {
+            layout.style.display = 'none';
+            layout.innerHTML = ''; // 清空内容，释放内存
+        }
+        
+        // 显示转盘
+        if (wheelSection) {
+            wheelSection.style.display = 'flex';
+            wheelSection.classList.add('wheel-fade-enter');
+            setTimeout(() => wheelSection.classList.remove('wheel-fade-enter'), 500);
+        }
+        
+        // 显示主容器
+        if (mainContainer) mainContainer.style.display = 'block';
+        
+        // 显示 tab 栏
+        const tabsBar = document.querySelector('.tabs');
+        if (tabsBar) tabsBar.style.display = 'flex';
+        
+        // 隐藏返回按钮
+        if (backBtn) backBtn.classList.remove('visible');
+        
+        // 重置状态
+        currentSelectedCategory = null;
+        if (wheelInstance) {
+            wheelInstance.clearPending();
+            wheelInstance.draw();
+        }
+        
+        // 移除遮罩
+        if (overlay) overlay.classList.remove('active');
+        
+        // 滚动到顶部
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+    }, 300);
+}
+
+// 显示返回按钮（进入大类页面时调用）
+function showBackButton() {
+    const btn = document.getElementById('backToWheelBtn');
+    if (btn) btn.classList.add('visible');
+}
+
+// ══════════════════════════════════════════════
+// 手机端手势返回（从屏幕左边缘向右滑动）
+// ══════════════════════════════════════════════
+function initSwipeBack() {
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let isSwiping = false;
+    const threshold = 80; // 滑动距离阈值
+    const edgeZone = 30;  // 边缘触发区域宽度
+    
+    const hint = document.getElementById('swipeBackHint');
+    
+    document.addEventListener('touchstart', (e) => {
+        if (!currentSelectedCategory) return;
+        
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        
+        // 只有在左边缘才开始监听
+        if (touchStartX < edgeZone) {
+            isSwiping = true;
+            if (hint) hint.classList.add('visible');
+        }
+    }, { passive: true });
+    
+    document.addEventListener('touchmove', (e) => {
+        if (!isSwiping || !currentSelectedCategory) return;
+        
+        const currentX = e.touches[0].clientX;
+        const currentY = e.touches[0].clientY;
+        const deltaX = currentX - touchStartX;
+        const deltaY = Math.abs(currentY - touchStartY);
+        
+        // 水平滑动为主，且向右滑动
+        if (deltaX > 20 && deltaY < deltaX * 0.5) {
+            if (hint) {
+                hint.style.width = Math.min(deltaX / 2, 60) + 'px';
+                hint.style.opacity = Math.min(deltaX / threshold, 1);
+            }
+        }
+    }, { passive: true });
+    
+    document.addEventListener('touchend', (e) => {
+        if (!isSwiping) return;
+        isSwiping = false;
+        
+        const touchEndX = e.changedTouches[0].clientX;
+        const deltaX = touchEndX - touchStartX;
+        
+        // 超过阈值则触发返回
+        if (deltaX > threshold && touchStartX < edgeZone) {
+            backToWheelSelection();
+        }
+        
+        // 重置提示
+        if (hint) {
+            hint.style.width = '4px';
+            hint.classList.remove('visible');
+        }
+    });
+}
+
 // ──────────────────────────────────────────────
 // 语言切换时更新转盘文字
 // ──────────────────────────────────────────────
@@ -642,6 +823,14 @@ if (typeof onLanguageChanged === 'function') {
     if (origLangChanged && typeof origLangChanged === 'function') {
       origLangChanged();
     }
+    
+    const btn = document.getElementById('backToWheelBtn');
+    if (btn) {
+        btn.setAttribute('data-tooltip', 
+            currentLang === 'en' ? 'Back to Wheel (ESC)' : '返回转盘 (ESC)'
+        );
+    }
+    
     const layout = document.getElementById('category-layout-container');
     if (layout && layout.style.display !== 'none' && currentSelectedCategory) {
       renderCategoryLayout(currentSelectedCategory);
