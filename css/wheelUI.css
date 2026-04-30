@@ -546,11 +546,11 @@
    ═══════════════════════════════════════════════ */
 .back-to-wheel-btn {
     position: fixed;
-    top: 20px;
-    left: 20px;
+    top: 15px;           /* 与 Logo 顶部对齐 */
+    left: 100px;         /* Logo 右侧（Logo left 20px + 宽度约 70px + 间距 10px）*/
     z-index: 9999;
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background: rgba(0, 223, 216, 0.15);
     border: 2px solid rgba(0, 223, 216, 0.4);
@@ -562,13 +562,13 @@
     transition: all 0.3s ease;
     opacity: 0;
     pointer-events: none;
-    transform: translateX(-20px);
+    transform: scale(0.8);
 }
 
 .back-to-wheel-btn.visible {
     opacity: 1;
     pointer-events: auto;
-    transform: translateX(0);
+    transform: scale(1);
 }
 
 .back-to-wheel-btn:hover {
@@ -579,8 +579,8 @@
 }
 
 .back-to-wheel-btn svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     fill: #00dfd8;
     transition: transform 0.3s ease;
 }
@@ -589,7 +589,7 @@
     transform: translateX(-2px);
 }
 
-/* 提示文字 */
+/* Tooltip */
 .back-to-wheel-btn::after {
     content: attr(data-tooltip);
     position: absolute;
@@ -615,14 +615,19 @@
 /* 手机端优化 */
 @media (max-width: 768px) {
     .back-to-wheel-btn {
-        top: 12px;
-        left: 12px;
-        width: 40px;
-        height: 40px;
+        top: 20px;        /* 与手机端 Logo top: 15px 对齐，微调 */
+        left: 75px;       /* 手机端 Logo left 15px + 宽度 50px + 间距 10px */
+        width: 36px;
+        height: 36px;
     }
     
     .back-to-wheel-btn::after {
-        display: none; /* 手机端不显示tooltip */
+        display: none;
+    }
+    
+    .back-to-wheel-btn svg {
+        width: 16px;
+        height: 16px;
     }
 }
 
