@@ -416,7 +416,6 @@ function initWheelUI() {
     const canvas = document.getElementById('wheelCanvas');
     if (!canvas) return;
     
-    // 【新增】创建返回按钮（如果不存在）
     createBackButtonIfNeeded();
     
     const namesMap = {};
@@ -435,9 +434,15 @@ function initWheelUI() {
     document.getElementById('btn-spin').onclick = () => wheelInstance.spin();
     wheelInstance.clearPending();
     
+    // 【确保】首页状态：显示转盘，隐藏其他
     document.getElementById('wheel-of-destiny').style.display = 'flex';
     document.getElementById('category-layout-container').style.display = 'none';
-    document.querySelector('.container').style.display = 'none';
+    document.querySelector('.container').style.display = 'none'; // 初始就隐藏
+    
+    // 确保 tab 内容也是隐藏的
+    document.querySelectorAll('.tab-content').forEach(tc => {
+        tc.style.display = 'none';
+    });
 }
 
 // ──────────────────────────────────────────────
@@ -675,6 +680,7 @@ function initBackToWheel() {
 }
 
 // 返回转盘选择界面
+// 修改 backToWheelSelection 函数
 function backToWheelSelection() {
     const overlay = document.getElementById('pageTransitionOverlay');
     const layout = document.getElementById('category-layout-container');
@@ -692,6 +698,16 @@ function backToWheelSelection() {
             layout.innerHTML = ''; // 清空内容，释放内存
         }
         
+        // 【修复】彻底隐藏主容器，避免下面的北极星内容露出来
+        if (mainContainer) {
+            mainContainer.style.display = 'none';
+        }
+        
+        // 隐藏所有 tab-content（双重保险）
+        document.querySelectorAll('.tab-content').forEach(tc => {
+            tc.style.display = 'none';
+        });
+        
         // 显示转盘
         if (wheelSection) {
             wheelSection.style.display = 'flex';
@@ -699,10 +715,7 @@ function backToWheelSelection() {
             setTimeout(() => wheelSection.classList.remove('wheel-fade-enter'), 500);
         }
         
-        // 显示主容器
-        if (mainContainer) mainContainer.style.display = 'block';
-        
-        // 显示 tab 栏
+        // 恢复 tab 栏显示（首页状态）
         const tabsBar = document.querySelector('.tabs');
         if (tabsBar) tabsBar.style.display = 'flex';
         
