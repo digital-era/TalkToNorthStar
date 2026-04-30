@@ -466,7 +466,11 @@ function initWheelUI() {
     
     const spinBtn = document.getElementById('btn-spin');
     if (spinBtn) {
-        spinBtn.textContent = t('spin');
+        // ❌ 不要这样：spinBtn.textContent = t('spin');
+        // ✅ 只替换 span 的内容，保留 ✦ 符号
+        const spinSpan = spinBtn.querySelector('.i18n-spin');
+        if (spinSpan) spinSpan.textContent = t('spin');
+        
         spinBtn.onclick = () => wheelInstance.spin();
     }
     
@@ -869,14 +873,15 @@ function updateWheelLanguage() {
   wheelInstance.namesMap = namesMap;
   wheelInstance.draw();
   
-  // 刷新 HTML 静态文本
-  const spinEls = document.querySelectorAll('.i18n-spin');
-  const destinyEls = document.querySelectorAll('.i18n-destiny');
-  const confirmEls = document.querySelectorAll('.i18n-confirm');
+  // ✅ 刷新 HTML 中的静态文本（只改 span，不动父元素）
+  const spinSpan = document.querySelector('#btn-spin .i18n-spin');
+  if (spinSpan) spinSpan.textContent = t('spin');
   
-  spinEls.forEach(el => el.textContent = t('spin'));
-  destinyEls.forEach(el => el.textContent = t('destiny'));
-  confirmEls.forEach(el => el.textContent = t('confirm'));
+  const destinySpan = document.querySelector('#wheel-selection-info .i18n-destiny');
+  if (destinySpan) destinySpan.textContent = t('destiny');
+  
+  const confirmSpan = document.querySelector('#btn-confirm-category .i18n-confirm');
+  if (confirmSpan) confirmSpan.textContent = t('confirm');
 }
 
 if (typeof onLanguageChanged === 'function') {
