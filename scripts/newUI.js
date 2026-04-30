@@ -29,7 +29,8 @@ const categoryNames = {
 const uiTexts = {
   'zh-CN': {
     spin: '✦ 缘动',
-    confirm: '确定',
+    destiny: '缘定',
+    confirm: '确认选择',
     backToWheel: '返回转盘',
     backTooltip: '返回转盘 (ESC)',
     noMatch: '无匹配的北极星',
@@ -40,6 +41,7 @@ const uiTexts = {
   },
   'en': {
     spin: '✦ Spin',
+    destiny: 'Destiny',
     confirm: 'Confirm',
     backToWheel: 'Back to Wheel',
     backTooltip: 'Back to Wheel (ESC)',
@@ -864,6 +866,11 @@ function updateWheelLanguage() {
   });
   wheelInstance.namesMap = namesMap;
   wheelInstance.draw();
+  
+ // 刷新 HTML 中的静态文本
+  document.querySelectorAll('.i18n-spin').forEach(el => el.textContent = t('spin'));
+  document.querySelectorAll('.i18n-destiny').forEach(el => el.textContent = t('destiny'));
+  document.querySelectorAll('.i18n-confirm').forEach(el => el.textContent = t('confirm'));
 }
 
 if (typeof onLanguageChanged === 'function') {
