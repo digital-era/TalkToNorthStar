@@ -540,3 +540,145 @@
         top: -20px;
     }
 }
+
+/* ═══════════════════════════════════════════════
+   返回大类选择按钮
+   ═══════════════════════════════════════════════ */
+.back-to-wheel-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 9999;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(0, 223, 216, 0.15);
+    border: 2px solid rgba(0, 223, 216, 0.4);
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-20px);
+}
+
+.back-to-wheel-btn.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+}
+
+.back-to-wheel-btn:hover {
+    background: rgba(0, 223, 216, 0.3);
+    border-color: #00dfd8;
+    box-shadow: 0 0 20px rgba(0, 223, 216, 0.3);
+    transform: scale(1.1);
+}
+
+.back-to-wheel-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: #00dfd8;
+    transition: transform 0.3s ease;
+}
+
+.back-to-wheel-btn:hover svg {
+    transform: translateX(-2px);
+}
+
+/* 提示文字 */
+.back-to-wheel-btn::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #00dfd8;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    border: 1px solid rgba(0, 223, 216, 0.3);
+}
+
+.back-to-wheel-btn:hover::after {
+    opacity: 1;
+}
+
+/* 手机端优化 */
+@media (max-width: 768px) {
+    .back-to-wheel-btn {
+        top: 12px;
+        left: 12px;
+        width: 40px;
+        height: 40px;
+    }
+    
+    .back-to-wheel-btn::after {
+        display: none; /* 手机端不显示tooltip */
+    }
+}
+
+/* 滑动返回指示器（手机端） */
+.swipe-back-hint {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 60px;
+    background: rgba(0, 223, 216, 0.3);
+    border-radius: 0 4px 4px 0;
+    z-index: 9998;
+    transition: all 0.3s;
+    opacity: 0;
+}
+
+.swipe-back-hint.visible {
+    opacity: 1;
+}
+
+/* 全屏遮罩过渡动画 */
+.wheel-fade-enter {
+    animation: wheelFadeIn 0.5s ease forwards;
+}
+
+.wheel-fade-exit {
+    animation: wheelFadeOut 0.3s ease forwards;
+}
+
+@keyframes wheelFadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes wheelFadeOut {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0; transform: scale(0.95); }
+}
+
+/* 页面切换遮罩 */
+.page-transition-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at center, #1a2332 0%, #0f1620 100%);
+    z-index: 9997;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.page-transition-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
