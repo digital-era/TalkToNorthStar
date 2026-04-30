@@ -14,6 +14,38 @@ const categoryImages = {
   'chinaEntrepreneurs': 'images/ambient-chinaEntrepreneurs.jpg'
 };
 
+// 按钮/提示文本映射
+const uiTexts = {
+  'zh-CN': {
+    spin: '✦ 缘动',
+    confirm: '确定',
+    backToWheel: '返回转盘',
+    backTooltip: '返回转盘 (ESC)',
+    noMatch: '无匹配的北极星',
+    searchPlaceholder: '搜索...',
+    labelContribution: '贡献',
+    labelField: '领域',
+    labelRemarks: '评注'
+  },
+  'en': {
+    spin: '✦ Spin',
+    confirm: 'Confirm',
+    backToWheel: 'Back to Wheel',
+    backTooltip: 'Back to Wheel (ESC)',
+    noMatch: 'No matching North Star',
+    searchPlaceholder: 'Search...',
+    labelContribution: 'Contribution',
+    labelField: 'Field',
+    labelRemarks: 'Remarks'
+  }
+};
+
+// 快捷获取当前语言文本
+function t(key) {
+  const lang = currentLang || 'zh-CN';
+  return uiTexts[lang]?.[key] || uiTexts['zh-CN'][key];
+}
+
 let currentSelectedCategory = null;
 
 // 大类中文 / 英文名称（从 translations 动态获取）
@@ -415,6 +447,15 @@ _onDragMove(e) {
 function initWheelUI() {
     const canvas = document.getElementById('wheelCanvas');
     if (!canvas) return;
+
+    const confirmBtn = document.getElementById('btn-confirm-category');
+    if (confirmBtn) confirmBtn.textContent = t('confirm');
+    
+    const spinBtn = document.getElementById('btn-spin');
+    if (spinBtn) {
+        spinBtn.textContent = t('spin');
+        spinBtn.onclick = () => wheelInstance.spin();
+    }
     
     createBackButtonIfNeeded();
     
@@ -424,22 +465,17 @@ function initWheelUI() {
     });
     
     wheelInstance = new DestinyWheel(canvas, categories, namesMap);
-    wheelInstance.onSelect = (cat) => {
-        selectCategory(cat);
-    };
+    wheelInstance.onSelect = (cat) => selectCategory(cat);
     wheelInstance.onPendingSelect = (cat) => {
         wheelInstance.showPendingUI(getCategoryName(cat));
     };
     
-    document.getElementById('btn-spin').onclick = () => wheelInstance.spin();
     wheelInstance.clearPending();
     
-    // 【确保】首页状态：显示转盘，隐藏其他
     document.getElementById('wheel-of-destiny').style.display = 'flex';
     document.getElementById('category-layout-container').style.display = 'none';
-    document.querySelector('.container').style.display = 'none'; // 初始就隐藏
+    document.querySelector('.container').style.display = 'none';
     
-    // 确保 tab 内容也是隐藏的
     document.querySelectorAll('.tab-content').forEach(tc => {
         tc.style.display = 'none';
     });
@@ -488,7 +524,8 @@ function createBackButtonIfNeeded() {
     const btn = document.createElement('button');
     btn.id = 'backToWheelBtn';
     btn.className = 'back-to-wheel-btn';
-    btn.setAttribute('data-tooltip', currentLang === 'en' ? 'Back to Wheel' : '返回转盘');
+    //btn.setAttribute('data-tooltip', currentLang === 'en' ? 'Back to Wheel' : '返回转盘');  
+    btn.setAttribute('data-tooltip', t('backTooltip'));  // 【修改】
     btn.innerHTML = `
         <svg viewBox="0 0 24 24">
             <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
@@ -519,32 +556,26 @@ function renderCategoryLayout(category) {
   const lang = currentLang || 'zh-CN';
   //const ambientSrc = `images/ambient-${category}.jpg`;
   const ambientSrc = categoryImages[category] || 'images/ambient-default.jpg';
-  const placeholderText = (window.translations && window.translations[lang]?.search) || '搜索...';
+  
+  const categoryDisplayName = categoryNames[category]?.[lang] || categoryNames[category]?.['zh-CN'] || category;
+  
+  //const placeholderText = (window.translations && window.translations[lang]?.search) || '搜索...';
+  // 【修改】使用 t() 获取多语言文本
+  const placeholderText = t('searchPlaceholder');
   
   container.innerHTML = `
     <div class="layout-left">
-      <img src="${ambientSrc}" alt="${getCategoryName(category)}">
+      <img src="${ambientSrc}" alt="${categoryDisplayName}">
     </div>
     <div class="layout-right">
       <div class="card-stage">
         <div class="search-and-random">
           <input type="text" class="modern-search-input" id="newUI-search" placeholder="${placeholderText}">
-          <button class="magic-btn small" id="btn-random-leader">✦ 缘动</button>
+          <button class="magic-btn small" id="btn-random-leader">${t('spin')}</button>
         </div>
         <div id="single-northstar-card" class="northstar-single-card"></div>
       </div>
-      <div class="card-controls">
-        <div class="filter-chips-container" id="chips-${category}" style="
-          display: flex;
-          flex-wrap: nowrap;
-          overflow-x: auto;
-          gap: 8px;
-          padding: 10px 0;
-          scrollbar-width: none;
-          -ms-overflow-style: none;
-          -webkit-overflow-scrolling: touch;
-        "></div>
-      </div>
+      ...
     </div>
   `;
   
@@ -572,7 +603,7 @@ function renderCategoryLayout(category) {
     randomBtn.onclick = () => {
       const candidates = getFilteredCandidates(category);
       if (candidates.length === 0) {
-        alert(translations[lang]?.noMatchingLeader || '无匹配的北极星');
+         alert(t('noMatch'));  // 【修改】
         return;
       }
       const random = candidates[Math.floor(Math.random() * candidates.length)];
@@ -596,16 +627,21 @@ function updateSingleCard(leader) {
   if (!card) return;
   
   const lang = window.currentLang || 'zh-CN';
-  const t = (window.translations && window.translations[lang]) ? window.translations[lang] : {};
+  
+  // 直接用 t() 获取标签，uiTexts 已包含映射
+  const labelContribution = t('labelContribution');
+  const labelField = t('labelField');
+  const labelRemarks = t('labelRemarks');
+  
   const contrib = leader.contribution ? (leader.contribution[lang] || leader.contribution['zh-CN'] || '') : '';
   const field = leader.field ? (leader.field[lang] || leader.field['zh-CN'] || '') : '';
   const remarks = leader.remarks ? (leader.remarks[lang] || leader.remarks['zh-CN'] || '') : '';
   
   card.innerHTML = `
     <h2>${leader.name}</h2>
-    <p class="contribution"><strong>${t.labelContribution || '贡献'}</strong> ${contrib}</p>
-    <p class="field"><strong>${t.labelField || '领域'}</strong> ${field}</p>
-    ${remarks ? `<p class="remarks"><strong>${t.labelRemarks || '评注'}</strong> ${remarks}</p>` : ''}
+    <p class="contribution"><strong>${labelContribution}</strong> ${contrib}</p>
+    <p class="field"><strong>${labelField}</strong> ${field}</p>
+    ${remarks ? `<p class="remarks"><strong>${labelRemarks}</strong> ${remarks}</p>` : ''}
   `;
 }
 
@@ -837,22 +873,21 @@ if (typeof onLanguageChanged === 'function') {
       origLangChanged();
     }
     
-    const btn = document.getElementById('backToWheelBtn');
-    if (btn) {
-        btn.setAttribute('data-tooltip', 
-            currentLang === 'en' ? 'Back to Wheel (ESC)' : '返回转盘 (ESC)'
-        );
+    const backBtn = document.getElementById('backToWheelBtn');
+    if (backBtn) {
+        backBtn.setAttribute('data-tooltip', t('backTooltip'));
     }
     
     const layout = document.getElementById('category-layout-container');
     if (layout && layout.style.display !== 'none' && currentSelectedCategory) {
-      renderCategoryLayout(currentSelectedCategory);
-      if (currentSelectedLeader && currentSelectedLeaderCategory === currentSelectedCategory) {
-        updateSingleCard(currentSelectedLeader);
-      }
+        renderCategoryLayout(currentSelectedCategory);
+        if (currentSelectedLeader && currentSelectedLeaderCategory === currentSelectedCategory) {
+            updateSingleCard(currentSelectedLeader);
+        }
     }
+    
     if (typeof updateWheelLanguage === 'function' && wheelInstance) {
-      updateWheelLanguage();
+        updateWheelLanguage();
     }
   };
 })();
