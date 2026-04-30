@@ -2,6 +2,18 @@
 // 依赖：全局 allData / translations / selectLeader / openTab / generateChipsForCategory
 
 const categories = ['ai','quantum','universe','humanities','art','finance','sport','chinaEntrepreneurs'];
+// 图片路径映射 - key 就是原始 category 值
+const categoryImages = {
+  'ai': 'images/ambient-ai.jpg',
+  'quantum': 'images/ambient-quantum.jpg',
+  'universe': 'images/ambient-universe.jpg',
+  'humanities': 'images/ambient-humanities.jpg',
+  'art': 'images/ambient-art.jpg',
+  'finance': 'images/ambient-finance.jpg',
+  'sport': 'images/ambient-sport.jpg',
+  'chinaEntrepreneurs': 'images/ambient-chinaEntrepreneurs.jpg'
+};
+
 let currentSelectedCategory = null;
 
 // 大类中文 / 英文名称（从 translations 动态获取）
@@ -463,6 +475,8 @@ function selectCategory(category) {
 function renderCategoryLayout(category) {
   const container = document.getElementById('category-layout-container');
   const lang = currentLang || 'zh-CN';
+  //const ambientSrc = `images/ambient-${category}.jpg`;
+  const ambientSrc = categoryImages[category] || 'images/ambient-default.jpg';
   const ambientSrc = `images/ambient-${category}.jpg`;
   const placeholderText = (window.translations && window.translations[lang]?.search) || '搜索...';
   
