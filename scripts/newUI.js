@@ -14,6 +14,17 @@ const categoryImages = {
   'chinaEntrepreneurs': 'images/ambient-chinaEntrepreneurs.jpg'
 };
 
+const categoryNames = {
+  'ai': { 'zh-CN': '人工智能', 'en': 'AI' },
+  'quantum': { 'zh-CN': '量子', 'en': 'Quantum' },
+  'universe': { 'zh-CN': '宇宙', 'en': 'Universe' },
+  'humanities': { 'zh-CN': '人文', 'en': 'Humanities' },
+  'art': { 'zh-CN': '艺术', 'en': 'Art' },
+  'finance': { 'zh-CN': '金融', 'en': 'Finance' },
+  'sport': { 'zh-CN': '竞技', 'en': 'Sport' },
+  'chinaEntrepreneurs': { 'zh-CN': '中华', 'en': 'Chinese' }
+};
+
 // 按钮/提示文本映射
 const uiTexts = {
   'zh-CN': {
