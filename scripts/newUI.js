@@ -425,6 +425,15 @@ _onDragMove(e) {
     if (infoDiv && nameSpan) {
       nameSpan.textContent = categoryName;
       infoDiv.style.display = 'block';
+      
+      // 【修复】确保显示时，“缘定”前缀有 span 包裹，方便切换语言
+      const destinySpan = infoDiv.querySelector('.i18n-destiny');
+      if (destinySpan) {
+        destinySpan.textContent = t('destiny');
+      } else {
+        // 容错：如果 HTML 没写 span，用 JS 强行包一层
+        infoDiv.innerHTML = `<span class="i18n-destiny">${t('destiny')}</span>: <span id="selected-category-name">${categoryName}</span>`;
+      }
     }
   }
 
@@ -461,12 +470,20 @@ function initWheelUI() {
     const canvas = document.getElementById('wheelCanvas');
     if (!canvas) return;
 
+    // 【修复】不要直接使用 textContent 覆盖，这会抹杀内部的 span 标签
     const confirmBtn = document.getElementById('btn-confirm-category');
-    if (confirmBtn) confirmBtn.textContent = t('confirm');
+    if (confirmBtn) {
+        const confirmSpan = confirmBtn.querySelector('.i18n-confirm');
+        if (confirmSpan) {
+            confirmSpan.textContent = t('confirm');
+        } else {
+            // 容错：如果找不到 span，强行植入带有 i18n 标识的 span
+            confirmBtn.innerHTML = `<span class="i18n-confirm">${t('confirm')}</span>`;
+        }
+    }
     
     const spinBtn = document.getElementById('btn-spin');
     if (spinBtn) {
-        // ❌ 不要这样：spinBtn.textContent = t('spin');
         // ✅ 只替换 span 的内容，保留 ✦ 符号
         const spinSpan = spinBtn.querySelector('.i18n-spin');
         if (spinSpan) spinSpan.textContent = t('spin');
@@ -895,26 +912,29 @@ function updateWheelLanguage() {
   wheelInstance.namesMap = namesMap;
   wheelInstance.draw();
   
-  // ✅ 刷新 HTML 中的静态文本（只改 span，不动父元素）
+  // ✅ 刷新 Spin 按钮文本
   const spinSpan = document.querySelector('#btn-spin .i18n-spin');
   if (spinSpan) spinSpan.textContent = t('spin');
   
-  const destinySpan = document.querySelector('#wheel-selection-info .i18n-destiny');
-  if (destinySpan) destinySpan.textContent = t('destiny');
+  // ✅ 刷新“缘定”文本，带容错恢复结构
+  const infoDiv = document.getElementById('wheel-selection-info');
+  const destinySpan = infoDiv ? infoDiv.querySelector('.i18n-destiny') : null;
+  if (destinySpan) {
+    destinySpan.textContent = t('destiny');
+  } else if (infoDiv) {
+    const nameSpan = document.getElementById('selected-category-name');
+    const catName = nameSpan ? nameSpan.textContent : '';
+    infoDiv.innerHTML = `<span class="i18n-destiny">${t('destiny')}</span>: <span id="selected-category-name">${catName}</span>`;
+  }
   
-  const confirmSpan = document.querySelector('#btn-confirm-category .i18n-confirm');
-  if (confirmSpan) confirmSpan.textContent = t('confirm');
-}
-
-if (typeof onLanguageChanged === 'function') {
-  const originalOnLanguageChanged = onLanguageChanged;
-  window.onLanguageChanged = function() {
-    originalOnLanguageChanged();
-    const style = localStorage.getItem('northstarUIStyle');
-    if (style === 'modern') {
-      updateWheelLanguage();
-    }
-  };
+  // ✅ 刷新“确认选择”文本，带容错恢复结构
+  const confirmBtn = document.getElementById('btn-confirm-category');
+  const confirmSpan = confirmBtn ? confirmBtn.querySelector('.i18n-confirm') : null;
+  if (confirmSpan) {
+    confirmSpan.textContent = t('confirm');
+  } else if (confirmBtn) {
+    confirmBtn.innerHTML = `<span class="i18n-confirm">${t('confirm')}</span>`;
+  }
 }
 
 (function() {
