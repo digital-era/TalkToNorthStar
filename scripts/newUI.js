@@ -597,8 +597,14 @@ function renderCategoryLayout(category) {
   `;
   
   const chipsContainer = document.getElementById(`chips-${category}`);
+  console.log('=== renderCategoryLayout ===');
+  console.log('category:', category);
+  console.log('chipsContainer:', chipsContainer);
+  console.log('generateChipsForCategory exists:', typeof generateChipsForCategory === 'function');
   if (typeof generateChipsForCategory === 'function' && chipsContainer) {
+    console.log('calling generateChipsForCategory...');
     generateChipsForCategory(category, chipsContainer);
+    console.log('after call, chips HTML:', chipsContainer.innerHTML);
     chipsContainer.querySelectorAll('.chip').forEach(chip => {
       chip.addEventListener('click', function() {
         chipsContainer.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
@@ -606,6 +612,11 @@ function renderCategoryLayout(category) {
         showFirstCandidate(category);
       });
     });
+  } else {
+        console.error('cannot call generateChipsForCategory!', {
+            hasFunction: typeof generateChipsForCategory === 'function',
+            hasContainer: !!chipsContainer
+        });
   }
   
   const searchInput = document.getElementById('newUI-search');
