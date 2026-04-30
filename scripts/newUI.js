@@ -860,6 +860,8 @@ function initSwipeBack() {
 // ──────────────────────────────────────────────
 function updateWheelLanguage() {
   if (!wheelInstance) return;
+  
+  // 刷新转盘扇形文字
   const namesMap = {};
   categories.forEach(cat => {
     namesMap[cat] = getCategoryName(cat);
@@ -867,10 +869,14 @@ function updateWheelLanguage() {
   wheelInstance.namesMap = namesMap;
   wheelInstance.draw();
   
- // 刷新 HTML 中的静态文本
-  document.querySelectorAll('.i18n-spin').forEach(el => el.textContent = t('spin'));
-  document.querySelectorAll('.i18n-destiny').forEach(el => el.textContent = t('destiny'));
-  document.querySelectorAll('.i18n-confirm').forEach(el => el.textContent = t('confirm'));
+  // 刷新 HTML 静态文本
+  const spinEls = document.querySelectorAll('.i18n-spin');
+  const destinyEls = document.querySelectorAll('.i18n-destiny');
+  const confirmEls = document.querySelectorAll('.i18n-confirm');
+  
+  spinEls.forEach(el => el.textContent = t('spin'));
+  destinyEls.forEach(el => el.textContent = t('destiny'));
+  confirmEls.forEach(el => el.textContent = t('confirm'));
 }
 
 if (typeof onLanguageChanged === 'function') {
