@@ -546,8 +546,6 @@
    ═══════════════════════════════════════════════ */
 .back-to-wheel-btn {
     position: fixed;
-    top: 15px;           /* 与 Logo 顶部对齐 */
-    left: 100px;         /* Logo 右侧（Logo left 20px + 宽度约 70px + 间距 10px）*/
     z-index: 9999;
     width: 40px;
     height: 40px;
@@ -612,11 +610,29 @@
     opacity: 1;
 }
 
-/* 手机端优化 */
+/* ═══════════════════════════════════════════════
+   电脑端：放在右上角，远离 Logo
+   ═══════════════════════════════════════════════ */
+@media (min-width: 769px) {
+    .back-to-wheel-btn {
+        top: 20px;
+        right: 20px;        /* 右上角 */
+        left: auto;
+    }
+    
+    .back-to-wheel-btn::after {
+        left: auto;
+        right: 50px;        /* tooltip 向左展开 */
+    }
+}
+
+/* ═══════════════════════════════════════════════
+   手机端：放在 Logo 右侧，紧凑排列
+   ═══════════════════════════════════════════════ */
 @media (max-width: 768px) {
     .back-to-wheel-btn {
-        top: 20px;        /* 与手机端 Logo top: 15px 对齐，微调 */
-        left: 75px;       /* 手机端 Logo left 15px + 宽度 50px + 间距 10px */
+        top: 22px;          /* 与手机 Logo (top:15px, height:50px) 垂直居中 */
+        left: 72px;         /* Logo left:15px + 宽度约50px + 间距7px */
         width: 36px;
         height: 36px;
     }
@@ -628,6 +644,15 @@
     .back-to-wheel-btn svg {
         width: 16px;
         height: 16px;
+    }
+}
+
+/* 超小屏幕进一步微调 */
+@media (max-width: 360px) {
+    .back-to-wheel-btn {
+        left: 68px;
+        width: 32px;
+        height: 32px;
     }
 }
 
