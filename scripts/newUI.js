@@ -896,27 +896,36 @@ if (typeof onLanguageChanged === 'function') {
 }
 
 (function() {
-  const origLangChanged = window.onLanguageChanged;
-  window.onLanguageChanged = function() {
-    if (origLangChanged && typeof origLangChanged === 'function') {
-      origLangChanged();
-    }
-    
-    const backBtn = document.getElementById('backToWheelBtn');
-    if (backBtn) {
-        backBtn.setAttribute('data-tooltip', t('backTooltip'));
-    }
-    
-    const layout = document.getElementById('category-layout-container');
-    if (layout && layout.style.display !== 'none' && currentSelectedCategory) {
-        renderCategoryLayout(currentSelectedCategory);
-        if (currentSelectedLeader && currentSelectedLeaderCategory === currentSelectedCategory) {
-            updateSingleCard(currentSelectedLeader);
+    const origLangChanged = window.onLanguageChanged;
+    window.onLanguageChanged = function() {
+        if (origLangChanged && typeof origLangChanged === 'function') {
+            origLangChanged();
         }
-    }
-    
-    if (typeof updateWheelLanguage === 'function' && wheelInstance) {
-        updateWheelLanguage();
-    }
-  };
+        
+        // 1. 刷新返回按钮 tooltip
+        const backBtn = document.getElementById('backToWheelBtn');
+        if (backBtn) {
+            backBtn.setAttribute('data-tooltip', t('backTooltip'));
+        }
+        
+        // 2. 刷新转盘页面按钮（如果当前显示的是转盘）
+        const wheelSection = document.getElementById('wheel-of-destiny');
+        if (wheelSection && wheelSection.style.display !== 'none') {
+            updateWheelLanguage();
+        }
+        
+        // 3. 刷新左右布局页面（如果当前显示的是布局）
+        const layout = document.getElementById('category-layout-container');
+        if (layout && layout.style.display !== 'none' && currentSelectedCategory) {
+            renderCategoryLayout(currentSelectedCategory);
+            if (currentSelectedLeader && currentSelectedLeaderCategory === currentSelectedCategory) {
+                updateSingleCard(currentSelectedLeader);
+            }
+        } else {
+            // 如果布局没显示，但至少刷新转盘文字（为下次显示做准备）
+            if (typeof updateWheelLanguage === 'function' && wheelInstance) {
+                updateWheelLanguage();
+            }
+        }
+    };
 })();
