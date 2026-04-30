@@ -65,35 +65,33 @@ class DestinyWheel {
   }
 
   // 【方案2核心】初始化 Canvas 像素尺寸
+  // 【修复】增加安全判断，防止半径为负
   _initCanvas() {
     const dpr = window.devicePixelRatio || 1;
-    
-    // 读取 CSS 渲染后的实际尺寸
     const rect = this.canvas.getBoundingClientRect();
     const displayWidth = rect.width;
     const displayHeight = rect.height;
-    
-    // 设置画布实际像素（高分辨率）
-    this.canvas.width = displayWidth * dpr;
-    this.canvas.height = displayHeight * dpr;
-    
-    // 缩放上下文以匹配 CSS 像素
-    this.ctx.scale(dpr, dpr);
-    
-    // 计算半径（基于 CSS 尺寸，而非画布像素）
-    this._radius = (Math.min(displayWidth, displayHeight) / 2) - 10;
+
+    // 保底：如果取不到尺寸，先设一个最小值
+    const cssWidth = displayWidth > 0 ? displayWidth : 300;
+    const cssHeight = displayHeight > 0 ? displayHeight : 300;
+
+    this.canvas.width = cssWidth * dpr;
+    this.canvas.height = cssHeight * dpr;
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    // 【关键修复】确保半径不会为负数
+    this._radius = Math.max(20, (Math.min(cssWidth, cssHeight) / 2) - 10);
   }
 
   // 【方案2核心】窗口大小变化时重绘
+  // 【修复】resize 时也重置变换矩阵
   _bindResize() {
     let resizeTimer = null;
-    
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
-        // 重置变换矩阵
         this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-        // 重新初始化
         this._initCanvas();
         this.draw();
       }, 200);
@@ -101,7 +99,8 @@ class DestinyWheel {
   }
 
   get radius() {
-    return this._radius || 150;
+    // 【修复】保底返回值
+    return Math.max(20, this._radius || 150);
   }
 
   // 绘制方法（与之前一致，使用 this.radius）
