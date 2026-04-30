@@ -617,7 +617,7 @@
 @media (min-width: 769px) {
     .back-to-wheel-btn {
         top: 16px;          /* 与 Logo (top:1px, height:70px) 垂直居中 */
-        left: 125px;        /* Logo left:20px + 宽度约 90px + 间距 5px */
+        left: 150px;        /* Logo left:20px + 宽度约 90px + 间距 5px */
         right: auto;
     }
 }
@@ -629,7 +629,7 @@
 @media (max-width: 768px) {
     .back-to-wheel-btn {
         top: 22px;          /* 与 Logo (top:15px, height:50px) 垂直居中 */
-        left: 68px;         /* Logo left:15px + 宽度约 50px + 间距 3px，稍微往左 */
+        left: 62px;         /* Logo left:15px + 宽度约 50px + 间距 3px，稍微往左 */
         right: auto;
         width: 36px;
         height: 36px;
