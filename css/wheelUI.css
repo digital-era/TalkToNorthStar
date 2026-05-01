@@ -660,10 +660,10 @@
     }
 }
 
-/* ═══════════════════════════════════════════════
-   左侧图片 - 单封面翻书效果（同一张图片）
-   ═══════════════════════════════════════════════ */
 
+/* ═══════════════════════════════════════════════
+   左侧图片 - 单封面自然翻书
+   ═══════════════════════════════════════════════ */
 .layout-left {
     perspective: 1500px;
     perspective-origin: 50% 50%;
@@ -680,7 +680,7 @@
     transform-style: preserve-3d;
 }
 
-/* 封面本体（正面） */
+/* 主封面：始终在正面 */
 .layout-left img.cover-front {
     position: absolute;
     top: 0;
@@ -695,9 +695,12 @@
     
     backface-visibility: hidden;
     transform-origin: left center;
+    
+    /* 自然摆动：小幅来回翻转，像书页被风吹动 */
+    animation: pageBreeze 6s ease-in-out infinite;
 }
 
-/* 封面背面（同一张图片，但水平翻转，模拟书页背面） */
+/* 背面：平时隐藏，只在翻转瞬间作为背面 */
 .layout-left img.cover-back {
     position: absolute;
     top: 0;
@@ -706,94 +709,79 @@
     height: 100%;
     object-fit: cover;
     object-position: center;
-    filter: brightness(0.85);
+    filter: brightness(0.7);  /* 背面稍暗 */
     border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     
     backface-visibility: hidden;
-    transform-origin: right center;
-    transform: rotateY(180deg);  /* 初始翻转在后方 */
-    /* 同一张图片，但水平镜像，模拟翻到背面 */
-    transform: rotateY(180deg) scaleX(-1);
+    transform-origin: left center;
+    transform: rotateY(180deg);  /* 初始在背面 */
+    
+    /* 平时透明，只有主封面翻过去时才显示 */
+    opacity: 0;
+    animation: pageBreezeBack 6s ease-in-out infinite;
 }
 
-/* 翻书动画 */
-.layout-left .cover-wrapper.flipping .cover-front {
-    animation: pageFlipFront 5s ease-in-out infinite;
-}
-
-.layout-left .cover-wrapper.flipping .cover-back {
-    animation: pageFlipBack 5s ease-in-out infinite;
-}
-
-/* 正面：从当前位置向左翻走，然后回来 */
-@keyframes pageFlipFront {
+/* 主封面摆动：小幅左右翻转，像微风中的书页 */
+@keyframes pageBreeze {
     0% {
         transform: rotateY(0deg);
-        filter: brightness(0.85);
     }
-    30% {
-        transform: rotateY(-90deg);
-        filter: brightness(0.6);
+    25% {
+        transform: rotateY(-15deg);  /* 向左翻开一点 */
     }
     50% {
-        transform: rotateY(-180deg);
-        filter: brightness(0.85);
+        transform: rotateY(0deg);
     }
-    70% {
-        transform: rotateY(-90deg);
-        filter: brightness(0.6);
+    75% {
+        transform: rotateY(-8deg);   /* 再小翻一下 */
     }
     100% {
         transform: rotateY(0deg);
-        filter: brightness(0.85);
     }
 }
 
-/* 背面：从右侧后方翻入，然后翻回 */
-@keyframes pageFlipBack {
+/* 背面跟随：主封面翻开时才显示 */
+@keyframes pageBreezeBack {
     0% {
-        transform: rotateY(180deg) scaleX(-1);
-        filter: brightness(0.85);
+        opacity: 0;
+        transform: rotateY(180deg);
     }
-    30% {
-        transform: rotateY(90deg) scaleX(-1);
-        filter: brightness(0.6);
+    20% {
+        opacity: 1;  /* 主封面翻开时，背面显现 */
+        transform: rotateY(165deg);
     }
     50% {
-        transform: rotateY(0deg) scaleX(-1);
-        filter: brightness(0.85);
+        opacity: 0;  /* 回到正面，背面隐藏 */
+        transform: rotateY(180deg);
     }
     70% {
-        transform: rotateY(90deg) scaleX(-1);
-        filter: brightness(0.6);
+        opacity: 1;
+        transform: rotateY(172deg);
     }
     100% {
-        transform: rotateY(180deg) scaleX(-1);
-        filter: brightness(0.85);
+        opacity: 0;
+        transform: rotateY(180deg);
     }
 }
 
 /* 缘动暂停 */
-.layout-left.flipping-paused .cover-wrapper {
+.layout-left.flipping-paused img.cover-front {
+    animation-play-state: paused;
+}
+.layout-left.flipping-paused img.cover-back {
     animation-play-state: paused;
 }
 
-.layout-left.flipping-paused img.cover-front,
-.layout-left.flipping-paused img.cover-back {
-    animation-play-state: paused !important;
-}
-
 /* 缘动微调 */
-.layout-left.flipping-paused img.active-flip {
-    transform: scale(1.03) !important;
+.layout-left.flipping-paused img.cover-front.active-flip {
+    transform: scale(1.03) rotateY(0deg) !important;
     filter: brightness(0.95) !important;
     box-shadow: 0 12px 40px rgba(0, 223, 216, 0.2);
     transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* ═══════════════════════════════════════════════
-   手机端：上下翻书
+   手机端：上下摆动
    ═══════════════════════════════════════════════ */
 @media (max-width: 768px) {
     .layout-left {
@@ -811,71 +799,45 @@
         border-radius: 8px;
     }
     
-    /* 手机端：从下往上翻 */
     .layout-left img.cover-front {
         transform-origin: bottom center;
+        animation: pageBreezeMobile 6s ease-in-out infinite;
     }
     
     .layout-left img.cover-back {
-        transform-origin: top center;
-        transform: rotateX(180deg) scaleY(-1);
+        transform-origin: bottom center;
+        transform: rotateX(180deg);
+        animation: pageBreezeBackMobile 6s ease-in-out infinite;
     }
     
-    .layout-left .cover-wrapper.flipping .cover-front {
-        animation: pageFlipFrontMobile 5s ease-in-out infinite;
+    @keyframes pageBreezeMobile {
+        0% { transform: rotateX(0deg); }
+        25% { transform: rotateX(-15deg); }
+        50% { transform: rotateX(0deg); }
+        75% { transform: rotateX(-8deg); }
+        100% { transform: rotateX(0deg); }
     }
     
-    .layout-left .cover-wrapper.flipping .cover-back {
-        animation: pageFlipBackMobile 5s ease-in-out infinite;
-    }
-    
-    @keyframes pageFlipFrontMobile {
+    @keyframes pageBreezeBackMobile {
         0% {
-            transform: rotateX(0deg);
-            filter: brightness(0.85);
-        }
-        30% {
-            transform: rotateX(90deg);
-            filter: brightness(0.6);
-        }
-        50% {
+            opacity: 0;
             transform: rotateX(180deg);
-            filter: brightness(0.85);
         }
-        70% {
-            transform: rotateX(90deg);
-            filter: brightness(0.6);
-        }
-        100% {
-            transform: rotateX(0deg);
-            filter: brightness(0.85);
-        }
-    }
-    
-    @keyframes pageFlipBackMobile {
-        0% {
-            transform: rotateX(180deg) scaleY(-1);
-            filter: brightness(0.85);
-        }
-        30% {
-            transform: rotateX(90deg) scaleY(-1);
-            filter: brightness(0.6);
+        20% {
+            opacity: 1;
+            transform: rotateX(165deg);
         }
         50% {
-            transform: rotateX(0deg) scaleY(-1);
-            filter: brightness(0.85);
+            opacity: 0;
+            transform: rotateX(180deg);
         }
         70% {
-            transform: rotateX(90deg) scaleY(-1);
-            filter: brightness(0.6);
+            opacity: 1;
+            transform: rotateX(172deg);
         }
         100% {
-            transform: rotateX(180deg) scaleY(-1);
-            filter: brightness(0.85);
+            opacity: 0;
+            transform: rotateX(180deg);
         }
-    }
-    
-    .layout-left.flipping-paused img.active-flip {
-        transform: scale(1.02) !important;
     }
 }
