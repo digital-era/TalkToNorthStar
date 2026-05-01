@@ -1142,16 +1142,17 @@ function renderCategoryLayout(category) {
   const placeholderText = t('searchPlaceholder');
   
   container.innerHTML = `
-    <div class="layout-left">
-      <img src="${ambientSrc}" alt="${categoryDisplayName}">
+    <div class="layout-left" id="layoutLeft">
+      <!-- 新增 cover-wrapper 用于 3D 翻动 -->
+      <div class="cover-wrapper">
+        <img src="${ambientSrc}" alt="${categoryDisplayName}" id="coverImage">
+      </div>
     </div>
     <div class="layout-right">
       <div class="card-stage">
-        <!-- 【修改】搜索+缘动+回退 三合一横排 -->
         <div class="search-and-random">
           <input type="text" class="modern-search-input" id="newUI-search" placeholder="${placeholderText}">
           <button class="magic-btn small" id="btn-random-leader">${t('spin')}</button>
-          <!-- 【新增】回退按钮嵌入此处 -->
           <button class="back-btn-inline" id="btn-back-inline" title="${t('backTooltip')}">
             <svg viewBox="0 0 24 24">
               <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
@@ -1211,6 +1212,48 @@ function renderCategoryLayout(category) {
     backBtnInline.addEventListener('click', () => {
       backToWheelSelection();
     });
+  }
+
+    // ══════════════════════════════════════════════
+  // 【新增】缘动按钮：暂停翻动 + 微调动画
+  // ══════════════════════════════════════════════
+  const randomBtn = document.getElementById('btn-random-leader');
+  const layoutLeft = document.getElementById('layoutLeft');
+  const coverImage = document.getElementById('coverImage');
+  
+  if (randomBtn && layoutLeft && coverImage) {
+    // 绑定缘动点击
+    const originalOnClick = randomBtn.onclick;
+    
+    randomBtn.onclick = () => {
+      // 1. 暂停翻动
+      layoutLeft.classList.add('flipping-paused');
+      
+      // 2. 图片微调动画
+      coverImage.classList.add('active-flip');
+      
+      // 3. 执行原有随机逻辑
+      const candidates = getFilteredCandidates(category);
+      if (candidates.length === 0) {
+        alert(t('noMatch'));
+        // 恢复翻动
+        setTimeout(() => {
+          coverImage.classList.remove('active-flip');
+          layoutLeft.classList.remove('flipping-paused');
+        }, 400);
+        return;
+      }
+      
+      const random = candidates[Math.floor(Math.random() * candidates.length)];
+      selectLeader(random, category, null);
+      updateSingleCard(random);
+      
+      // 4. 延迟后恢复翻动（给用户看结果的时间）
+      setTimeout(() => {
+        coverImage.classList.remove('active-flip');
+        layoutLeft.classList.remove('flipping-paused');
+      }, 800);  // 0.8秒后恢复循环翻动
+    };
   }
   
   const randomBtn = document.getElementById('btn-random-leader');
