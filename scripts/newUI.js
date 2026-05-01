@@ -11,16 +11,16 @@ const NEBULA_CATEGORIES = ['ai','quantum','universe','humanities','art','finance
 // 多语言文本
 const crystalTexts = {
   'zh-CN': {
-    touchHint: '触碰以感知命运',
+    touchHint: '触碰以启动潜能',
     holdStatus: '长按水晶球以充能',
     chargingStatus: '充能中...',
-    releasing: '释放命运之力...'
+    releasing: '释放思维之力...'
   },
   'en': {
-    touchHint: 'Touch to Sense Destiny',
+    touchHint: 'Touch to unlock potential',
     holdStatus: 'Hold the crystal to charge',
     chargingStatus: 'Charging...',
-    releasing: 'Releasing destiny...'
+    releasing: 'Releasing power of mind...'
   }
 };
 
