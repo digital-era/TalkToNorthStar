@@ -1901,7 +1901,7 @@
     right: 25px;
     font-size: 28px;
     font-weight: 100;
-    color: rgba(255, 255, 255, 0.2);
+    color: #4facfe;                      /* 【改】统一使用星辰蓝，醒目可见 */
     cursor: pointer;
     z-index: 10;
     transition: all 0.4s ease;
@@ -1910,7 +1910,7 @@
     border-radius: 50%;
 }
 .elegant-close:hover {
-    color: #fff;
+    color: #ffffff;                     /* 悬浮时变为纯白，依然突出 */
     background: rgba(255, 255, 255, 0.1);
     transform: rotate(90deg);
 }
@@ -1938,6 +1938,14 @@
     .elegant-content { padding: 8vh 6%; }
     #elegantAnswerText { font-size: 1.05rem; line-height: 1.9; }
     #elegantAnswerText p { margin-bottom: 1.5em; }
+
+    /* 【改】关闭按钮下移，避开手机顶部状态栏/重叠区域 */
+    .elegant-close {
+        top: 30px;                      /* 从 20px 增加到 30px */
+        /* 若手机带刘海或灵动岛，可进一步使用安全区域
+           top: calc(30px + env(safe-area-inset-top, 0px)); 
+           此处先给一个更通用的下移值 */
+    }
 }
 
 /* === [新增] 文字流动/星雾凝结 动画 === */
