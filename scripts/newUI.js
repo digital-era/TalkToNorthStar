@@ -1070,17 +1070,10 @@ function initWheelUI() {
 
 // 新入口
 function initNebulaCrystal() {
-  // 先检查必要元素是否存在
-  const nebulaCrystal = document.getElementById('nebula-crystal');
-  if (!nebulaCrystal) {
-    console.error('initNebulaCrystal: #nebula-crystal not found in DOM');
-    return;
-  }
-  
   initCrystalBall();
   
-  // 显示水晶球，隐藏其他
-  nebulaCrystal.style.display = 'flex';
+  const nebulaCrystal = document.getElementById('nebula-crystal');
+  if (nebulaCrystal) nebulaCrystal.style.display = 'flex';
   
   const wheelSection = document.getElementById('wheel-of-destiny');
   if (wheelSection) wheelSection.style.display = 'none';
@@ -1102,9 +1095,16 @@ function initNebulaCrystal() {
 function selectCategory(category) {
     currentSelectedCategory = category;
     
-    document.getElementById('wheel-of-destiny').style.display = 'none';
+    // 隐藏水晶球
+    const nebulaCrystal = document.getElementById('nebula-crystal');
+    if (nebulaCrystal) nebulaCrystal.style.display = 'none';
+    
+    // 隐藏旧转盘
+    const wheelSection = document.getElementById('wheel-of-destiny');
+    if (wheelSection) wheelSection.style.display = 'none';
+    
     const layout = document.getElementById('category-layout-container');
-    layout.style.display = 'flex';
+    if (layout) layout.style.display = 'flex';
     
     const tabsBar = document.querySelector('.tabs');
     if (tabsBar) tabsBar.style.display = 'none';
@@ -1120,10 +1120,9 @@ function selectCategory(category) {
         updateSingleCard(leaders[0]);
     }
     
-    document.getElementById('wheel-of-destiny').style.display = 'none';
-    document.getElementById('category-layout-container').style.display = 'flex';
-    document.querySelector('.container').style.display = 'block';
-  
+    // 【修复】空值检查
+    const container = document.querySelector('.container');
+    if (container) container.style.display = 'block';
 }
 
 
@@ -1318,55 +1317,49 @@ function backToWheelSelection() {
     const wheelSection = document.getElementById('wheel-of-destiny');
     const mainContainer = document.querySelector('.container');
     
-    // 显示过渡遮罩
     if (overlay) overlay.classList.add('active');
     
     setTimeout(() => {
-        // 隐藏左右布局
         if (layout) {
             layout.style.display = 'none';
-            layout.innerHTML = ''; // 清空内容，释放内存
+            layout.innerHTML = '';
         }
         
-        // 【修复】彻底隐藏主容器，避免下面的北极星内容露出来
         if (mainContainer) {
             mainContainer.style.display = 'none';
         }
         
-        // 隐藏所有 tab-content（双重保险）
         document.querySelectorAll('.tab-content').forEach(tc => {
             tc.style.display = 'none';
         });
         
-        // 显示转盘
+        // 显示水晶球（现代模式）
+        const nebulaCrystal = document.getElementById('nebula-crystal');
+        if (nebulaCrystal) {
+            nebulaCrystal.style.display = 'flex';
+        }
+        
+        // 兼容旧转盘
         if (wheelSection) {
             wheelSection.style.display = 'flex';
             wheelSection.classList.add('wheel-fade-enter');
             setTimeout(() => wheelSection.classList.remove('wheel-fade-enter'), 500);
         }
-
-        // 新增：重置水晶球
-        if (crystalInstance) {
-          crystalInstance.reset();
-        }
         
-        document.getElementById('nebula-crystal').style.display = 'flex';
-        
-        // 恢复 tab 栏显示（首页状态）
         const tabsBar = document.querySelector('.tabs');
-        if (tabsBar) tabsBar.style.display = 'flex';       
-          
-        // 重置状态
+        if (tabsBar) tabsBar.style.display = 'flex';
+        
         currentSelectedCategory = null;
         if (wheelInstance) {
             wheelInstance.clearPending();
             wheelInstance.draw();
         }
         
-        // 移除遮罩
-        if (overlay) overlay.classList.remove('active');
+        if (crystalInstance) {
+            crystalInstance.reset();
+        }
         
-        // 滚动到顶部
+        if (overlay) overlay.classList.remove('active');
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
     }, 300);
