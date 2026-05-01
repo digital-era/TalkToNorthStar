@@ -1132,18 +1132,13 @@ function selectCategory(category) {
 function renderCategoryLayout(category) {
   const container = document.getElementById('category-layout-container');
   const lang = currentLang || 'zh-CN';
-  //const ambientSrc = `images/ambient-${category}.jpg`;
   const ambientSrc = categoryImages[category] || 'images/ambient-default.jpg';
   
   const categoryDisplayName = categoryNames[category]?.[lang] || categoryNames[category]?.['zh-CN'] || category;
-  
-  //const placeholderText = (window.translations && window.translations[lang]?.search) || '搜索...';
-  // 【修改】使用 t() 获取多语言文本
   const placeholderText = t('searchPlaceholder');
   
   container.innerHTML = `
     <div class="layout-left" id="layoutLeft">
-      <!-- 新增 cover-wrapper 用于 3D 翻动 -->
       <div class="cover-wrapper">
         <img src="${ambientSrc}" alt="${categoryDisplayName}" id="coverImage">
       </div>
@@ -1193,10 +1188,10 @@ function renderCategoryLayout(category) {
       });
     });
   } else {
-        console.error('cannot call generateChipsForCategory!', {
-            hasFunction: typeof generateChipsForCategory === 'function',
-            hasContainer: !!chipsContainer
-        });
+    console.error('cannot call generateChipsForCategory!', {
+      hasFunction: typeof generateChipsForCategory === 'function',
+      hasContainer: !!chipsContainer
+    });
   }
   
   const searchInput = document.getElementById('newUI-search');
@@ -1206,7 +1201,6 @@ function renderCategoryLayout(category) {
     });
   }
 
-  // 【新增】绑定内联回退按钮事件
   const backBtnInline = document.getElementById('btn-back-inline');
   if (backBtnInline) {
     backBtnInline.addEventListener('click', () => {
@@ -1214,32 +1208,30 @@ function renderCategoryLayout(category) {
     });
   }
 
-    // ══════════════════════════════════════════════
-  // 【新增】缘动按钮：暂停翻动 + 微调动画
+  // ══════════════════════════════════════════════
+  // 缘动按钮：暂停翻动 + 随机切换（含防重复点击）
   // ══════════════════════════════════════════════
   const randomBtn = document.getElementById('btn-random-leader');
   const layoutLeft = document.getElementById('layoutLeft');
   const coverImage = document.getElementById('coverImage');
   
-  if (randomBtn && layoutLeft && coverImage) {
-    // 绑定缘动点击
-    const originalOnClick = randomBtn.onclick;
-    
+  let isFlipping = false;
+  
+  if (randomBtn) {
     randomBtn.onclick = () => {
-      // 1. 暂停翻动
-      layoutLeft.classList.add('flipping-paused');
+      if (isFlipping) return;
+      isFlipping = true;
       
-      // 2. 图片微调动画
-      coverImage.classList.add('active-flip');
+      if (layoutLeft) layoutLeft.classList.add('flipping-paused');
+      if (coverImage) coverImage.classList.add('active-flip');
       
-      // 3. 执行原有随机逻辑
       const candidates = getFilteredCandidates(category);
       if (candidates.length === 0) {
         alert(t('noMatch'));
-        // 恢复翻动
         setTimeout(() => {
-          coverImage.classList.remove('active-flip');
-          layoutLeft.classList.remove('flipping-paused');
+          if (coverImage) coverImage.classList.remove('active-flip');
+          if (layoutLeft) layoutLeft.classList.remove('flipping-paused');
+          isFlipping = false;
         }, 400);
         return;
       }
@@ -1248,25 +1240,11 @@ function renderCategoryLayout(category) {
       selectLeader(random, category, null);
       updateSingleCard(random);
       
-      // 4. 延迟后恢复翻动（给用户看结果的时间）
       setTimeout(() => {
-        coverImage.classList.remove('active-flip');
-        layoutLeft.classList.remove('flipping-paused');
-      }, 800);  // 0.8秒后恢复循环翻动
-    };
-  }
-  
-  const randomBtn = document.getElementById('btn-random-leader');
-  if (randomBtn) {
-    randomBtn.onclick = () => {
-      const candidates = getFilteredCandidates(category);
-      if (candidates.length === 0) {
-         alert(t('noMatch'));  // 【修改】
-        return;
-      }
-      const random = candidates[Math.floor(Math.random() * candidates.length)];
-      selectLeader(random, category, null);
-      updateSingleCard(random);
+        if (coverImage) coverImage.classList.remove('active-flip');
+        if (layoutLeft) layoutLeft.classList.remove('flipping-paused');
+        isFlipping = false;
+      }, 800);
     };
   }
   
