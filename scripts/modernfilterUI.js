@@ -239,8 +239,11 @@ function switchUIStyle(style) {
         if (layout) layout.style.display = 'none';
 
         // 3. 调用新 UI 初始化
-        if (typeof initWheelUI === 'function') {
-            initWheelUI();
+        //if (typeof initWheelUI === 'function') {
+        //    initWheelUI();
+        //}
+        if (typeof initNebulaCrystal === 'function') {
+            initNebulaCrystal();
         }
     }
 }
