@@ -70,13 +70,10 @@
     
     /* 多重阴影：内阴影 + 外发光 + 折射高光 */
     box-shadow:
-        /* 内部深邃感 */
         inset 0 0 60px rgba(0, 0, 0, 0.6),
         inset 0 0 100px rgba(0, 60, 80, 0.3),
-        /* 边缘折射光 */
         inset -10px -10px 40px rgba(0, 223, 216, 0.1),
         inset 10px 10px 40px rgba(255, 255, 255, 0.05),
-        /* 外部辉光 */
         0 0 40px rgba(0, 223, 216, 0.15),
         0 0 80px rgba(0, 100, 150, 0.1),
         0 0 120px rgba(0, 60, 100, 0.05);
@@ -144,7 +141,7 @@
     top: 0; left: 0;
     width: 100%; height: 100%;
     border-radius: 50%;
-    pointer-events: none;   /* 事件穿透到球体 */
+    pointer-events: none;
 }
 
 /* ═══════════════════════════════════════════════
@@ -261,7 +258,7 @@
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.3s ease;
-    transform: rotate(-90deg);  /* 从顶部开始 */
+    transform: rotate(-90deg);
 }
 
 .charge-ring.visible {
@@ -279,8 +276,8 @@
     stroke: url(#chargeGradient);
     stroke-width: 3;
     stroke-linecap: round;
-    stroke-dasharray: 289;      /* 2 * π * 46 ≈ 289 */
-    stroke-dashoffset: 289;     /* 初始隐藏 */
+    stroke-dasharray: 289;
+    stroke-dashoffset: 289;
     transition: stroke-dashoffset 0.1s linear;
 }
 
@@ -321,266 +318,6 @@
 }
 
 /* ═══════════════════════════════════════════════
-   响应式
-   ═══════════════════════════════════════════════ */
-@media (max-width: 768px) {
-    .crystal-container {
-        width: min(300px, 75vw);
-    }
-    
-    .hint-text {
-        font-size: 14px;
-        letter-spacing: 2px;
-    }
-    
-    .result-text {
-        font-size: 22px;
-        letter-spacing: 4px;
-    }
-    
-    .crystal-ball.charging {
-        animation: crystalShakeMobile 0.15s ease-in-out infinite;
-    }
-    
-    @keyframes crystalShakeMobile {
-        0%, 100% { transform: translate(0, 0) scale(1); }
-        25% { transform: translate(-1px, 0.5px) scale(1.003); }
-        75% { transform: translate(1px, -0.5px) scale(0.997); }
-    }
-}
-
-/* ═══════════════════════════════════════════════
-   转盘界面
-   ═══════════════════════════════════════════════ */
-.wheel-section {
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 20px 0 40px;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    background: radial-gradient(ellipse at center, #1a2332 0%, #0f1620 40%, #080c14 100%);
-    position: relative;
-}
-
-/* 星空背景层 */
-.wheel-section::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: 
-        radial-gradient(1.5px 1.5px at 10% 20%, rgba(0, 223, 216, 0.4), transparent),
-        radial-gradient(1px 1px at 20% 80%, rgba(255, 255, 255, 0.3), transparent),
-        radial-gradient(2px 2px at 80% 10%, rgba(0, 223, 216, 0.2), transparent),
-        radial-gradient(1px 1px at 90% 60%, rgba(255, 215, 0, 0.3), transparent),
-        radial-gradient(1.5px 1.5px at 50% 50%, rgba(0, 223, 216, 0.15), transparent);
-    background-size: 250px 250px, 300px 300px, 200px 200px, 350px 350px, 400px 400px;
-    pointer-events: none;
-    z-index: 0;
-    animation: twinkle 8s ease-in-out infinite alternate;
-}
-
-@keyframes twinkle {
-    0% { opacity: 0.6; }
-    100% { opacity: 1; }
-}
-
-/* 内容层提升z-index */
-.wheel-container,
-.wheel-controls,
-#wheel-selection-info,
-.wheel-section h1,
-.wheel-section .main-title,
-.wheel-section .sub-title {
-    position: relative;
-    z-index: 1;
-}
-
-/* 标题区域 */
-.wheel-section h1,
-.wheel-section .main-title {
-    font-family: 'Noto Serif SC', 'Cinzel', serif;
-    font-size: clamp(24px, 5vw, 42px);
-    color: #00dfd8;
-    text-align: center;
-    margin: 20px 0 10px;
-    text-shadow: 0 0 20px rgba(0, 223, 216, 0.3);
-    letter-spacing: 4px;
-}
-
-.wheel-section .sub-title {
-    font-family: 'Noto Serif SC', serif;
-    font-size: clamp(14px, 3vw, 20px);
-    color: rgba(255, 255, 255, 0.7);
-    text-align: center;
-    margin-bottom: 30px;
-    font-style: italic;
-}
-
-/* 转盘容器 */
-.wheel-container {
-    position: relative;
-    width: 100%;
-    max-width: 520px;
-    aspect-ratio: 1 / 1;
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* 转盘外圈发光 */
-.wheel-container::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: calc(100% + 40px);
-    height: calc(100% + 40px);
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(0, 223, 216, 0.08) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: -1;
-}
-
-/* Canvas - CSS完全控制尺寸 */
-#wheelCanvas {
-    display: block;
-    width: 100% !important;
-    height: 100% !important;
-    max-width: 520px;
-    max-height: 520px;
-    cursor: grab;
-    border: none;
-    padding: 0;
-    margin: 0;
-}
-
-#wheelCanvas:active {
-    cursor: grabbing;
-    filter: brightness(1.1);
-}
-
-/* 指针 */
-.wheel-pointer {
-    position: absolute;
-    top: -15px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 36px;
-    color: #ffd700;
-    text-shadow: 0 0 10px #ffd700;
-    z-index: 10;
-    pointer-events: none;
-}
-
-/* 控制按钮区域 */
-.wheel-controls {
-    margin-top: 30px;
-    display: flex;
-    gap: 30px;
-}
-
-/* 选中信息框 */
-#wheel-selection-info {
-    margin-top: 25px;
-    padding: 15px 30px;
-    background: rgba(0, 223, 216, 0.1);
-    border: 1px solid rgba(0, 223, 216, 0.3);
-    border-radius: 30px;
-    backdrop-filter: blur(10px);
-    display: none;
-}
-
-#wheel-selection-info p {
-    margin: 0;
-    font-size: 18px;
-    color: #00dfd8;
-    font-family: 'Noto Serif SC', serif;
-    text-shadow: 0 0 15px rgba(0, 223, 216, 0.6);
-    letter-spacing: 3px;
-}
-
-/* 按钮样式 */
-#btn-spin {
-    background: linear-gradient(135deg, #00dfd8, #007cf0);
-    border: none;
-    border-radius: 50px;
-    padding: 14px 48px;
-    color: white;
-    font-size: 20px;
-    font-family: 'Noto Serif SC', serif;
-    cursor: pointer;
-    box-shadow: 0 4px 20px rgba(0, 223, 216, 0.4), 0 0 30px rgba(0, 223, 216, 0.1);
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-#btn-spin::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
-    transform: rotate(45deg);
-    transition: all 0.5s;
-}
-
-#btn-spin:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 30px rgba(0, 223, 216, 0.6), 0 0 50px rgba(0, 223, 216, 0.2);
-}
-
-#btn-spin:hover::before {
-    left: 100%;
-}
-
-#btn-confirm-category {
-    background: transparent;
-    border: 2px solid #ffd700;
-    border-radius: 50px;
-    padding: 12px 36px;
-    color: #ffd700;
-    font-size: 16px;
-    font-family: 'Noto Serif SC', serif;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-#btn-confirm-category:hover {
-    background: rgba(255, 215, 0, 0.1);
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-}
-
-/* 滚动条美化 */
-.wheel-section::-webkit-scrollbar {
-    width: 6px;
-}
-
-.wheel-section::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2);
-}
-
-.wheel-section::-webkit-scrollbar-thumb {
-    background: rgba(0, 223, 216, 0.3);
-    border-radius: 3px;
-}
-
-.wheel-section::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 223, 216, 0.5);
-}
-
-/* ═══════════════════════════════════════════════
    左右布局
    ═══════════════════════════════════════════════ */
 #category-layout-container {
@@ -593,9 +330,7 @@
     flex: 1;
     overflow: hidden;
     position: relative;
-    /* 修复1：增加左边距，避免贴边 */
     padding-left: 20px;
-    /* 修复2：使用 flex 让图片垂直居中，与右侧对齐 */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -603,22 +338,19 @@
 }
 
 .layout-left img {
-    width: 90%;              /* 不要铺满，留边距 */
-    height: 85%;             /* 稍微收缩，避免顶天立地 */
+    width: 90%;
+    height: 85%;
     object-fit: cover;
     object-position: center;
     filter: brightness(0.8);
-    border-radius: 12px;     /* 轻微圆角，更现代 */
+    border-radius: 12px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 .layout-left::after {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    top: 0; left: 0; right: 0; bottom: 0;
     background: linear-gradient(to right, transparent 0%, rgba(10, 14, 23, 0.3) 100%);
     pointer-events: none;
 }
@@ -627,10 +359,9 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    /* 修复2：从 center 改为 flex-start，让内容从顶部开始对齐 */
     align-items: center;
     justify-content: flex-start;
-    padding: 60px 40px 40px;  /* 增加顶部 padding，与图片视觉对齐 */
+    padding: 60px 40px 40px;
     background: rgba(10, 15, 30, 0.9);
 }
 
@@ -658,7 +389,6 @@
     font-size: 16px;
 }
 
-/* 卡片舞台：顶部对齐 */
 .card-stage {
     text-align: center;
     margin-bottom: 30px;
@@ -666,12 +396,10 @@
     max-width: 450px;
 }
 
-/* 搜索区域顶部对齐 */
-/* 【修改】增加 gap，确保三者间距舒适 */
 .search-and-random {
     display: flex;
     align-items: center;
-    gap: 10px;                /* 搜索框、缘动、回退之间统一间距 */
+    gap: 10px;
     margin-bottom: 20px;
     width: 100%;
     max-width: 450px;
@@ -739,62 +467,90 @@
     display: none;
 }
 
-/* 搜索框与缘动按钮同行 */
-.search-and-random {
+/* ═══════════════════════════════════════════════
+   内联回退按钮
+   ═══════════════════════════════════════════════ */
+.back-btn-inline {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(0, 223, 216, 0.12);
+    border: 1.5px solid rgba(0, 223, 216, 0.35);
+    backdrop-filter: blur(8px);
+    cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-    width: 100%;
-    max-width: 450px;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.25s ease;
+    padding: 0;
 }
 
-.search-and-random .magic-btn.small {
-    white-space: nowrap;
-    flex-shrink: 0;
+.back-btn-inline svg {
+    width: 16px;
+    height: 16px;
+    fill: #00dfd8;
+    transition: transform 0.25s ease;
+}
+
+.back-btn-inline:hover {
+    background: rgba(0, 223, 216, 0.25);
+    border-color: #00dfd8;
+    box-shadow: 0 0 15px rgba(0, 223, 216, 0.25);
+    transform: scale(1.08);
+}
+
+.back-btn-inline:hover svg {
+    transform: translateX(-2px);
+}
+
+.back-btn-inline:active {
+    transform: scale(0.95);
 }
 
 /* ═══════════════════════════════════════════════
    响应式：手机端 (max-width: 768px)
    ═══════════════════════════════════════════════ */
 @media (max-width: 768px) {
-    /* 隐藏星空 */
-    .wheel-section::before {
-        display: none;
+    /* 水晶球上移 */
+    .crystal-section {
+        justify-content: flex-start;
+        padding-top: 20px;
+        padding-bottom: 40px;
     }
-
-    /* 转盘缩小 */
-    .wheel-container {
-        max-width: 320px;
+    
+    .crystal-container {
+        width: min(280px, 70vw);
+        margin-top: 10px;
     }
-
-    #wheelCanvas {
-        max-width: 320px;
-        max-height: 320px;
-    }
-
-    .wheel-pointer {
-        font-size: 28px;
-        top: -10px;
-    }
-
-    .wheel-controls {
+    
+    .crystal-status {
         margin-top: 20px;
-        gap: 15px;
+        margin-bottom: 20px;
     }
-
-    #wheel-selection-info {
-        padding: 10px 20px;
-    }
-
-    #wheel-selection-info p {
-        font-size: 16px;
+    
+    .hint-text {
+        font-size: 13px;
         letter-spacing: 2px;
     }
-
-    #btn-spin {
-        padding: 12px 36px;
-        font-size: 18px;
+    
+    .result-text {
+        font-size: 22px;
+        letter-spacing: 4px;
+    }
+    
+    .status-text {
+        font-size: 12px;
+    }
+    
+    .crystal-ball.charging {
+        animation: crystalShakeMobile 0.15s ease-in-out infinite;
+    }
+    
+    @keyframes crystalShakeMobile {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        25% { transform: translate(-1px, 0.5px) scale(1.003); }
+        75% { transform: translate(1px, -0.5px) scale(0.997); }
     }
 
     /* 左右布局改为上下 */
@@ -805,10 +561,9 @@
 
     .layout-left {
         width: 100%;
-        height: 200px;        /* 稍微增加高度 */
+        height: 200px;
         flex: none;
-        padding-left: 0;      /* 手机端去掉左内边距 */
-        /* 修复2：手机端图片向下调整，与标题保持距离 */
+        padding-left: 0;
         padding-top: 10px;
         padding-bottom: 10px;
     }
@@ -826,7 +581,6 @@
         justify-content: flex-start;
     }
 
-    /* 搜索区域 */
     .search-and-random {
         max-width: 100%;
         gap: 8px;
@@ -842,7 +596,6 @@
         font-size: 14px;
     }
 
-    /* 【新增】移动端回退按钮微调 */
     .back-btn-inline {
         width: 32px;
         height: 32px;
@@ -853,7 +606,6 @@
         height: 14px;
     }
 
-    /* 卡片适配 */
     .northstar-single-card {
         min-width: 0 !important;
         width: 100%;
@@ -880,91 +632,30 @@
    响应式：超小屏幕 (max-width: 360px)
    ═══════════════════════════════════════════════ */
 @media (max-width: 360px) {
+    .crystal-section {
+        padding-top: 10px;
+    }
+    
+    .crystal-container {
+        width: min(240px, 65vw);
+    }
+    
+    .crystal-status {
+        margin-top: 15px;
+    }
+    
     .search-and-random .magic-btn.small {
         padding: 8px 10px;
         font-size: 12px;
     }
    
-    /* 【新增】超小屏幕进一步压缩 */
     .back-btn-inline {
         width: 28px;
         height: 28px;
     }
    
-   .back-btn-inline svg {
+    .back-btn-inline svg {
         width: 12px;
         height: 12px;
     }
-}
-
-/* ═══════════════════════════════════════════════
-   响应式：电脑端增强 (min-width: 768px)
-   ═══════════════════════════════════════════════ */
-@media (min-width: 768px) {
-    .wheel-pointer {
-        font-size: 48px;
-        top: -20px;
-    }
-}
-
-
-/* 全屏遮罩过渡动画 */
-.wheel-fade-enter {
-    animation: wheelFadeIn 0.5s ease forwards;
-}
-
-.wheel-fade-exit {
-    animation: wheelFadeOut 0.3s ease forwards;
-}
-
-@keyframes wheelFadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes wheelFadeOut {
-    from { opacity: 1; transform: scale(1); }
-    to { opacity: 0; transform: scale(0.95); }
-}
-
-
-/* ═══════════════════════════════════════════════
-   内联回退按钮（嵌入搜索+缘动行）
-   ═══════════════════════════════════════════════ */
-.back-btn-inline {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: rgba(0, 223, 216, 0.12);
-    border: 1.5px solid rgba(0, 223, 216, 0.35);
-    backdrop-filter: blur(8px);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;           /* 不压缩 */
-    transition: all 0.25s ease;
-    padding: 0;
-}
-
-.back-btn-inline svg {
-    width: 16px;
-    height: 16px;
-    fill: #00dfd8;
-    transition: transform 0.25s ease;
-}
-
-.back-btn-inline:hover {
-    background: rgba(0, 223, 216, 0.25);
-    border-color: #00dfd8;
-    box-shadow: 0 0 15px rgba(0, 223, 216, 0.25);
-    transform: scale(1.08);
-}
-
-.back-btn-inline:hover svg {
-    transform: translateX(-2px);   /* 箭头左移动画 */
-}
-
-.back-btn-inline:active {
-    transform: scale(0.95);
 }
