@@ -1211,20 +1211,67 @@ function renderCategoryLayout(category) {
   // ══════════════════════════════════════════════
   // 缘动按钮：暂停翻动 + 随机切换（含防重复点击）
   // ══════════════════════════════════════════════
+  // ══════════════════════════════════════════════
+  // 缘动按钮：暂停翻动 + 随机切换
+  // ══════════════════════════════════════════════
   const randomBtn = document.getElementById('btn-random-leader');
   const layoutLeft = document.getElementById('layoutLeft');
   const coverImage = document.getElementById('coverImage');
   
   let isFlipping = false;
   
+  // 【新增】交叉淡入淡出循环
+  let flipInterval = null;
+  
+  function startCoverFlip() {
+    if (flipInterval) clearInterval(flipInterval);
+    
+    // 初始状态
+    if (coverImage) {
+      coverImage.classList.remove('flip-exit');
+      coverImage.classList.add('flip-enter');
+    }
+    
+    // 循环：展示 4秒 → 淡出 3秒 → 淡入 3秒
+    let isVisible = true;
+    
+    flipInterval = setInterval(() => {
+      if (!coverImage || layoutLeft?.classList.contains('flipping-paused')) return;
+      
+      if (isVisible) {
+        // 开始淡出
+        coverImage.classList.remove('flip-enter');
+        coverImage.classList.add('flip-exit');
+      } else {
+        // 开始淡入
+        coverImage.classList.remove('flip-exit');
+        coverImage.classList.add('flip-enter');
+      }
+      isVisible = !isVisible;
+      
+    }, 7000); // 7秒一个周期（4秒展示 + 3秒过渡）
+  }
+  
+  function stopCoverFlip() {
+    if (flipInterval) {
+      clearInterval(flipInterval);
+      flipInterval = null;
+    }
+  }
+  
+  // 启动翻动
+  startCoverFlip();
+  
   if (randomBtn) {
     randomBtn.onclick = () => {
       if (isFlipping) return;
       isFlipping = true;
       
+      // 暂停翻动
       if (layoutLeft) layoutLeft.classList.add('flipping-paused');
       if (coverImage) coverImage.classList.add('active-flip');
       
+      // 随机逻辑
       const candidates = getFilteredCandidates(category);
       if (candidates.length === 0) {
         alert(t('noMatch'));
@@ -1240,6 +1287,7 @@ function renderCategoryLayout(category) {
       selectLeader(random, category, null);
       updateSingleCard(random);
       
+      // 恢复翻动
       setTimeout(() => {
         if (coverImage) coverImage.classList.remove('active-flip');
         if (layoutLeft) layoutLeft.classList.remove('flipping-paused');
@@ -1247,6 +1295,10 @@ function renderCategoryLayout(category) {
       }, 800);
     };
   }
+  
+  // 【新增】清理函数：页面卸载时停止定时器
+  const cleanup = () => stopCoverFlip();
+  window.addEventListener('beforeunload', cleanup);
   
   const leaders = allData[category];
   if (leaders && leaders.length > 0) {
