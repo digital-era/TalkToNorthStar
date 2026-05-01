@@ -1070,14 +1070,30 @@ function initWheelUI() {
 
 // 新入口
 function initNebulaCrystal() {
+  // 先检查必要元素是否存在
+  const nebulaCrystal = document.getElementById('nebula-crystal');
+  if (!nebulaCrystal) {
+    console.error('initNebulaCrystal: #nebula-crystal not found in DOM');
+    return;
+  }
+  
   initCrystalBall();
   
   // 显示水晶球，隐藏其他
-  document.getElementById('nebula-crystal').style.display = 'flex';
-  document.getElementById('wheel-of-destiny').style.display = 'none';
-  document.getElementById('category-layout-container').style.display = 'none';
-  document.querySelector('.container').style.display = 'none';
-  document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
+  nebulaCrystal.style.display = 'flex';
+  
+  const wheelSection = document.getElementById('wheel-of-destiny');
+  if (wheelSection) wheelSection.style.display = 'none';
+  
+  const layout = document.getElementById('category-layout-container');
+  if (layout) layout.style.display = 'none';
+  
+  const container = document.querySelector('.container');
+  if (container) container.style.display = 'none';
+  
+  document.querySelectorAll('.tab-content').forEach(tc => {
+    tc.style.display = 'none';
+  });
 }
 
 // ──────────────────────────────────────────────
