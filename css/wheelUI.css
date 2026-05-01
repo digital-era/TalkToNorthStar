@@ -515,7 +515,7 @@
     /* 水晶球上移 */
     .crystal-section {
         justify-content: flex-start;
-        padding-top: 30px;
+        padding-top: 40px;
         padding-bottom: 40px;
     }
     
