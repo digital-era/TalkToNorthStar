@@ -323,14 +323,14 @@
 }
 
 /* 搜索区域顶部对齐 */
+/* 【修改】增加 gap，确保三者间距舒适 */
 .search-and-random {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 10px;                /* 搜索框、缘动、回退之间统一间距 */
     margin-bottom: 20px;
     width: 100%;
     max-width: 450px;
-    /* 确保与图片顶部对齐 */
     margin-top: 0;
 }
 
@@ -498,6 +498,17 @@
         font-size: 14px;
     }
 
+    /* 【新增】移动端回退按钮微调 */
+    .back-btn-inline {
+        width: 32px;
+        height: 32px;
+    }
+
+    .back-btn-inline svg {
+        width: 14px;
+        height: 14px;
+    }
+
     /* 卡片适配 */
     .northstar-single-card {
         min-width: 0 !important;
@@ -529,6 +540,17 @@
         padding: 8px 10px;
         font-size: 12px;
     }
+   
+    /* 【新增】超小屏幕进一步压缩 */
+    .back-btn-inline {
+        width: 28px;
+        height: 28px;
+    }
+   
+   .back-btn-inline svg {
+        width: 12px;
+        height: 12px;
+    }
 }
 
 /* ═══════════════════════════════════════════════
@@ -541,137 +563,6 @@
     }
 }
 
-/* ═══════════════════════════════════════════════
-   返回大类选择按钮
-   ═══════════════════════════════════════════════ */
-.back-to-wheel-btn {
-    position: fixed;
-    z-index: 9999;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: rgba(0, 223, 216, 0.15);
-    border: 2px solid rgba(0, 223, 216, 0.4);
-    backdrop-filter: blur(10px);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    opacity: 0;
-    pointer-events: none;
-    transform: scale(0.8);
-}
-
-.back-to-wheel-btn.visible {
-    opacity: 1;
-    pointer-events: auto;
-    transform: scale(1);
-}
-
-.back-to-wheel-btn:hover {
-    background: rgba(0, 223, 216, 0.3);
-    border-color: #00dfd8;
-    box-shadow: 0 0 20px rgba(0, 223, 216, 0.3);
-    transform: scale(1.1);
-}
-
-.back-to-wheel-btn svg {
-    width: 18px;
-    height: 18px;
-    fill: #00dfd8;
-    transition: transform 0.3s ease;
-}
-
-.back-to-wheel-btn:hover svg {
-    transform: translateX(-2px);
-}
-
-/* Tooltip */
-.back-to-wheel-btn::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    left: 50px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: #00dfd8;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 13px;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
-    border: 1px solid rgba(0, 223, 216, 0.3);
-}
-
-.back-to-wheel-btn:hover::after {
-    opacity: 1;
-}
-
-/* ═══════════════════════════════════════════════
-   电脑端：紧挨 Logo 右侧，避免重叠
-   Logo: left:20px, img height:70px, 估算宽度约 70-100px
-   ═══════════════════════════════════════════════ */
-@media (min-width: 769px) {
-    .back-to-wheel-btn {
-        top: 16px;          /* 与 Logo (top:1px, height:70px) 垂直居中 */
-        left: 150px;        /* Logo left:20px + 宽度约 90px + 间距 5px */
-        right: auto;
-    }
-}
-
-/* ═══════════════════════════════════════════════
-   手机端：紧挨 Logo 右侧，稍微往左调一点
-   Logo: left:15px, img height:50px, 估算宽度约 50-60px
-   ═══════════════════════════════════════════════ */
-@media (max-width: 768px) {
-    .back-to-wheel-btn {
-        top: 22px;          /* 与 Logo (top:15px, height:50px) 垂直居中 */
-        left: 56px;         /* Logo left:15px + 宽度约 50px + 间距 3px，稍微往左 */
-        right: auto;
-        width: 36px;
-        height: 36px;
-    }
-    
-    .back-to-wheel-btn::after {
-        display: none;
-    }
-    
-    .back-to-wheel-btn svg {
-        width: 16px;
-        height: 16px;
-    }
-}
-
-/* 超小屏幕 */
-@media (max-width: 360px) {
-    .back-to-wheel-btn {
-        left: 65px;
-        width: 32px;
-        height: 32px;
-    }
-}
-
-/* 滑动返回指示器（手机端） */
-.swipe-back-hint {
-    position: fixed;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4px;
-    height: 60px;
-    background: rgba(0, 223, 216, 0.3);
-    border-radius: 0 4px 4px 0;
-    z-index: 9998;
-    transition: all 0.3s;
-    opacity: 0;
-}
-
-.swipe-back-hint.visible {
-    opacity: 1;
-}
 
 /* 全屏遮罩过渡动画 */
 .wheel-fade-enter {
@@ -692,21 +583,44 @@
     to { opacity: 0; transform: scale(0.95); }
 }
 
-/* 页面切换遮罩 */
-.page-transition-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(ellipse at center, #1a2332 0%, #0f1620 100%);
-    z-index: 9997;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
+
+/* ═══════════════════════════════════════════════
+   内联回退按钮（嵌入搜索+缘动行）
+   ═══════════════════════════════════════════════ */
+.back-btn-inline {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(0, 223, 216, 0.12);
+    border: 1.5px solid rgba(0, 223, 216, 0.35);
+    backdrop-filter: blur(8px);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;           /* 不压缩 */
+    transition: all 0.25s ease;
+    padding: 0;
 }
 
-.page-transition-overlay.active {
-    opacity: 1;
-    pointer-events: auto;
+.back-btn-inline svg {
+    width: 16px;
+    height: 16px;
+    fill: #00dfd8;
+    transition: transform 0.25s ease;
+}
+
+.back-btn-inline:hover {
+    background: rgba(0, 223, 216, 0.25);
+    border-color: #00dfd8;
+    box-shadow: 0 0 15px rgba(0, 223, 216, 0.25);
+    transform: scale(1.08);
+}
+
+.back-btn-inline:hover svg {
+    transform: translateX(-2px);   /* 箭头左移动画 */
+}
+
+.back-btn-inline:active {
+    transform: scale(0.95);
 }
