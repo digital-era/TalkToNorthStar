@@ -1,6 +1,561 @@
 // newUI.js —— 新界面：缘动转盘 + 左右布局
 // 依赖：全局 allData / translations / selectLeader / openTab / generateChipsForCategory
 
+// ══════════════════════════════════════════════
+// 星云水晶球 - 粒子系统 + 交互逻辑
+// ══════════════════════════════════════════════
+
+const NEBULA_CATEGORIES = ['ai','quantum','universe','humanities','art','finance','sport','chinaEntrepreneurs'];
+
+
+// 多语言文本
+const crystalTexts = {
+  'zh-CN': {
+    touchHint: '触碰以感知命运',
+    holdStatus: '长按水晶球以充能',
+    chargingStatus: '充能中...',
+    releasing: '释放命运之力...'
+  },
+  'en': {
+    touchHint: 'Touch to Sense Destiny',
+    holdStatus: 'Hold the crystal to charge',
+    chargingStatus: 'Charging...',
+    releasing: 'Releasing destiny...'
+  }
+};
+
+let crystalInstance = null;
+
+// ══════════════════════════════════════════════
+// 星云粒子系统
+// ══════════════════════════════════════════════
+class NebulaParticleSystem {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.particles = [];
+    this.width = 0;
+    this.height = 0;
+    this.centerX = 0;
+    this.centerY = 0;
+    this.radius = 0;
+    
+    // 状态参数
+    this.chargeLevel = 0;        // 0 ~ 1 充能进度
+    this.isCharging = false;
+    this.isRevealed = false;
+    this.revealProgress = 0;
+    
+    // 基础参数
+    this.particleCount = 120;
+    this.baseSpeed = 0.3;
+    this.chargeSpeed = 3.0;
+    this.colors = [
+      { r: 0, g: 223, b: 216 },    // 青色
+      { r: 100, g: 200, b: 255 },  // 蓝色
+      { r: 200, g: 100, b: 255 },  // 紫色
+      { r: 0, g: 150, b: 200 },    // 深蓝
+      { r: 255, g: 200, b: 100 }   // 金色
+    ];
+    
+    this._initCanvas();
+    this._createParticles();
+    this._bindResize();
+    
+    this.animId = null;
+    this.running = false;
+  }
+  
+  _initCanvas() {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = this.canvas.getBoundingClientRect();
+    const cssW = rect.width || 400;
+    const cssH = rect.height || 400;
+    
+    this.canvas.width = cssW * dpr;
+    this.canvas.height = cssH * dpr;
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    
+    this.width = cssW;
+    this.height = cssH;
+    this.centerX = cssW / 2;
+    this.centerY = cssH / 2;
+    this.radius = Math.min(cssW, cssH) / 2 - 10;
+  }
+  
+  _createParticles() {
+    this.particles = [];
+    for (let i = 0; i < this.particleCount; i++) {
+      this.particles.push(this._createParticle());
+    }
+  }
+  
+  _createParticle() {
+    const angle = Math.random() * Math.PI * 2;
+    const dist = Math.random() * this.radius * 0.85;
+    const color = this.colors[Math.floor(Math.random() * this.colors.length)];
+    
+    return {
+      x: this.centerX + Math.cos(angle) * dist,
+      y: this.centerY + Math.sin(angle) * dist,
+      angle: angle,
+      dist: dist,
+      size: Math.random() * 2 + 0.5,
+      speed: Math.random() * 0.5 + 0.2,
+      color: color,
+      alpha: Math.random() * 0.5 + 0.2,
+      pulsePhase: Math.random() * Math.PI * 2,
+      orbitOffset: (Math.random() - 0.5) * 0.02  // 轨道扰动
+    };
+  }
+  
+  _bindResize() {
+    let timer = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+        this._initCanvas();
+        this._createParticles();
+      }, 200);
+    });
+  }
+  
+  // 开始充能
+  startCharging() {
+    this.isCharging = true;
+  }
+  
+  // 停止充能
+  stopCharging() {
+    this.isCharging = false;
+  }
+  
+  // 设置充能进度 0~1
+  setChargeLevel(level) {
+    this.chargeLevel = Math.max(0, Math.min(1, level));
+  }
+  
+  // 触发揭晓
+  reveal() {
+    this.isRevealed = true;
+    this.revealProgress = 0;
+  }
+  
+  // 重置
+  reset() {
+    this.isCharging = false;
+    this.isRevealed = false;
+    this.chargeLevel = 0;
+    this.revealProgress = 0;
+    this._createParticles();
+  }
+  
+  // 核心绘制循环
+  render() {
+    const ctx = this.ctx;
+    const time = Date.now() * 0.001;
+    
+    ctx.clearRect(0, 0, this.width, this.height);
+    
+    // 创建圆形裁剪区域（限制在球内）
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(this.centerX, this.centerY, this.radius, 0, Math.PI * 2);
+    ctx.clip();
+    
+    // 背景渐变（随充能变化）
+    const bgIntensity = 0.05 + this.chargeLevel * 0.15;
+    const gradient = ctx.createRadialGradient(
+      this.centerX, this.centerY, 0,
+      this.centerX, this.centerY, this.radius
+    );
+    gradient.addColorStop(0, `rgba(0, 40, 60, ${bgIntensity})`);
+    gradient.addColorStop(0.6, `rgba(0, 20, 40, ${bgIntensity * 0.5})`);
+    gradient.addColorStop(1, 'rgba(0, 5, 15, 0)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, this.width, this.height);
+    
+    // 绘制粒子
+    for (const p of this.particles) {
+      this._updateAndDrawParticle(p, time);
+    }
+    
+    // 揭晓时的粒子爆散效果
+    if (this.isRevealed) {
+      this._drawRevealEffect(time);
+    }
+    
+    // 中心光晕（充能时增强）
+    if (this.chargeLevel > 0) {
+      const glowRadius = 20 + this.chargeLevel * 60;
+      const glowAlpha = 0.1 + this.chargeLevel * 0.3;
+      const glow = ctx.createRadialGradient(
+        this.centerX, this.centerY, 0,
+        this.centerX, this.centerY, glowRadius
+      );
+      glow.addColorStop(0, `rgba(0, 223, 216, ${glowAlpha})`);
+      glow.addColorStop(0.5, `rgba(0, 150, 255, ${glowAlpha * 0.5})`);
+      glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, this.width, this.height);
+    }
+    
+    ctx.restore();
+  }
+  
+  _updateAndDrawParticle(p, time) {
+    const ctx = this.ctx;
+    
+    // 计算当前速度倍率
+    let speedMult = 1;
+    if (this.isCharging) {
+      speedMult = 1 + this.chargeLevel * 4;  // 充能时最高5倍速
+    }
+    
+    // 漩涡运动：角度随时间变化
+    const orbitSpeed = p.speed * speedMult * 0.5;
+    p.angle += orbitSpeed * 0.016 + p.orbitOffset;
+    
+    // 距离轻微脉动
+    const pulse = Math.sin(time * 2 + p.pulsePhase) * 3;
+    const currentDist = p.dist + pulse * (1 - this.chargeLevel * 0.5);
+    
+    // 充能时向中心收缩（漩涡加速）
+    let targetDist = currentDist;
+    if (this.isCharging && this.chargeLevel > 0.3) {
+      targetDist = currentDist * (1 - (this.chargeLevel - 0.3) * 0.3);
+    }
+    
+    // 揭晓时向外爆散
+    if (this.isRevealed) {
+      const explodeFactor = this.revealProgress * 3;
+      targetDist = currentDist + explodeFactor * this.radius;
+      p.alpha = Math.max(0, 1 - this.revealProgress);
+    }
+    
+    // 更新位置
+    p.x = this.centerX + Math.cos(p.angle) * targetDist;
+    p.y = this.centerY + Math.sin(p.angle) * targetDist;
+    
+    // 绘制粒子
+    const size = p.size * (1 + this.chargeLevel * 0.5);
+    const alpha = p.alpha * (0.5 + this.chargeLevel * 0.5);
+    
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, ${alpha})`;
+    ctx.fill();
+    
+    // 高光粒子（充能时增加）
+    if (this.chargeLevel > 0.5 && Math.random() > 0.7) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, size * 0.5, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.8})`;
+      ctx.fill();
+    }
+    
+    // 拖尾效果（高速时）
+    if (speedMult > 2) {
+      const tailX = p.x - Math.cos(p.angle) * size * 3;
+      const tailY = p.y - Math.sin(p.angle) * size * 3;
+      const tailGrad = ctx.createLinearGradient(p.x, p.y, tailX, tailY);
+      tailGrad.addColorStop(0, `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, ${alpha * 0.6})`);
+      tailGrad.addColorStop(1, `rgba(${p.color.r}, ${p.color.g}, ${p.color.b}, 0)`);
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(tailX, tailY);
+      ctx.strokeStyle = tailGrad;
+      ctx.lineWidth = size * 0.8;
+      ctx.stroke();
+    }
+  }
+  
+  _drawRevealEffect(time) {
+    const ctx = this.ctx;
+    this.revealProgress += 0.02;
+    
+    if (this.revealProgress > 1) return;
+    
+    // 冲击波环
+    const waveRadius = this.revealProgress * this.radius * 1.5;
+    ctx.beginPath();
+    ctx.arc(this.centerX, this.centerY, waveRadius, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(0, 223, 216, ${1 - this.revealProgress})`;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    
+    // 闪光
+    if (this.revealProgress < 0.3) {
+      const flashAlpha = 1 - this.revealProgress / 0.3;
+      ctx.fillStyle = `rgba(255, 255, 255, ${flashAlpha * 0.3})`;
+      ctx.fillRect(0, 0, this.width, this.height);
+    }
+  }
+  
+  start() {
+    if (this.running) return;
+    this.running = true;
+    const loop = () => {
+      if (!this.running) return;
+      this.render();
+      this.animId = requestAnimationFrame(loop);
+    };
+    loop();
+  }
+  
+  stop() {
+    this.running = false;
+    cancelAnimationFrame(this.animId);
+  }
+}
+
+// ══════════════════════════════════════════════
+// 水晶球交互控制器
+// ══════════════════════════════════════════════
+class CrystalBallController {
+  constructor() {
+    this.ball = document.getElementById('crystalBall');
+    this.canvas = document.getElementById('nebulaCanvas');
+    this.hint = document.getElementById('crystalHint');
+    this.result = document.getElementById('crystalResult');
+    this.resultText = document.getElementById('resultText');
+    this.resultSub = document.getElementById('resultSub');
+    this.status = document.getElementById('crystalStatus');
+    this.statusText = this.status.querySelector('.status-text');
+    this.chargeRing = document.getElementById('chargeRing');
+    this.chargeProgress = document.getElementById('chargeProgress');
+    
+    this.nebula = new NebulaParticleSystem(this.canvas);
+    
+    // 充能参数
+    this.chargeDuration = 2000;    // 充满需要 2 秒
+    this.chargeStartTime = 0;
+    this.isHolding = false;
+    this.chargeComplete = false;
+    
+    // 选中回调
+    this.onSelect = null;
+    
+    this._bindEvents();
+    this.nebula.start();
+  }
+  
+  _bindEvents() {
+    // 鼠标事件
+    this.ball.addEventListener('mousedown', (e) => this._onPressStart(e));
+    window.addEventListener('mousemove', (e) => this._onPressMove(e));
+    window.addEventListener('mouseup', (e) => this._onPressEnd(e));
+    
+    // 触摸事件
+    this.ball.addEventListener('touchstart', (e) => this._onPressStart(e), { passive: false });
+    window.addEventListener('touchmove', (e) => this._onPressMove(e), { passive: false });
+    window.addEventListener('touchend', (e) => this._onPressEnd(e));
+    
+    // 防止上下文菜单
+    this.ball.addEventListener('contextmenu', (e) => e.preventDefault());
+    
+    // 防止拖拽
+    this.ball.addEventListener('dragstart', (e) => e.preventDefault());
+  }
+  
+  _onPressStart(e) {
+    if (this.chargeComplete) return;
+    if (e.cancelable) e.preventDefault();
+    
+    this.isHolding = true;
+    this.chargeStartTime = Date.now();
+    this.chargeComplete = false;
+    
+    // UI 状态
+    this.ball.classList.add('charging');
+    this.chargeRing.classList.add('visible');
+    this.hint.classList.add('hidden');
+    this.statusText.textContent = crystalTexts[currentLang || 'zh-CN'].chargingStatus;
+    
+    // 粒子系统
+    this.nebula.startCharging();
+    
+    // 开始充能循环
+    this._chargeLoop();
+  }
+  
+  _onPressMove(e) {
+    // 拖拽时可选：根据拖拽距离微调充能速度
+    // 当前版本简化为纯时间充能
+  }
+  
+  _onPressEnd(e) {
+    if (!this.isHolding) return;
+    this.isHolding = false;
+    
+    // 停止充能循环
+    cancelAnimationFrame(this.chargeAnimId);
+    
+    // 检查是否充满
+    const elapsed = Date.now() - this.chargeStartTime;
+    const chargeLevel = Math.min(1, elapsed / this.chargeDuration);
+    
+    if (chargeLevel >= 1) {
+      // 充满 → 揭晓
+      this._reveal();
+    } else {
+      // 未充满 → 回弹
+      this._cancelCharge();
+    }
+  }
+  
+  _chargeLoop() {
+    if (!this.isHolding) return;
+    
+    const elapsed = Date.now() - this.chargeStartTime;
+    const chargeLevel = Math.min(1, elapsed / this.chargeDuration);
+    
+    // 更新粒子系统
+    this.nebula.setChargeLevel(chargeLevel);
+    
+    // 更新进度环
+    const circumference = 2 * Math.PI * 46;  // r=46
+    const offset = circumference * (1 - chargeLevel);
+    this.chargeProgress.style.strokeDashoffset = offset;
+    
+    // 检查是否充满
+    if (chargeLevel >= 1) {
+      this.chargeComplete = true;
+      this._onChargeComplete();
+      return;
+    }
+    
+    this.chargeAnimId = requestAnimationFrame(() => this._chargeLoop());
+  }
+  
+  _onChargeComplete() {
+    // 充满但还未松手 → 保持震动，等待释放
+    this.statusText.textContent = crystalTexts[currentLang || 'zh-CN'].releasing;
+    
+    // 可选：自动释放（不等待松手）
+    // setTimeout(() => this._reveal(), 300);
+  }
+  
+  _reveal() {
+    this.ball.classList.remove('charging');
+    this.ball.classList.add('revealed');
+    this.chargeRing.classList.remove('visible');
+    this.status.classList.add('hidden');
+    
+    // 粒子爆散
+    this.nebula.reveal();
+    
+    // 随机选择大类
+    const selectedCat = NEBULA_CATEGORIES[Math.floor(Math.random() * NEBULA_CATEGORIES.length)];
+    const name = categoryNames[selectedCat]?.[currentLang] || categoryNames[selectedCat]?.['zh-CN'];
+    const enName = categoryNames[selectedCat]?.['en'] || selectedCat;
+    
+    // 显示结果文字
+    setTimeout(() => {
+      this.resultText.textContent = name;
+      this.resultSub.textContent = enName;
+      this.result.classList.add('show');
+      
+      // 延迟后跳转
+      setTimeout(() => {
+        if (this.onSelect) this.onSelect(selectedCat);
+        this.reset();
+      }, 2000);
+    }, 500);
+  }
+  
+  _cancelCharge() {
+    // 未充满松手 → 平滑回退
+    this.ball.classList.remove('charging');
+    this.chargeRing.classList.remove('visible');
+    this.hint.classList.remove('hidden');
+    this.statusText.textContent = crystalTexts[currentLang || 'zh-CN'].holdStatus;
+    
+    this.nebula.stopCharging();
+    this.nebula.setChargeLevel(0);
+    
+    // 进度环回弹动画
+    this.chargeProgress.style.transition = 'stroke-dashoffset 0.5s ease-out';
+    this.chargeProgress.style.strokeDashoffset = 289;
+    setTimeout(() => {
+      this.chargeProgress.style.transition = 'stroke-dashoffset 0.1s linear';
+    }, 500);
+  }
+  
+  reset() {
+    this.ball.classList.remove('charging', 'revealed');
+    this.hint.classList.remove('hidden');
+    this.result.classList.remove('show');
+    this.status.classList.remove('hidden');
+    this.chargeRing.classList.remove('visible');
+    this.statusText.textContent = crystalTexts[currentLang || 'zh-CN'].holdStatus;
+    
+    this.isHolding = false;
+    this.chargeComplete = false;
+    this.nebula.reset();
+  }
+  
+  destroy() {
+    this.nebula.stop();
+  }
+}
+
+// ══════════════════════════════════════════════
+// 初始化入口
+// ══════════════════════════════════════════════
+function initCrystalBall() {
+  // 创建 SVG 渐变定义（需要在 HTML 中或动态插入）
+  if (!document.getElementById('crystalSvgDefs')) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.id = 'crystalSvgDefs';
+    svg.style.position = 'absolute';
+    svg.style.width = '0';
+    svg.style.height = '0';
+    svg.innerHTML = `
+      <defs>
+        <linearGradient id="chargeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#00dfd8"/>
+          <stop offset="50%" stop-color="#007cf0"/>
+          <stop offset="100%" stop-color="#00dfd8"/>
+        </linearGradient>
+      </defs>
+    `;
+    document.body.appendChild(svg);
+  }
+  
+  crystalInstance = new CrystalBallController();
+  crystalInstance.onSelect = (cat) => selectCategory(cat);
+}
+
+// ══════════════════════════════════════════════
+// 语言切换支持
+// ══════════════════════════════════════════════
+function updateCrystalLanguage() {
+  const lang = currentLang || 'zh-CN';
+  const texts = crystalTexts[lang];
+  
+  const hintText = document.querySelector('.crystal-hint .hint-text');
+  if (hintText) hintText.textContent = texts.touchHint;
+  
+  const statusText = document.querySelector('.crystal-status .status-text');
+  if (statusText && !crystalInstance?.isHolding) {
+    statusText.textContent = texts.holdStatus;
+  }
+}
+
+// 包装语言切换
+(function() {
+  const orig = window.onLanguageChanged;
+  window.onLanguageChanged = function() {
+    if (orig) orig();
+    updateCrystalLanguage();
+    if (crystalInstance?.nebula) {
+      // 粒子系统无需重启，但可刷新类别名称
+    }
+  };
+})();
+
 const categories = ['ai','quantum','universe','humanities','art','finance','sport','chinaEntrepreneurs'];
 // 图片路径映射 - key 就是原始 category 值
 const categoryImages = {
