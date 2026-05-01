@@ -1068,6 +1068,18 @@ function initWheelUI() {
     });
 }
 
+// 新入口
+function initNebulaCrystal() {
+  initCrystalBall();
+  
+  // 显示水晶球，隐藏其他
+  document.getElementById('nebula-crystal').style.display = 'flex';
+  document.getElementById('wheel-of-destiny').style.display = 'none';
+  document.getElementById('category-layout-container').style.display = 'none';
+  document.querySelector('.container').style.display = 'none';
+  document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
+}
+
 // ──────────────────────────────────────────────
 // 选择大类后：进入左右布局
 // ══════════════════════════════════════════════
@@ -1316,6 +1328,13 @@ function backToWheelSelection() {
             wheelSection.classList.add('wheel-fade-enter');
             setTimeout(() => wheelSection.classList.remove('wheel-fade-enter'), 500);
         }
+
+        // 新增：重置水晶球
+        if (crystalInstance) {
+          crystalInstance.reset();
+        }
+        
+        document.getElementById('nebula-crystal').style.display = 'flex';
         
         // 恢复 tab 栏显示（首页状态）
         const tabsBar = document.querySelector('.tabs');
