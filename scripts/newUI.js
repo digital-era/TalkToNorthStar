@@ -1137,10 +1137,12 @@ function renderCategoryLayout(category) {
   const categoryDisplayName = categoryNames[category]?.[lang] || categoryNames[category]?.['zh-CN'] || category;
   const placeholderText = t('searchPlaceholder');
   
+  // 【修改】双封面结构：同一张图片，front + back（back 水平镜像模拟背面）
   container.innerHTML = `
     <div class="layout-left" id="layoutLeft">
-      <div class="cover-wrapper">
-        <img src="${ambientSrc}" alt="${categoryDisplayName}" id="coverImage">
+      <div class="cover-wrapper flipping" id="coverWrapper">
+        <img src="${ambientSrc}" alt="${categoryDisplayName}" class="cover-front" id="coverFront">
+        <img src="${ambientSrc}" alt="${categoryDisplayName}" class="cover-back" id="coverBack">
       </div>
     </div>
     <div class="layout-right">
@@ -1209,74 +1211,30 @@ function renderCategoryLayout(category) {
   }
 
   // ══════════════════════════════════════════════
-  // 缘动按钮：暂停翻动 + 随机切换（含防重复点击）
-  // ══════════════════════════════════════════════
-  // ══════════════════════════════════════════════
-  // 缘动按钮：暂停翻动 + 随机切换
+  // 缘动按钮：暂停翻书 + 随机切换
   // ══════════════════════════════════════════════
   const randomBtn = document.getElementById('btn-random-leader');
   const layoutLeft = document.getElementById('layoutLeft');
-  const coverImage = document.getElementById('coverImage');
+  const coverFront = document.getElementById('coverFront');
+  const coverWrapper = document.getElementById('coverWrapper');
   
   let isFlipping = false;
-  
-  // 【新增】交叉淡入淡出循环
-  let flipInterval = null;
-  
-  function startCoverFlip() {
-    if (flipInterval) clearInterval(flipInterval);
-    
-    // 初始状态
-    if (coverImage) {
-      coverImage.classList.remove('flip-exit');
-      coverImage.classList.add('flip-enter');
-    }
-    
-    // 循环：展示 4秒 → 淡出 3秒 → 淡入 3秒
-    let isVisible = true;
-    
-    flipInterval = setInterval(() => {
-      if (!coverImage || layoutLeft?.classList.contains('flipping-paused')) return;
-      
-      if (isVisible) {
-        // 开始淡出
-        coverImage.classList.remove('flip-enter');
-        coverImage.classList.add('flip-exit');
-      } else {
-        // 开始淡入
-        coverImage.classList.remove('flip-exit');
-        coverImage.classList.add('flip-enter');
-      }
-      isVisible = !isVisible;
-      
-    }, 7000); // 7秒一个周期（4秒展示 + 3秒过渡）
-  }
-  
-  function stopCoverFlip() {
-    if (flipInterval) {
-      clearInterval(flipInterval);
-      flipInterval = null;
-    }
-  }
-  
-  // 启动翻动
-  startCoverFlip();
   
   if (randomBtn) {
     randomBtn.onclick = () => {
       if (isFlipping) return;
       isFlipping = true;
       
-      // 暂停翻动
+      // 暂停翻书动画
       if (layoutLeft) layoutLeft.classList.add('flipping-paused');
-      if (coverImage) coverImage.classList.add('active-flip');
+      if (coverFront) coverFront.classList.add('active-flip');
       
       // 随机逻辑
       const candidates = getFilteredCandidates(category);
       if (candidates.length === 0) {
         alert(t('noMatch'));
         setTimeout(() => {
-          if (coverImage) coverImage.classList.remove('active-flip');
+          if (coverFront) coverFront.classList.remove('active-flip');
           if (layoutLeft) layoutLeft.classList.remove('flipping-paused');
           isFlipping = false;
         }, 400);
@@ -1287,19 +1245,16 @@ function renderCategoryLayout(category) {
       selectLeader(random, category, null);
       updateSingleCard(random);
       
-      // 恢复翻动
+      // 恢复翻书
       setTimeout(() => {
-        if (coverImage) coverImage.classList.remove('active-flip');
+        if (coverFront) coverFront.classList.remove('active-flip');
         if (layoutLeft) layoutLeft.classList.remove('flipping-paused');
         isFlipping = false;
       }, 800);
     };
   }
   
-  // 【新增】清理函数：页面卸载时停止定时器
-  const cleanup = () => stopCoverFlip();
-  window.addEventListener('beforeunload', cleanup);
-  
+  // ... 初始化第一个领袖 ...
   const leaders = allData[category];
   if (leaders && leaders.length > 0) {
     selectLeader(leaders[0], category, null);
