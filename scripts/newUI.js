@@ -491,8 +491,6 @@ function initWheelUI() {
         spinBtn.onclick = () => wheelInstance.spin();
     }
     
-    createBackButtonIfNeeded();
-    
     const namesMap = {};
     categories.forEach(cat => {
         namesMap[cat] = getCategoryName(cat);
@@ -517,7 +515,6 @@ function initWheelUI() {
 
 // ──────────────────────────────────────────────
 // 选择大类后：进入左右布局
-// 修改 selectCategory 函数（在显示布局后调用 showBackButton）
 // ══════════════════════════════════════════════
 function selectCategory(category) {
     currentSelectedCategory = category;
@@ -543,44 +540,9 @@ function selectCategory(category) {
     document.getElementById('wheel-of-destiny').style.display = 'none';
     document.getElementById('category-layout-container').style.display = 'flex';
     document.querySelector('.container').style.display = 'block';
-    
-    // 【新增】显示返回按钮
-    showBackButton();
+  
 }
 
-// 【新增】动态创建返回按钮
-function createBackButtonIfNeeded() {
-    if (document.getElementById('backToWheelBtn')) {
-        initBackToWheel();
-        return;
-    }
-    
-    const btn = document.createElement('button');
-    btn.id = 'backToWheelBtn';
-    btn.className = 'back-to-wheel-btn';
-    //btn.setAttribute('data-tooltip', currentLang === 'en' ? 'Back to Wheel' : '返回转盘');  
-    btn.setAttribute('data-tooltip', t('backTooltip'));  // 【修改】
-    btn.innerHTML = `
-        <svg viewBox="0 0 24 24">
-            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
-        </svg>
-    `;
-    document.body.appendChild(btn);
-    
-    // 创建滑动提示
-    const hint = document.createElement('div');
-    hint.id = 'swipeBackHint';
-    hint.className = 'swipe-back-hint';
-    document.body.appendChild(hint);
-    
-    // 创建过渡遮罩
-    const overlay = document.createElement('div');
-    overlay.id = 'pageTransitionOverlay';
-    overlay.className = 'page-transition-overlay';
-    document.body.appendChild(overlay);
-    
-    initBackToWheel();
-}
 
 // ──────────────────────────────────────────────
 // 渲染左右布局
@@ -603,9 +565,16 @@ function renderCategoryLayout(category) {
     </div>
     <div class="layout-right">
       <div class="card-stage">
+        <!-- 【修改】搜索+缘动+回退 三合一横排 -->
         <div class="search-and-random">
           <input type="text" class="modern-search-input" id="newUI-search" placeholder="${placeholderText}">
           <button class="magic-btn small" id="btn-random-leader">${t('spin')}</button>
+          <!-- 【新增】回退按钮嵌入此处 -->
+          <button class="back-btn-inline" id="btn-back-inline" title="${t('backTooltip')}">
+            <svg viewBox="0 0 24 24">
+              <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+          </button>
         </div>
         <div id="single-northstar-card" class="northstar-single-card"></div>
       </div>
@@ -622,7 +591,7 @@ function renderCategoryLayout(category) {
         "></div>
       </div>
     </div>
-`;
+  `;
   
   const chipsContainer = document.getElementById(`chips-${category}`);
   console.log('=== renderCategoryLayout ===');
@@ -651,6 +620,14 @@ function renderCategoryLayout(category) {
   if (searchInput) {
     searchInput.addEventListener('input', () => {
       showFirstCandidate(category);
+    });
+  }
+
+  // 【新增】绑定内联回退按钮事件
+  const backBtnInline = document.getElementById('btn-back-inline');
+  if (backBtnInline) {
+    backBtnInline.addEventListener('click', () => {
+      backToWheelSelection();
     });
   }
   
@@ -750,27 +727,6 @@ function showFirstCandidate(category) {
 // ══════════════════════════════════════════════
 // 返回大类选择功能
 // ══════════════════════════════════════════════
-
-// 初始化返回按钮
-function initBackToWheel() {
-    const btn = document.getElementById('backToWheelBtn');
-    if (!btn) return;
-    
-    btn.addEventListener('click', () => {
-        backToWheelSelection();
-    });
-    
-    // 键盘快捷键：ESC 返回
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && currentSelectedCategory) {
-            backToWheelSelection();
-        }
-    });
-    
-    // 手机端手势返回
-    initSwipeBack();
-}
-
 // 返回转盘选择界面
 // 修改 backToWheelSelection 函数
 function backToWheelSelection() {
@@ -778,7 +734,6 @@ function backToWheelSelection() {
     const layout = document.getElementById('category-layout-container');
     const wheelSection = document.getElementById('wheel-of-destiny');
     const mainContainer = document.querySelector('.container');
-    const backBtn = document.getElementById('backToWheelBtn');
     
     // 显示过渡遮罩
     if (overlay) overlay.classList.add('active');
@@ -809,11 +764,8 @@ function backToWheelSelection() {
         
         // 恢复 tab 栏显示（首页状态）
         const tabsBar = document.querySelector('.tabs');
-        if (tabsBar) tabsBar.style.display = 'flex';
-        
-        // 隐藏返回按钮
-        if (backBtn) backBtn.classList.remove('visible');
-        
+        if (tabsBar) tabsBar.style.display = 'flex';       
+          
         // 重置状态
         currentSelectedCategory = null;
         if (wheelInstance) {
@@ -830,11 +782,6 @@ function backToWheelSelection() {
     }, 300);
 }
 
-// 显示返回按钮（进入大类页面时调用）
-function showBackButton() {
-    const btn = document.getElementById('backToWheelBtn');
-    if (btn) btn.classList.add('visible');
-}
 
 // ══════════════════════════════════════════════
 // 手机端手势返回（从屏幕左边缘向右滑动）
@@ -942,12 +889,6 @@ function updateWheelLanguage() {
     window.onLanguageChanged = function() {
         if (origLangChanged && typeof origLangChanged === 'function') {
             origLangChanged();
-        }
-        
-        // 1. 刷新返回按钮 tooltip
-        const backBtn = document.getElementById('backToWheelBtn');
-        if (backBtn) {
-            backBtn.setAttribute('data-tooltip', t('backTooltip'));
         }
         
         // 2. 刷新转盘页面按钮（如果当前显示的是转盘）
