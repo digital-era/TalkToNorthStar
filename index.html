@@ -219,6 +219,46 @@
 	    <button id="btn-confirm-category" class="magic-btn"><span class="i18n-confirm">确认选择</span></button>
 	  </div>
 	</div>
+
+	<!-- 星云水晶球界面 -->
+	<section id="nebula-crystal" class="crystal-section">
+	    <!-- 背景星空层 -->
+	    <div class="starfield-bg"></div>
+	    
+	    <!-- 水晶球容器 -->
+	    <div class="crystal-container">
+	        <!-- 玻璃球体 -->
+	        <div class="crystal-ball" id="crystalBall">
+	            <!-- 内部粒子 Canvas -->
+	            <canvas id="nebulaCanvas"></canvas>
+	            
+	            <!-- 中央提示文字 -->
+	            <div class="crystal-hint" id="crystalHint">
+	                <span class="hint-icon">✦</span>
+	                <span class="hint-text i18n-touch">触碰以感知命运</span>
+	            </div>
+	            
+	            <!-- 结果文字（充能完成后显示） -->
+	            <div class="crystal-result" id="crystalResult">
+	                <span class="result-glow"></span>
+	                <span class="result-text" id="resultText"></span>
+	                <span class="result-sub" id="resultSub"></span>
+	            </div>
+	        </div>
+	        
+	        <!-- 充能进度环 -->
+	        <svg class="charge-ring" id="chargeRing" viewBox="0 0 100 100">
+	            <circle class="charge-track" cx="50" cy="50" r="46"/>
+	            <circle class="charge-progress" id="chargeProgress" cx="50" cy="50" r="46"/>
+	        </svg>
+	    </div>
+	    
+	    <!-- 底部状态文字 -->
+	    <div class="crystal-status" id="crystalStatus">
+	        <span class="status-pulse"></span>
+	        <span class="status-text i18n-hold">长按水晶球以充能</span>
+	    </div>
+	</section>
 	
 	<div id="category-layout-container" style="display: none;">
 	  <!-- 由 JS 动态渲染左右内容 -->
