@@ -136,32 +136,36 @@ function refreshChipsForActiveTab() {
 // 5. 风格切换核心函数
 // ──────────────────────────────────────────────
 function switchUIStyle(style) {
-    // 统一归一化：用户只可能传入 'modern' 或 'traditional'
     style = (style === 'modern') ? 'modern' : 'traditional';
     localStorage.setItem('northstarUIStyle', style);
 
     if (style === 'traditional') {
-        // 恢复标签页
-        const tabsBar = document.querySelector('.tabs');
-        if (tabsBar) tabsBar.style.display = 'flex';
-
         // ════════════════════════════════════════
-        // “传统模式”实际执行原现代界面的行为
-        // （搜索 + 过滤胶囊 + 横向滚动网格）
+        // 传统模式：对话卡片选择界面
         // ════════════════════════════════════════
-        document.body.classList.add('modern-mode');
-
-        // 1. 隐藏新 UI 的相关元素
+        
+        // 1. 隐藏水晶球（关键修复）
+        const nebulaCrystal = document.getElementById('nebula-crystal');
+        if (nebulaCrystal) nebulaCrystal.style.display = 'none';
+        
+        // 2. 隐藏转盘和左右布局
         const wheel = document.getElementById('wheel-of-destiny');
         if (wheel) wheel.style.display = 'none';
         const layout = document.getElementById('category-layout-container');
         if (layout) layout.style.display = 'none';
 
-        // 2. 显示原有容器，恢复交互区
-        document.querySelector('.container').style.display = 'block';
-        document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
+        // 3. 恢复标签页
+        const tabsBar = document.querySelector('.tabs');
+        if (tabsBar) tabsBar.style.display = 'flex';
 
-        // 3. 设置网格容器为原现代风格
+        // 4. 显示传统容器
+        const container = document.querySelector('.container');
+        if (container) container.style.display = 'block';
+        
+        document.body.classList.add('modern-mode');
+        document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
+        
+        // 5. 设置网格容器
         document.querySelectorAll('.leader-scroll-container').forEach(container => {
             container.style.display = 'flex';
             container.style.overflow = 'hidden';
@@ -183,17 +187,15 @@ function switchUIStyle(style) {
             }
         });
 
-        // 4. ★ 修复：为所有 Tab 生成子类胶囊并强制单行横向滚动
+        // 6. 为所有 Tab 生成子类胶囊
         document.querySelectorAll('.modern-filter-bar').forEach(bar => {
             bar.style.display = 'flex';
             const tabContent = bar.closest('.tab-content');
             if (tabContent) {
                 const chipsContainer = tabContent.querySelector('.filter-chips-container');
                 if (chipsContainer && typeof generateChipsForCategory === 'function') {
-                    // 【修复】传入当前语言，确保重新生成对应语言的胶囊
                     generateChipsForCategory(tabContent.id, chipsContainer);
                 }
-                // 强制单行样式（防止被其他 CSS 覆盖）
                 if (chipsContainer) {
                     chipsContainer.style.flexWrap = 'nowrap';
                     chipsContainer.style.overflowX = 'auto';
@@ -203,45 +205,48 @@ function switchUIStyle(style) {
             }
         });
 
-        // 5. 激活当前选中的标签
+        // 7. 激活当前选中的标签
         const activeBtn = document.querySelector('.tab-button.active') || document.querySelector('.tab-button');
         if (activeBtn) {
             const match = activeBtn.getAttribute('onclick').match(/'([^']+)'/);
             if (match) openTab(null, match[1]);
         }
 
-        // 6. 刷新当前网格
+        // 8. 刷新当前网格
         const activeTab = document.querySelector('.tab-content.active');
         if (activeTab) {
             filterModernGrid(null, activeTab.id);
         }
+        
     } else {
-        // 现代模式：隐藏标签页
+        // ════════════════════════════════════════
+        // 现代模式：星云水晶球
+        // ════════════════════════════════════════
+        
+        // 1. 隐藏标签页
         const tabsBar = document.querySelector('.tabs');
         if (tabsBar) tabsBar.style.display = 'none';
 
-        // ════════════════════════════════════════
-        // “现代模式”执行全新界面
-        // （转盘 + 左右布局 + 缘动随机）
-        // ════════════════════════════════════════
+        // 2. 隐藏传统模式元素
         document.body.classList.remove('modern-mode');
-
-        // 1. 隐藏传统模式的元素
         document.querySelectorAll('.modern-filter-bar').forEach(bar => bar.style.display = 'none');
         document.querySelectorAll('.leader-scroll-container').forEach(container => container.style.display = 'none');
         document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
-        document.querySelector('.container').style.display = 'none';
+        
+        const container = document.querySelector('.container');
+        if (container) container.style.display = 'none';
 
-        // 2. 显示转盘，隐藏左右布局
+        // 3. 隐藏转盘和左右布局
         const wheel = document.getElementById('wheel-of-destiny');
-        if (wheel) wheel.style.display = 'flex';
+        if (wheel) wheel.style.display = 'none';
         const layout = document.getElementById('category-layout-container');
         if (layout) layout.style.display = 'none';
 
-        // 3. 调用新 UI 初始化
-        //if (typeof initWheelUI === 'function') {
-        //    initWheelUI();
-        //}
+        // 4. 【关键】显示水晶球
+        const nebulaCrystal = document.getElementById('nebula-crystal');
+        if (nebulaCrystal) nebulaCrystal.style.display = 'flex';
+
+        // 5. 初始化水晶球
         if (typeof initNebulaCrystal === 'function') {
             initNebulaCrystal();
         }
