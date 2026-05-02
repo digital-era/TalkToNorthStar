@@ -848,15 +848,13 @@
 }
 
 /* ══════════════════════════════════════════════
-   星轨指引 (Manual Constellation Selector)
+   星轨指引 (Manual Constellation Selector) - 终极布局修复
    ══════════════════════════════════════════════ */
-/* ══════════════════════════════════════════════
-   星轨指引 (Manual Constellation Selector) - 修复版
-   ══════════════════════════════════════════════ */
+
+/* 【关键修复 1】：把负数改为正数，让类别牢牢浮在黑色版权栏上方，绝不越界 */
 .nebula-manual-selector {
   position: absolute;
-  /* 【修复 1】：向下移动，避免与水晶球原生状态文字重叠 */
-  bottom: -80px; 
+  bottom: 30px; 
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -867,6 +865,12 @@
   max-width: 700px;
   opacity: 1;
   transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* 【关键修复 2】：强行把带有绿点的状态文字（长按水晶球以充能）往上推，彻底腾出空间！ */
+#crystalStatus, .crystal-status {
+  margin-bottom: 80px !important; 
+  bottom: 160px !important; 
 }
 
 .nebula-manual-selector.fading-out {
@@ -883,13 +887,12 @@
   text-transform: uppercase;
   font-family: "Noto Serif SC", "Poppins", serif;
   text-shadow: 0 0 10px rgba(0, 223, 216, 0.2);
-  white-space: nowrap; /* 防止提示语换行 */
+  white-space: nowrap; /* 强制不换行 */
 }
 
-/* 【修复 3】：使用 Grid 强制对称布局 */
+/* 网格：电脑端 4列 x 2行，完美对称 */
 .manual-selector-chips {
   display: grid;
-  /* 电脑端：固定 4 列，保证 8 个类别完美均分为 2 行 */
   grid-template-columns: repeat(4, 1fr);
   gap: 12px 16px;
   padding: 0 20px;
@@ -901,7 +904,7 @@
   background: rgba(10, 20, 35, 0.4);
   border: 1px solid rgba(0, 223, 216, 0.15);
   color: rgba(255, 255, 255, 0.7);
-  padding: 8px 10px; /* 微调内边距适配统一宽度 */
+  padding: 8px 10px; 
   border-radius: 30px;
   font-size: 14px;
   cursor: pointer;
@@ -909,10 +912,10 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-  text-align: center;
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
 }
 
 .manual-star-chip .chip-text {
@@ -954,10 +957,17 @@
 /* 移动端适配 */
 @media (max-width: 768px) {
   .nebula-manual-selector {
-    bottom: -60px; /* 手机端也向下偏移 */
+    bottom: 20px; /* 手机端也必须在安全区正值 */
   }
+  
+  /* 手机端因为类别会变成 4 行，需要把水晶球文字推得更高 */
+  #crystalStatus, .crystal-status {
+    margin-bottom: 120px !important;
+    bottom: 220px !important; 
+  }
+
   .manual-selector-chips {
-    /* 手机端：固定 2 列，保证 8 个类别完美均分为 4 行 */
+    /* 网格：手机端 2列 x 4行，完美对称 */
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
   }
@@ -969,3 +979,4 @@
     font-size: 11px;
   }
 }
+
