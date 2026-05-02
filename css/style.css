@@ -1295,10 +1295,7 @@
   footer {
       text-align: left;
       padding: 20px 50px;
-      background: #0a0e17; /* ← 改成实色 */
-      color: rgba(255, 255, 255, 0.6);
-      margin: 0;
-      width: 100%;
+      background: rgba(0, 0, 0, 0.5);
   }
 
   /* 媒体查询，在小屏幕上调整布局 */
