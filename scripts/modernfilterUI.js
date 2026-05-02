@@ -250,6 +250,14 @@ function switchUIStyle(style) {
         if (typeof initNebulaCrystal === 'function') {
             initNebulaCrystal();
         }
+
+        // 【修复 4】：从传统模式切回现代模式时，确保重置显示状态
+        const manualSelector = document.getElementById('nebula-manual-selector');
+        if (manualSelector) {
+            manualSelector.classList.remove('fading-out');
+        } else if (typeof renderNebulaManualSelector === 'function') {
+            renderNebulaManualSelector();
+        }
     }
 }
 
