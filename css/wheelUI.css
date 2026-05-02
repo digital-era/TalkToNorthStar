@@ -690,8 +690,8 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 90%;
-    height: 85%;
+    width: 100%;      /* 【修改】填满 wrapper */
+    height: 100%;     /* 【修改】填满 wrapper */
     object-fit: cover;
     object-position: center;
     filter: brightness(0.85);
@@ -700,7 +700,6 @@
     
     backface-visibility: hidden;
     transform-origin: left center;
-    
     /* 自然摆动：小幅来回翻转，像书页被风吹动 */
     animation: pageBreeze 6s ease-in-out infinite;
 }
@@ -710,17 +709,17 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 90%;
-    height: 85%;
+    width: 100%;      /* 【修改】填满 wrapper */
+    height: 100%;     /* 【修改】填满 wrapper */
     object-fit: cover;
     object-position: center;
-    filter: brightness(0.7);  /* 背面稍暗 */
+    filter: brightness(0.7);
     border-radius: 12px;
     
     backface-visibility: hidden;
     transform-origin: left center;
-    transform: rotateY(180deg);  /* 初始在背面 */
-    
+    transform: rotateY(180deg);
+   
     /* 平时透明，只有主封面翻过去时才显示 */
     opacity: 0;
     animation: pageBreezeBack 6s ease-in-out infinite;
@@ -795,13 +794,13 @@
     }
     
     .layout-left .cover-wrapper {
-        width: 100%;
+        width: 95%;
         height: 100%;
     }
     
     .layout-left img.cover-front,
     .layout-left img.cover-back {
-        width: 95%;    /* 【修改】手机端图片宽度 */
+        width: 100%;    /* 【修改】手机端图片宽度 */
         height: 100%;   /* 【修改】手机端图片高度 */
         border-radius: 8px;
     }
