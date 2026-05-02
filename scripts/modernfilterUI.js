@@ -354,9 +354,9 @@ function filterModernGrid(trigger, category = null) {
 
             card.innerHTML = `
                 <h3>${leader.name}</h3>
-                <p><strong>${lblContrib}：</strong> ${txtContrib}</p>
-                <p class="field"><strong>${lblField}：</strong> ${txtField}</p>
-                ${txtRemarks ? `<p class="remarks"><strong>${lblRemarks}：</strong> ${txtRemarks}</p>` : ''}
+                <p><strong>${lblContrib}</strong> ${txtContrib}</p>
+                <p class="field"><strong>${lblField}</strong> ${txtField}</p>
+                ${txtRemarks ? `<p class="remarks"><strong>${lblRemarks}</strong> ${txtRemarks}</p>` : ''}
             `;
             
             // --- 单选互斥逻辑 ---
