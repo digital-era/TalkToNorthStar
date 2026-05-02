@@ -680,8 +680,8 @@
 /* 书页容器 */
 .layout-left .cover-wrapper {
     position: relative;
-    width: 90%;
-    height: 85%;
+    width: auto;      /* 不限制 */
+    height: auto;     /* 不限制 */
     transform-style: preserve-3d;
 }
 
@@ -690,8 +690,8 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 90%;
+    height: 85%;
     object-fit: cover;
     object-position: center;
     filter: brightness(0.85);
@@ -710,8 +710,8 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 90%;
+    height: 85%;
     object-fit: cover;
     object-position: center;
     filter: brightness(0.7);  /* 背面稍暗 */
@@ -795,12 +795,14 @@
     }
     
     .layout-left .cover-wrapper {
-        width: 95%;
+        width: 100%;
         height: 100%;
     }
     
     .layout-left img.cover-front,
     .layout-left img.cover-back {
+        width: 95%;    /* 【修改】手机端图片宽度 */
+        height: 100%;   /* 【修改】手机端图片高度 */
         border-radius: 8px;
     }
     
