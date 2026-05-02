@@ -438,7 +438,7 @@ class CrystalBallController {
     // setTimeout(() => this._reveal(), 300);
   }
   
-  _reveal() {
+   _reveal(forcedCategory = null) {
     this.ball.classList.remove('charging');
     this.ball.classList.add('revealed');
     this.chargeRing.classList.remove('visible');
@@ -465,6 +465,28 @@ class CrystalBallController {
       }, 2000);
     }, 500);
   }
+  
+  // 新增：极简优雅的强制触发方法
+  forceSelect(category) {
+    if (this.chargeComplete || this.isHolding) return; // 如果正在操作则忽略
+    
+    this.chargeComplete = true; 
+    
+    // UI 瞬间高光充能状态
+    this.ball.classList.add('charging');
+    this.chargeRing.classList.add('visible');
+    this.hint.classList.add('hidden');
+    this.statusText.textContent = crystalTexts[currentLang || 'zh-CN'].releasing;
+    
+    // 粒子系统瞬间满充能
+    this.nebula.startCharging();
+    this.nebula.setChargeLevel(1); 
+    
+    // 给予0.6秒的视觉缓冲（水晶球亮起）后，爆发揭晓动画
+    setTimeout(() => {
+      this._reveal(category);
+    }, 600);
+  }  
   
   _cancelCharge() {
     // 未充满松手 → 平滑回退
@@ -530,6 +552,52 @@ function initCrystalBall() {
 }
 
 // ══════════════════════════════════════════════
+// 优雅的手动选择器：星轨指引 (Constellation Guidance)
+// ══════════════════════════════════════════════
+function renderNebulaManualSelector() {
+  const crystalContainer = document.getElementById('nebula-crystal');
+  if (!crystalContainer) return;
+
+  // 如果已经存在，先移除重新渲染（用于语言切换）
+  let existingSelector = document.getElementById('nebula-manual-selector');
+  if (existingSelector) existingSelector.remove();
+
+  const selector = document.createElement('div');
+  selector.id = 'nebula-manual-selector';
+  selector.className = 'nebula-manual-selector';
+
+  // 极简引导语
+  const hintText = document.createElement('div');
+  hintText.className = 'manual-selector-hint';
+  hintText.textContent = currentLang === 'en' ? '— Or guide the stars yourself —' : '— 或，亲自指引星辰 —';
+  selector.appendChild(hintText);
+
+  // 生成大类碎片
+  const chipsWrap = document.createElement('div');
+  chipsWrap.className = 'manual-selector-chips';
+
+  NEBULA_CATEGORIES.forEach(cat => {
+    const name = categoryNames[cat]?.[currentLang] || categoryNames[cat]?.['zh-CN'];
+    const chip = document.createElement('button');
+    chip.className = 'manual-star-chip';
+    chip.innerHTML = `<span class="chip-glow"></span><span class="chip-text">${name}</span>`;
+    
+    // 点击触发优雅的强制唤醒
+    chip.onclick = () => {
+      if (crystalInstance) {
+        // 隐藏自身，保持界面纯净
+        selector.classList.add('fading-out');
+        crystalInstance.forceSelect(cat);
+      }
+    };
+    chipsWrap.appendChild(chip);
+  });
+
+  selector.appendChild(chipsWrap);
+  crystalContainer.appendChild(selector);
+}
+
+// ══════════════════════════════════════════════
 // 语言切换支持
 // ══════════════════════════════════════════════
 function updateCrystalLanguage() {
@@ -543,6 +611,9 @@ function updateCrystalLanguage() {
   if (statusText && !crystalInstance?.isHolding) {
     statusText.textContent = texts.holdStatus;
   }
+
+   renderNebulaManualSelector(); // <--- 新增这行，切换语言时重绘星轨
+  
 }
 
 // 包装语言切换
@@ -1072,6 +1143,7 @@ function initWheelUI() {
 // 新入口
 function initNebulaCrystal() {
   initCrystalBall();
+  renderNebulaManualSelector(); // <--- 新增这行，初始化时渲染星轨
   
   const nebulaCrystal = document.getElementById('nebula-crystal');
   if (nebulaCrystal) nebulaCrystal.style.display = 'flex';
