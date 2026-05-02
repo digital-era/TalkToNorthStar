@@ -264,7 +264,7 @@
   /* 2. 标题：使用艺术字体 (Playfair Display / 马善政) */
   .manifesto-modal h2 {
       font-family: 'Playfair Display', 'Ma Shan Zheng', serif;
-      font-size: 2em;
+      font-size: 1.3em;
       text-align: center;
       font-weight: 700;
       /* === 核心修改点 === */
@@ -318,7 +318,7 @@
       text-align: center;
       font-style: normal; /* 中文不需要斜体 */
       font-family: 'Ma Shan Zheng', cursive; /* 结语用毛笔字 */
-      font-size: 1.4em;
+      font-size: 1.3em;
       color: var(--dark-accent);
       margin-top: 40px;
       padding-top: 20px;
@@ -968,7 +968,7 @@
      /* 2. 标题 H2：复刻流光渐变艺术字 */
   #immersiveModal h2 {
       font-family: 'Playfair Display', 'Ma Shan Zheng', serif;
-      font-size: 2em;
+      font-size: 1.3em;
       text-align: center;
       
       /* 间距控制 */
@@ -1052,7 +1052,7 @@
       margin-top: 30px;
       margin-bottom: 15px;
       font-weight: 400; /* 宋体标题不宜太粗 */
-      font-size: 1.3em;
+      font-size: 1.2em;
       letter-spacing: 1px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       padding-bottom: 8px;
@@ -1380,7 +1380,7 @@
           max-width: 95%;
       }
       .manifesto-modal h2 {
-          font-size: 1.5em;
+          font-size: 1.3em;
           margin-bottom: 15px;
       }
       .manifesto-modal .manifesto-text {
