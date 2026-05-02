@@ -847,46 +847,28 @@
     }
 }
 
-
 /* ══════════════════════════════════════════════
-   星轨指引 (Manual Constellation Selector) - 中心锚定版
+   星轨指引 (Manual Constellation Selector)
    ══════════════════════════════════════════════ */
-/* 【修复 1 & 2】：彻底抛弃 bottom！改为基于屏幕中心 (top: 50%) 向下偏移 */
-/* 这样无论屏幕高矮，提示文字永远精确停留在水晶球发光边缘的正下方 */
-#crystalStatus, .crystal-status {
-  position: absolute !important;
-  top: 50% !important;
-  bottom: auto !important; /* 清除所有旧的底部定位 */
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  margin-top: 190px !important; /* 锚定在球体正下方 */
-  white-space: nowrap !important;
-  z-index: 5;
-}
-
-/* 类别网格同样基于中心锚定，永远跟在提示文字的下方 */
 .nebula-manual-selector {
   position: absolute;
-  top: 50%;
-  bottom: auto;
+  bottom: 8%; /* 悬浮在水晶球下方 */
   left: 50%;
   transform: translateX(-50%);
-  margin-top: 240px; /* 锚定在状态文字下方 50px 处，拉开完美呼吸感 */
   display: flex;
   flex-direction: column;
   align-items: center;
   z-index: 10;
   width: 100%;
-  max-width: 700px;
+  max-width: 600px;
   opacity: 1;
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
-/* 【修复 3】：避免 translateY 把页面向下撑长导致底部出现白色空白块 */
-/* 改用 scale 原地缩放淡出，绝不撑破页面高度 */
+/* 点击后淡出，保持水晶球爆散时的画面纯净 */
 .nebula-manual-selector.fading-out {
   opacity: 0;
-  transform: translateX(-50%) scale(0.95);
+  transform: translateX(-50%) translateY(20px);
   pointer-events: none;
 }
 
@@ -894,28 +876,27 @@
   font-size: 12px;
   color: rgba(255, 255, 255, 0.4);
   letter-spacing: 2px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   text-transform: uppercase;
   font-family: "Noto Serif SC", "Poppins", serif;
   text-shadow: 0 0 10px rgba(0, 223, 216, 0.2);
-  white-space: nowrap; 
 }
 
-/* 电脑端 4x2 网格 */
 .manual-selector-chips {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px 16px; 
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
   padding: 0 20px;
-  width: 100%;
 }
 
+/* 玻璃拟态星轨芯片 */
 .manual-star-chip {
   position: relative;
   background: rgba(10, 20, 35, 0.4);
   border: 1px solid rgba(0, 223, 216, 0.15);
   color: rgba(255, 255, 255, 0.7);
-  padding: 6px 10px; 
+  padding: 8px 20px;
   border-radius: 30px;
   font-size: 14px;
   cursor: pointer;
@@ -923,10 +904,6 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
 }
 
 .manual-star-chip .chip-text {
@@ -936,6 +913,7 @@
   letter-spacing: 1px;
 }
 
+/* 悬浮内发光效果 */
 .manual-star-chip .chip-glow {
   position: absolute;
   top: 50%;
@@ -965,30 +943,19 @@
   transform: scale(0.95);
 }
 
-/* ══════════════════════════════════════════════
-   【修复 4】：手机端动态调近与球体的距离
-   ══════════════════════════════════════════════ */
+/* 移动端适配 */
 @media (max-width: 768px) {
-  #crystalStatus, .crystal-status {
-    /* 手机端水晶球因为屏幕窄会变小，所以提示文字的圆心偏移量缩小 */
-    margin-top: 150px !important; 
-  }
   .nebula-manual-selector {
-    /* 类别网格跟随上移，这样在长手机屏幕上绝不会掉到最底部 */
-    margin-top: 190px; 
-  }
-  .manual-selector-chips {
-    /* 手机端 2x4 完美对称 */
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    bottom: 5%;
   }
   .manual-star-chip {
-    padding: 6px 5px;
+    padding: 6px 14px;
     font-size: 13px;
   }
   .manual-selector-hint {
     font-size: 11px;
   }
 }
+
 }
 
