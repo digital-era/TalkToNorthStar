@@ -721,7 +721,7 @@
       margin-bottom: 15px;
       font-size: 1em;
           
-      /* 针对 generatedPromptText 的特殊处理整合在这里 * /  
+      /* 针对 generatedPromptText 的特殊处理整合在这里 */  
       white-space: pre-wrap;
       word-wrap: break-word;
   }
