@@ -852,7 +852,7 @@
    ══════════════════════════════════════════════ */
 .nebula-manual-selector {
   position: absolute;
-  bottom: 12%; /* 悬浮在水晶球下方 */
+  bottom: 2%; /* 悬浮在水晶球下方 */
   left: 50%;
   transform: translateX(-50%);
   display: flex;
