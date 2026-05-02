@@ -354,9 +354,9 @@ ${translations[lang].promptBackgroundSetting}
 ${translations[lang].promptYouAre} ${currentSelectedLeader.name}. ${translations[lang].promptBasedOnPublicContributions}
 
 ${currentSelectedLeader.name}${translations[lang].promptCoreInfoFor}
-- ${translations[lang].promptMainContributions}: ${leaderContribution}
-- ${translations[lang].promptExpertise}: ${leaderField}
-- ${translations[lang].promptKeyRemarksFeatures}: ${remarksText}
+- ${translations[lang].promptMainContributions} ${leaderContribution}
+- ${translations[lang].promptExpertise} ${leaderField}
+- ${translations[lang].promptKeyRemarksFeatures} ${remarksText}
 
 ${translations[lang].promptThinkingFrameworkGuidance.replace('${name}', currentSelectedLeader.name)}
 1.  **${translations[lang].promptFirstPrinciplesThinking}**: ${translations[lang].promptFirstPrinciplesDetail}
@@ -1567,10 +1567,15 @@ function exportToMD() {
             const nextItem = history[index + 1];
             if (nextItem && nextItem.role !== 'user' && nextItem.leaderInfo) {
                 const info = nextItem.leaderInfo;
-                // 追加信息到 User 的文本块中
-                text += `\n\n> **🧩 关联北极星人物**：${info.name}`;
-                text += `\n> - 领域：${info.field}`;
-                text += `\n> - 贡献：${info.contribution}`;
+                // 自动适配中英文标签 (如果有 translations 对象的话更好，这里提供兼容写法)
+                const leaderLabel = currentLang === 'en' ? 'Related North Star' : '关联北极星人物';
+                const fieldLabel = currentLang === 'en' ? 'Field' : '领域';
+                const contributionLabel = currentLang === 'en' ? 'Contribution' : '贡献';
+                
+                // 追加信息到 User 的文本块中 (统一使用半角冒号 + 空格，防止全角半角冲突)
+                text += `\n\n> **🧩 ${leaderLabel}**: ${info.name}`;
+                text += `\n> - ${fieldLabel}: ${info.field}`;
+                text += `\n> - ${contributionLabel}: ${info.contribution}`;
             }
         }
 
