@@ -25,6 +25,7 @@ const crystalTexts = {
 };
 
 let crystalInstance = null;
+let wheelInstance = null;
 
 // ══════════════════════════════════════════════
 // 星云粒子系统
