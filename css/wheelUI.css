@@ -846,3 +846,113 @@
         }
     }
 }
+
+/* ══════════════════════════════════════════════
+   星轨指引 (Manual Constellation Selector)
+   ══════════════════════════════════════════════ */
+.nebula-manual-selector {
+  position: absolute;
+  bottom: 8%; /* 悬浮在水晶球下方 */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+  width: 100%;
+  max-width: 600px;
+  opacity: 1;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* 点击后淡出，保持水晶球爆散时的画面纯净 */
+.nebula-manual-selector.fading-out {
+  opacity: 0;
+  transform: translateX(-50%) translateY(20px);
+  pointer-events: none;
+}
+
+.manual-selector-hint {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  font-family: "Noto Serif SC", "Poppins", serif;
+  text-shadow: 0 0 10px rgba(0, 223, 216, 0.2);
+}
+
+.manual-selector-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 20px;
+}
+
+/* 玻璃拟态星轨芯片 */
+.manual-star-chip {
+  position: relative;
+  background: rgba(10, 20, 35, 0.4);
+  border: 1px solid rgba(0, 223, 216, 0.15);
+  color: rgba(255, 255, 255, 0.7);
+  padding: 8px 20px;
+  border-radius: 30px;
+  font-size: 14px;
+  cursor: pointer;
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.manual-star-chip .chip-text {
+  position: relative;
+  z-index: 2;
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+
+/* 悬浮内发光效果 */
+.manual-star-chip .chip-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(0, 223, 216, 0.4) 0%, rgba(0, 0, 0, 0) 70%);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+  z-index: 1;
+  border-radius: 50%;
+}
+
+.manual-star-chip:hover {
+  color: #fff;
+  border-color: rgba(0, 223, 216, 0.6);
+  box-shadow: 0 0 15px rgba(0, 223, 216, 0.3), inset 0 0 10px rgba(0, 223, 216, 0.2);
+  transform: translateY(-2px);
+}
+
+.manual-star-chip:hover .chip-glow {
+  width: 150px;
+  height: 150px;
+}
+
+.manual-star-chip:active {
+  transform: scale(0.95);
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .nebula-manual-selector {
+    bottom: 5%;
+  }
+  .manual-star-chip {
+    padding: 6px 14px;
+    font-size: 13px;
+  }
+  .manual-selector-hint {
+    font-size: 11px;
+  }
+}
