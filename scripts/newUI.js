@@ -569,7 +569,7 @@ function renderNebulaManualSelector() {
   // 极简引导语
   const hintText = document.createElement('div');
   hintText.className = 'manual-selector-hint';
-  hintText.textContent = currentLang === 'en' ? '— Or guide the stars yourself —' : '— 或，亲自指引星辰 —';
+  hintText.textContent = currentLang === 'en' ? '— Choose your path —' : '— 或，亲自指引星辰 —';  
   selector.appendChild(hintText);
 
   // 生成大类碎片
@@ -1459,7 +1459,13 @@ function backToWheelSelection() {
         if (crystalInstance) {
             crystalInstance.reset();
         }
-        
+
+        // 【修复 4】：返回首页时，恢复星轨标签的显示
+        const manualSelector = document.getElementById('nebula-manual-selector');
+        if (manualSelector) {
+            manualSelector.classList.remove('fading-out');
+        }
+      
         if (overlay) overlay.classList.remove('active');
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
