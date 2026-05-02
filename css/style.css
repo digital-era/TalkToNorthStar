@@ -318,7 +318,7 @@
       text-align: center;
       font-style: normal; /* 中文不需要斜体 */
       font-family: 'Ma Shan Zheng', cursive; /* 结语用毛笔字 */
-      font-size: 1.3em;
+      font-size: 1.2em;
       color: var(--dark-accent);
       margin-top: 40px;
       padding-top: 20px;
@@ -1052,7 +1052,7 @@
       margin-top: 30px;
       margin-bottom: 15px;
       font-weight: 400; /* 宋体标题不宜太粗 */
-      font-size: 1.2em;
+      font-size: 1.15em;
       letter-spacing: 1px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       padding-bottom: 8px;
