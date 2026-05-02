@@ -570,8 +570,8 @@ function renderNebulaManualSelector() {
     hintText.className = 'manual-selector-hint';
     // 【修复文字过长】：精简英文文案，防止撑爆容器
     hintText.textContent = (typeof currentLang !== 'undefined' && currentLang === 'en') 
-        ? '— Choose your path —' 
-        : '— 或，亲自指引星辰 —';
+        ? '— Or, Choose your star —' 
+        : '— 或，亲自选择星辰 —';
     selector.appendChild(hintText);
 
     const chipsWrap = document.createElement('div');
