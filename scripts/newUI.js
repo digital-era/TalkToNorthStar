@@ -447,22 +447,23 @@ class CrystalBallController {
     // 粒子爆散
     this.nebula.reveal();
     
-    // 随机选择大类
-    const selectedCat = NEBULA_CATEGORIES[Math.floor(Math.random() * NEBULA_CATEGORIES.length)];
-    const name = categoryNames[selectedCat]?.[currentLang] || categoryNames[selectedCat]?.['zh-CN'];
+    // 随机选择，或使用传入的强制大类
+    const selectedCat = forcedCategory || NEBULA_CATEGORIES[Math.floor(Math.random() * NEBULA_CATEGORIES.length)];
+    
+    // 【修复英文错乱问题】：统一使用 getCategoryName 保证与转盘、标签页的文案绝对同步！
+    // 之前错乱是因为英文模式下发生了事件穿透，或者 categoryNames 字典与全局 translations 没对齐
+    const name = getCategoryName(selectedCat);
     const enName = categoryNames[selectedCat]?.['en'] || selectedCat;
     
-    // 显示结果文字
     setTimeout(() => {
-      this.resultText.textContent = name;
-      this.resultSub.textContent = enName;
-      this.result.classList.add('show');
-      
-      // 延迟后跳转
-      setTimeout(() => {
-        if (this.onSelect) this.onSelect(selectedCat);
-        this.reset();
-      }, 2000);
+        this.resultText.textContent = name;
+        this.resultSub.textContent = enName;
+        this.result.classList.add('show');
+        
+        setTimeout(() => {
+            if (this.onSelect) this.onSelect(selectedCat);
+            this.reset();
+        }, 2000);
     }, 500);
   }
   
@@ -555,46 +556,47 @@ function initCrystalBall() {
 // 优雅的手动选择器：星轨指引 (Constellation Guidance)
 // ══════════════════════════════════════════════
 function renderNebulaManualSelector() {
-  const crystalContainer = document.getElementById('nebula-crystal');
-  if (!crystalContainer) return;
+    const crystalContainer = document.getElementById('nebula-crystal');
+    if (!crystalContainer) return;
 
-  // 如果已经存在，先移除重新渲染（用于语言切换）
-  let existingSelector = document.getElementById('nebula-manual-selector');
-  if (existingSelector) existingSelector.remove();
+    let existingSelector = document.getElementById('nebula-manual-selector');
+    if (existingSelector) existingSelector.remove();
 
-  const selector = document.createElement('div');
-  selector.id = 'nebula-manual-selector';
-  selector.className = 'nebula-manual-selector';
+    const selector = document.createElement('div');
+    selector.id = 'nebula-manual-selector';
+    selector.className = 'nebula-manual-selector';
 
-  // 极简引导语
-  const hintText = document.createElement('div');
-  hintText.className = 'manual-selector-hint';
-  hintText.textContent = currentLang === 'en' ? '— Choose your path —' : '— 或，亲自指引星辰 —';  
-  selector.appendChild(hintText);
+    const hintText = document.createElement('div');
+    hintText.className = 'manual-selector-hint';
+    // 【修复文字过长】：精简英文文案，防止撑爆容器
+    hintText.textContent = (typeof currentLang !== 'undefined' && currentLang === 'en') 
+        ? '— Choose your path —' 
+        : '— 或，亲自指引星辰 —';
+    selector.appendChild(hintText);
 
-  // 生成大类碎片
-  const chipsWrap = document.createElement('div');
-  chipsWrap.className = 'manual-selector-chips';
+    const chipsWrap = document.createElement('div');
+    chipsWrap.className = 'manual-selector-chips';
 
-  NEBULA_CATEGORIES.forEach(cat => {
-    const name = categoryNames[cat]?.[currentLang] || categoryNames[cat]?.['zh-CN'];
-    const chip = document.createElement('button');
-    chip.className = 'manual-star-chip';
-    chip.innerHTML = `<span class="chip-glow"></span><span class="chip-text">${name}</span>`;
-    
-    // 点击触发优雅的强制唤醒
-    chip.onclick = () => {
-      if (crystalInstance) {
-        // 隐藏自身，保持界面纯净
-        selector.classList.add('fading-out');
-        crystalInstance.forceSelect(cat);
-      }
-    };
-    chipsWrap.appendChild(chip);
-  });
+    NEBULA_CATEGORIES.forEach(cat => {
+        // 【修复英文错乱】：这里也统一采用 getCategoryName
+        const name = getCategoryName(cat);
+        const chip = document.createElement('button');
+        chip.className = 'manual-star-chip';
+        chip.innerHTML = `<span class="chip-glow"></span><span class="chip-text">${name}</span>`;
+        
+        chip.onclick = (e) => {
+            // 【关键修复】：阻止事件冒泡，防止点击按钮时误触了水晶球引发 "随机选择(Finance)"
+            e.stopPropagation(); 
+            if (crystalInstance) {
+                selector.classList.add('fading-out');
+                crystalInstance.forceSelect(cat);
+            }
+        };
+        chipsWrap.appendChild(chip);
+    });
 
-  selector.appendChild(chipsWrap);
-  crystalContainer.appendChild(selector);
+    selector.appendChild(chipsWrap);
+    crystalContainer.appendChild(selector);
 }
 
 // ══════════════════════════════════════════════
