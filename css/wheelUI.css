@@ -847,27 +847,31 @@
     }
 }
 
-/* ══════════════════════════════════════════════
-   星轨指引 (Manual Constellation Selector) 
-   ══════════════════════════════════════════════ */
 
-/* 【关键修复 1】：强行接管绿点提示文字的坐标，把它推到上方安全区 (距离底部140px) */
+/* ══════════════════════════════════════════════
+   星轨指引 (Manual Constellation Selector) - 中心锚定版
+   ══════════════════════════════════════════════ */
+/* 【修复 1 & 2】：彻底抛弃 bottom！改为基于屏幕中心 (top: 50%) 向下偏移 */
+/* 这样无论屏幕高矮，提示文字永远精确停留在水晶球发光边缘的正下方 */
 #crystalStatus, .crystal-status {
   position: absolute !important;
-  bottom: 140px !important; 
+  top: 50% !important;
+  bottom: auto !important; /* 清除所有旧的底部定位 */
   left: 50% !important;
   transform: translateX(-50%) !important;
-  margin: 0 !important;
+  margin-top: 190px !important; /* 锚定在球体正下方 */
   white-space: nowrap !important;
   z-index: 5;
 }
 
-/* 【关键修复 2】：分类网格整体下沉到距离底部 20px 的位置 */
+/* 类别网格同样基于中心锚定，永远跟在提示文字的下方 */
 .nebula-manual-selector {
   position: absolute;
-  bottom: 20px; 
+  top: 50%;
+  bottom: auto;
   left: 50%;
   transform: translateX(-50%);
+  margin-top: 240px; /* 锚定在状态文字下方 50px 处，拉开完美呼吸感 */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -875,31 +879,33 @@
   width: 100%;
   max-width: 700px;
   opacity: 1;
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
+/* 【修复 3】：避免 translateY 把页面向下撑长导致底部出现白色空白块 */
+/* 改用 scale 原地缩放淡出，绝不撑破页面高度 */
 .nebula-manual-selector.fading-out {
   opacity: 0;
-  transform: translateX(-50%) translateY(20px);
+  transform: translateX(-50%) scale(0.95);
   pointer-events: none;
 }
 
-/* 【关键修复 3】：缩小提示语与下方按钮的间距，节省高度空间 */
 .manual-selector-hint {
   font-size: 12px;
   color: rgba(255, 255, 255, 0.4);
   letter-spacing: 2px;
-  margin-bottom: 10px; /* 原来是 16px，压缩一点 */
+  margin-bottom: 12px;
   text-transform: uppercase;
   font-family: "Noto Serif SC", "Poppins", serif;
   text-shadow: 0 0 10px rgba(0, 223, 216, 0.2);
   white-space: nowrap; 
 }
 
+/* 电脑端 4x2 网格 */
 .manual-selector-chips {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 10px 14px; /* 间距微调，更紧凑精致 */
+  gap: 12px 16px; 
   padding: 0 20px;
   width: 100%;
 }
@@ -909,7 +915,7 @@
   background: rgba(10, 20, 35, 0.4);
   border: 1px solid rgba(0, 223, 216, 0.15);
   color: rgba(255, 255, 255, 0.7);
-  padding: 6px 10px; /* 按钮稍微做扁一点，节省垂直空间 */
+  padding: 6px 10px; 
   border-radius: 30px;
   font-size: 14px;
   cursor: pointer;
@@ -959,20 +965,22 @@
   transform: scale(0.95);
 }
 
-/* 移动端适配 */
+/* ══════════════════════════════════════════════
+   【修复 4】：手机端动态调近与球体的距离
+   ══════════════════════════════════════════════ */
 @media (max-width: 768px) {
-  .nebula-manual-selector {
-    bottom: 10px; 
-  }
-  
-  /* 手机端因为类别会折叠成 4 行，需要把绿点提示推得更高 */
   #crystalStatus, .crystal-status {
-    bottom: 180px !important; 
+    /* 手机端水晶球因为屏幕窄会变小，所以提示文字的圆心偏移量缩小 */
+    margin-top: 150px !important; 
   }
-
+  .nebula-manual-selector {
+    /* 类别网格跟随上移，这样在长手机屏幕上绝不会掉到最底部 */
+    margin-top: 190px; 
+  }
   .manual-selector-chips {
+    /* 手机端 2x4 完美对称 */
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    gap: 10px;
   }
   .manual-star-chip {
     padding: 6px 5px;
@@ -981,5 +989,6 @@
   .manual-selector-hint {
     font-size: 11px;
   }
+}
 }
 
