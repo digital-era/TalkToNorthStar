@@ -122,7 +122,7 @@
                 "immersiveFeat2Desc": "<em>针对对话主题，动态生成契合的图、文、声、乐</em><br>对话是一场流动的盛宴。当你与巴菲特聊起1929年的大萧条，背景乐会悄然转为低沉的大提琴，画风染上历史的颗粒感；当你与马斯克展望火星殖民，电子合成器的激昂旋律将随之升腾，深空的壮丽图景在眼前铺陈。<br>你的声音与北极星的声音在云端交汇，<strong>AI实时编曲，让情绪互通</strong>。不仅是你在对话，更是世界在随你的思维起舞。",
                 "immersiveFeat3Title": "临在 · 跨越时空的凝视",
                 "immersiveFeat3Desc": "<em>动态生成高度一致性、连续性的视频与立体空间视听</em><br>告别碎片的拼接，迎来连贯的生命。<br>依托最前沿的视频生成模型，北极星不再静止。你会看到他们思考时眉头的微蹙，听到他们兴奋时语速的加快。立体空间音频技术（Spatial Audio）将你包裹其中，仿佛你正坐在维也纳的咖啡馆或硅谷的会议室对面。<br><strong>这不仅是视频，这是“在场”。</strong> 是一次打破物理法则的面对面，是两颗心灵在同一时空的深度纠缠。",
-                 "footerRight": "© 2025 AI范式进化. 保留所有权利。",
+                 "footerRight": "© AI范式进化. 保留所有权利。",
             },
             "en": {
                 "pageTitle": "Talk with North Stars",
@@ -244,7 +244,7 @@
                 "immersiveFeat2Desc": "<em>Dynamic generation of images, text, sound, and music tailored to the dialogue theme</em><br>Dialogue is a moveable feast. When you talk to Buffett about the Great Depression of 1929, the background music quietly shifts to a deep cello, and the visual style takes on historical grain; when you discuss Mars colonization with Musk, the soaring melody of synthesizers rises, spreading magnificent deep space views before you.<br>Your voice meets the NorthStar's in the cloud, <strong>AI composing in real-time to interconnect emotions</strong>. It's not just you talking; the world dances with your thoughts.",
                 "immersiveFeat3Title": "Presence · Gaze Across Time and Space",
                 "immersiveFeat3Desc": "<em>Dynamic generation of highly consistent, continuous video and spatial audio</em><br>Farewell to fragmented splicing, welcome coherent life.<br>Relying on cutting-edge video generation models, NorthStar is no longer static. You will see the slight frown when they think, hear the acceleration of speech when excited. Spatial Audio technology wraps around you, as if you are sitting opposite them in a Vienna café or a Silicon Valley meeting room.<br><strong>This is not just video; this is 'Presence'.</strong> A face-to-face encounter breaking physical laws, a deep entanglement of two souls in the same space-time.",                                        
-                "footerRight": "© 2025 AI Paradigm Evolution. All rights reserved.",
+                "footerRight": "© AI Paradigm Evolution. All rights reserved.",
                 
             }
         };
