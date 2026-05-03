@@ -72,6 +72,11 @@ function escapeRegExp(string) {
  * 专门处理旧格式（### User: / ### 人物名:）的解析函数
  * 已针对头部元信息、🧩 信息块剥离、leaderInfo 正确传递进行优化
  */
+/**
+ * 专门处理旧格式（### User: / ### 人物名:）的解析函数
+ * 已针对头部元信息、🧩 信息块剥离、leaderInfo 正确传递进行优化
+ * 【修复】兼容移动端MD使用英文冒号(:)的情况
+ */
 function parseOldFormatMD(normalized) {
     const history = [];
     const sections = normalized.split(/^###\s+/m).filter(Boolean);
@@ -110,11 +115,14 @@ function parseOldFormatMD(normalized) {
 
             let userText = userLines.join('\n');
 
-            // ★ 剥离 🧩 关联信息块（精确匹配三种常见写法）
+            // ★【修复】剥离 🧩 关联信息块（兼容中英文冒号）
             const infoBlockPatterns = [
-                /\*\*🧩 关联北极星人物\*\*：\s*(.+?)\n\s*-\s*领域[：:]\s*(.+?)\n\s*-\s*贡献[：:]\s*(.+?)(?=\n|$)/s,
-                /🧩 关联北极星人物：\s*(.+?)\n\s*-\s*领域：\s*(.+?)\n\s*-\s*贡献：\s*(.+?)(?=\n|$)/s,
-                /\*\*🧩 关联北极星人物\*\*：(.+?)(?:- 领域：(.+?))?(?:- 贡献：(.+?))?/s
+                // 模式1: **🧩 关联北极星人物**：姓名 (中文/英文冒号)
+                /\*\*🧩 关联北极星人物\*\*[：:]\s*(.+?)\n\s*-\s*领域[：:]\s*(.+?)\n\s*-\s*贡献[：:]\s*(.+?)(?=\n|$)/s,
+                // 模式2: 🧩 关联北极星人物：姓名 (无加粗，兼容冒号)
+                /🧩 关联北极星人物[：:]\s*(.+?)\n\s*-\s*领域[：:]\s*(.+?)\n\s*-\s*贡献[：:]\s*(.+?)(?=\n|$)/s,
+                // 模式3: 宽松匹配（兼容冒号，非贪婪）
+                /\*\*🧩 关联北极星人物\*\*[：:](.+?)(?:-\s*领域[：:](.+?))?(?:-\s*贡献[：:](.+?))?/s
             ];
 
             let extractedLeaderInfo = null;
@@ -172,7 +180,7 @@ function parseOldFormatMD(normalized) {
 
         // 移除可能的角色名重复
         if (roleName && text) {
-            const prefixRegex = new RegExp(`^\\s*${escapeRegExp(roleName)}[:：]?\\s*`, 'i');
+            const prefixRegex = new RegExp(`^\\s*${escapeRegExp(roleName)}[：:]?\\s*`, 'i');
             text = text.replace(prefixRegex, '').trim();
         }
 
