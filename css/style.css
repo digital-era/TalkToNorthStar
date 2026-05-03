@@ -2693,19 +2693,127 @@
 /* 适配移动端 */
 @media (max-width: 768px) {
     .thought-stream {
-        padding: 60px 20px;
-        gap: 50px;
+        /* 大幅减少两侧留白，释放屏幕宽度 */
+        padding: 40px 12px;
+        gap: 40px;
+        max-width: 100%;
     }
+    
     .thought-node {
-        max-width: 90%;
+        /* 宽度从48%改为92%，充分利用屏幕 */
+        max-width: 92%;
+        width: 92%;
     }
+    
+    /* 用户提问卡片：减少padding，字体缩小 */
     .thought-node.question-node {
+        padding: 15px 18px;
+        border-radius: 8px;
         align-self: center;
         margin-right: auto;
-        border-radius: 10px;
     }
+    
+    .user-handwriting {
+        font-size: 1.15rem;  /* 从1.4rem缩小 */
+        line-height: 1.6;    /* 从1.6收紧 */
+        letter-spacing: 0.5px;
+    }
+    
+    /* 北极星回答卡片：大幅减少padding，优化字体 */
     .thought-node.answer-node {
+        padding: 20px 18px;        /* 从30px 40px缩减 */
+        border-radius: 4px 4px 4px 30px; /* 右下角卷起效果缩小 */
         align-self: center;
         margin-left: auto;
+    }
+    
+    /* 卡片内部元素字号统一缩小 */
+    .leader-name {
+        font-size: 1.2rem;      /* 从1.5rem缩小 */
+        letter-spacing: 1px;
+    }
+    
+    .badge-field {
+        font-size: 0.7rem;
+        padding: 2px 6px;
+    }
+    
+    .leader-contribution-hint {
+        font-size: 0.8rem;
+        margin-bottom: 10px;
+    }
+    
+    .star-content {
+        font-size: 0.95rem;     /* 从1.05rem缩小 */
+        line-height: 1.65;      /* 从1.8收紧，每行显示更多字 */
+        text-align: left;       /* 手机端左对齐更易读 */
+    }
+    
+    .node-divider {
+        margin: 10px 0 15px 0;
+    }
+    
+    .star-decoration-bottom {
+        margin-top: 15px;
+        font-size: 0.75rem;
+    }
+    
+    /* 删除按钮在移动端始终可见（方便操作） */
+    .node-delete-btn {
+        opacity: 0.6;
+        width: 28px;
+        height: 28px;
+        font-size: 0.9rem;
+    }
+    
+    /* 顶部工具栏适配 */
+    .canvas-toolbar {
+        padding: 10px 15px;
+    }
+    
+    .canvas-title {
+        font-size: 1.1rem;
+    }
+    
+    /* 连线层：在手机端减弱效果，避免视觉干扰 */
+    .trail-path {
+        stroke-width: 1px;
+        opacity: 0.4;
+    }
+}
+
+/* 超小屏幕额外优化 */
+@media (max-width: 480px) {
+    .thought-stream {
+        padding: 30px 8px;   /* 进一步减少留白 */
+        gap: 30px;
+    }
+    
+    .thought-node {
+        max-width: 96%;      /* 几乎撑满屏幕 */
+        width: 96%;
+    }
+    
+    .thought-node.question-node,
+    .thought-node.answer-node {
+        padding: 12px 14px;
+    }
+    
+    .user-handwriting {
+        font-size: 1.05rem;
+    }
+    
+    .star-content {
+        font-size: 0.9rem;
+        line-height: 1.55;   /* 更紧凑的行高 */
+    }
+    
+    .leader-name {
+        font-size: 1.1rem;
+    }
+    
+    /* 隐藏用户头像标记，节省空间 */
+    .question-node .user-avatar-mark {
+        display: none;
     }
 }
