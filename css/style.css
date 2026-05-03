@@ -2817,3 +2817,75 @@
         display: none;
     }
 }
+
+/* ==========================================
+   对话画布移动端性能优化
+   ========================================== */
+
+@media (max-width: 768px) {
+    /* 禁用星空背景动画，改为静态 */
+    .canvas-modal::before,
+    .canvas-modal::after {
+        animation: none !important;
+        width: 100% !important;
+        height: 100% !important;
+        top: 0 !important;
+        left: 0 !important;
+        opacity: 0.3;
+    }
+    
+    /* 禁用毛玻璃 */
+    .thought-node.question-node {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+    
+    /* 禁用3D透视 */
+    .canvas-viewport {
+        perspective: none !important;
+    }
+    
+    /* 禁用节点入场动画 */
+    .thought-node {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+    
+    .thought-node:hover {
+        transform: none !important;
+    }
+    
+    /* 简化阴影，禁用卷角伪元素 */
+    .thought-node.answer-node {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+        border-radius: 4px !important;
+    }
+    
+    .thought-node.answer-node::after,
+    .thought-node.answer-node::before {
+        display: none !important;
+    }
+    
+    /* 简化连线 */
+    .trail-path {
+        stroke-width: 1px !important;
+        opacity: 0.3 !important;
+    }
+    
+    /* 减少重绘区域 */
+    .canvas-viewport {
+        contain: layout style paint;
+    }
+    
+    .thought-stream {
+        contain: layout;
+    }
+}
+
+@media (max-width: 480px) {
+    .canvas-modal::before,
+    .canvas-modal::after {
+        opacity: 0.15;
+    }
+}
