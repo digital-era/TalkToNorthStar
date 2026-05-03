@@ -1324,8 +1324,8 @@ function renderDialogueCanvas() {
     const container = document.getElementById('thoughtStreamContent');
     const svgEl = document.getElementById('thoughtTrailsSvg');
     container.innerHTML = '';
+    lastDrawnHash = '';
 
-    // ★ 新增：统一取当前要渲染的数据源
     const history = getMergedHistory(importedHistory, conversationHistory);
     if (history.length === 0) {
         container.innerHTML = `<div style="text-align:center; color:#888; margin-top:100px; font-family:'Ma Shan Zheng'">
@@ -1335,6 +1335,8 @@ function renderDialogueCanvas() {
         return;
     }
 
+    const fragment = document.createDocumentFragment();
+
     history.forEach((item, index) => {
         const node = document.createElement('div');
         const isUser = item.role === 'user';
@@ -1342,8 +1344,6 @@ function renderDialogueCanvas() {
         node.className = `thought-node ${isUser ? 'question-node' : 'answer-node'}`;
         node.id = `node-${index}`;
         
-        // --- 新增：删除按钮 ---
-        // 注意：onclick 绑定了 deleteNode 并传入 index
         const deleteBtnHTML = `
             <button class="node-delete-btn" onclick="deleteNode(event, ${index})" title="删除此节点">
                 <i class="fas fa-times"></i>
@@ -1354,19 +1354,24 @@ function renderDialogueCanvas() {
 
         if (isUser) {
             contentHTML = `
-                ${deleteBtnHTML} <!-- 插入删除按钮 -->
+                ${deleteBtnHTML}
                 <div class="user-avatar-mark"><i class="fas fa-user-astronaut"></i></div>
                 <div class="node-content user-handwriting">${item.text}</div>
             `;
         } else {
-            let processedText = typeof parseMarkdownWithMath === 'function' 
-                ? parseMarkdownWithMath(item.text) 
-                : item.text.replace(/\n/g, '<br>');
+            // 缓存Markdown解析结果
+            let processedText = item._processedText;
+            if (!processedText) {
+                processedText = typeof parseMarkdownWithMath === 'function' 
+                    ? parseMarkdownWithMath(item.text) 
+                    : item.text.replace(/\n/g, '<br>');
+                item._processedText = processedText;
+            }
 
             const info = item.leaderInfo || { name: 'Unknown', field: '', contribution: '' };
 
             contentHTML = `
-                ${deleteBtnHTML} <!-- 插入删除按钮 -->
+                ${deleteBtnHTML}
                 <div class="star-decoration-top"><i class="fas fa-star-of-life"></i></div>
                 <div class="leader-header">
                     <div class="leader-name">${info.name}</div>
@@ -1376,7 +1381,7 @@ function renderDialogueCanvas() {
                 </div>
                 <div class="leader-contribution-hint" title="${info.contribution}">
                     <i class="fas fa-quote-left"></i> ${info.contribution.substring(0, 30)}...
-                </div>
+n                </div>
                 <div class="node-divider"></div>
                 <div class="node-content star-content">${processedText}</div>
                 <div class="star-decoration-bottom"><i class="fas fa-feather-alt"></i> North Star Insight</div>
@@ -1385,63 +1390,79 @@ function renderDialogueCanvas() {
         
         node.innerHTML = contentHTML;
         node.onclick = (e) => addToInspiration(e, item.text); 
-        
-        container.appendChild(node);
+        fragment.appendChild(node);
     });
 
+    container.appendChild(fragment);
+
+    // MathJax延迟渲染，不阻塞UI
     if (window.MathJax) {
-        MathJax.typesetPromise([container]).catch(err => {});
+        const delay = typeof requestIdleCallback !== 'undefined' 
+            ? cb => requestIdleCallback(cb, { timeout: 500 })
+            : cb => setTimeout(cb, 300);
+        delay(() => {
+            MathJax.typesetPromise([container]).catch(err => {});
+        });
     }
 
-    setTimeout(drawConnections, 300);
+    setTimeout(drawConnections, 100);
 }
 
 
+/* --- 优化版 drawConnections (防抖 + 缓存) --- */
+let drawConnectionsTimeout = null;
+let lastDrawnHash = '';
+
 function drawConnections() {
+    if (drawConnectionsTimeout) clearTimeout(drawConnectionsTimeout);
+    drawConnectionsTimeout = setTimeout(() => {
+        _doDrawConnections();
+    }, 100);
+}
+
+function _doDrawConnections() {
     const container = document.getElementById('thoughtStreamContent');
     const svgEl = document.getElementById('thoughtTrailsSvg');
+    if (!container || !svgEl) return;
+    
     const nodes = container.querySelectorAll('.thought-node');
     
-    // 调整SVG高度以匹配内容
-    svgEl.style.height = container.scrollHeight + 'px';
-    svgEl.innerHTML = ''; // 清除旧线
-
+    // 布局未变化则跳过重绘
+    const currentHash = Array.from(nodes).map(n => n.offsetTop + ',' + n.offsetHeight).join('|');
+    if (currentHash === lastDrawnHash && svgEl.innerHTML !== '') return;
+    lastDrawnHash = currentHash;
+    
+    const newHeight = container.scrollHeight;
+    if (svgEl.style.height !== newHeight + 'px') {
+        svgEl.style.height = newHeight + 'px';
+    }
+    
+    svgEl.innerHTML = '';
     if (nodes.length < 2) return;
 
-    let pathD = '';
+    const fragment = document.createDocumentFragment();
     
-    // 遍历节点，连接 i 和 i+1
     for (let i = 0; i < nodes.length - 1; i++) {
         const current = nodes[i];
         const next = nodes[i+1];
         
-        // 获取相对坐标
-        const currentRect = current.getBoundingClientRect();
-        const nextRect = next.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect(); // 视口容器
-        
-        // 计算相对于 SVG 容器 (container) 的坐标
-        // 注意：因为 container 是 scrollable，这里需要加上 scrollTop 
-        // 但更简单的是利用 offsetTop/Left，因为 thought-node 是 relative 到 container 的
-        
         const startX = current.offsetLeft + (current.offsetWidth / 2);
         const startY = current.offsetTop + current.offsetHeight;
-        
         const endX = next.offsetLeft + (next.offsetWidth / 2);
         const endY = next.offsetTop;
         
-        // 贝塞尔曲线控制点 (S型)
-        const controlY = (endY - startY) / 2;
+        if (startY >= endY) continue;
         
-        // 绘制路径 M(起点) C(控制点1) (控制点2) (终点)
-        // 路径颜色根据是 User->AI 还是 AI->User 变化
+        const controlY = (endY - startY) / 2;
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         path.setAttribute("d", `M ${startX} ${startY} C ${startX} ${startY + controlY}, ${endX} ${endY - controlY}, ${endX} ${endY}`);
         path.setAttribute("class", "trail-path");
-        
-        svgEl.appendChild(path);
+        fragment.appendChild(path);
     }
+    
+    svgEl.appendChild(fragment);
 }
+
 
 // 将内容添加到手稿区
 function addToInspiration(event, text) {
@@ -1482,9 +1503,12 @@ function addToInspiration(event, text) {
     // notesDiv.scrollTop = notesDiv.scrollHeight;
 }
 
-// 监听窗口大小变化重绘连线
+// 替换原有的resize监听（需先移除旧监听）
+let resizeTimeout = null;
 window.addEventListener('resize', () => {
-    if(isCanvasModeOpen) drawConnections();
+    if (!isCanvasModeOpen) return;
+    if (resizeTimeout) clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(drawConnections, 200);
 });
 
 /* --- 新增功能逻辑 --- */
