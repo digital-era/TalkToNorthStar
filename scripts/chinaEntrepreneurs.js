@@ -167,6 +167,102 @@ const chinaEntrepreneurs = [
                 "en": "Led Horizon Robotics to list in Hong Kong in October 2024; in 2025, the Journey series computing solutions exceeded 10 million cumulative shipments, making Horizon the first intelligent driving tech company in China to reach this milestone."
               }
             },
+            { 
+              id: "chen_zongnian", 
+              name: "陈宗年 (Chen Zongnian)",
+              contribution: {
+                "zh-CN": "海康威视创始核心人物之一，曾任董事长，带领公司从视频压缩板卡起步，成为全球领先的视频监控与智能物联网解决方案提供商，推动安防行业数字化转型。",
+                "en": "One of the founding core figures of Hikvision, former Chairman, led the company from video compression boards to become a global leader in video surveillance and intelligent IoT solutions, driving digital transformation in the security industry."
+              },
+              field: {
+                "zh-CN": "视频监控、安防技术、智能物联网。",
+                "en": "Video Surveillance, Security Technology, Intelligent IoT."
+              },
+              remarks: {
+                "zh-CN": "华中科技大学校友，与胡扬忠、龚虹嘉形成创业铁三角；公司成长为全球安防龙头，强调民企机制与国企战略定力结合的技术创新路线。",
+                "en": "Alumnus of Huazhong University of Science and Technology, formed the founding 'iron triangle' with Hu Yangzhong and Gong Hongjia; grew the company into the global security leader with market value once exceeding 300 billion RMB, emphasizing the combination of private enterprise mechanisms and state-owned strategic focus in technological innovation."
+              }
+            },
+            { 
+              id: "liu_sheng", 
+              name: "刘圣 (Liu Sheng)",
+              contribution: {
+                "zh-CN": "中际旭创创始人、董事长兼总裁，从美国归国创业，领导公司成为全球高速光模块（400G/800G及以上）领先供应商，推动AI数据中心光互联技术进步。",
+                "en": "Founder, Chairman and President of Zhongji Innolight, returned from the US to start a business, led the company to become a global leader in high-speed optical modules (400G/800G and above), advancing optical interconnect technology for AI data centers."
+              },
+              field: {
+                "zh-CN": "光通信、光模块、人工智能数据中心。",
+                "en": "Optical Communications, Optical Modules, AI Data Centers."
+              },
+              remarks: {
+                "zh-CN": "清华大学本科、中科院硕士、佐治亚理工博士，曾任职朗讯、Opnext等国际企业；2008年创立苏州旭创，通过并购重组实现高速增长，公司全球光模块市场份额领先，受益于AI算力需求。",
+                "en": "Tsinghua University undergraduate, Chinese Academy of Sciences master's, Georgia Tech PhD; previously worked at Lucent, Opnext and other international firms; founded Suzhou Innolight in 2008, achieved rapid growth through M&A restructuring, leading global optical module market share, benefiting from AI computing power demand."
+              }
+            },
+            { 
+              id: "yuan_yonggang", 
+              name: "袁永刚 (Yuan Yonggang)",
+              contribution: {
+                "zh-CN": "东山精密董事长、实际控制人之一，主导公司从精密钣金制造向高端电子电路、PCB及AI光模块领域战略转型，通过资本运作和并购实现高速扩张。",
+                "en": "Chairman and one of the actual controllers of Dongshan Precision, led the company's strategic transformation from precision sheet metal manufacturing to high-end electronic circuits, PCB and AI optical modules, achieving rapid expansion through capital operations and M&A."
+              },
+              field: {
+                "zh-CN": "精密制造、电子电路、光模块、资本运作。",
+                "en": "Precision Manufacturing, Electronic Circuits, Optical Modules, Capital Operations."
+              },
+              remarks: {
+                "zh-CN": "1998年进入家族企业，2010年主导公司上市；与兄长袁永峰、父亲袁富根形成家族经营核心，推动重大并购（如索尔思光电），公司业务升级为AI算力相关领域重要供应商。",
+                "en": "Born in 1979, joined the family business in 1998, led the company's IPO in 2010; forms the core of family management with brother Yuan Yongfeng and father Yuan Fugen, drove major acquisitions (e.g., Source Photonics), upgrading the company's business into a key supplier in AI computing power-related fields."
+              }
+            },
+            { 
+              id: "yang_zhilin", 
+              name: "杨植麟 (Yang Zhilin)",
+              contribution: {
+                "zh-CN": "月之暗面创始人兼首席执行官，推出Kimi智能助手，以超长上下文能力引领行业，推动大模型长文本处理和多模态技术发展。",
+                "en": "Founder and CEO of Moonshot AI, launched Kimi intelligent assistant, leading the industry with ultra-long context capabilities, advancing long-text processing and multimodal technology in large models."
+              },
+              field: {
+                "zh-CN": "大语言模型、人工智能、自然语言处理。",
+                "en": "Large Language Models, Artificial Intelligence, Natural Language Processing."
+              },
+              remarks: {
+                "zh-CN": "卡内基梅隆大学博士，曾任职Facebook AI Research、Google Brain，XLNet论文第一作者。",
+                "en": "Carnegie Mellon University PhD; previously worked at Facebook AI Research and Google Brain,first author of XLNet paper."
+              }
+            },
+            { 
+              id: "zhang_peng_zhipu", 
+              name: "张鹏 (Zhang Peng)",
+              contribution: {
+                "zh-CN": "智谱AI创始人兼首席执行官，带领团队开发GLM系列大模型，推动知识图谱与大模型融合，从清华实验室走向产业化，构建自主可控的国产大模型体系。",
+                "en": "Founder and CEO of Zhipu AI, led the team to develop the GLM series of large models, promoted the integration of knowledge graphs and large models, transitioned from Tsinghua lab to industrialization, building an independent and controllable domestic large model system."
+              },
+              field: {
+                "zh-CN": "大语言模型、知识图谱、认知智能。",
+                "en": "Large Language Models, Knowledge Graphs, Cognitive Intelligence."
+              },
+              remarks: {
+                "zh-CN": "源自清华KEG实验室，公司GLM模型开源与商用并重，服务众多企业用户。",
+                "en": "From Tsinghua KEG Lab, GLM models emphasize both open-source and commercial use, serving numerous enterprise users."
+              }
+            },
+            { 
+              id: "yan_junjie", 
+              name: "闫俊杰 (Yan Junjie)",
+              contribution: {
+                "zh-CN": "MiniMax创始人、CEO兼首席技术官，推出多模态大模型及海螺AI等应用，推动通用人工智能发展，专注多模态和工程落地。",
+                "en": "Founder, CEO and CTO of MiniMax, launched the multimodal large models and applications such as Hailuo AI , advancing general artificial intelligence (AGI) development with focus on multimodality and engineering implementation."
+              },
+              field: {
+                "zh-CN": "多模态大模型、通用人工智能、AI应用。",
+                "en": "Multimodal Large Models, General Artificial Intelligence, AI Applications."
+              },
+              remarks: {
+                "zh-CN": "曾任商汤科技副总裁，2021年底创立MiniMax，快速成为AI独角兽，推出开源模型，强调技术驱动与普惠应用。",
+                "en": "Former Vice President at SenseTime, founded MiniMax at the end of 2021, rapidly becoming an AI unicorn, released open-source models, emphasizing technology-driven and inclusive applications."
+              }
+            },
             {
               id: "yu_donglai", name: "于东来 (Yu Donglai)",
               contribution: {
