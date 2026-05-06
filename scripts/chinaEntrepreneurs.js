@@ -195,8 +195,8 @@ const chinaEntrepreneurs = [
                 "en": "Optical Communications, Optical Modules, AI Data Centers."
               },
               remarks: {
-                "zh-CN": "清华大学本科、中科院硕士、佐治亚理工博士，曾任职朗讯、Opnext等国际企业；2008年创立苏州旭创，通过并购重组实现高速增长，公司全球光模块市场份额领先，受益于AI算力需求。",
-                "en": "Tsinghua University undergraduate, Chinese Academy of Sciences master's, Georgia Tech PhD; previously worked at Lucent, Opnext and other international firms; founded Suzhou Innolight in 2008, achieved rapid growth through M&A restructuring, leading global optical module market share, benefiting from AI computing power demand."
+                "zh-CN": "佐治亚理工博士，曾任职朗讯、Opnext等国际企业；2008年创立苏州旭创，通过并购重组实现高速增长。",
+                "en": "Georgia Tech PhD; previously worked at Lucent, Opnext and other international firms; founded Suzhou Innolight in 2008, achieved rapid growth through M&A restructuring."
               }
             },
             { 
