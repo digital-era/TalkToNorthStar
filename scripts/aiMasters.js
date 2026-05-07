@@ -69,6 +69,22 @@ const aiMasters = [
         "en": "Anthropic is committed to responsible AI development, forming competition with OpenAI."
       }
     },
+    { 
+      id: "boris_cherny", 
+      name: "Boris Cherny (鲍里斯·切尔尼)",
+      contribution: {
+        "zh-CN": "Anthropic Claude Code 创造者和负责人，主导开发AI驱动的编码工具，大幅提升工程生产力。",
+        "en": "Creator and head of Anthropic's Claude Code, developed AI-powered coding tools that significantly boost engineering productivity."
+      },
+      field: {
+        "zh-CN": "AI编码工具、生成式AI、软件工程。",
+        "en": "AI Coding Tools, Generative AI, Software Engineering."
+      },
+      remarks: {
+        "zh-CN": "Claude Code之父，推动“编程已被解决”的观点，认为AI代理将重塑软件工程角色。",
+        "en": "Father of Claude Code, advocates that 'coding is solved' and AI agents will reshape software engineering roles."
+      }
+    },
     { id: "mark_zuckerberg", name: "Mark Zuckerberg (扎克伯格)",
       contribution: {
         "zh-CN": "Meta创始人兼首席执行官，领导Llama开源模型开发，推动开放源AI与Meta AI助手，2025年投资600亿美元推进AI基础设施。",
