@@ -2339,133 +2339,102 @@
    [优化] 对话画布工具栏- 响应式双层布局
    ========================================== */
 /* --- 顶部导航条：标题与关闭按钮同行 --- */
+/* --- 第一行：极窄导航条 (约35px) --- */
 .canvas-nav-bar {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 60px;
+    height: 38px; /* 大幅压减高度 */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 25px;
-    background: rgba(2, 6, 10, 0.9);
-    backdrop-filter: blur(10px);
+    padding: 0 15px;
+    background: rgba(2, 6, 10, 0.98);
     z-index: 2101;
     box-sizing: border-box;
 }
 
 .canvas-title {
-    font-size: 1.5rem;
+    font-size: 0.95rem; /* 字体变细、变小 */
     color: #c5a059;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-shadow: 0 0 10px rgba(197, 160, 89, 0.4);
+    font-weight: 600;
+    letter-spacing: 1px;
 }
 
 .canvas-close-btn {
     background: transparent !important;
     border: none !important;
-    color: rgba(255, 255, 255, 0.5) !important;
-    font-size: 1.8rem !important;
+    color: rgba(255, 255, 255, 0.4) !important;
+    font-size: 1.2rem !important; /* 图标缩小 */
     cursor: pointer;
-    transition: all 0.3s ease;
-    padding: 10px;
+    line-height: 1;
 }
 
-.canvas-close-btn:hover {
-    color: #ff4d4f !important;
-    transform: rotate(90deg);
-}
-
-/* --- 第二行功能工具栏 --- */
+/* --- 第二行：极窄工具栏 (约38px) --- */
 .canvas-action-bar {
     position: fixed;
-    top: 60px; /* 紧贴第一行 */
+    top: 38px; /* 紧贴第一行 */
     left: 0;
     width: 100%;
-    height: 55px;
+    height: 38px; /* 高度同步压减 */
     display: flex;
     justify-content: center;
     align-items: center;
-    background: rgba(197, 160, 89, 0.05); /* 淡淡的金色底色区分 */
-    border-bottom: 1px solid rgba(197, 160, 89, 0.2);
-    backdrop-filter: blur(10px);
+    background: rgba(197, 160, 89, 0.03); 
+    border-bottom: 1px solid rgba(197, 160, 89, 0.15);
+    backdrop-filter: blur(8px);
     z-index: 2100;
-    box-sizing: border-box;
 }
 
 .action-group {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 10px;
 }
 
+/* 按钮尺寸紧凑化 */
 .canvas-action-bar button {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(197, 160, 89, 0.3);
+    background: transparent;
+    border: 1px solid rgba(197, 160, 89, 0.2);
     color: #c5a059;
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
+    width: 28px; /* 从40px压减到28px */
+    height: 28px;
+    border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.3s;
+    font-size: 0.8rem;
+    transition: all 0.2s;
 }
 
 .canvas-action-bar button:hover {
-    background: #c5a059;
-    color: #0d1218;
-    box-shadow: 0 0 12px rgba(197, 160, 89, 0.5);
+    background: rgba(197, 160, 89, 0.2);
+    border-color: #c5a059;
 }
 
 .divider-v {
     width: 1px;
-    height: 20px;
-    background: rgba(197, 160, 89, 0.3);
-    margin: 0 5px;
+    height: 12px;
+    background: rgba(197, 160, 89, 0.2);
 }
 
-/* --- 移动端适配 --- */
+/* --- 移动端极致压缩 --- */
 @media (max-width: 768px) {
-    .canvas-nav-bar {
-        padding: 0 15px;
-        height: 50px;
+    .canvas-nav-bar, .canvas-action-bar {
+        height: 35px;
     }
-    
-    .canvas-title {
-        font-size: 1.2rem;
-    }
-
     .canvas-action-bar {
-        top: 50px;
-        height: 50px;
-        justify-content: flex-start; /* 靠左排列 */
-        padding: 0 15px;
-        overflow-x: auto; /* 核心：手机端支持横向滑动，防止折行 */
-        -webkit-overflow-scrolling: touch;
+        top: 35px;
+        justify-content: flex-start;
+        padding-left: 10px;
+        overflow-x: auto;
     }
-
-    /* 隐藏滚动条但保留功能 */
-    .canvas-action-bar::-webkit-scrollbar {
-        display: none;
-    }
-
-    .action-group {
-        gap: 10px;
-    }
-
-    .canvas-action-bar button {
-        width: 36px;
-        height: 36px;
-        flex-shrink: 0; /* 防止按钮被挤压变扁 */
-    }
-
-    /* 调整主内容区的顶部偏移，避开两层工具栏 */
+    .canvas-action-bar::-webkit-scrollbar { display: none; }
+    
     .thought-stream {
-        padding-top: 130px !important;
+        padding-top: 85px !important;
     }
 }
 
