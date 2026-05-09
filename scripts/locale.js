@@ -446,17 +446,28 @@
             }
         }
 
+        /**
+         * 完整版语言切换函数
+         * 修复了 contextManager 和 ContextUI 状态同步问题
+         */
         function setLanguage(lang) {
-            currentLang = lang;
+            // 1. 【核心修复】同步到全局 window 对象，确保 contextManager.js 的 _t 函数能获取最新语言
+            window.currentLang = lang; 
+            currentLang = lang; // 更新当前作用域变量
+            
+            // 2. 更新 HTML 属性及持久化配置
             document.documentElement.lang = currentLang;
-            document.title = translations[currentLang].pageTitle;
-            localStorage.setItem('preferredLang', lang); // Save preference
-
+            if (translations[currentLang].pageTitle) {
+                document.title = translations[currentLang].pageTitle;
+            }
+            localStorage.setItem('preferredLang', lang); // 保存用户偏好
+        
+            // 3. 翻译静态元素：扫描所有 data-i18n-key
             document.querySelectorAll('[data-i18n-key]').forEach(el => {
                 const key = el.dataset.i18nKey;
-                const target = el.dataset.i18nTarget || 'textContent'; // Default to textContent
-                let translation = translations[currentLang][key] || key; // Fallback to key if no translation
-
+                const target = el.dataset.i18nTarget || 'textContent'; // 默认为 textContent
+                let translation = translations[currentLang][key] || key; // 如果找不到翻译则显示 key
+        
                 if (target === 'innerHTML') {
                     el.innerHTML = translation;
                 } else if (target === 'placeholder') {
@@ -467,7 +478,8 @@
                     el.textContent = translation;
                 }
             });
-
+        
+            // 4. 翻译标题提示元素：扫描所有 data-i18n-title
             document.querySelectorAll('[data-i18n-title]').forEach(el => {
                 const key = el.getAttribute('data-i18n-title');
                 if (translations[currentLang][key]) {
@@ -475,20 +487,35 @@
                 }
             });
                 
-            // Update dynamic elements that need re-translation
-            populateLeaders(); // This will now use translated labels AND translated data content
-            updateModelSelectByEndpoint(document.getElementById('apiEndpoint').value); // Re-populate models with translated labels
-
-            // Update selected leader display if "None"
+            // 5. 更新业务逻辑中的动态内容
+            if (typeof populateLeaders === 'function') {
+                populateLeaders(); // 重新填充北极星列表（包含翻译标签）
+            }
+        
+            const apiEndpointEl = document.getElementById('apiEndpoint');
+            if (apiEndpointEl && typeof updateModelSelectByEndpoint === 'function') {
+                // 根据当前接入点重新生成模型下拉列表（包含翻译后的模型名称）
+                updateModelSelectByEndpoint(apiEndpointEl.value); 
+            }
+        
+            // 6. 更新“当前选择”状态显示
             const selectedLeaderNameEl = document.getElementById('selectedLeaderName');
-            if (!currentSelectedLeader) {
+            // 如果当前没选北极星，更新“无/None”的显示
+            if (selectedLeaderNameEl && (typeof currentSelectedLeader === 'undefined' || !currentSelectedLeader)) {
                 selectedLeaderNameEl.textContent = translations[currentLang].noLeaderSelected;
             }
-
-            // === NEW: Call function to update manifesto modal content ===
-            updateManifestoModalContent(lang);
-            // === END NEW ===
-        }    
+        
+            // 7. 更新宣言模态框内容 (Manifesto Modal)
+            if (typeof updateManifestoModalContent === 'function') {
+                updateManifestoModalContent(lang);
+            }
+        
+            // 8. 【新增修复】强制刷新星语上下文 UI 面板
+            // 确保面板中的“暂无上下文”、“来源标签”等动态渲染的内容立即跟随语言变化
+            if (window.ContextUI && typeof window.ContextUI._renderList === 'function') {
+                window.ContextUI._renderList();
+            }
+        }  
 
         // 在你的翻译脚本最底部添加
         window.translations = translations;
