@@ -152,6 +152,13 @@
                  "alertApiSettingsIncomplete": '请确保 API 设置完整（接入点、Key、模型）'  ,   
 
                  "canvasTitle": '思想画布',
+                 "canvasEmptyHint": "暂无思想轨迹...",
+                 "canvasEmptyDesc": "请先在主界面与北极星对话。",
+                 "ctxErrorNotInit": "星语上下文系统尚未初始化",
+                 "ctxErrorFullCleanup": "星语上下文已满（最多 3 个）。\n\n是否打开管理面板手动清理？",
+                 "contextCanvasAddTitle": "加入星语上下文",
+                 "contextToastAdded": "已加入星语上下文",
+                
                  "loginUsernameLabel": '用户名:',
                  "loginUsernamePlaceholder": '输入用户名',
                  "loginPasswordLabel": '密码:',
@@ -358,6 +365,13 @@
                  "alertApiSettingsIncomplete": 'Please ensure API settings are complete (Endpoint, Key, Model)'  ,   
 
                  "canvasTitle": 'Thought Canvas',
+                 "canvasEmptyHint": "No thought trails yet...",
+                 "canvasEmptyDesc": "Please talk with a North Star in the main interface first.",
+                 "ctxErrorNotInit": "Star Context system not initialized",
+                 "ctxErrorFullCleanup": "Star Context is full (Max 3).\n\nOpen the manager for manual cleanup?",
+                 "contextCanvasAddTitle": "Add to Star Context",
+                 "contextToastAdded": "Added to Star Context",
+                    
                  "loginUsernameLabel": 'Username:',
                  "loginUsernamePlaceholder": 'Enter username',
                  "loginPasswordLabel": 'Password:',
