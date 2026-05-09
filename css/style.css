@@ -2341,22 +2341,22 @@
 /* --- 顶部导航条：标题与关闭按钮同行 --- */
 /* --- 第一行：极窄导航条 (约35px) --- */
 /* --- 统一工具栏基础：取消模糊，增加实色感 --- */
+/* --- 基础设置：实色背景，彻底移除模糊 --- */
 .canvas-nav-bar, .canvas-action-bar {
     position: fixed;
     left: 0;
     width: 100%;
-    background: #02060a; /* 使用实色背景，避免节点穿透时的视觉混乱 */
+    background: #02060a; /* 纯黑背景，确保节点滑过时边缘清晰 */
     border-bottom: 1px solid rgba(197, 160, 89, 0.15);
     z-index: 2100;
     box-sizing: border-box;
-    backdrop-filter: none !important; /* 彻底移除模糊遮罩效果 */
+    backdrop-filter: none !important; /* 移除模糊 */
     -webkit-backdrop-filter: none !important;
 }
 
-/* --- 第一行：32px 高度，标题居中 --- */
+/* --- 第一行样式 --- */
 .canvas-nav-bar {
     top: 0;
-    height: 32px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -2367,29 +2367,25 @@
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 0.9rem;
     color: #c5a059;
     font-weight: 700;
     letter-spacing: 2px;
-    pointer-events: none; /* 防止遮挡点击 */
+    white-space: nowrap;
 }
 
 .canvas-close-btn {
-    margin-left: auto; /* 靠右 */
+    margin-left: auto;
     background: transparent !important;
     border: none;
     color: #666;
-    font-size: 1.1rem;
     cursor: pointer;
     transition: color 0.2s;
 }
 
 .canvas-close-btn:hover { color: #fff; }
 
-/* --- 第二行：32px 高度，按钮靠左 --- */
+/* --- 第二行样式 --- */
 .canvas-action-bar {
-    top: 32px;
-    height: 32px;
     display: flex;
     justify-content: flex-start; /* 按钮靠左 */
     align-items: center;
@@ -2399,22 +2395,18 @@
 .action-group {
     display: flex;
     align-items: center;
-    gap: 6px;
 }
 
-/* 按钮微型化 */
 .canvas-action-bar button {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(197, 160, 89, 0.2);
     color: #c5a059;
-    width: 26px;
-    height: 26px;
-    border-radius: 3px;
+    border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 0.75rem;
+    transition: all 0.2s;
 }
 
 .canvas-action-bar button:hover {
@@ -2422,21 +2414,60 @@
     color: #02060a;
 }
 
-.divider-v {
-    width: 1px;
-    height: 12px;
-    background: rgba(197, 160, 89, 0.2);
-    margin: 0 4px;
+/* ============================================================
+   电脑端优化 (屏幕宽度 > 1024px)
+   ============================================================ */
+@media (min-width: 1024px) {
+    .canvas-nav-bar { height: 42px; }     /* 适度放宽高度以容纳大字体 */
+    .canvas-action-bar { height: 42px; top: 42px; }
+
+    .canvas-title { font-size: 1.25rem; } /* 电脑端标题放大 */
+    .canvas-close-btn { font-size: 1.6rem; }
+
+    .action-group { gap: 10px; }
+    .canvas-action-bar button {
+        width: 34px;  /* 按钮变大 */
+        height: 34px;
+        font-size: 1rem; /* 内部图标变大 */
+    }
+
+    .divider-v {
+        width: 1px;
+        height: 18px;
+        background: rgba(197, 160, 89, 0.2);
+        margin: 0 8px;
+    }
+
+    /* 内容区顶部间距相应增加，总高 84px + 预留 36px */
+    .thought-stream { padding: 120px 40px 60px 40px !important; }
 }
 
-/* 适配移动端 */
+/* ============================================================
+   手机端保持 (屏幕宽度 <= 768px)
+   ============================================================ */
 @media (max-width: 768px) {
-    .canvas-nav-bar, .canvas-action-bar {
-        height: 30px;
+    .canvas-nav-bar { height: 32px; }
+    .canvas-action-bar { height: 32px; top: 32px; }
+
+    .canvas-title { font-size: 0.9rem; } /* 手机端维持小字号 */
+    .canvas-close-btn { font-size: 1.1rem; }
+
+    .action-group { gap: 6px; }
+    .canvas-action-bar button {
+        width: 26px;
+        height: 26px;
+        font-size: 0.75rem;
     }
-    .canvas-action-bar { top: 30px; }
-    .canvas-title { font-size: 0.8rem; }
-    .thought-stream { padding-top: 75px !important; }
+
+    .divider-v {
+        width: 1px;
+        height: 12px;
+        background: rgba(197, 160, 89, 0.2);
+        margin: 0 4px;
+    }
+
+    /* 内容区顶部间距，总高 64px + 预留 16px */
+    .thought-stream { padding: 80px 15px 40px 15px !important; }
 }
 
 /* 删除按钮样式 */
