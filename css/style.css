@@ -2335,93 +2335,79 @@
 }
 
 /* 7. 顶部工具栏适配深色背景 */
-.canvas-title {
-    color: #c5a059; /* 金色文字 */
-    text-shadow: 0 0 10px rgba(197, 160, 89, 0.4);
-}
-
 /* ==========================================
-   [优化] 对话画布工具栏 v3.0 - 响应式双层布局
+   [优化] 对话画布工具栏- 响应式双层布局
    ========================================== */
-
-.canvas-toolbar {
+/* --- 顶部导航条：标题与关闭按钮同行 --- */
+.canvas-nav-bar {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 2100;
-    background: rgba(2, 6, 10, 0.85); /* 半透明深色背景 */
-    backdrop-filter: blur(15px);
-    border-bottom: 1px solid rgba(197, 160, 89, 0.2);
-    display: flex;
-    flex-direction: column; /* 改为纵向排列：上层标题，下层按钮 */
-    padding: 0;
-}
-
-/* 上层：标题与关闭按钮 */
-.toolbar-top {
+    height: 60px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
-    height: 50px;
+    padding: 0 25px;
+    background: rgba(2, 6, 10, 0.9);
+    backdrop-filter: blur(10px);
+    z-index: 2101;
+    box-sizing: border-box;
 }
 
-/* 下层：功能按钮组 */
-.toolbar-actions {
-    display: flex;
-    justify-content: center; /* 按钮水平居中 */
-    gap: 12px;
-    padding: 10px 20px;
-    background: rgba(197, 160, 89, 0.05); /* 给按钮区一个微弱的底色区分 */
-    flex-wrap: nowrap; /* 手机端不换行，支持横向滚动或缩放 */
-}
-
-/* 标题样式优化 */
 .canvas-title {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
+    color: #c5a059;
     font-weight: 700;
-    color: #c5a059;
-    text-shadow: 0 0 15px rgba(197, 160, 89, 0.3);
-    margin: 0;
     letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(197, 160, 89, 0.4);
 }
 
-/* 功能按钮样式优化 */
-.toolbar-actions button {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: #c5a059;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(197, 160, 89, 0.4);
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    white-space: nowrap; /* 防止文字折行 */
-}
-
-.toolbar-actions button i {
-    font-size: 1rem;
-}
-
-.toolbar-actions button:hover {
-    background: #c5a059;
-    color: #0d1218;
-    box-shadow: 0 0 15px rgba(197, 160, 89, 0.4);
-    transform: translateY(-1px);
-}
-
-/* 关闭按钮特殊处理：移除之前可能的默认样式干扰 */
 .canvas-close-btn {
     background: transparent !important;
     border: none !important;
-    color: rgba(255, 255, 255, 0.6) !important;
+    color: rgba(255, 255, 255, 0.5) !important;
     font-size: 1.8rem !important;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 10px;
+}
+
+.canvas-close-btn:hover {
+    color: #ff4d4f !important;
+    transform: rotate(90deg);
+}
+
+/* --- 第二行功能工具栏 --- */
+.canvas-action-bar {
+    position: fixed;
+    top: 60px; /* 紧贴第一行 */
+    left: 0;
+    width: 100%;
+    height: 55px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(197, 160, 89, 0.05); /* 淡淡的金色底色区分 */
+    border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+    backdrop-filter: blur(10px);
+    z-index: 2100;
+    box-sizing: border-box;
+}
+
+.action-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.canvas-action-bar button {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(197, 160, 89, 0.3);
+    color: #c5a059;
     width: 40px;
     height: 40px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2429,43 +2415,57 @@
     transition: all 0.3s;
 }
 
-.canvas-close-btn:hover {
-    color: #ff4d4f !important; /* 悬停稍微发红提示关闭 */
-    transform: rotate(90deg);
+.canvas-action-bar button:hover {
+    background: #c5a059;
+    color: #0d1218;
+    box-shadow: 0 0 12px rgba(197, 160, 89, 0.5);
 }
 
-/* --- 移动端适配优化 --- */
+.divider-v {
+    width: 1px;
+    height: 20px;
+    background: rgba(197, 160, 89, 0.3);
+    margin: 0 5px;
+}
+
+/* --- 移动端适配 --- */
 @media (max-width: 768px) {
-    .toolbar-top {
-        padding: 8px 15px;
-        height: 45px;
+    .canvas-nav-bar {
+        padding: 0 15px;
+        height: 50px;
     }
     
     .canvas-title {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
     }
 
-    .toolbar-actions {
-        gap: 8px;
-        padding: 8px 10px;
-        justify-content: flex-start; /* 手机端靠左排列 */
-        overflow-x: auto; /* 核心：如果按钮太多，支持左右滑动而不是强行换行 */
+    .canvas-action-bar {
+        top: 50px;
+        height: 50px;
+        justify-content: flex-start; /* 靠左排列 */
+        padding: 0 15px;
+        overflow-x: auto; /* 核心：手机端支持横向滑动，防止折行 */
         -webkit-overflow-scrolling: touch;
-        scrollbar-width: none; /* 隐藏滚动条 */
     }
 
-    .toolbar-actions::-webkit-scrollbar {
+    /* 隐藏滚动条但保留功能 */
+    .canvas-action-bar::-webkit-scrollbar {
         display: none;
     }
 
-    .toolbar-actions button {
-        padding: 5px 10px;
-        font-size: 0.8rem;
+    .action-group {
+        gap: 10px;
     }
-    
-    /* 调整主内容区的偏移，防止被加高的工具栏遮挡 */
+
+    .canvas-action-bar button {
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0; /* 防止按钮被挤压变扁 */
+    }
+
+    /* 调整主内容区的顶部偏移，避开两层工具栏 */
     .thought-stream {
-        padding-top: 130px; /* 根据两层工具栏的高度调整 */
+        padding-top: 130px !important;
     }
 }
 
