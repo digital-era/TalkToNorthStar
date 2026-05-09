@@ -1403,16 +1403,13 @@ function renderDialogueCanvas() {
         node.onclick = (e) => addToInspiration(e, item.text);
 
         /* ═══════════════════════════════════════════════
-           【星语上下文按钮】DOM 创建 + addEventListener
+           【星语上下文按钮】蓝色星标，点击即添加
+           无状态切换，无重复检测，用户自行管理
            ═══════════════════════════════════════════════ */
-        const inCtx = (window.starContext && item.id) 
-            ? window.starContext.hasDialogueNode(item.id) 
-            : false;
-        
         const ctxBtn = document.createElement('button');
-        ctxBtn.className = `ctx-canvas-btn ${inCtx ? 'in-context' : ''}`;
-        ctxBtn.innerHTML = `<i class="fas ${inCtx ? 'fa-minus' : 'fa-plus'}"></i>`;
-        ctxBtn.title = inCtx ? '从星语上下文移除' : '加入星语上下文';
+        ctxBtn.className = 'ctx-canvas-btn';
+        ctxBtn.innerHTML = '<i class="fas fa-star"></i>';  // 蓝色星标
+        ctxBtn.title = '加入星语上下文';
         
         ctxBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -1422,21 +1419,30 @@ function renderDialogueCanvas() {
                 return;
             }
             
+            // 检查是否已满（仅提示，不阻止）
+            if (window.starContext.isFull()) {
+                const go = confirm('星语上下文已满（最多 3 个）。\n\n是否打开管理面板手动清理？');
+                if (go && window.ContextUI) window.ContextUI.openPanel();
+                return;
+            }
+            
+            // 直接添加，不检测重复
             const res = window.starContext.addFromDialogue(item);
             if (res.success) {
-                const isIn = res.action === 'added';
-                ctxBtn.classList.toggle('in-context', isIn);
-                ctxBtn.innerHTML = `<i class="fas ${isIn ? 'fa-minus' : 'fa-plus'}"></i>`;
-                ctxBtn.title = isIn ? '从星语上下文移除' : '加入星语上下文';
+                // 瞬时动画反馈
+                ctxBtn.classList.add('just-added');
+                setTimeout(() => ctxBtn.classList.remove('just-added'), 600);
                 
+                // 刷新侧滑面板
                 if (window.ContextUI && window.ContextUI._renderList) {
                     window.ContextUI._renderList();
                 }
                 
-                const msg = isIn ? '已加入星语上下文' : '已从上下文移除';
+                // Toast
+                const msg = '已加入星语上下文';
                 const t = document.createElement('div');
-                t.style.cssText = 'position:fixed; bottom:50px; left:50%; transform:translateX(-50%); background:rgba(0,223,216,.12); border:1px solid rgba(0,223,216,.3); color:#00dfd8; padding:13px 28px; border-radius:50px; font-size:14px; font-family:"Noto Serif SC",serif; backdrop-filter:blur(12px); z-index:999999; opacity:0; transition:all .35s; pointer-events:none; white-space:nowrap; letter-spacing:1px; box-shadow:0 8px 32px rgba(0,0,0,.3);';
-                t.innerHTML = `<i class="fas fa-check-circle" style="margin-right:8px"></i> ${msg}`;
+                t.style.cssText = 'position:fixed; bottom:50px; left:50%; transform:translateX(-50%); background:rgba(0,124,240,.12); border:1px solid rgba(0,124,240,.3); color:#007cf0; padding:13px 28px; border-radius:50px; font-size:14px; font-family:"Noto Serif SC",serif; backdrop-filter:blur(12px); z-index:999999; opacity:0; transition:all .35s; pointer-events:none; white-space:nowrap; letter-spacing:1px; box-shadow:0 8px 32px rgba(0,0,0,.3);';
+                t.innerHTML = `<i class="fas fa-star" style="margin-right:8px"></i> ${msg}`;
                 document.body.appendChild(t);
                 requestAnimationFrame(() => requestAnimationFrame(() => t.style.opacity = '1'));
                 setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; setTimeout(()=>t.remove(), 350); }, 2200);
@@ -1446,7 +1452,7 @@ function renderDialogueCanvas() {
         });
 
         /* ═══════════════════════════════════════════════
-           【删除按钮】DOM 创建 + addEventListener
+           【删除按钮】
            ═══════════════════════════════════════════════ */
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'node-delete-btn';
@@ -1458,7 +1464,7 @@ function renderDialogueCanvas() {
             deleteNode(e, index);
         });
 
-        // 按顺序插入：上下文按钮 → 删除按钮 → 内容
+        // 按顺序插入：上下文按钮 → 删除按钮
         node.insertBefore(ctxBtn, node.firstChild);
         node.insertBefore(deleteBtn, node.firstChild);
 
