@@ -1501,16 +1501,26 @@ function renderDialogueCanvas() {
     container.appendChild(fragment);
 
     // 严格保留原有的 MathJax 延时逻辑
+    /* --- 修改 renderDialogueCanvas 函数末尾的 MathJax 逻辑 --- */
     if (window.MathJax) {
         const delay = typeof requestIdleCallback !== 'undefined' 
             ? cb => requestIdleCallback(cb, { timeout: 500 })
             : cb => setTimeout(cb, 300);
+            
         delay(() => {
-            MathJax.typesetPromise([container]).catch(err => {});
+            // 关键修改点：在 typesetPromise 渲染完成后，追加执行一次 drawConnections
+            MathJax.typesetPromise([container])
+                .then(() => {
+                    // 确保公式撑开高度后，重新计算位置
+                    setTimeout(drawConnections, 100); 
+                })
+                .catch(err => console.warn('MathJax reflow error:', err));
         });
+    } else {
+        // 如果没有 MathJax，也适当增加延时确保布局稳定
+        setTimeout(drawConnections, 200);
     }
-
-    setTimeout(drawConnections, 100);
+    
 }
 
 
