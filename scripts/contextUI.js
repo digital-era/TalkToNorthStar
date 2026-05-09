@@ -6,19 +6,26 @@
  */
 
 const ContextUI = {
-  // ...
+  panel: null,
+  browseModal: null,
+  isPanelOpen: false,
+
+  // ── 国际化辅助方法 ──
   _t(key) {
     const lang = window.currentLang || 'zh-CN';
     const dict = window.translations?.[lang] || window.translations?.['zh-CN'] || {};
     return dict[key] || key;
   },
-  // ...
-};
 
-const ContextUI = {
-  panel: null,
-  browseModal: null,
-  isPanelOpen: false,
+  // ── 来源标签映射（动态国际化）──
+  _getSourceLabel(source) {
+    const map = {
+      text: this._t('contextSourceText'),
+      url: this._t('contextSourceUrl'),
+      dialogue: this._t('contextSourceDialogue')
+    };
+    return map[source] || source;
+  },
 
   init() {
     this._createPanel();
@@ -30,7 +37,7 @@ const ContextUI = {
     this._renderList();
   },
 
-   /* ── 构建侧滑面板（国际化版） ── */
+  /* ── 构建侧滑面板（国际化版） ── */
   _createPanel() {
     const panel = document.createElement('div');
     panel.id = 'starContextPanel';
@@ -68,7 +75,7 @@ const ContextUI = {
               <div class="ctx-url-hint">${this._t('contextUrlHint')}</div>
             </div>
           </div>
-  
+
           <div class="star-context-list-area">
             <div class="ctx-list-header">
               <span>${this._t('contextSelectedHeader')} <span id="ctxCountBadge" class="ctx-count">0/3</span></span>
@@ -93,69 +100,63 @@ const ContextUI = {
   _createBrowseModal() {
     const modal = document.createElement('div');
     modal.id = 'starContextBrowseModal';
-    // 【关键】不再使用 .modal 类，避免与项目全局 modal 样式冲突
     modal.className = 'star-context-browse-modal';
     modal.innerHTML = `
       <div class="modal-content star-context-browse-content">
         <span class="close-button" onclick="ContextUI.closeBrowse(event)">×</span>
-        <div class="ctx-browse-title"><i class="fas fa-scroll"></i> <span id="ctxBrowseTitleText">上下文内容</span></div>
+        <div class="ctx-browse-title"><i class="fas fa-scroll"></i> <span id="ctxBrowseTitleText">${this._t('contextBrowseTitle')}</span></div>
         <div id="ctxBrowseBody" class="ctx-browse-body"></div>
       </div>`;
     document.body.appendChild(modal);
     this.browseModal = modal;
 
-    // 点击背景关闭
     modal.addEventListener('click', (e) => {
       if (e.target === modal) this.closeBrowse();
     });
 
-    // ESC 键关闭
     this._escHandler = (e) => {
       if (e.key === 'Escape' && modal.classList.contains('open')) this.closeBrowse();
     };
     document.addEventListener('keydown', this._escHandler);
   },
 
-  /* ── 绑定原有按钮 ── */
+  /* ── 绑定原有按钮（国际化版） ── */
   _bindGlobalEvents() {
-    // 接管 HTML 中的 ContextButton
     const btn = document.getElementById('ContextButton');
     if (btn) {
       btn.onclick = () => this.openPanel();
-      btn.title = '星语上下文管理';
+      btn.title = this._t('contextButtonTitle');
     }
-    // 提供全局句柄供 HTML 内联调用
     window.handleContext = () => this.openPanel();
   },
 
-  /* ── 画布按钮注入（非侵入式） ── */
+  /* ── 画布按钮注入 ── */
   _watchCanvas() {
     const container = document.getElementById('thoughtStreamContent');
     if (!container) return;
     const observer = new MutationObserver(() => this._injectCanvasButtons());
     observer.observe(container, { childList: true, subtree: true });
-    // 初始注入
     setTimeout(() => this._injectCanvasButtons(), 500);
   },
 
-  /* ── 画布按钮注入（非侵入式，国际化版） ── */
+  /* ── 画布按钮注入（国际化版） ── */
   _injectCanvasButtons() {
     const nodes = document.querySelectorAll('.thought-node');
     const history = (typeof getMergedHistory === 'function')
       ? getMergedHistory(window.importedHistory || null, window.conversationHistory || [])
       : [];
-  
+
     nodes.forEach((node, idx) => {
       if (node.querySelector('.ctx-canvas-btn')) return;
       const data = history[idx];
       if (!data || !data.id) return;
-  
+
       const inCtx = window.starContext.hasDialogueNode(data.id);
       const btn = document.createElement('button');
       btn.className = `ctx-canvas-btn ${inCtx ? 'in-context' : ''}`;
       btn.title = inCtx ? this._t('contextCanvasRemoveTitle') : this._t('contextCanvasAddTitle');
       btn.innerHTML = inCtx ? '<i class="fas fa-minus"></i>' : '<i class="fas fa-plus"></i>';
-  
+
       btn.onclick = (e) => {
         e.stopPropagation();
         const res = window.starContext.addFromDialogue(data);
@@ -170,8 +171,7 @@ const ContextUI = {
           alert(res.message);
         }
       };
-  
-      // 插入到删除按钮之前
+
       const deleteBtn = node.querySelector('.node-delete-btn');
       if (deleteBtn) {
         node.insertBefore(btn, deleteBtn);
@@ -195,11 +195,11 @@ const ContextUI = {
     const res = window.starContext.addFromText(text, '粘贴文本');
     if (res.success) {
       ta.value = '';
-      this._showToast(this._t('contextToastAdded'));   // ✅ 替换硬编码
+      this._showToast(this._t('contextToastAdded'));
     } else {
       alert(res.message);
     }
-  }
+  },
 
   async addFromUrl() {
     const input = document.getElementById('ctxUrlInput');
@@ -209,36 +209,35 @@ const ContextUI = {
     const html = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 解析中…';
     btn.disabled = true;
-  
+
     const res = await window.starContext.addFromUrl(url);
-  
+
     btn.innerHTML = html;
     btn.disabled = false;
     if (res.success) {
       input.value = '';
-      this._showToast(this._t('contextToastUrlAdded'));   // ✅ 替换硬编码
+      this._showToast(this._t('contextToastUrlAdded'));
     } else {
       alert(res.message);
     }
-  }
+  },
 
   clearAll() {
     if (!window.starContext.getAll().length) return;
-    if (!confirm(this._t('contextConfirmClear'))) return;   // ✅ 替换硬编码
+    if (!confirm(this._t('contextConfirmClear'))) return;
     window.starContext.clear();
-    this._showToast(this._t('contextToastCleared'));        // ✅ 替换硬编码
+    this._showToast(this._t('contextToastCleared'));
     this._refreshCanvasButtons();
-  }
+  },
 
   removeContext(id) {
     window.starContext.remove(id);
     this._refreshCanvasButtons();
-    this._showToast(this._t('contextToastRemoved'));   // 可选
-  }
+    this._showToast(this._t('contextToastRemoved'));
+  },
 
   /* ── 浏览 ── */
   browseContext(id) {
-    // 防重复点击锁
     if (this._browseOpening) return;
     this._browseOpening = true;
 
@@ -252,21 +251,17 @@ const ContextUI = {
       : ctx.content.replace(/\n/g, '<br>');
 
     const modal = this.browseModal;
-    // 先设置 display 确保进入文档流
     modal.style.display = 'flex';
-    // 双 rAF 确保浏览器已重绘后再添加 open 类，触发动画
     requestAnimationFrame(() => {
       requestAnimationFrame(() => modal.classList.add('open'));
     });
 
     if (window.MathJax) MathJax.typesetPromise([body]).catch(() => {});
 
-    // 400ms 后解锁（匹配 CSS transition 时长）
     setTimeout(() => { this._browseOpening = false; }, 400);
   },
-  
+
   closeBrowse(e) {
-    // 阻止事件冒泡，防止触发背景点击
     if (e) e.stopPropagation();
 
     const modal = this.browseModal;
@@ -274,8 +269,6 @@ const ContextUI = {
 
     modal.classList.remove('open');
 
-    // 等待 CSS 动画（0.4s）完全结束后再移除 display
-    // 避免直接 display:none 导致按钮跳闪与动画截断
     setTimeout(() => {
       if (!modal.classList.contains('open')) {
         modal.style.display = 'none';
@@ -290,13 +283,14 @@ const ContextUI = {
     document.body.style.overflow = 'hidden';
     this._renderList();
   },
+
   closePanel() {
     this.isPanelOpen = false;
     this.panel.classList.remove('open');
     document.body.style.overflow = '';
   },
 
-  /* ── 渲染列表 ── */
+  /* ── 渲染列表（国际化版） ── */
   _renderList() {
     const container = document.getElementById('ctxListContainer');
     const items = window.starContext.getAll();
@@ -306,8 +300,8 @@ const ContextUI = {
       container.innerHTML = `
         <div class="ctx-empty-state">
           <i class="fas fa-wind"></i>
-          <p>暂无上下文</p>
-          <span>从上方粘贴文本、输入 URL，或从对话画布中添加</span>
+          <p>${this._t('contextEmptyTitle')}</p>
+          <span>${this._t('contextEmptyDesc')}</span>
         </div>`;
       return;
     }
@@ -317,18 +311,18 @@ const ContextUI = {
       <div class="ctx-card" style="--i:${i}">
         <div class="ctx-card-header">
           <div class="ctx-card-title">
-            <i class="fas ${iconMap[ctx.source]||'fa-star'}"></i>
+            <i class="fas ${iconMap[ctx.source] || 'fa-star'}"></i>
             <span>${ctx.title}</span>
           </div>
           <div class="ctx-card-actions">
-            <button onclick="ContextUI.browseContext('${ctx.id}')" title="浏览全文"><i class="fas fa-eye"></i></button>
-            <button onclick="ContextUI.removeContext('${ctx.id}')" title="移除"><i class="fas fa-times"></i></button>
+            <button onclick="ContextUI.browseContext('${ctx.id}')" title="${this._t('contextBrowseTitleAttr')}"><i class="fas fa-eye"></i></button>
+            <button onclick="ContextUI.removeContext('${ctx.id}')" title="${this._t('contextRemoveTitleAttr')}"><i class="fas fa-times"></i></button>
           </div>
         </div>
         <div class="ctx-card-preview">${ctx.preview}</div>
         <div class="ctx-card-meta">
           <span>${new Date(ctx.timestamp).toLocaleString()}</span>
-          <span class="ctx-source-tag">${{text:'文本',url:'网页',dialogue:'对话'}[ctx.source]}</span>
+          <span class="ctx-source-tag">${this._getSourceLabel(ctx.source)}</span>
         </div>
       </div>`).join('');
   },
@@ -344,7 +338,10 @@ const ContextUI = {
     t.innerHTML = `<i class="fas fa-check-circle"></i> ${msg}`;
     document.body.appendChild(t);
     requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('show')));
-    setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2200);
+    setTimeout(() => {
+      t.classList.remove('show');
+      setTimeout(() => t.remove(), 300);
+    }, 2200);
   }
 };
 
