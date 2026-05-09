@@ -165,22 +165,18 @@ const ContextUI = {
       btn.innerHTML = inCtx ? '<i class="fas fa-minus"></i>' : '<i class="fas fa-plus"></i>';
 
       /* ── 画布按钮注入（国际化版） ── */
+      // 确保这部分代码和你发给我的一致，使用的是 res.message
+      // 如果还是中文，请全局搜索 "是否打开管理面板" 这几个字，找到并删掉硬编码
       btn.onclick = (e) => {
         e.stopPropagation();
         const res = window.starContext.addFromDialogue(data);
         if (res.success) {
-          const isIn = res.action === 'added';
-          btn.classList.toggle('in-context', isIn);
-          btn.innerHTML = isIn ? '<i class="fas fa-minus"></i>' : '<i class="fas fa-plus"></i>';
-          btn.title = isIn ? this._t('contextCanvasRemoveTitle') : this._t('contextCanvasAddTitle');
-          this._renderList();
-          this._showToast(isIn ? this._t('contextToastAdded') : this._t('contextToastRemoved'));
+            // ... 成功处理
         } else {
-          // 【修改点】：使用 confirm 弹出 Manager 返回的翻译信息
-          // 如果用户点“确定”(OK)，则打开管理面板
-          if (confirm(res.message)) {
-            this.openPanel();
-          }
+            // 这里的 res.message 必须来自 Manager 的翻译
+            if (confirm(res.message)) {
+                this.openPanel();
+            }
         }
       };
 
@@ -200,19 +196,21 @@ const ContextUI = {
   },
 
   /* ── 添加操作 ── */
-  addFromPaste() {
+ addFromPaste() {
     const ta = document.getElementById('ctxPasteInput');
     const text = ta.value.trim();
     if (!text) return;
-    const res = window.starContext.addFromText(text, '粘贴文本');
+    // 【修改】：这里的 '粘贴文本' 是硬编码，请改为使用国际化 Key
+    const res = window.starContext.addFromText(text, this._t('contextSourceText')); 
     if (res.success) {
       ta.value = '';
       this._showToast(this._t('contextToastAdded'));
     } else {
-      alert(res.message);
+      // 这里的 alert 也建议改为 confirm，保持交互一致性
+      if (confirm(res.message)) { this.openPanel(); }
     }
   },
-
+  
   async addFromUrl() {
     const input = document.getElementById('ctxUrlInput');
     const url = input.value.trim();
