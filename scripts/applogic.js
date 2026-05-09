@@ -86,7 +86,9 @@ function saveApiSettings() {
 
     localStorage.setItem('apiSettingsMap', JSON.stringify(allSettings));
 
-    alert(translations[currentLang].settingsSaved || 'Settings Saved!');
+    // alert(translations[currentLang].settingsSaved || 'Settings Saved!');
+    // 修改后（确保 translations 中包含 settingsSaved 键）
+    alert(translations[currentLang].settingsSaved);
     closeApiSettingsModal();
 }
 
@@ -433,7 +435,8 @@ async function getAIResponse() {
     const loadingIndicator = document.getElementById('loadingIndicator');
 
     if (!apiBaseUrl || !apiKey || !model) {
-        alert("请确保 API 设置完整（接入点、Key、模型）");
+        //alert("请确保 API 设置完整（接入点、Key、模型）");
+        alert(translations[currentLang].alertApiSettingsIncomplete);
         return;
     }
 
@@ -1184,7 +1187,8 @@ async function openElegantMode() {
 
     const rawAiContent = aiResponseEl.dataset.raw || aiResponseEl.innerText;
     if (!rawAiContent || rawAiContent.trim() === "") {
-        alert("✦ 星辰尚未汇聚，请先获取北极星的指引。");
+        //alert("✦ 星辰尚未汇聚，请先获取北极星的指引。");
+        alert(translations[currentLang].alertNoNorthStarResponse);
         return;
     }
 
@@ -1308,12 +1312,16 @@ function clearCanvasHistory() {
     }
 
     // 2. 提示语稍作调整，提醒用户会清空导入内容
+    /*
     const isConfirmed = confirm(
         "⚠️ 高风险操作\n\n" +
         "您确定要清空整个画布吗？\n" +
         "此操作将移除所有当前的思维节点（包括任何从MD导入的历史内容），且无法恢复。\n" +
         "(主界面的对话记录不会受影响)"
-    );
+    );*/
+
+    // 修改后
+    const isConfirmed = confirm(translations[currentLang].confirmClearCanvas);
 
     // 3. 执行清空
     if (isConfirmed) {
@@ -1533,7 +1541,8 @@ function deleteNode(event, index) {
     }
     
     // 2. 弹出确认框
-    const isConfirmed = confirm("🗑️ 确认删除\n\n您确定要移除这个对话节点吗？\n删除后，画布上的连线将自动重新连接。");
+   //const isConfirmed = confirm("🗑️ 确认删除\n\n您确定要移除这个对话节点吗？\n删除后，画布上的连线将自动重新连接。");
+    const isConfirmed = confirm(translations[currentLang].confirmDeleteNode);
 
     // 3. 用户点击“确定”后执行
     if (isConfirmed) {
@@ -1581,7 +1590,8 @@ function exportToMD() {
     const history = getMergedHistory(importedHistory, conversationHistory);
     
     if (!history || history.length === 0) {
-        alert("画布为空，无法导出。");
+        //alert("画布为空，无法导出。");
+        alert(translations[currentLang].alertCanvasEmpty);
         return;
     }
 
@@ -1669,7 +1679,8 @@ function exportToPDF() {
     
     const source = document.getElementById('thoughtStreamContent');
     if (!source) {
-        alert("无可导出内容");
+        //alert("无可导出内容");
+        alert(translations[currentLang].alertNoExportContent);
         return;
     }
 
