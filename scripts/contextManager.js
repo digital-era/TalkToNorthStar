@@ -103,20 +103,12 @@ class StarContextManager {
   }
 
   /* ── 3. 对话节点 Toggle ── */
-  addFromDialogue(nodeData) {
+   addFromDialogue(nodeData) {
     const nodeId = nodeData.id || ('node_' + Date.now());
 
-    // 若已存在则移除（实现 +/- 切换）
-    const existIdx = this.contexts.findIndex(
-      c => c.source === 'dialogue' && c.sourceMeta?.nodeId === nodeId
-    );
-    if (existIdx >= 0) {
-      this.contexts.splice(existIdx, 1);
-      this.save();
-      return { success: true, id: null, action: 'removed' };
+    if (this.isFull()) {
+      return { success: false, message: '星语上下文已满（最多 3 个），请先清理' };
     }
-
-    if (this.isFull()) return { success: false, message: '星语上下文已满（最多 3 个）' };
 
     const roleName = nodeData.role === 'user'
       ? '探索者'
