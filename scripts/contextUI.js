@@ -82,15 +82,27 @@ const ContextUI = {
   _createBrowseModal() {
     const modal = document.createElement('div');
     modal.id = 'starContextBrowseModal';
-    modal.className = 'modal star-context-browse-modal';
+    // 【关键】不再使用 .modal 类，避免与项目全局 modal 样式冲突
+    modal.className = 'star-context-browse-modal';
     modal.innerHTML = `
       <div class="modal-content star-context-browse-content">
-        <span class="close-button" onclick="ContextUI.closeBrowse()">×</span>
+        <span class="close-button" onclick="ContextUI.closeBrowse(event)">×</span>
         <div class="ctx-browse-title"><i class="fas fa-scroll"></i> <span id="ctxBrowseTitleText">上下文内容</span></div>
         <div id="ctxBrowseBody" class="ctx-browse-body"></div>
       </div>`;
     document.body.appendChild(modal);
     this.browseModal = modal;
+
+    // 点击背景关闭
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) this.closeBrowse();
+    });
+
+    // ESC 键关闭
+    this._escHandler = (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('open')) this.closeBrowse();
+    };
+    document.addEventListener('keydown', this._escHandler);
   },
 
   /* ── 绑定原有按钮 ── */
@@ -198,15 +210,50 @@ const ContextUI = {
 
   /* ── 浏览 ── */
   browseContext(id) {
+    // 防重复点击锁
+    if (this._browseOpening) return;
+    this._browseOpening = true;
+
     const ctx = window.starContext.getAll().find(c => c.id === id);
-    if (!ctx) return;
+    if (!ctx) { this._browseOpening = false; return; }
+
     document.getElementById('ctxBrowseTitleText').textContent = ctx.title;
     const body = document.getElementById('ctxBrowseBody');
-    body.innerHTML = (typeof marked !== 'undefined') ? marked.parse(ctx.content) : ctx.content.replace(/\n/g, '<br>');
-    this.browseModal.style.display = 'block';
-    if (window.MathJax) MathJax.typesetPromise([body]).catch(()=>{});
+    body.innerHTML = (typeof marked !== 'undefined')
+      ? marked.parse(ctx.content)
+      : ctx.content.replace(/\n/g, '<br>');
+
+    const modal = this.browseModal;
+    // 先设置 display 确保进入文档流
+    modal.style.display = 'flex';
+    // 双 rAF 确保浏览器已重绘后再添加 open 类，触发动画
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => modal.classList.add('open'));
+    });
+
+    if (window.MathJax) MathJax.typesetPromise([body]).catch(() => {});
+
+    // 400ms 后解锁（匹配 CSS transition 时长）
+    setTimeout(() => { this._browseOpening = false; }, 400);
   },
-  closeBrowse() { this.browseModal.style.display = 'none'; },
+  
+  closeBrowse(e) {
+    // 阻止事件冒泡，防止触发背景点击
+    if (e) e.stopPropagation();
+
+    const modal = this.browseModal;
+    if (!modal || !modal.classList.contains('open')) return;
+
+    modal.classList.remove('open');
+
+    // 等待 CSS 动画（0.4s）完全结束后再移除 display
+    // 避免直接 display:none 导致按钮跳闪与动画截断
+    setTimeout(() => {
+      if (!modal.classList.contains('open')) {
+        modal.style.display = 'none';
+      }
+    }, 400);
+  },
 
   /* ── 面板开关 ── */
   openPanel() {
