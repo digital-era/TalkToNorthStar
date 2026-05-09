@@ -12,10 +12,12 @@ const ContextUI = {
 
   // ── 国际化辅助方法 ──
   _t(key) {
+    // 确保 fallback 逻辑更健壮
     const lang = window.currentLang || 'zh-CN';
-    const dict = window.translations?.[lang] || window.translations?.['zh-CN'] || {};
+    const translations = window.translations || {}; 
+    const dict = translations[lang] || translations['zh-CN'] || {};
     return dict[key] || key;
-  },
+},
 
   // ── 来源标签映射（动态国际化）──
   _getSourceLabel(source) {
