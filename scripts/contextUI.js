@@ -4,6 +4,17 @@
  * 职责：侧滑面板、画布按钮注入、浏览交互、Toast
  * ═══════════════════════════════════════════════
  */
+
+const ContextUI = {
+  // ...
+  _t(key) {
+    const lang = window.currentLang || 'zh-CN';
+    const dict = window.translations?.[lang] || window.translations?.['zh-CN'] || {};
+    return dict[key] || key;
+  },
+  // ...
+};
+
 const ContextUI = {
   panel: null,
   browseModal: null,
@@ -19,7 +30,7 @@ const ContextUI = {
     this._renderList();
   },
 
-  /* ── 构建侧滑面板 ── */
+   /* ── 构建侧滑面板（国际化版） ── */
   _createPanel() {
     const panel = document.createElement('div');
     panel.id = 'starContextPanel';
@@ -28,7 +39,7 @@ const ContextUI = {
       <div class="star-context-backdrop" onclick="ContextUI.closePanel()"></div>
       <div class="star-context-sheet">
         <div class="star-context-header">
-          <h3><i class="fas fa-star-of-life"></i> 星语上下文</h3>
+          <h3><i class="fas fa-star-of-life"></i> ${this._t('contextPanelTitle')}</h3>
           <button class="star-context-close" onclick="ContextUI.closePanel()">
             <i class="fas fa-times"></i>
           </button>
@@ -37,39 +48,39 @@ const ContextUI = {
           <div class="star-context-input-area">
             <div class="star-context-tabs">
               <button class="ctx-tab active" data-tab="paste" onclick="ContextUI.switchTab('paste')">
-                <i class="fas fa-paste"></i> 粘贴文本
+                <i class="fas fa-paste"></i> ${this._t('contextTabPaste')}
               </button>
               <button class="ctx-tab" data-tab="url" onclick="ContextUI.switchTab('url')">
-                <i class="fas fa-link"></i> 网页链接
+                <i class="fas fa-link"></i> ${this._t('contextTabUrl')}
               </button>
             </div>
             <div class="ctx-tab-content active" id="ctx-tab-paste">
-              <textarea id="ctxPasteInput" placeholder="在此粘贴文本，系统将自动规整为 Markdown 格式…"></textarea>
+              <textarea id="ctxPasteInput" placeholder="${this._t('contextPastePlaceholder')}"></textarea>
               <button class="ctx-add-btn" onclick="ContextUI.addFromPaste()">
-                <i class="fas fa-plus"></i> 加入上下文
+                <i class="fas fa-plus"></i> ${this._t('contextAddBtn')}
               </button>
             </div>
             <div class="ctx-tab-content" id="ctx-tab-url">
-              <input type="text" id="ctxUrlInput" placeholder="https://example.com/article" />
+              <input type="text" id="ctxUrlInput" placeholder="${this._t('contextUrlPlaceholder')}" />
               <button class="ctx-add-btn" onclick="ContextUI.addFromUrl()">
-                <i class="fas fa-globe"></i> 解析并加入
+                <i class="fas fa-globe"></i> ${this._t('contextParseBtn')}
               </button>
-              <div class="ctx-url-hint">支持新闻、博客等公开页面。若解析失败，请切换至「粘贴文本」手动导入。</div>
+              <div class="ctx-url-hint">${this._t('contextUrlHint')}</div>
             </div>
           </div>
-
+  
           <div class="star-context-list-area">
             <div class="ctx-list-header">
-              <span>已选上下文 <span id="ctxCountBadge" class="ctx-count">0/3</span></span>
-              <button class="ctx-clear-btn" onclick="ContextUI.clearAll()" title="清空全部">
+              <span>${this._t('contextSelectedHeader')} <span id="ctxCountBadge" class="ctx-count">0/3</span></span>
+              <button class="ctx-clear-btn" onclick="ContextUI.clearAll()" title="${this._t('contextClearTitle')}">
                 <i class="fas fa-trash-alt"></i>
               </button>
             </div>
             <div id="ctxListContainer" class="ctx-list-container">
               <div class="ctx-empty-state">
                 <i class="fas fa-wind"></i>
-                <p>暂无上下文</p>
-                <span>从上方粘贴文本、输入 URL，或从对话画布中添加</span>
+                <p>${this._t('contextEmptyTitle')}</p>
+                <span>${this._t('contextEmptyDesc')}</span>
               </div>
             </div>
           </div>
@@ -127,23 +138,24 @@ const ContextUI = {
     setTimeout(() => this._injectCanvasButtons(), 500);
   },
 
+  /* ── 画布按钮注入（非侵入式，国际化版） ── */
   _injectCanvasButtons() {
     const nodes = document.querySelectorAll('.thought-node');
     const history = (typeof getMergedHistory === 'function')
       ? getMergedHistory(window.importedHistory || null, window.conversationHistory || [])
       : [];
-
+  
     nodes.forEach((node, idx) => {
       if (node.querySelector('.ctx-canvas-btn')) return;
       const data = history[idx];
       if (!data || !data.id) return;
-
+  
       const inCtx = window.starContext.hasDialogueNode(data.id);
       const btn = document.createElement('button');
       btn.className = `ctx-canvas-btn ${inCtx ? 'in-context' : ''}`;
-      btn.title = inCtx ? '从星语上下文移除' : '加入星语上下文';
+      btn.title = inCtx ? this._t('contextCanvasRemoveTitle') : this._t('contextCanvasAddTitle');
       btn.innerHTML = inCtx ? '<i class="fas fa-minus"></i>' : '<i class="fas fa-plus"></i>';
-
+  
       btn.onclick = (e) => {
         e.stopPropagation();
         const res = window.starContext.addFromDialogue(data);
@@ -151,15 +163,15 @@ const ContextUI = {
           const isIn = res.action === 'added';
           btn.classList.toggle('in-context', isIn);
           btn.innerHTML = isIn ? '<i class="fas fa-minus"></i>' : '<i class="fas fa-plus"></i>';
-          btn.title = isIn ? '从星语上下文移除' : '加入星语上下文';
+          btn.title = isIn ? this._t('contextCanvasRemoveTitle') : this._t('contextCanvasAddTitle');
           this._renderList();
-          this._showToast(isIn ? '已加入星语上下文' : '已从上下文移除');
+          this._showToast(isIn ? this._t('contextToastAdded') : this._t('contextToastRemoved'));
         } else {
           alert(res.message);
         }
       };
-
-      // 【关键】插入到删除按钮之前，实现"在关闭按钮左面"
+  
+      // 插入到删除按钮之前
       const deleteBtn = node.querySelector('.node-delete-btn');
       if (deleteBtn) {
         node.insertBefore(btn, deleteBtn);
@@ -181,9 +193,13 @@ const ContextUI = {
     const text = ta.value.trim();
     if (!text) return;
     const res = window.starContext.addFromText(text, '粘贴文本');
-    if (res.success) { ta.value = ''; this._showToast('已加入星语上下文'); }
-    else alert(res.message);
-  },
+    if (res.success) {
+      ta.value = '';
+      this._showToast(this._t('contextToastAdded'));   // ✅ 替换硬编码
+    } else {
+      alert(res.message);
+    }
+  }
 
   async addFromUrl() {
     const input = document.getElementById('ctxUrlInput');
@@ -193,26 +209,32 @@ const ContextUI = {
     const html = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 解析中…';
     btn.disabled = true;
-
+  
     const res = await window.starContext.addFromUrl(url);
-
-    btn.innerHTML = html; btn.disabled = false;
-    if (res.success) { input.value = ''; this._showToast('网页内容已解析加入'); }
-    else alert(res.message);
-  },
+  
+    btn.innerHTML = html;
+    btn.disabled = false;
+    if (res.success) {
+      input.value = '';
+      this._showToast(this._t('contextToastUrlAdded'));   // ✅ 替换硬编码
+    } else {
+      alert(res.message);
+    }
+  }
 
   clearAll() {
     if (!window.starContext.getAll().length) return;
-    if (!confirm('确定清空所有星语上下文吗？')) return;
+    if (!confirm(this._t('contextConfirmClear'))) return;   // ✅ 替换硬编码
     window.starContext.clear();
-    this._showToast('上下文已清空');
+    this._showToast(this._t('contextToastCleared'));        // ✅ 替换硬编码
     this._refreshCanvasButtons();
-  },
+  }
 
   removeContext(id) {
     window.starContext.remove(id);
     this._refreshCanvasButtons();
-  },
+    this._showToast(this._t('contextToastRemoved'));   // 可选
+  }
 
   /* ── 浏览 ── */
   browseContext(id) {
