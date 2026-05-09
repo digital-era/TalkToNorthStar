@@ -390,37 +390,73 @@
 }
 
 /* ── 画布节点上下文按钮 ── */
-.thought-node { position: relative; }
-
 .ctx-canvas-btn {
-  position: absolute;
-  left: -40px; top: 50%;
-  transform: translateY(-50%);
-  width: 30px; height: 30px;
-  border-radius: 50%;
-  background: rgba(0,223,216,.08);
-  border: 1.5px solid rgba(0,223,216,.3);
-  color: #00dfd8;
-  font-size: 11px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: all .25s cubic-bezier(.34,1.56,.64,1);
-  z-index: 5; padding: 0;
-  backdrop-filter: blur(4px);
+    position: absolute;
+    top: 5px;
+    right: 34px;            /* 删除按钮 right:5px + width:24px + 间距5px */
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(0, 223, 216, 0.08);
+    border: 1.5px solid rgba(0, 223, 216, 0.3);
+    color: #00dfd8;
+    font-size: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 10;
+    padding: 0;
+    opacity: 0;             /* 默认隐藏，与删除按钮行为一致 */
 }
+
+/* 鼠标悬停节点时显示 */
+.thought-node:hover .ctx-canvas-btn {
+    opacity: 1;
+}
+
 .ctx-canvas-btn:hover {
-  background: rgba(0,223,216,.22);
-  border-color: rgba(0,223,216,.6);
-  box-shadow: 0 0 16px rgba(0,223,216,.25);
-  transform: translateY(-50%) scale(1.15);
+    background: rgba(0, 223, 216, 0.22);
+    border-color: rgba(0, 223, 216, 0.6);
+    box-shadow: 0 0 16px rgba(0, 223, 216, 0.25);
+    transform: scale(1.15);
 }
+
+/* 已加入上下文状态：琥珀色高亮，始终可见 */
 .ctx-canvas-btn.in-context {
-  background: rgba(245,158,11,.1);
-  border-color: rgba(245,158,11,.45);
-  color: #f59e0b;
+    background: rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.45);
+    color: #f59e0b;
+    opacity: 1;
 }
+
 .ctx-canvas-btn.in-context:hover {
-  background: rgba(245,158,11,.2);
-  box-shadow: 0 0 16px rgba(245,158,11,.15);
+    background: rgba(245, 158, 11, 0.2);
+    box-shadow: 0 0 16px rgba(245, 158, 11, 0.15);
+}
+
+/* 移动端适配：按钮始终可见，与删除按钮保持一致 */
+@media (max-width: 768px) {
+    .ctx-canvas-btn {
+        opacity: 0.6;
+        width: 28px;
+        height: 28px;
+        right: 38px;        /* 适配移动端删除按钮 28px 宽度 */
+        font-size: 11px;
+    }
+    .ctx-canvas-btn.in-context {
+        opacity: 0.9;
+    }
+}
+
+@media (max-width: 480px) {
+    .ctx-canvas-btn {
+        right: 36px;
+        width: 26px;
+        height: 26px;
+        font-size: 10px;
+    }
 }
 
 /* ── Toast ── */
@@ -453,12 +489,6 @@
 /* ── 响应式 ── */
 @media (max-width: 768px) {
   .star-context-sheet { width: 100%; max-width: 100%; }
-  .ctx-canvas-btn {
-    left: -30px; width: 26px; height: 26px;
-    font-size: 10px;
-  }
   .star-context-body { padding: 18px; }
 }
-@media (max-width: 360px) {
-  .ctx-canvas-btn { left: -26px; width: 22px; height: 22px; }
-}
+
