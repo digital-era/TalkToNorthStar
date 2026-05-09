@@ -393,14 +393,14 @@
 .ctx-canvas-btn {
     position: absolute;
     top: 5px;
-    right: 34px;            /* 删除按钮 right:5px + width:24px + 间距5px */
+    right: 34px;            /* 删除按钮左侧 */
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background: rgba(0, 223, 216, 0.08);
-    border: 1.5px solid rgba(0, 223, 216, 0.3);
-    color: #00dfd8;
-    font-size: 10px;
+    background: rgba(0, 124, 240, 0.1);    /* 蓝色基调 */
+    border: 1.5px solid rgba(0, 124, 240, 0.35);
+    color: #007cf0;                         /* 蓝色星标 */
+    font-size: 11px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -417,23 +417,25 @@
 }
 
 .ctx-canvas-btn:hover {
-    background: rgba(0, 223, 216, 0.22);
-    border-color: rgba(0, 223, 216, 0.6);
-    box-shadow: 0 0 16px rgba(0, 223, 216, 0.25);
+    background: rgba(0, 124, 240, 0.22);
+    border-color: rgba(0, 124, 240, 0.6);
+    box-shadow: 0 0 16px rgba(0, 124, 240, 0.25);
     transform: scale(1.15);
 }
 
-/* 已加入上下文状态：琥珀色高亮，始终可见 */
-.ctx-canvas-btn.in-context {
-    background: rgba(245, 158, 11, 0.1);
-    border-color: rgba(245, 158, 11, 0.45);
-    color: #f59e0b;
-    opacity: 1;
+.ctx-canvas-btn:active {
+    transform: scale(0.95);
 }
 
-.ctx-canvas-btn.in-context:hover {
-    background: rgba(245, 158, 11, 0.2);
-    box-shadow: 0 0 16px rgba(245, 158, 11, 0.15);
+/* 点击后的瞬时反馈（非持久状态） */
+.ctx-canvas-btn.just-added {
+    animation: ctxAddedPulse 0.6s ease;
+}
+
+@keyframes ctxAddedPulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 rgba(0, 124, 240, 0); }
+    50% { transform: scale(1.25); box-shadow: 0 0 20px rgba(0, 124, 240, 0.4); }
+    100% { transform: scale(1); box-shadow: 0 0 0 rgba(0, 124, 240, 0); }
 }
 
 /* 移动端适配：按钮始终可见，与删除按钮保持一致 */
@@ -442,11 +444,8 @@
         opacity: 0.6;
         width: 28px;
         height: 28px;
-        right: 38px;        /* 适配移动端删除按钮 28px 宽度 */
-        font-size: 11px;
-    }
-    .ctx-canvas-btn.in-context {
-        opacity: 0.9;
+        right: 38px;
+        font-size: 12px;
     }
 }
 
@@ -455,7 +454,7 @@
         right: 36px;
         width: 26px;
         height: 26px;
-        font-size: 10px;
+        font-size: 11px;
     }
 }
 
