@@ -195,6 +195,20 @@
                 "alertSelectModelToSave": "请选择要保存的模型",
                 "scrollLeftAria": "向左滚动",
                 "scrollRightAria": "向右滚动",
+
+                "ctxErrorFull": "星语上下文已满（最多 3 个）",
+                "ctxErrorEmpty": "内容不能为空",
+                "ctxErrorUrlInvalid": "URL 格式不正确",
+                "ctxErrorUrlFail": "网页内容提取失败，建议手动粘贴文本",
+                "ctxErrorFullCleanup": "星语上下文已满（最多 3 个），请先清理",
+                "ctxDefaultTextTitle": "文本片段",
+                "ctxDefaultWebTitle": "网页内容",
+                "ctxRoleUser": "探索者",
+                "ctxRoleNorthStar": "北极星",
+                "ctxDialogueTitleTemplate": "对话 · ${role}",
+                "ctxInjectionTitle": "【星语上下文 · 参考资料】",
+                "ctxInjectionHeader": "上下文",
+                "ctxInjectionFooter": "上下文结束 · 请结合以上资料回答后续问题",
                     
                  "footerRight": "© AI范式进化. 保留所有权利。",
             },
@@ -388,7 +402,21 @@
                 "alertSelectModelToSave": "Please select a model to save",
                 "scrollLeftAria": "Scroll Left",
                 "scrollRightAria": "Scroll Right",
-                        
+                
+                "ctxErrorFull": "Star Context is full (Max 3 items)",
+                "ctxErrorEmpty": "Content cannot be empty",
+                "ctxErrorUrlInvalid": "Invalid URL format",
+                "ctxErrorUrlFail": "Failed to extract web content, please paste manually",
+                "ctxErrorFullCleanup": "Star Context is full (Max 3), please clear some items",
+                "ctxDefaultTextTitle": "Text Snippet",
+                "ctxDefaultWebTitle": "Web Content",
+                "ctxRoleUser": "Explorer",
+                "ctxRoleNorthStar": "North Star",
+                "ctxDialogueTitleTemplate": "Dialogue · ${role}",
+                "ctxInjectionTitle": "[Star Context · Reference Materials]",
+                "ctxInjectionHeader": "Context",
+                "ctxInjectionFooter": "End of Context · Please use these materials for following answers",
+                    
                  "footerRight": "© AI Paradigm Evolution. All rights reserved.",                
             }
         };
