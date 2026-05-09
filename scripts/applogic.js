@@ -1360,10 +1360,10 @@ function toggleSidebar() {
     sidebar.classList.toggle('open');
 }
 
-/* --- 核心渲染函数 (renderDialogueCanvas) --- */
+
 /* --- 核心渲染函数 (renderDialogueCanvas) - 全球化增强版 --- */
 function renderDialogueCanvas() {
-    // 内部翻译辅助函数
+    // 内部翻译辅助方法
     const _t = (key) => {
         const lang = window.currentLang || 'zh-CN';
         const dict = window.translations?.[lang] || window.translations?.['zh-CN'] || {};
@@ -1372,21 +1372,16 @@ function renderDialogueCanvas() {
 
     const container = document.getElementById('thoughtStreamContent');
     const svgEl = document.getElementById('thoughtTrailsSvg');
-    if (!container) return;
-    
     container.innerHTML = '';
     lastDrawnHash = '';
 
-    const history = getMergedHistory(window.importedHistory || null, window.conversationHistory || []);
-    
-    // 1. 处理空状态 (全球化)
+    // 保持原始变量名引用
+    const history = getMergedHistory(importedHistory, conversationHistory);
     if (history.length === 0) {
-        container.innerHTML = `
-            <div style="text-align:center; color:#888; margin-top:100px; font-family:'Noto Serif SC', serif">
-                <p style="font-size:18px;">${_t('canvasEmptyHint')}</p>
-                <p style="font-size:14px;">${_t('canvasEmptyDesc')}</p>
-            </div>`;
-        if (svgEl) svgEl.innerHTML = '';
+        container.innerHTML = `<div style="text-align:center; color:#888; margin-top:100px; font-family:'Noto Serif SC', serif">
+            ${_t('canvasEmptyHint')}<br>${_t('canvasEmptyDesc')}
+        </div>`;
+        svgEl.innerHTML = '';
         return;
     }
 
@@ -1409,6 +1404,7 @@ function renderDialogueCanvas() {
         } else {
             let processedText = item._processedText;
             if (!processedText) {
+                // 严格保留原有的 Markdown 渲染逻辑，确保 MD 文件正常解析
                 processedText = typeof parseMarkdownWithMath === 'function' 
                     ? parseMarkdownWithMath(item.text) 
                     : item.text.replace(/\n/g, '<br>');
@@ -1435,18 +1431,15 @@ function renderDialogueCanvas() {
         }
         
         node.innerHTML = contentHTML;
-        // 点击节点添加到灵感库（假设该函数已定义）
-        if (typeof addToInspiration === 'function') {
-            node.onclick = (e) => addToInspiration(e, item.text);
-        }
+        node.onclick = (e) => addToInspiration(e, item.text);
 
         /* ═══════════════════════════════════════════════
-           【星语上下文按钮】全球化处理
+           【星语上下文按钮】全球化
            ═══════════════════════════════════════════════ */
         const ctxBtn = document.createElement('button');
         ctxBtn.className = 'ctx-canvas-btn';
-        ctxBtn.innerHTML = '<i class="fas fa-star"></i>';
-        ctxBtn.title = _t('contextCanvasAddTitle'); // "加入星语上下文"
+        ctxBtn.innerHTML = '<i class="fas fa-star"></i>';  
+        ctxBtn.title = _t('contextCanvasAddTitle');
         
         ctxBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -1459,48 +1452,46 @@ function renderDialogueCanvas() {
             // 检查是否已满 (全球化 Confirm)
             if (window.starContext.isFull()) {
                 const go = confirm(_t('ctxErrorFullCleanup'));
-                if (go && window.ContextUI && window.ContextUI.openPanel) {
-                    window.ContextUI.openPanel();
-                }
+                if (go && window.ContextUI) window.ContextUI.openPanel();
                 return;
             }
             
-            // 执行添加逻辑
+            // 直接添加
             const res = window.starContext.addFromDialogue(item);
             if (res.success) {
-                // 反馈动画
                 ctxBtn.classList.add('just-added');
                 setTimeout(() => ctxBtn.classList.remove('just-added'), 600);
                 
-                // 同步刷新侧滑面板
                 if (window.ContextUI && window.ContextUI._renderList) {
                     window.ContextUI._renderList();
                 }
                 
-                // 弹出翻译后的 Toast
+                // Toast 全球化 (保持你原始的 DOM 样式实现)
                 const msg = _t('contextToastAdded');
-                showGlobalToast(msg); // 封装后的 Toast 函数
+                const t = document.createElement('div');
+                t.style.cssText = 'position:fixed; bottom:50px; left:50%; transform:translateX(-50%); background:rgba(0,124,240,.12); border:1px solid rgba(0,124,240,.3); color:#007cf0; padding:13px 28px; border-radius:50px; font-size:14px; font-family:"Noto Serif SC",serif; backdrop-filter:blur(12px); z-index:999999; opacity:0; transition:all .35s; pointer-events:none; white-space:nowrap; letter-spacing:1px; box-shadow:0 8px 32px rgba(0,0,0,.3);';
+                t.innerHTML = `<i class="fas fa-star" style="margin-right:8px"></i> ${msg}`;
+                document.body.appendChild(t);
+                requestAnimationFrame(() => requestAnimationFrame(() => t.style.opacity = '1'));
+                setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; setTimeout(()=>t.remove(), 350); }, 2200);
             } else {
                 alert(res.message);
             }
         });
 
         /* ═══════════════════════════════════════════════
-           【删除按钮】全球化处理
+           【删除按钮】全球化
            ═══════════════════════════════════════════════ */
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'node-delete-btn';
         deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
-        deleteBtn.title = _t('contextRemoveTitleAttr'); // "移除" 或 "删除"
+        deleteBtn.title = _t('contextRemoveTitleAttr');
         
         deleteBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (typeof deleteNode === 'function') {
-                deleteNode(e, index);
-            }
+            deleteNode(e, index);
         });
 
-        // 插入按钮
         node.insertBefore(ctxBtn, node.firstChild);
         node.insertBefore(deleteBtn, node.firstChild);
 
@@ -1509,7 +1500,7 @@ function renderDialogueCanvas() {
 
     container.appendChild(fragment);
 
-    // 处理公式渲染
+    // 严格保留原有的 MathJax 延时逻辑
     if (window.MathJax) {
         const delay = typeof requestIdleCallback !== 'undefined' 
             ? cb => requestIdleCallback(cb, { timeout: 500 })
@@ -1519,41 +1510,9 @@ function renderDialogueCanvas() {
         });
     }
 
-    // 重绘连线
-    if (typeof drawConnections === 'function') {
-        setTimeout(drawConnections, 100);
-    }
+    setTimeout(drawConnections, 100);
 }
 
-/**
- * 辅助：显示漂浮 Toast（全球化风格）
- */
-function showGlobalToast(msg) {
-    const t = document.createElement('div');
-    // 统一样式，确保在深色模式下可见
-    t.style.cssText = `
-        position:fixed; bottom:60px; left:50%; transform:translateX(-50%); 
-        background:rgba(0,124,240,0.15); border:1px solid rgba(0,124,240,0.4); 
-        color:#007cf0; padding:12px 24px; border-radius:50px; font-size:14px; 
-        backdrop-filter:blur(15px); z-index:999999; opacity:0; transition:all 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); 
-        pointer-events:none; white-space:nowrap; box-shadow:0 10px 40px rgba(0,0,0,0.4);
-    `;
-    t.innerHTML = `<i class="fas fa-check-circle" style="margin-right:8px"></i> ${msg}`;
-    document.body.appendChild(t);
-    
-    requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            t.style.opacity = '1';
-            t.style.bottom = '80px';
-        });
-    });
-
-    setTimeout(() => {
-        t.style.opacity = '0';
-        t.style.bottom = '100px';
-        setTimeout(() => t.remove(), 400);
-    }, 2200);
-}
 
 /* --- 优化版 drawConnections (防抖 + 缓存) --- */
 let drawConnectionsTimeout = null;
