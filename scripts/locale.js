@@ -421,6 +421,7 @@
             }
         };
         let currentLang = 'zh-CN'; // Default language
+
         // === NEW: Function to update manifesto modal content ===
         function updateManifestoModalContent(lang) {
             const manifestoModalTitle = document.getElementById('manifestoModalTitle');
@@ -488,3 +489,8 @@
             updateManifestoModalContent(lang);
             // === END NEW ===
         }    
+
+        // 在你的翻译脚本最底部添加
+        window.translations = translations;
+        window.currentLang = currentLang;
+        window.setLanguage = setLanguage;
