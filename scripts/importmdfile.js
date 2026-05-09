@@ -34,11 +34,14 @@ function importFromMD() {
                     return;
                 }
 
+                // --- 修改点：保存到内存后立即持久化 ---
                 importedHistory = parsed;
+                if (typeof saveCanvasSession === 'function') {
+                    saveCanvasSession(); 
+                }
+                
                 renderDialogueCanvas();
-
-                // 可选：添加成功提示（根据你的UI风格实现）
-                // showToast(`已成功导入 ${parsed.length} 条对话记录`, 3000);
+                // ------------------------------------
 
             } catch (err) {
                 console.error('导入MD解析失败:', err);
@@ -53,11 +56,9 @@ function importFromMD() {
         reader.readAsText(file);
     };
 
-    // 触发选择对话框
     document.body.appendChild(input);
     input.click();
 
-    // 清理（可选）
     setTimeout(() => {
         document.body.removeChild(input);
     }, 1000);
