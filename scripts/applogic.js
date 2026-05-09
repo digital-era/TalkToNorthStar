@@ -1340,6 +1340,7 @@ function toggleSidebar() {
 }
 
 /* --- 核心渲染函数 (renderDialogueCanvas) --- */
+/* --- 核心渲染函数 (renderDialogueCanvas) --- */
 function renderDialogueCanvas() {
     const container = document.getElementById('thoughtStreamContent');
     const svgEl = document.getElementById('thoughtTrailsSvg');
@@ -1364,6 +1365,20 @@ function renderDialogueCanvas() {
         node.className = `thought-node ${isUser ? 'question-node' : 'answer-node'}`;
         node.id = `node-${index}`;
         
+        /* ═══════════════════════════════════════════════
+           【星语上下文按钮】在删除按钮左侧
+           ═══════════════════════════════════════════════ */
+        const inCtx = (window.starContext && item.id) 
+            ? window.starContext.hasDialogueNode(item.id) 
+            : false;
+        const ctxBtnHTML = `
+            <button class="ctx-canvas-btn ${inCtx ? 'in-context' : ''}" 
+                    onclick="handleCtxCanvasBtn(event, ${index})" 
+                    title="${inCtx ? '从星语上下文移除' : '加入星语上下文'}">
+                <i class="fas ${inCtx ? 'fa-minus' : 'fa-plus'}"></i>
+            </button>
+        `;
+
         const deleteBtnHTML = `
             <button class="node-delete-btn" onclick="deleteNode(event, ${index})" title="删除此节点">
                 <i class="fas fa-times"></i>
@@ -1374,6 +1389,7 @@ function renderDialogueCanvas() {
 
         if (isUser) {
             contentHTML = `
+                ${ctxBtnHTML}
                 ${deleteBtnHTML}
                 <div class="user-avatar-mark"><i class="fas fa-user-astronaut"></i></div>
                 <div class="node-content user-handwriting">${item.text}</div>
@@ -1391,6 +1407,7 @@ function renderDialogueCanvas() {
             const info = item.leaderInfo || { name: 'Unknown', field: '', contribution: '' };
 
             contentHTML = `
+                ${ctxBtnHTML}
                 ${deleteBtnHTML}
                 <div class="star-decoration-top"><i class="fas fa-star-of-life"></i></div>
                 <div class="leader-header">
@@ -1401,7 +1418,7 @@ function renderDialogueCanvas() {
                 </div>
                 <div class="leader-contribution-hint" title="${info.contribution}">
                     <i class="fas fa-quote-left"></i> ${info.contribution.substring(0, 30)}...
-n                </div>
+                </div>
                 <div class="node-divider"></div>
                 <div class="node-content star-content">${processedText}</div>
                 <div class="star-decoration-bottom"><i class="fas fa-feather-alt"></i> North Star Insight</div>
@@ -1974,4 +1991,46 @@ function exportToHTML() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+}
+
+/* ═══════════════════════════════════════════════
+   画布节点上下文按钮处理器
+   ═══════════════════════════════════════════════ */
+function handleCtxCanvasBtn(event, historyIndex) {
+    event.stopPropagation();
+    
+    // 确保上下文管理器已初始化
+    if (!window.starContext) {
+        alert('星语上下文系统尚未初始化');
+        return;
+    }
+    
+    const history = getMergedHistory(importedHistory, conversationHistory);
+    const data = history[historyIndex];
+    if (!data || !data.id) return;
+    
+    const res = window.starContext.addFromDialogue(data);
+    if (res.success) {
+        const isIn = res.action === 'added';
+        const btn = event.currentTarget;
+        btn.classList.toggle('in-context', isIn);
+        btn.innerHTML = `<i class="fas ${isIn ? 'fa-minus' : 'fa-plus'}"></i>`;
+        btn.title = isIn ? '从星语上下文移除' : '加入星语上下文';
+        
+        // 刷新侧滑面板列表（如果打开）
+        if (window.ContextUI && window.ContextUI._renderList) {
+            window.ContextUI._renderList();
+        }
+        
+        // Toast 提示
+        const msg = isIn ? '已加入星语上下文' : '已从上下文移除';
+        const t = document.createElement('div');
+        t.className = 'ctx-toast show';
+        t.innerHTML = `<i class="fas fa-check-circle"></i> ${msg}`;
+        t.style.cssText = 'position:fixed; bottom:50px; left:50%; transform:translateX(-50%); background:rgba(0,223,216,.12); border:1px solid rgba(0,223,216,.3); color:#00dfd8; padding:13px 28px; border-radius:50px; font-size:14px; font-family:\"Noto Serif SC\",serif; backdrop-filter:blur(12px); z-index:999999; opacity:1; pointer-events:none; white-space:nowrap; letter-spacing:1px; box-shadow:0 8px 32px rgba(0,0,0,.3);';
+        document.body.appendChild(t);
+        setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; setTimeout(()=>t.remove(), 350); }, 2200);
+    } else {
+        alert(res.message);
+    }
 }
