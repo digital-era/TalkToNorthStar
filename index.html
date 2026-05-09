@@ -170,27 +170,27 @@
             </div>
 
             <!-- 2. 开启星语阅读：只留图标，增加 title 提示 -->
-            <button class="icon-btn" onclick="openElegantMode()" title="星语阅读">
+            <button class="icon-btn" onclick="openElegantMode()" title="星语阅读" data-i18n-title="tooltipReadingMode">
                 <i class="fas fa-wand-magic-sparkles"></i>
             </button>
 
             <!-- 3. 开启对话画布 -->
-            <button class="icon-btn" onclick="openDialogueCanvas()" title="思想画布">
+            <button class="icon-btn" onclick="openDialogueCanvas()" title="思想画布" data-i18n-title="tooltipCanvas">
                 <i class="fas fa-scroll"></i> <!-- 使用卷轴图标 -->
             </button>
             
             <!-- 4. 了解我们：去掉文字 span，只留图标，增加 title 提示 -->
-            <button class="icon-btn" onclick="openManifestoModal()" title="了解我们">
+            <button class="icon-btn" onclick="openManifestoModal()" title="了解我们" data-i18n-title="tooltipAboutUs">
                 <i class="fas fa-circle-info"></i>                 
             </button>
         
             <!-- 5. 设置：去掉文字 span，只留图标 -->
-            <a href="#" onclick="openSettingsAndCheckAuth(event)" class="icon-btn" title="设置">
+            <a href="#" onclick="openSettingsAndCheckAuth(event)" class="icon-btn" title="设置" data-i18n-title="tooltipSettings">
                 <i class="fas fa-cog"></i>
             </a>
         
             <!-- 6. 语言：图标 + 透明下拉框组合 -->
-            <div class="icon-btn language-wrapper" title="切换语言">
+            <div class="icon-btn language-wrapper" title="切换语言" data-i18n-title="tooltipLanguage">
                 <!-- 新增的语言图标 -->
                 <i class="fas fa-globe"></i>
                 <!-- 原有的 select，但移除了 visible class，通过 CSS 隐藏外观 -->
@@ -202,7 +202,7 @@
             </div>
             
             <!-- 7. 新增：现代界面风格（紧跟语言后面） -->
-            <div class="icon-btn style-wrapper" title="界面风格">
+            <div class="icon-btn style-wrapper" title="界面风格" data-i18n-title="tooltipStyle">
                 <i class="fas fa-palette"></i>
                 <select id="uiStyle" onchange="switchUIStyle(this.value)">                    
                     <option value="modern" selected>现代</option>
@@ -778,15 +778,15 @@
         <!-- 顶部工具栏 -->
         <div class="canvas-toolbar">
             <span class="canvas-title">思想画布</span>
-            <button onclick="clearCanvasHistory()" title="清空画布"><i class="fas fa-eraser"></i></button>
+            <button onclick="clearCanvasHistory()" data-i18n-title="tooltipClearCanvas" title="清空画布"><i class="fas fa-eraser"></i></button>
             <!-- 新增：导出组 -->            
             <div class="toolbar-group" style="margin-right: 15px; display:inline-block;">
-                <button onclick="exportToPDF()" title="导出PDF"><i class="fas fa-file-pdf"></i></button>
-                <button onclick="exportToMD()" title="导出Markdown"><i class="fas fa-file-alt"></i></button>
+                <button onclick="exportToPDF()" data-i18n-title="tooltipExportPDF" title="导出PDF"><i class="fas fa-file-pdf"></i></button>
+                <button onclick="exportToMD()" data-i18n-title="tooltipExportMD" title="导出Markdown"><i class="fas fa-file-alt"></i></button>
                 <!-- 新增：导出为HTML -->
-                <button onclick="exportToHTML()" title="导出HTML"><i class="fas fa-file-code"></i></button>
+                <button onclick="exportToHTML()" data-i18n-title="tooltipExportHTML" title="导出HTML"><i class="fas fa-file-code"></i></button>
                 <!-- 新增：导入MD文件 -->
-                <button onclick="importFromMD()" title="导入Markdown"><i class="fas fa-file-import"></i>
+                <button onclick="importFromMD()" data-i18n-title="tooltipImportMD" title="导入Markdown"><i class="fas fa-file-import"></i>
                 </button>
             </div>
             <!--
