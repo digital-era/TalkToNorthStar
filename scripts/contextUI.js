@@ -164,6 +164,7 @@ const ContextUI = {
       btn.title = inCtx ? this._t('contextCanvasRemoveTitle') : this._t('contextCanvasAddTitle');
       btn.innerHTML = inCtx ? '<i class="fas fa-minus"></i>' : '<i class="fas fa-plus"></i>';
 
+      /* ── 画布按钮注入（国际化版） ── */
       btn.onclick = (e) => {
         e.stopPropagation();
         const res = window.starContext.addFromDialogue(data);
@@ -175,7 +176,11 @@ const ContextUI = {
           this._renderList();
           this._showToast(isIn ? this._t('contextToastAdded') : this._t('contextToastRemoved'));
         } else {
-          alert(res.message);
+          // 【修改点】：使用 confirm 弹出 Manager 返回的翻译信息
+          // 如果用户点“确定”(OK)，则打开管理面板
+          if (confirm(res.message)) {
+            this.openPanel();
+          }
         }
       };
 
