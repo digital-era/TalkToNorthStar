@@ -150,6 +150,20 @@
                  "confirmDeleteNode": '🗑️ 确认删除\n\n您确定要移除这个对话节点吗？\n删除后，画布上的连线将自动重新连接。'  ,   
                  "confirmClearCanvas": '⚠️ 高风险操作\n\n您确定要清空整个画布吗？\n此操作将移除所有当前的思维节点（包括任何从MD导入的历史内容），且无法恢复。\n(主界面的对话记录不会受影响)'  ,   
                  "alertApiSettingsIncomplete": '请确保 API 设置完整（接入点、Key、模型）'  ,   
+
+                 "canvasTitle": '思想画布',
+                 "loginUsernameLabel": '用户名:',
+                 "loginUsernamePlaceholder": '输入用户名',
+                 "loginPasswordLabel": '密码:',
+                 "loginPasswordPlaceholder": '输入密码',
+                 "loginButton": '登录',
+                 "authenticatedBadge": '[ 已认证 ]',
+                 "oldPasswordLabel": '旧密码:',
+                 "oldPasswordPlaceholder": '当前密码',
+                 "newPasswordLabel": '新密码:',
+                 "newPasswordPlaceholder": '新密码',
+                 "logoutButton": '退出',
+                 "changePasswordButton": '修改密码',
                     
                  "footerRight": "© AI范式进化. 保留所有权利。",
             },
@@ -297,7 +311,20 @@
                  "confirmDeleteNode": '🗑️ Confirm delete\n\nAre you sure you want to remove this dialogue node?\nConnections will be automatically reconnected after deletion.'  ,    
                  "confirmClearCanvas": '⚠️ High-risk operation\n\nAre you sure you want to clear the entire canvas?\nThis will remove all current thought nodes (including any imported MD history) and cannot be undone.\n(The main interface conversation history will not be affected)'  ,   
                  "alertApiSettingsIncomplete": 'Please ensure API settings are complete (Endpoint, Key, Model)'  ,   
-                    
+
+                 "canvasTitle": 'Thought Canvas',
+                 "loginUsernameLabel": 'Username:',
+                 "loginUsernamePlaceholder": 'Enter username',
+                 "loginPasswordLabel": 'Password:',
+                 "loginPasswordPlaceholder": 'Enter password',
+                 "loginButton": 'Login',
+                 "authenticatedBadge": '[ Authenticated ]',
+                 "oldPasswordLabel": 'Old Password:',
+                 "oldPasswordPlaceholder": 'Current password',
+                 "newPasswordLabel": 'New Password:',
+                 "newPasswordPlaceholder": 'New password',
+                 "logoutButton": 'Logout',
+                 "changePasswordButton": 'Change Password',
                  "footerRight": "© AI Paradigm Evolution. All rights reserved.",                
             }
         };
