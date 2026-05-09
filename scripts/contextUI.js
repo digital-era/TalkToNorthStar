@@ -30,14 +30,19 @@ const ContextUI = {
   },
 
   init() {
-    this._createPanel();
-    this._createBrowseModal();
-    this._bindGlobalEvents();
-    this._watchCanvas();
-
-    window.starContext.onChange(() => this._renderList());
-    this._renderList();
-  },
+      this._createPanel();
+      this._createBrowseModal();
+      this._bindGlobalEvents();
+      this._watchCanvas();
+  
+      // ── 核心修复：面板创建后立即同步语言 ──
+      if (window.setLanguage && window.currentLang) {
+        window.setLanguage(window.currentLang);
+      }
+  
+      window.starContext.onChange(() => this._renderList());
+      this._renderList();
+    },
 
   /* ── 构建侧滑面板（国际化版） ── */
   _createPanel() {
@@ -48,7 +53,8 @@ const ContextUI = {
       <div class="star-context-backdrop" onclick="ContextUI.closePanel()"></div>
       <div class="star-context-sheet">
         <div class="star-context-header">
-          <h3><i class="fas fa-star-of-life"></i> ${this._t('contextPanelTitle')}</h3>
+          <!-- 关键：添加 data-i18n-key -->
+          <h3><i class="fas fa-star-of-life"></i> <span data-i18n-key="contextPanelTitle">${this._t('contextPanelTitle')}</span></h3>
           <button class="star-context-close" onclick="ContextUI.closePanel()">
             <i class="fas fa-times"></i>
           </button>
@@ -56,41 +62,40 @@ const ContextUI = {
         <div class="star-context-body">
           <div class="star-context-input-area">
             <div class="star-context-tabs">
-              <button class="ctx-tab active" data-tab="paste" onclick="ContextUI.switchTab('paste')">
+              <button class="ctx-tab active" data-tab="paste" onclick="ContextUI.switchTab('paste')" data-i18n-key="contextTabPaste">
                 <i class="fas fa-paste"></i> ${this._t('contextTabPaste')}
               </button>
-              <button class="ctx-tab" data-tab="url" onclick="ContextUI.switchTab('url')">
+              <button class="ctx-tab" data-tab="url" onclick="ContextUI.switchTab('url')" data-i18n-key="contextTabUrl">
                 <i class="fas fa-link"></i> ${this._t('contextTabUrl')}
               </button>
             </div>
             <div class="ctx-tab-content active" id="ctx-tab-paste">
-              <textarea id="ctxPasteInput" placeholder="${this._t('contextPastePlaceholder')}"></textarea>
-              <button class="ctx-add-btn" onclick="ContextUI.addFromPaste()">
+              <!-- placeholder 的翻译需要 data-i18n-target="placeholder" -->
+              <textarea id="ctxPasteInput" data-i18n-key="contextPastePlaceholder" data-i18n-target="placeholder" placeholder="${this._t('contextPastePlaceholder')}"></textarea>
+              <button class="ctx-add-btn" onclick="ContextUI.addFromPaste()" data-i18n-key="contextAddBtn">
                 <i class="fas fa-plus"></i> ${this._t('contextAddBtn')}
               </button>
             </div>
             <div class="ctx-tab-content" id="ctx-tab-url">
-              <input type="text" id="ctxUrlInput" placeholder="${this._t('contextUrlPlaceholder')}" />
-              <button class="ctx-add-btn" onclick="ContextUI.addFromUrl()">
+              <input type="text" id="ctxUrlInput" data-i18n-key="contextUrlPlaceholder" data-i18n-target="placeholder" placeholder="${this._t('contextUrlPlaceholder')}" />
+              <button class="ctx-add-btn" onclick="ContextUI.addFromUrl()" data-i18n-key="contextParseBtn">
                 <i class="fas fa-globe"></i> ${this._t('contextParseBtn')}
               </button>
-              <div class="ctx-url-hint">${this._t('contextUrlHint')}</div>
+              <div class="ctx-url-hint" data-i18n-key="contextUrlHint">${this._t('contextUrlHint')}</div>
             </div>
           </div>
 
           <div class="star-context-list-area">
             <div class="ctx-list-header">
-              <span>${this._t('contextSelectedHeader')} <span id="ctxCountBadge" class="ctx-count">0/3</span></span>
-              <button class="ctx-clear-btn" onclick="ContextUI.clearAll()" title="${this._t('contextClearTitle')}">
+              <!-- 这里选中的上下文标题 -->
+              <span><span data-i18n-key="contextSelectedHeader">${this._t('contextSelectedHeader')}</span> <span id="ctxCountBadge" class="ctx-count">0/3</span></span>
+              <!-- title 翻译需要特殊处理 -->
+              <button class="ctx-clear-btn" onclick="ContextUI.clearAll()" data-i18n-title="contextClearTitle" title="${this._t('contextClearTitle')}">
                 <i class="fas fa-trash-alt"></i>
               </button>
             </div>
             <div id="ctxListContainer" class="ctx-list-container">
-              <div class="ctx-empty-state">
-                <i class="fas fa-wind"></i>
-                <p>${this._t('contextEmptyTitle')}</p>
-                <span>${this._t('contextEmptyDesc')}</span>
-              </div>
+              <!-- 空状态也会被 renderList 动态刷新，建议在 renderList 里也加上 key -->
             </div>
           </div>
         </div>
