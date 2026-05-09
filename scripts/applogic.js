@@ -477,36 +477,48 @@ async function getAIResponse() {
     }
 
     // 3. 构造 Body
+     // ═══════════════════════════════════════════════
+    // 【星语上下文注入】与 Prompt 完全解耦
+    // ═══════════════════════════════════════════════
+    const ctxMessages = (window.starContext && window.starContext.getAll().length > 0)
+      ? window.starContext.getContextMessages()
+      : [];
+    const ctxSystemContent = ctxMessages.length > 0 ? ctxMessages[0].content : '';
+
+    // 3. 构造 Body
     let requestBody;
     if (isGeminiModel) {
-        requestBody = {
-            contents: [{ role: "user", parts: [{ text: promptText }] }],
-            generationConfig: { temperature: 0.7 }
-        };
-    }  else if (isQwenModel) {
-        // Qwen 请求体（支持插件）
-        requestBody = {
-            model: model,
-            input: {
-                messages: [{ role: "user", content: promptText }]
-            },
-            parameters: {
-                temperature: 0.7,
-                // 【关键】启用代搜索插件
-                // 【关键】plugins 必须是对象，不是数组
-                plugins: {
-                    web_search: {}  // 启用网络搜索插件
-                },
-                // 加上这一行！关键！
-                function_call: "auto"
-            }
-        };    
-   } else {
-        requestBody = {
-            model: model,
-            messages: [{ role: "user", content: promptText }],
-            temperature: 0.7,
-        };
+      const contents = [];
+      if (ctxSystemContent) {
+        contents.push({ role: "user", parts: [{ text: ctxSystemContent }] });
+      }
+      contents.push({ role: "user", parts: [{ text: promptText }] });
+      requestBody = {
+        contents: contents,
+        generationConfig: { temperature: 0.7 }
+      };
+    } else if (isQwenModel) {
+      const messages = [];
+      if (ctxSystemContent) messages.push({ role: "system", content: ctxSystemContent });
+      messages.push({ role: "user", content: promptText });
+      requestBody = {
+        model: model,
+        input: { messages: messages },
+        parameters: {
+          temperature: 0.7,
+          plugins: { web_search: {} },
+          function_call: "auto"
+        }
+      };
+    } else {
+      const messages = [];
+      if (ctxSystemContent) messages.push({ role: "system", content: ctxSystemContent });
+      messages.push({ role: "user", content: promptText });
+      requestBody = {
+        model: model,
+        messages: messages,
+        temperature: 0.7,
+      };
     }
 
     // UI 状态更新
