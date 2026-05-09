@@ -143,6 +143,7 @@
                  "tooltipExportHTML": '导出HTML',
                  "tooltipImportMD": '导入Markdown'  ,      
 
+                 "noMatchingLeader": '未找到匹配的北极星'  ,   
                  "alertNoExportContent": '无可导出内容'  ,   
                  "alertCanvasEmpty": '画布为空，无法导出'  ,   
                  "alertNoNorthStarResponse": '✦ 星辰尚未汇聚，请先获取北极星的指引。'  ,   
@@ -288,7 +289,8 @@
                 "tooltipExportMD": 'Export as Markdown',
                 "tooltipExportHTML": 'Export as HTML',
                 "tooltipImportMD": 'Import Markdown',
-
+                    
+                 "noMatchingLeader": 'No matching North Star'  ,   
                  "alertNoExportContent": 'No content to export'  ,  
                  "alertCanvasEmpty": 'Canvas is empty, cannot export'  ,
                  "alertNoNorthStarResponse": '✦ The stars have not yet gathered. Please obtain guidance from the North Star first.'  ,   
