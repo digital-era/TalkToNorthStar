@@ -774,39 +774,48 @@
         <p data-i18n-key="footerRight">© 2025 AI范式进化. 保留所有权利。</p>
     </footer>
     
-    <!-- 对话画布模态框 -->
-    <div id="dialogueCanvasModal" class="canvas-modal">
-        <!-- 关闭按钮 -->
-        <button class="canvas-close-btn" onclick="closeDialogueCanvas()">
-            <i class="fas fa-times"></i>
-        </button>
-        
-        <!-- 顶部工具栏 -->
-        <div class="canvas-toolbar">
-            <span class="canvas-title" data-i18n-key="canvasTitle" data-i18n-target="innerHTML">思想画布</span>
-            <button onclick="clearCanvasHistory()" data-i18n-title="tooltipClearCanvas" title="清空画布"><i class="fas fa-eraser"></i></button>
-            <!-- 新增：导出组 -->            
-            <div class="toolbar-group" style="margin-right: 15px; display:inline-block;">
-                <button onclick="exportToPDF()" data-i18n-title="tooltipExportPDF" title="导出PDF"><i class="fas fa-file-pdf"></i></button>
-                <button onclick="exportToMD()" data-i18n-title="tooltipExportMD" title="导出Markdown"><i class="fas fa-file-alt"></i></button>
-                <!-- 新增：导出为HTML -->
-                <button onclick="exportToHTML()" data-i18n-title="tooltipExportHTML" title="导出HTML"><i class="fas fa-file-code"></i></button>
-                <!-- 新增：导入MD文件 -->
-                <button onclick="importFromMD()" data-i18n-title="tooltipImportMD" title="导入Markdown"><i class="fas fa-file-import"></i>
-                </button>
-            </div>
-            <!--
-            <button onclick="toggleSidebar()" title="灵感手稿"><i class="fas fa-feather-alt"></i></button>
-            -->
-        </div>
-    
-        <!-- 核心画布区域 -->
-        <div class="canvas-viewport" id="canvasViewport">
-            <!-- SVG层：用于绘制连接线，置于底层 -->
-            <svg id="thoughtTrailsSvg" class="thought-trails"></svg>
-            <!-- 内容层：存放对话节点 -->
-            <div id="thoughtStreamContent" class="thought-stream"></div>
-        </div>
+		<!-- 对话画布模态框 -->
+		<div id="dialogueCanvasModal" class="canvas-modal">
+		    <!-- 顶部导航条（包含标题和关闭按钮） -->
+		    <div class="canvas-nav-bar">
+		        <div class="nav-left">
+		            <span class="canvas-title" data-i18n-key="canvasTitle" data-i18n-target="innerHTML">思想画布</span>
+		        </div>
+		        <div class="nav-right">
+		            <button class="canvas-close-btn" onclick="closeDialogueCanvas()" title="关闭">
+		                <i class="fas fa-times"></i>
+		            </button>
+		        </div>
+		    </div>
+		
+		    <!-- 功能工具栏（第二行） -->
+		    <div class="canvas-action-bar">
+		        <div class="action-group">
+		            <button onclick="clearCanvasHistory()" data-i18n-title="tooltipClearCanvas" title="清空画布">
+		                <i class="fas fa-eraser"></i>
+		            </button>
+		            <div class="divider-v"></div> <!-- 小分隔线 -->
+		            <button onclick="exportToPDF()" data-i18n-title="tooltipExportPDF" title="导出PDF">
+		                <i class="fas fa-file-pdf"></i>
+		            </button>
+		            <button onclick="exportToMD()" data-i18n-title="tooltipExportMD" title="导出Markdown">
+		                <i class="fas fa-file-alt"></i>
+		            </button>
+		            <button onclick="exportToHTML()" data-i18n-title="tooltipExportHTML" title="导出HTML">
+		                <i class="fas fa-file-code"></i>
+		            </button>
+		            <button onclick="importFromMD()" data-i18n-title="tooltipImportMD" title="导入Markdown">
+		                <i class="fas fa-file-import"></i>
+		            </button>
+		        </div>
+		    </div>
+		
+		    <!-- 核心画布区域 -->
+		    <div class="canvas-viewport" id="canvasViewport">
+		        <svg id="thoughtTrailsSvg" class="thought-trails"></svg>
+		        <div id="thoughtStreamContent" class="thought-stream"></div>
+		    </div>
+		</div>
     
         <!-- 右侧：灵感手稿/留白区域 -->
         <!-- 
