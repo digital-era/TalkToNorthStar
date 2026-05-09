@@ -2340,48 +2340,133 @@
     text-shadow: 0 0 10px rgba(197, 160, 89, 0.4);
 }
 
-/* 默认按钮样式 (如果有其他按钮需要) */
-.canvas-toolbar button {
-    color: #c5a059;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(197, 160, 89, 0.3);
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.3s;
+/* ==========================================
+   [优化] 对话画布工具栏 v3.0 - 响应式双层布局
+   ========================================== */
+
+.canvas-toolbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 2100;
+    background: rgba(2, 6, 10, 0.85); /* 半透明深色背景 */
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+    display: flex;
+    flex-direction: column; /* 改为纵向排列：上层标题，下层按钮 */
+    padding: 0;
 }
 
-.canvas-toolbar button:hover {
+/* 上层：标题与关闭按钮 */
+.toolbar-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    height: 50px;
+}
+
+/* 下层：功能按钮组 */
+.toolbar-actions {
+    display: flex;
+    justify-content: center; /* 按钮水平居中 */
+    gap: 12px;
+    padding: 10px 20px;
+    background: rgba(197, 160, 89, 0.05); /* 给按钮区一个微弱的底色区分 */
+    flex-wrap: nowrap; /* 手机端不换行，支持横向滚动或缩放 */
+}
+
+/* 标题样式优化 */
+.canvas-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #c5a059;
+    text-shadow: 0 0 15px rgba(197, 160, 89, 0.3);
+    margin: 0;
+    letter-spacing: 2px;
+}
+
+/* 功能按钮样式优化 */
+.toolbar-actions button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #c5a059;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(197, 160, 89, 0.4);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap; /* 防止文字折行 */
+}
+
+.toolbar-actions button i {
+    font-size: 1rem;
+}
+
+.toolbar-actions button:hover {
     background: #c5a059;
     color: #0d1218;
+    box-shadow: 0 0 15px rgba(197, 160, 89, 0.4);
+    transform: translateY(-1px);
 }
 
-/* === [核心修复] 关闭按钮样式重写 === */
-/* 确保覆盖之前的通用 button 样式，去除背景和边框 */
-.canvas-toolbar .canvas-close-btn,
+/* 关闭按钮特殊处理：移除之前可能的默认样式干扰 */
 .canvas-close-btn {
-    background: transparent !important; /* 核心：去除灰色背景 */
-    border: none !important;            /* 去除边框 */
-    box-shadow: none !important;        /* 去除阴影框 */
-    color: rgba(255, 255, 255, 0.4);    /* 默认颜色调暗，不刺眼 */
-    font-size: 2rem;                    /* 图标大一点 */
-    width: 50px;
-    height: 50px;
+    background: transparent !important;
+    border: none !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 1.8rem !important;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    z-index: 100;
+    transition: all 0.3s;
 }
 
-/* 悬停效果：旋转 + 变亮 + 微弱光晕 */
-.canvas-toolbar .canvas-close-btn:hover,
 .canvas-close-btn:hover {
-    background: rgba(255, 255, 255, 0.05) !important; /* 悬停时极淡的背景 */
-    color: var(--dark-accent, #c5a059); /* 悬停变金色或主题色 */
-    transform: rotate(90deg) scale(1.1); /* 优雅旋转 */
-    text-shadow: 0 0 10px rgba(197, 160, 89, 0.5); /* 文字发光 */
+    color: #ff4d4f !important; /* 悬停稍微发红提示关闭 */
+    transform: rotate(90deg);
+}
+
+/* --- 移动端适配优化 --- */
+@media (max-width: 768px) {
+    .toolbar-top {
+        padding: 8px 15px;
+        height: 45px;
+    }
+    
+    .canvas-title {
+        font-size: 1.1rem;
+    }
+
+    .toolbar-actions {
+        gap: 8px;
+        padding: 8px 10px;
+        justify-content: flex-start; /* 手机端靠左排列 */
+        overflow-x: auto; /* 核心：如果按钮太多，支持左右滑动而不是强行换行 */
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* 隐藏滚动条 */
+    }
+
+    .toolbar-actions::-webkit-scrollbar {
+        display: none;
+    }
+
+    .toolbar-actions button {
+        padding: 5px 10px;
+        font-size: 0.8rem;
+    }
+    
+    /* 调整主内容区的偏移，防止被加高的工具栏遮挡 */
+    .thought-stream {
+        padding-top: 130px; /* 根据两层工具栏的高度调整 */
+    }
 }
 
 /* 删除按钮样式 */
