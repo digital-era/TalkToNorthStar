@@ -129,7 +129,6 @@ const ContextUI = {
 
   _injectCanvasButtons() {
     const nodes = document.querySelectorAll('.thought-node');
-    // 获取当前完整历史（兼容原有全局函数）
     const history = (typeof getMergedHistory === 'function')
       ? getMergedHistory(window.importedHistory || null, window.conversationHistory || [])
       : [];
@@ -159,7 +158,14 @@ const ContextUI = {
           alert(res.message);
         }
       };
-      node.insertBefore(btn, node.firstChild);
+
+      // 【关键】插入到删除按钮之前，实现"在关闭按钮左面"
+      const deleteBtn = node.querySelector('.node-delete-btn');
+      if (deleteBtn) {
+        node.insertBefore(btn, deleteBtn);
+      } else {
+        node.appendChild(btn);
+      }
     });
   },
 
