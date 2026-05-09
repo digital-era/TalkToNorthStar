@@ -329,7 +329,14 @@
                     el.textContent = translation;
                 }
             });
-            
+
+            document.querySelectorAll('[data-i18n-title]').forEach(el => {
+                const key = el.getAttribute('data-i18n-title');
+                if (translations[currentLang][key]) {
+                    el.setAttribute('title', translations[currentLang][key]);
+                }
+            });
+                
             // Update dynamic elements that need re-translation
             populateLeaders(); // This will now use translated labels AND translated data content
             updateModelSelectByEndpoint(document.getElementById('apiEndpoint').value); // Re-populate models with translated labels
