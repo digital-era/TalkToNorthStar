@@ -13,15 +13,21 @@ let isCanvasModeOpen = false;
 // ═══════════════════════════════════════════════
 (function initCanvasSession() {
     try {
-        const saved = sessionStorage.getItem('northstar_canvas_history');
-        if (saved) {
-            const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-                conversationHistory = parsed;
-            }
+        // 恢复对话历史
+        const savedChat = sessionStorage.getItem('northstar_canvas_history');
+        if (savedChat) {
+            conversationHistory = JSON.parse(savedChat);
+        }
+
+        // --- [新增] 恢复导入的历史 ---
+        const savedImported = sessionStorage.getItem('northstar_imported_history');
+        if (savedImported) {
+            importedHistory = JSON.parse(savedImported);
         }
     } catch (e) {
+        console.error("Session 恢复失败:", e);
         conversationHistory = [];
+        importedHistory = null;
     }
 })();
 
@@ -1659,6 +1665,9 @@ function deleteNode(event, index) {
                 conversationHistory.splice(relativeIndex, 1);
             }
         }
+
+        // --- [核心修复] 删除后立即保存到持久化 ---
+        saveCanvasSession(); 
         
         // 4. 重新渲染画布 (这时候数据源已经真的变少了)
         renderDialogueCanvas();
@@ -2116,17 +2125,30 @@ function handleCtxCanvasBtn(event, historyIndex) {
 /* ═══════════════════════════════════════════════
    对话画布 Session 持久化（仅 conversationHistory）
    ═══════════════════════════════════════════════ */
-
 function saveCanvasSession() {
     try {
-        if (conversationHistory.length > 0) {
+        // 保存当前对话
+        if (conversationHistory && conversationHistory.length > 0) {
             sessionStorage.setItem('northstar_canvas_history', JSON.stringify(conversationHistory));
         } else {
             sessionStorage.removeItem('northstar_canvas_history');
         }
+
+        // --- [新增] 保存导入的历史 ---
+        if (importedHistory && importedHistory.length > 0) {
+            sessionStorage.setItem('northstar_imported_history', JSON.stringify(importedHistory));
+        } else {
+            sessionStorage.removeItem('northstar_imported_history');
+        }
     } catch (e) {
         // 静默失败
     }
+}
+
+// 补充：清空函数也要同步
+function clearCanvasSession() {
+    sessionStorage.removeItem('northstar_canvas_history');
+    sessionStorage.removeItem('northstar_imported_history');
 }
 
 function clearCanvasSession() {
