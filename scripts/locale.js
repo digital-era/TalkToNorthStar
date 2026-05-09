@@ -141,7 +141,15 @@
                  "tooltipExportPDF": '导出PDF',
                  "tooltipExportMD": '导出Markdown',
                  "tooltipExportHTML": '导出HTML',
-                 "tooltipImportMD": '导入Markdown'  ,                  
+                 "tooltipImportMD": '导入Markdown'  ,      
+
+                 "alertNoExportContent": '无可导出内容'  ,   
+                 "alertCanvasEmpty": '画布为空，无法导出'  ,   
+                 "alertNoNorthStarResponse": '✦ 星辰尚未汇聚，请先获取北极星的指引。'  ,   
+                 "confirmDeleteNode": '🗑️ 确认删除\n\n您确定要移除这个对话节点吗？\n删除后，画布上的连线将自动重新连接。'  ,   
+                 "confirmClearCanvas": '⚠️ 高风险操作\n\n您确定要清空整个画布吗？\n此操作将移除所有当前的思维节点（包括任何从MD导入的历史内容），且无法恢复。\n(主界面的对话记录不会受影响)'  ,   
+                 "alertApiSettingsIncomplete": '请确保 API 设置完整（接入点、Key、模型）'  ,   
+                    
                  "footerRight": "© AI范式进化. 保留所有权利。",
             },
             "en": {
@@ -280,7 +288,15 @@
                 "tooltipExportMD": 'Export as Markdown',
                 "tooltipExportHTML": 'Export as HTML',
                 "tooltipImportMD": 'Import Markdown',
-                "footerRight": "© AI Paradigm Evolution. All rights reserved.",                
+
+                 "alertNoExportContent": 'No content to export'  ,  
+                 "alertCanvasEmpty": 'Canvas is empty, cannot export'  ,
+                 "alertNoNorthStarResponse": '✦ The stars have not yet gathered. Please obtain guidance from the North Star first.'  ,   
+                 "confirmDeleteNode": '🗑️ Confirm delete\n\nAre you sure you want to remove this dialogue node?\nConnections will be automatically reconnected after deletion.'  ,    
+                 "confirmClearCanvas": '⚠️ High-risk operation\n\nAre you sure you want to clear the entire canvas?\nThis will remove all current thought nodes (including any imported MD history) and cannot be undone.\n(The main interface conversation history will not be affected)'  ,   
+                 "alertApiSettingsIncomplete": 'Please ensure API settings are complete (Endpoint, Key, Model)'  ,   
+                    
+                 "footerRight": "© AI Paradigm Evolution. All rights reserved.",                
             }
         };
         let currentLang = 'zh-CN'; // Default language
