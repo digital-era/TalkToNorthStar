@@ -8,6 +8,23 @@ let conversationHistory = []; // 存储 {role, text, leaderName, timestamp}
 let importedHistory = null;  
 let isCanvasModeOpen = false;
 
+// ═══════════════════════════════════════════════
+// 【Session 持久化】仅恢复对话画布内容
+// ═══════════════════════════════════════════════
+(function initCanvasSession() {
+    try {
+        const saved = sessionStorage.getItem('northstar_canvas_history');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                conversationHistory = parsed;
+            }
+        }
+    } catch (e) {
+        conversationHistory = [];
+    }
+})();
+
 // 优雅模式状态锁，防止频繁点击
 let isElegantModeOpen = false;
 
@@ -596,6 +613,7 @@ async function getAIResponse() {
             leaderInfo: null, // 用户不需要leader信息
             timestamp: new Date()
         });
+        saveCanvasSession();  // ← 追加这行
         
         // 4. 存入历史 - AI回答
         conversationHistory.push({
@@ -605,6 +623,8 @@ async function getAIResponse() {
             leaderInfo: leaderMeta, // 保存这一刻的北极星状态
             timestamp: new Date()
         });
+        saveCanvasSession();  // ← 追加这行
+        
         // 如果画布当前是打开的，实时刷新
         if(isCanvasModeOpen) {
             renderDialogueCanvas();
@@ -1327,6 +1347,7 @@ function clearCanvasHistory() {
     if (isConfirmed) {
         conversationHistory = [];           // 清空原有对话历史
         importedHistory = null;             // ★ 同时清除导入的历史
+        clearCanvasSession();  // ← 追加这行
         renderDialogueCanvas();             // 重绘
         
         // 可选：轻提示
@@ -2072,4 +2093,24 @@ function handleCtxCanvasBtn(event, historyIndex) {
     } else {
         alert(res.message);
     }
+}
+
+/* ═══════════════════════════════════════════════
+   对话画布 Session 持久化（仅 conversationHistory）
+   ═══════════════════════════════════════════════ */
+
+function saveCanvasSession() {
+    try {
+        if (conversationHistory.length > 0) {
+            sessionStorage.setItem('northstar_canvas_history', JSON.stringify(conversationHistory));
+        } else {
+            sessionStorage.removeItem('northstar_canvas_history');
+        }
+    } catch (e) {
+        // 静默失败
+    }
+}
+
+function clearCanvasSession() {
+    sessionStorage.removeItem('northstar_canvas_history');
 }
