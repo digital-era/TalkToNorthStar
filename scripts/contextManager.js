@@ -131,6 +131,180 @@ class StarContextManager {
       // ─────────────────────────────
       // PDF
       // ─────────────────────────────
+  
+      } else if (/\.pdf(\?|$)/i.test(url)) {
+  
+        if (!window.pdfjsLib) {
+          throw new Error(
+            this._t('ctxErrorPdfLibMissing')
+          );
+        }
+  
+        try {
+  
+          const loadingTask =
+            window.pdfjsLib.getDocument(url);
+  
+          const pdf = await loadingTask.promise;
+  
+          let fullText = '';
+  
+          const maxPages = Math.min(pdf.numPages, 20);
+  
+          for (let i = 1; i <= maxPages; i++) {
+  
+            const page = await pdf.getPage(i);
+  
+            const content =
+              await page.getTextContent();
+  
+            fullText += content.items
+              .map(item => item.str)
+              .join(' ') + '\n\n';
+          }
+  
+          result = {
+            title:
+              this._extractTitle(fullText) ||
+              this._t('ctxDefaultPdfTitle'),
+  
+            content: fullText,
+  
+            parser: 'pdfjs'
+          };
+  
+        } catch (pdfErr) {
+  
+          console.warn('[PDF Parse Failed]', pdfErr);
+  
+          throw new Error(
+            this._t('ctxErrorPdfParse')
+          );
+        }
+  
+      // ─────────────────────────────
+      // YouTube
+      // ─────────────────────────────
+  
+      } else if (
+        hostname.includes('youtube.com') ||
+        hostname.includes('youtu.be')
+      ) {
+  
+        if (
+          window.STAR_CONTEXT_API?.youtubeTranscript
+        ) {
+  
+          try {
+  
+            const apiUrl =
+              `${window.STAR_CONTEXT_API.youtubeTranscript}` +
+              `?url=${encodeURIComponent(url)}`;
+  
+            const res = await fetch(apiUrl);
+  
+            if (res.ok) {
+  
+              const data = await res.json();
+  
+              result = {
+                title:
+                  data.title ||
+                  this._t('ctxDefaultYoutubeTitle'),
+  
+                content:
+                  data.transcript || url,
+  
+                parser: 'youtube-transcript'
+              };
+            }
+  
+          } catch (e) {
+            console.warn('[YouTube Transcript Failed]', e);
+          }
+        }
+  
+        // fallback
+        if (!result) {
+  
+          result = {
+            title:
+              this._t('ctxDefaultYoutubeTitle'),
+  
+            content: url,
+  
+            parser: 'youtube-url'
+          };
+        }
+  
+      // ─────────────────────────────
+      // GitHub / 普通网页
+      // ─────────────────────────────
+  
+      } else {
+  
+        result = await this._parseViaJina(url);
+      }
+  
+      // ─────────────────────────────
+      // 内容检查
+      // ─────────────────────────────
+  
+      if (!result?.content?.trim()) {
+        throw new Error(
+          this._t('ctxErrorEmptyContent')
+        );
+      }
+  
+      const title =
+        result.title ||
+        this._t('ctxDefaultWebTitle');
+  
+      const id = 'ctx_url_' + Date.now();
+  
+      this.contexts.push({
+  
+        id,
+  
+        title: this._clip(title, 40),
+  
+        content: result.content.trim(),
+  
+        source: 'url',
+  
+        sourceMeta: {
+          url,
+          parser: result.parser || 'unknown'
+        },
+  
+        timestamp: Date.now(),
+  
+        preview: this._makePreview(
+          result.content
+        )
+      });
+  
+      this.save();
+  
+      return {
+        success: true,
+        id
+      };
+  
+    } catch (e) {
+  
+      console.error(
+        '[StarContext] URL Parse Error:',
+        e
+      );
+  
+      return {
+        success: false,
+        message:
+          e.message ||
+          this._t('ctxErrorUrlFail')
+      };
+    }
   }
 
   /* ── 3. 对话节点 Toggle ── */
