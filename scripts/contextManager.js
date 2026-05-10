@@ -74,41 +74,63 @@ class StarContextManager {
     return { success: true, id };
   }
 
-  /* ── 2. URL 解析 ── */
+
+  /* ── 2. URL 解析（安全增强版） ── */
   async addFromUrl(url) {
-    if (this.isFull()) return { success: false, message: this._t('ctxErrorFull') };
-    if (!this._isValidUrl(url)) return { success: false, message: this._t('ctxErrorUrlInvalid') };
-
-    try {
-      const cleanUrl = url.replace(/^https?:\/\//, '');
-      const jinaUrl = `https://r.jina.ai/http://${cleanUrl}`;
-
-      const res = await fetch(jinaUrl, {
-        method: 'GET',
-        headers: { 'Accept': 'text/plain' }
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-      const text = await res.text();
-      if (!text.trim()) throw new Error('Empty content');
-
-      const title = this._extractTitle(text) || this._t('ctxDefaultWebTitle');
-      const id = 'ctx_url_' + Date.now();
-
-      this.contexts.push({
-        id, title: this._clip(title, 40),
-        content: text.trim(),
-        source: 'url',
-        sourceMeta: { url: cleanUrl, jinaUrl },
-        timestamp: Date.now(),
-        preview: this._makePreview(text)
-      });
-      this.save();
-      return { success: true, id };
-    } catch (e) {
-      console.error('[StarContext] URL Parse Error:', e);
-      return { success: false, message: this._t('ctxErrorUrlFail') };
+  
+    if (this.isFull()) {
+      return {
+        success: false,
+        message: this._t('ctxErrorFull')
+      };
     }
+  
+    if (!this._isValidUrl(url)) {
+      return {
+        success: false,
+        message: this._t('ctxErrorUrlInvalid')
+      };
+    }
+  
+    try {
+  
+      const parsed = new URL(url);
+      const hostname = parsed.hostname;
+  
+      let result;
+  
+      // ─────────────────────────────
+      // 微信公众号
+      // ─────────────────────────────
+  
+      if (hostname.includes('mp.weixin.qq.com')) {
+  
+        // 优先后端 Puppeteer
+        if (window.STAR_CONTEXT_API?.wechatParser) {
+  
+          const apiUrl =
+            `${window.STAR_CONTEXT_API.wechatParser}` +
+            `?url=${encodeURIComponent(url)}`;
+  
+          const res = await fetch(apiUrl);
+  
+          if (!res.ok) {
+            throw new Error(
+              this._t('ctxErrorWechatFail')
+            );
+          }
+  
+          result = await res.json();
+  
+        } else {
+  
+          // fallback
+          result = await this._parseViaJina(url);
+        }
+  
+      // ─────────────────────────────
+      // PDF
+      // ─────────────────────────────
   }
 
   /* ── 3. 对话节点 Toggle ── */
@@ -187,11 +209,78 @@ class StarContextManager {
   _isValidUrl(str) {
     try { new URL(str); return true; } catch { return false; }
   }
+
   _extractTitle(text) {
-    const m = text.match(/^#\s+(.+)$/m) || text.match(/^(.+?)[\n\r]/);
-    return m ? m[1].trim() : null;
+    const m =
+      text.match(/^Title:\s*(.+)$/mi) ||
+      text.match(/^#\s+(.+)$/m) ||
+      text.match(/^(.+?)[\n\r]/);
+  
+    return m
+      ? m[1].trim()
+      : null;
   }
   _clip(s, n) { return s.length > n ? s.slice(0, n) + '…' : s; }
 }
 
 window.starContext = new StarContextManager();
+
+async _parseViaJina(url) {
+
+  const cleanUrl =
+    url.replace(/^https?:\/\//, '');
+
+  const jinaUrl =
+    `https://r.jina.ai/http://${cleanUrl}`;
+
+  const res = await fetch(jinaUrl, {
+    method: 'GET',
+    headers: {
+      'Accept': 'text/plain'
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}`);
+  }
+
+  const text = await res.text();
+
+  if (!text.trim()) {
+    throw new Error(
+      this._t('ctxErrorEmptyContent')
+    );
+  }
+
+  const blockedPatterns = [
+    '环境异常',
+    '完成验证后即可继续访问',
+    'captcha',
+    'Access Denied',
+    '安全验证'
+  ];
+
+  const lower = text.toLowerCase();
+
+  const blocked = blockedPatterns.some(
+    p => lower.includes(p.toLowerCase())
+  );
+
+  if (blocked) {
+
+    throw new Error(
+      this._t('ctxErrorBlocked')
+    );
+  }
+
+  return {
+
+    title:
+      this._extractTitle(text) ||
+      this._t('ctxDefaultWebTitle'),
+
+    content: text,
+
+    parser: 'jina'
+  };
+}
