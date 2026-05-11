@@ -870,6 +870,24 @@ function updateEndpointByModel(modelValue) {
     }
 }
 
+function fillSampleQuestion() {
+    const textarea = document.getElementById('userQuestion');
+    
+    // 直接从 translations 全局对象读取，支持 i18n
+    const text = translations[currentLang]?.sampleQuestionText 
+              || translations['zh-CN'].sampleQuestionText;
+    
+    textarea.value = text;
+    textarea.focus();
+    
+    // 按钮瞬时反馈
+    const btn = document.querySelector('.sample-question-btn');
+    if (btn) {
+        btn.style.color = '#00dfd8';
+        setTimeout(() => btn.style.color = '', 800);
+    }
+}
+
 // --- 沉浸模式逻辑 ---
 const immersiveModal = document.getElementById('immersiveModal');
 
