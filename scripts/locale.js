@@ -35,7 +35,7 @@
                 "noLeaderSelected": "无",
                 "noLeaderSelectedInitial": "无",
                 "placeholderUserQuestion": "请输入您的问题...",
-                "sampleQuestionText": "请阐述下你对自身领域所做贡献的心路历程"',
+                "sampleQuestionText": "请阐述下你对自身领域所做贡献的心路历程",
                 "sampleQuestionTooltip": "示例问题",
                 "btnGeneratePrompt": "1. 生成 问题",
                 "btnGetAiResponse": "2. 获取 北极星 回复",
