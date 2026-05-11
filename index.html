@@ -492,21 +492,20 @@
                 </div>
 				<!-- 新增：图标容器 -->
 			    <div class="leader-info-actions">
-			        <i class="fas fa-lightbulb sample-q-icon" ...></i>
-			        <i class="fas fa-copy copy-leader-btn" ...></i>
+					<!-- 示例问题图标 -->
+			        <i class="fas fa-lightbulb sample-q-icon"
+			           onclick="fillSampleQuestion()"
+			           title="填入示例问题"
+			           data-i18n-key="sampleQuestionTooltip"
+			           data-i18n-target="title"></i>
+	                <!-- 点击此图标调用新的合并拷贝功能 -->
+	                <i class="fas fa-copy copy-leader-btn"
+	                   onclick="copyConversationToClipboard()"
+	                   aria-label="Copy conversation"
+	                   data-i18n-key="tooltipCopyConversation"
+	                   data-i18n-target="aria-label"></i>
 			    </div>
-				<!-- 示例问题图标 -->
-		        <i class="fas fa-lightbulb sample-q-icon"
-		           onclick="fillSampleQuestion()"
-		           title="填入示例问题"
-		           data-i18n-key="sampleQuestionTooltip"
-		           data-i18n-target="title"></i>
-                <!-- 点击此图标调用新的合并拷贝功能 -->
-                <i class="fas fa-copy copy-leader-btn"
-                   onclick="copyConversationToClipboard()"
-                   aria-label="Copy conversation"
-                   data-i18n-key="tooltipCopyConversation"
-                   data-i18n-target="aria-label"></i>
+
             </div>
             <!-- --- 修改结束 --- -->
             <textarea id="userQuestion" data-i18n-key="placeholderUserQuestion" data-i18n-target="placeholder"></textarea>
