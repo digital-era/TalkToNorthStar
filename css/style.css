@@ -875,19 +875,46 @@
       text-shadow: 0 0 10px rgba(0, 223, 216, 0.3); /* 名字微发光 */
   }
 
-  /* 新增：右侧拷贝小图标的样式 */
+  .leader-info-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+  }
+  
+  .sample-q-icon,
+  .copy-leader-btn {
+      width: 28px;           /* 统一宽度 */
+      height: 28px;          /* 统一高度 */
+      display: flex;         /* 内部图标居中 */
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;    /* 统一圆角 */
+  }
+  
+  .sample-q-icon {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.35);
+      cursor: pointer;
+      transition: all 0.25s ease;
+  }
+  
+  .sample-q-icon:hover {
+      color: #f59e0b;
+      transform: scale(1.15);
+      text-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+  }
+  
   .copy-leader-btn {
       cursor: pointer;
       color: var(--dark-text-secondary);
       font-size: 1.1em;
-      padding: 5px;
-      border-radius: 4px;
       transition: all 0.3s ease;
   }
+  
   .copy-leader-btn:hover {
       color: var(--dark-accent);
       background-color: rgba(255, 255, 255, 0.1);
-      transform: scale(1.1);
+      transform: scale(1.15);
   }
   /* --- 修改结束 --- */
 
@@ -958,44 +985,7 @@
   }
   /* --- MODIFICATION END --- */
 
-   /* 输入框包装器 */
-  .question-input-wrapper {
-      position: relative;
-      width: 100%;
-  }
-  
-  /* 示例问题按钮 */
-  .sample-question-btn {
-      position: absolute;
-      right: 12px;
-      top: 12px;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: rgba(0, 223, 216, 0.08);
-      border: 1px solid rgba(0, 223, 216, 0.2);
-      color: rgba(0, 223, 216, 0.6);
-      font-size: 14px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.25s ease;
-      z-index: 2;
-  }
-  
-  .sample-question-btn:hover {
-      background: rgba(0, 223, 216, 0.18);
-      border-color: rgba(0, 223, 216, 0.4);
-      color: #00dfd8;
-      box-shadow: 0 0 12px rgba(0, 223, 216, 0.15);
-      transform: scale(1.1);
-  }
-  
-  .sample-question-btn:active {
-      transform: scale(0.95);
-  }
-
+ 
   /* --- [新增] 统一输入框与答复框为小说阅读字体风格 --- */
   #userQuestion, 
   #generatedPromptText, 
