@@ -2166,9 +2166,4 @@ function saveCanvasSession() {
 // 补充：清空函数也要同步
 function clearCanvasSession() {
     sessionStorage.removeItem('northstar_canvas_history');
-    sessionStorage.removeItem('northstar_imported_history');
-}
-
-function clearCanvasSession() {
-    sessionStorage.removeItem('northstar_canvas_history');
 }
