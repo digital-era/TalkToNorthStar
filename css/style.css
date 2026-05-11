@@ -958,6 +958,44 @@
   }
   /* --- MODIFICATION END --- */
 
+   /* 输入框包装器 */
+  .question-input-wrapper {
+      position: relative;
+      width: 100%;
+  }
+  
+  /* 示例问题按钮 */
+  .sample-question-btn {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(0, 223, 216, 0.08);
+      border: 1px solid rgba(0, 223, 216, 0.2);
+      color: rgba(0, 223, 216, 0.6);
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s ease;
+      z-index: 2;
+  }
+  
+  .sample-question-btn:hover {
+      background: rgba(0, 223, 216, 0.18);
+      border-color: rgba(0, 223, 216, 0.4);
+      color: #00dfd8;
+      box-shadow: 0 0 12px rgba(0, 223, 216, 0.15);
+      transform: scale(1.1);
+  }
+  
+  .sample-question-btn:active {
+      transform: scale(0.95);
+  }
+
   /* --- [新增] 统一输入框与答复框为小说阅读字体风格 --- */
   #userQuestion, 
   #generatedPromptText, 
