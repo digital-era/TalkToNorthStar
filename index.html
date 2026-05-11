@@ -490,6 +490,12 @@
                     <span data-i18n-key="currentSelectedLeaderPrefix">当前选择的北极星: </span>
                     <span id="selectedLeaderName" data-i18n-key="noLeaderSelectedInitial">无</span>
                 </div>
+				<!-- 示例问题图标 -->
+		        <i class="fas fa-lightbulb sample-q-icon"
+		           onclick="fillSampleQuestion()"
+		           title="填入示例问题"
+		           data-i18n-key="sampleQuestionTooltip"
+		           data-i18n-target="title"></i>
                 <!-- 点击此图标调用新的合并拷贝功能 -->
                 <i class="fas fa-copy copy-leader-btn"
                    onclick="copyConversationToClipboard()"
@@ -498,15 +504,7 @@
                    data-i18n-target="aria-label"></i>
             </div>
             <!-- --- 修改结束 --- -->
-			
-			<button onclick="if(checkActionAuth('1. 生成 问题')) generateAndShowPrompt()" data-i18n-key="btnGeneratePrompt">
-			    <span>1. 生成 问题</span>
-			    <i class="fas fa-lightbulb sample-q-icon" 
-			       onclick="event.stopPropagation(); fillSampleQuestion()" 
-			       title="示例问题" 
-			       data-i18n-key="sampleQuestionTooltip" 
-			       data-i18n-target="title"></i>
-			</button>
+            <textarea id="userQuestion" data-i18n-key="placeholderUserQuestion" data-i18n-target="placeholder"></textarea>
             
             <div class="interaction-buttons">
                 <button onclick="if(checkActionAuth('1. 生成 问题')) generateAndShowPrompt()" data-i18n-key="btnGeneratePrompt">1. 生成 问题</button>
