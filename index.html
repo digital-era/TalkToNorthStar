@@ -498,14 +498,15 @@
                    data-i18n-target="aria-label"></i>
             </div>
             <!-- --- 修改结束 --- -->
-            <div class="question-input-wrapper">
-			    <textarea id="userQuestion" data-i18n-key="placeholderUserQuestion" data-i18n-target="placeholder"></textarea>
-			    <button class="sample-question-btn" onclick="fillSampleQuestion()" 
-			            data-i18n-key="sampleQuestionTooltip" 
-			            data-i18n-target="title">
-			        <i class="fas fa-lightbulb"></i>
-			    </button>
-			</div>
+			
+			<button onclick="if(checkActionAuth('1. 生成 问题')) generateAndShowPrompt()" data-i18n-key="btnGeneratePrompt">
+			    <span>1. 生成 问题</span>
+			    <i class="fas fa-lightbulb sample-q-icon" 
+			       onclick="event.stopPropagation(); fillSampleQuestion()" 
+			       title="示例问题" 
+			       data-i18n-key="sampleQuestionTooltip" 
+			       data-i18n-target="title"></i>
+			</button>
             
             <div class="interaction-buttons">
                 <button onclick="if(checkActionAuth('1. 生成 问题')) generateAndShowPrompt()" data-i18n-key="btnGeneratePrompt">1. 生成 问题</button>
