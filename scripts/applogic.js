@@ -1399,7 +1399,6 @@ function renderDialogueCanvas() {
     container.innerHTML = '';
     lastDrawnHash = '';
 
-    // 保持原始变量名引用
     const history = getMergedHistory(importedHistory, conversationHistory);
     if (history.length === 0) {
         container.innerHTML = `<div style="text-align:center; color:#888; margin-top:100px; font-family:'Noto Serif SC', serif">
@@ -1428,7 +1427,6 @@ function renderDialogueCanvas() {
         } else {
             let processedText = item._processedText;
             if (!processedText) {
-                // 严格保留原有的 Markdown 渲染逻辑，确保 MD 文件正常解析
                 processedText = typeof parseMarkdownWithMath === 'function' 
                     ? parseMarkdownWithMath(item.text) 
                     : item.text.replace(/\n/g, '<br>');
@@ -1458,53 +1456,55 @@ function renderDialogueCanvas() {
         node.onclick = (e) => addToInspiration(e, item.text);
 
         /* ═══════════════════════════════════════════════
-           【星语上下文按钮】全球化
+           【星语上下文按钮】仅 AI 回答节点显示
+           用户提问节点不显示上下文按钮
            ═══════════════════════════════════════════════ */
-        const ctxBtn = document.createElement('button');
-        ctxBtn.className = 'ctx-canvas-btn';
-        ctxBtn.innerHTML = '<i class="fas fa-star"></i>';  
-        ctxBtn.title = _t('contextCanvasAddTitle');
-        
-        ctxBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
+        if (!isUser) {
+            const ctxBtn = document.createElement('button');
+            ctxBtn.className = 'ctx-canvas-btn';
+            ctxBtn.innerHTML = '<i class="fas fa-star"></i>';  
+            ctxBtn.title = _t('contextCanvasAddTitle');
             
-            if (!window.starContext) {
-                alert(_t('ctxErrorNotInit'));
-                return;
-            }
-            
-            // 检查是否已满 (全球化 Confirm)
-            if (window.starContext.isFull()) {
-                const go = confirm(_t('ctxErrorFullCleanup'));
-                if (go && window.ContextUI) window.ContextUI.openPanel();
-                return;
-            }
-            
-            // 直接添加
-            const res = window.starContext.addFromDialogue(item);
-            if (res.success) {
-                ctxBtn.classList.add('just-added');
-                setTimeout(() => ctxBtn.classList.remove('just-added'), 600);
+            ctxBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
                 
-                if (window.ContextUI && window.ContextUI._renderList) {
-                    window.ContextUI._renderList();
+                if (!window.starContext) {
+                    alert(_t('ctxErrorNotInit'));
+                    return;
                 }
                 
-                // Toast 全球化 (保持你原始的 DOM 样式实现)
-                const msg = _t('contextToastAdded');
-                const t = document.createElement('div');
-                t.style.cssText = 'position:fixed; bottom:50px; left:50%; transform:translateX(-50%); background:rgba(0,124,240,.12); border:1px solid rgba(0,124,240,.3); color:#007cf0; padding:13px 28px; border-radius:50px; font-size:14px; font-family:"Noto Serif SC",serif; backdrop-filter:blur(12px); z-index:999999; opacity:0; transition:all .35s; pointer-events:none; white-space:nowrap; letter-spacing:1px; box-shadow:0 8px 32px rgba(0,0,0,.3);';
-                t.innerHTML = `<i class="fas fa-star" style="margin-right:8px"></i> ${msg}`;
-                document.body.appendChild(t);
-                requestAnimationFrame(() => requestAnimationFrame(() => t.style.opacity = '1'));
-                setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; setTimeout(()=>t.remove(), 350); }, 2200);
-            } else {
-                alert(res.message);
-            }
-        });
+                if (window.starContext.isFull()) {
+                    const go = confirm(_t('ctxErrorFullCleanup'));
+                    if (go && window.ContextUI) window.ContextUI.openPanel();
+                    return;
+                }
+                
+                const res = window.starContext.addFromDialogue(item);
+                if (res.success) {
+                    ctxBtn.classList.add('just-added');
+                    setTimeout(() => ctxBtn.classList.remove('just-added'), 600);
+                    
+                    if (window.ContextUI && window.ContextUI._renderList) {
+                        window.ContextUI._renderList();
+                    }
+                    
+                    const msg = _t('contextToastAdded');
+                    const t = document.createElement('div');
+                    t.style.cssText = 'position:fixed; bottom:50px; left:50%; transform:translateX(-50%); background:rgba(0,124,240,.12); border:1px solid rgba(0,124,240,.3); color:#007cf0; padding:13px 28px; border-radius:50px; font-size:14px; font-family:"Noto Serif SC",serif; backdrop-filter:blur(12px); z-index:999999; opacity:0; transition:all .35s; pointer-events:none; white-space:nowrap; letter-spacing:1px; box-shadow:0 8px 32px rgba(0,0,0,.3);';
+                    t.innerHTML = `<i class="fas fa-star" style="margin-right:8px"></i> ${msg}`;
+                    document.body.appendChild(t);
+                    requestAnimationFrame(() => requestAnimationFrame(() => t.style.opacity = '1'));
+                    setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; setTimeout(()=>t.remove(), 350); }, 2200);
+                } else {
+                    alert(res.message);
+                }
+            });
+
+            node.insertBefore(ctxBtn, node.firstChild);
+        }
 
         /* ═══════════════════════════════════════════════
-           【删除按钮】全球化
+           【删除按钮】所有节点保留
            ═══════════════════════════════════════════════ */
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'node-delete-btn';
@@ -1516,7 +1516,6 @@ function renderDialogueCanvas() {
             deleteNode(e, index);
         });
 
-        node.insertBefore(ctxBtn, node.firstChild);
         node.insertBefore(deleteBtn, node.firstChild);
 
         fragment.appendChild(node);
@@ -1524,29 +1523,22 @@ function renderDialogueCanvas() {
 
     container.appendChild(fragment);
 
-    // 严格保留原有的 MathJax 延时逻辑
-    /* --- 修改 renderDialogueCanvas 函数末尾的 MathJax 逻辑 --- */
     if (window.MathJax) {
         const delay = typeof requestIdleCallback !== 'undefined' 
             ? cb => requestIdleCallback(cb, { timeout: 500 })
             : cb => setTimeout(cb, 300);
             
         delay(() => {
-            // 关键修改点：在 typesetPromise 渲染完成后，追加执行一次 drawConnections
             MathJax.typesetPromise([container])
                 .then(() => {
-                    // 确保公式撑开高度后，重新计算位置
                     setTimeout(drawConnections, 100); 
                 })
                 .catch(err => console.warn('MathJax reflow error:', err));
         });
     } else {
-        // 如果没有 MathJax，也适当增加延时确保布局稳定
         setTimeout(drawConnections, 200);
     }
-    
 }
-
 
 /* --- 优化版 drawConnections (防抖 + 缓存) --- */
 let drawConnectionsTimeout = null;
