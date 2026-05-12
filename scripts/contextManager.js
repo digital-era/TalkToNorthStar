@@ -113,6 +113,11 @@ class StarContextManager {
 
   /* ── 3. 对话节点 Toggle ── */
   addFromDialogue(nodeData) {
+    
+    // 【限制】仅 AI 回答节点可作为上下文
+    if (nodeData.role === 'user') {
+      return { success: false, message: '用户提问暂不支持加入星语上下文' };
+    }
     const nodeId = nodeData.id || ('node_' + Date.now());
 
     if (this.isFull()) {
