@@ -1129,6 +1129,21 @@ const humanitiesMasters = [
       }
     },
     {
+      id: "luo_zhenyu", name: "罗振宇 (Luo Zhenyu)",
+      contribution: {
+        "zh-CN": "创办《罗辑思维》知识型脱口秀节目及得到App，开创知识付费商业模式，通过音频专栏、跨年演讲等形式普及通识知识，推动终身学习理念。",
+        "en": "Founded the knowledge-oriented talk show 'Luo Ji Si Wei' and the Dedao App, pioneering the paid knowledge service business model; popularized general knowledge through audio columns, year-end speeches, and other formats, advancing the concept of lifelong learning."
+      },
+      field: {
+        "zh-CN": "知识服务、知识付费、终身教育、思想传播。",
+        "en": "Knowledge Services, Paid Knowledge Content, Lifelong Education, Thought Dissemination."
+      },
+      remarks: {
+        "zh-CN": "从央视媒体人转型知识服务创业者，将深度内容产品化、商业化，是中国知识付费领域的标志性人物，以‘知识转述者’和‘手艺人’自定位，推动认知升级与思想普及。",
+        "en": "Transitioned from CCTV media professional to knowledge service entrepreneur; commercialized in-depth content and became an iconic figure in China's paid knowledge sector. Positions himself as a 'knowledge transporter' and 'craftsman,' promoting cognitive upgrading and the popularization of ideas."
+      }
+    },
+    {
         id: "han_han", name: "韩寒 (Han Han)",
         contribution: {
         "zh-CN": "17岁创作长篇小说《三重门》，以半自传形式深刻刻画应试教育体制下的高中生态，开启中国当代80后青春文学潮流。",
