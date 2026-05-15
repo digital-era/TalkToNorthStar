@@ -356,6 +356,7 @@ class CrystalBallController {
     // ══════════════════════════════════════════════
     this.isDemo = false;           // 是否处于系统演示中
     this.demoCooldownUntil = 0;
+    this.chargeLoopToken = 0;
     this.demoTimer = null;         // setInterval 句柄
     this.demoInterval = 3800+3800;      // 循环间隔 7.6 秒
     this.demoChargeMax = 0.82;     // 充能到 82% 自动回退（不触发 reveal）
@@ -415,7 +416,8 @@ class CrystalBallController {
     this.nebula.startCharging();
     
     // 开始充能循环
-    this._chargeLoop();
+    const token = ++this.chargeLoopToken;
+    this._chargeLoop(token);
   }
   
   _onPressMove(e) {
@@ -449,45 +451,48 @@ class CrystalBallController {
     this.realUserHolding = false;
   }
   
-  _chargeLoop() {
-    if (!this.isHolding) return;
-    
-    const elapsed = Date.now() - this.chargeStartTime;
-    
-    // 【修改】演示模式使用更长的充能时长
-    const duration = this.isDemo ? this.demoChargeDuration : this.chargeDuration;    
-    const chargeLevel = Math.min(1, elapsed / duration);
-    
-    // 更新粒子系统
-    this.nebula.setChargeLevel(chargeLevel);
-    
-    // 更新进度环
-    const circumference = 2 * Math.PI * 46;  // r=46
-    const offset = circumference * (1 - chargeLevel);
-    this.chargeProgress.style.strokeDashoffset = offset;    
-
-    // [DEMO] 演示模式下达到阈值自动回退，绝不触发揭晓
-    if (this.isDemo && chargeLevel >= this.demoChargeMax) {
-      this._endDemoPress();
-      return;
-    }
-    
-    // 正常充满检查（真人触摸时）
-    if (!this.isDemo && chargeLevel >= 1) {
-      this.chargeComplete = true;
-      this._onChargeComplete();
-      return;
-    }
-    
-    this.chargeAnimId = requestAnimationFrame(() => this._chargeLoop());
-  }
+  _chargeLoop(token = this.chargeLoopToken) {
   
-  _onChargeComplete() {
-    // 充满但还未松手 → 保持震动，等待释放
-    this.statusText.textContent = crystalTexts[currentLang || 'zh-CN'].releasing;
-    
-    // 可选：自动释放（不等待松手）
-    // setTimeout(() => this._reveal(), 300);
+      // token 不一致，说明当前循环已失效
+      if (token !== this.chargeLoopToken) return;
+  
+      // demo 冻结期间立即停止
+      if (
+          this.isDemo &&
+          Date.now() < this.demoCooldownUntil
+      ) {
+          return;
+      }
+  
+      if (!this.isHolding) return;
+  
+      const elapsed = Date.now() - this.chargeStartTime;
+  
+      const duration = this.isDemo
+          ? this.demoChargeDuration
+          : this.chargeDuration;
+  
+      const chargeLevel = Math.min(1, elapsed / duration);
+  
+      this.nebula.setChargeLevel(chargeLevel);
+  
+      const offset = this.circumference * (1 - chargeLevel);
+      this.chargeProgress.style.strokeDashoffset = offset;
+  
+      if (this.isDemo && chargeLevel >= this.demoChargeMax) {
+          this._endDemoPress();
+          return;
+      }
+  
+      if (!this.isDemo && chargeLevel >= 1) {
+          this.chargeComplete = true;
+          this._onChargeComplete();
+          return;
+      }
+  
+      this.chargeAnimId = requestAnimationFrame(() => {
+          this._chargeLoop(token);
+      });
   }
   
    _reveal(forcedCategory = null) {
@@ -521,6 +526,8 @@ class CrystalBallController {
   
   // 新增：极简优雅的强制触发方法
   forceSelect(category) {
+    // 杀死所有旧 chargeLoop
+    this.chargeLoopToken++;
     // 先彻底杀掉当前 demo
     if (this.isDemo) {
         this._endDemoPress();
@@ -571,38 +578,48 @@ class CrystalBallController {
   }
   
   reset() {
-  
-      // [DEMO] 清理演示状态
-      this.isDemo = false;
-  
-      // 清理所有动画帧
-      cancelAnimationFrame(this.chargeAnimId);
-  
-      // UI 复位
-      this.ball.classList.remove('charging', 'revealed');
-      this.hint.classList.remove('hidden');
-      this.result.classList.remove('show');
-      this.status.classList.remove('hidden');
-      this.chargeRing.classList.remove('visible');
-  
-      this.statusText.textContent =
-          crystalTexts[currentLang || 'zh-CN'].holdStatus;
-  
-      // 状态复位
-      this.isHolding = false;
-      this.realUserHolding = false;
-      this.chargeComplete = false;
-  
-      // 粒子系统复位
-      this.nebula.reset();
-  
-      // SVG 进度环立即归零
-      this.chargeProgress.style.transition = 'none';
-      this.chargeProgress.style.strokeDashoffset = this.circumference;
-  
-      // 防止 reveal 结束瞬间立刻触发 demo
-      this.demoCooldownUntil = Date.now() + 1200;
-  }
+
+    // ① 彻底废弃所有正在运行的 chargeLoop
+    this.chargeLoopToken++;
+
+    // ② 关闭 demo 状态（关键）
+    this.isDemo = false;
+
+    // ③ 清理 RAF（防止最后一帧偷跑）
+    cancelAnimationFrame(this.chargeAnimId);
+    this.chargeAnimId = null;
+
+    // ④ 如果你有 demo interval，一定要停（非常关键）
+    if (this.demoTimer) {
+        clearInterval(this.demoTimer);
+        this.demoTimer = null;
+    }
+
+    // ⑤ UI 重置
+    this.ball.classList.remove('charging', 'revealed');
+    this.hint.classList.remove('hidden');
+    this.result.classList.remove('show');
+    this.status.classList.remove('hidden');
+    this.chargeRing.classList.remove('visible');
+
+    this.statusText.textContent =
+        crystalTexts[currentLang || 'zh-CN'].holdStatus;
+
+    // ⑥ 状态重置
+    this.isHolding = false;
+    this.realUserHolding = false;
+    this.chargeComplete = false;
+
+    // ⑦ 粒子系统复位
+    this.nebula.reset();
+
+    // ⑧ SVG 进度条立即归零（无动画）
+    this.chargeProgress.style.transition = 'none';
+    this.chargeProgress.style.strokeDashoffset = this.circumference;
+
+    // ⑨ 冷却窗口（防止 reveal / demo 交叉帧）
+    this.demoCooldownUntil = Date.now() + 1200;
+}
   
   destroy() {
     // [DEMO] 清理循环，防止内存泄漏
@@ -660,24 +677,25 @@ class CrystalBallController {
     
     // 粒子系统进入充能
     this.nebula.startCharging();
-    this._chargeLoop();
+    const token = ++this.chargeLoopToken;
+    this._chargeLoop(token);
   }
 
   /** 模拟手指松开（提前取消，绝不进入 reveal） */
   _endDemoPress() {
-    if (!this.isDemo) return;
-    this.isDemo = false;
-    this.isHolding = false;
-    cancelAnimationFrame(this.chargeAnimId);
-    this._cancelCharge();   // 走"未充满回退"分支，带动画回弹
-  }
-
-  /** 外部调用：强制中断演示（如用户点击星轨按钮） */
-  stopDemo() {
-    if (this.isDemo) this._endDemoPress();
-  }
   
-}
+      if (!this.isDemo) return;
+  
+      this.isDemo = false;
+      this.isHolding = false;
+  
+      // 让旧 RAF 全部失效
+      this.chargeLoopToken++;
+  
+      cancelAnimationFrame(this.chargeAnimId);
+  
+      this._cancelCharge();
+  }
 
 // ══════════════════════════════════════════════
 // 初始化入口
