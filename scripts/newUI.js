@@ -521,7 +521,7 @@ class CrystalBallController {
   
   // 新增：极简优雅的强制触发方法
   forceSelect(category) {
-    this._pauseDemo(5000);
+    this.demoCooldownUntil = Infinity;
     if (this.chargeComplete || this.isHolding) return; // 如果正在操作则忽略
     
     this.chargeComplete = true; 
