@@ -356,7 +356,7 @@ class CrystalBallController {
     // ══════════════════════════════════════════════
     this.isDemo = false;           // 是否处于系统演示中
     this.demoTimer = null;         // setInterval 句柄
-    this.demoInterval = 3500;      // 循环间隔 3.5 秒
+    this.demoInterval = 3800+3800;      // 循环间隔 7.6 秒
     this.demoChargeMax = 0.82;     // 充能到 82% 自动回退（不触发 reveal）
   }
   
