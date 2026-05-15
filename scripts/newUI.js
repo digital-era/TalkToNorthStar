@@ -397,6 +397,7 @@ class CrystalBallController {
 
     // 【修复抖动】强制移除任何残留的 CSS 过渡，确保 RAF 直接驱动、绝对跟手
     this.chargeProgress.style.transition = 'none';
+    this.chargeProgress.style.strokeDashoffset = this.circumference;
     
     // 粒子系统
     this.nebula.startCharging();
@@ -532,14 +533,11 @@ class CrystalBallController {
     // 进度环回弹动画
     this.chargeProgress.style.transition = 'stroke-dashoffset 0.5s ease-out';
     this.chargeProgress.style.strokeDashoffset = this.circumference; //原来是 289
+    
     setTimeout(() => {
       this.chargeProgress.style.transition = 'none'; // 【修复抖动】回弹结束后，彻底移除transition, 'stroke-dashoffset 0.1s linear'，绝不留到下一次充能 
     }, 500);
-
-       
-    setTimeout(() => {
-        this.chargeProgress.style.transition = 'none';
-    }, 500);
+    
   }
   
   reset() {
@@ -600,6 +598,7 @@ class CrystalBallController {
 
     // 【修复抖动】强制移除残留过渡
     this.chargeProgress.style.transition = 'none';
+    this.chargeProgress.style.strokeDashoffset = this.circumference;
     
     // 粒子系统进入充能
     this.nebula.startCharging();
