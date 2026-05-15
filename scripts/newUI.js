@@ -355,7 +355,7 @@ class CrystalBallController {
     // [DEMO] 自动演示模式：模拟触摸，不触发揭晓
     // ══════════════════════════════════════════════
     this.isDemo = false;           // 是否处于系统演示中
-    this.demoPaused = false;       // 用户交互期间暂停 demo
+    this.demoCooldownUntil = 0;
     this.demoTimer = null;         // setInterval 句柄
     this.demoInterval = 3800+3800;      // 循环间隔 7.6 秒
     this.demoChargeMax = 0.82;     // 充能到 82% 自动回退（不触发 reveal）
@@ -386,17 +386,16 @@ class CrystalBallController {
     // 如果正在 demo，先彻底结束，并直接 return
     // 避免 demo 状态与真实触摸状态串帧
     if (this.isDemo) {
-      this._endDemoPress();
-      // 等下一次真实触摸
-      // 非常关键：阻断本次事件继续执行
-      return;
+        this._endDemoPress();
+        return;
     }
+
+    this._pauseDemo(4000);
     
     if (this.chargeComplete) return;
     if (e.cancelable) e.preventDefault();
 
     this.realUserHolding = true;
-    this.demoPaused = true;
 
     this.isHolding = true;
     this.chargeStartTime = Date.now();
@@ -522,7 +521,7 @@ class CrystalBallController {
   
   // 新增：极简优雅的强制触发方法
   forceSelect(category) {
-    this.demoPaused = true;
+    this._pauseDemo(5000);
     if (this.chargeComplete || this.isHolding) return; // 如果正在操作则忽略
     
     this.chargeComplete = true; 
@@ -562,26 +561,43 @@ class CrystalBallController {
     }, 500);
     
   }
+
+  _pauseDemo(ms = 3000) {
+    this.demoCooldownUntil = Date.now() + ms;
+  }
   
   reset() {
-    
-    // [DEMO] 清理演示标记，但不断掉循环定时器
-    this.isDemo = false;
-    
-    this.ball.classList.remove('charging', 'revealed');
-    this.hint.classList.remove('hidden');
-    this.result.classList.remove('show');
-    this.status.classList.remove('hidden');
-    this.chargeRing.classList.remove('visible');
-    this.statusText.textContent = crystalTexts[currentLang || 'zh-CN'].holdStatus;
-    
-    this.isHolding = false;
-    this.chargeComplete = false;
-    this.nebula.reset();
-    // 延迟恢复 demo，避免 reveal 结束瞬间抢状态
-    setTimeout(() => {
-        this.demoPaused = false;
-    }, 1200);
+  
+      // [DEMO] 清理演示状态
+      this.isDemo = false;
+  
+      // 清理所有动画帧
+      cancelAnimationFrame(this.chargeAnimId);
+  
+      // UI 复位
+      this.ball.classList.remove('charging', 'revealed');
+      this.hint.classList.remove('hidden');
+      this.result.classList.remove('show');
+      this.status.classList.remove('hidden');
+      this.chargeRing.classList.remove('visible');
+  
+      this.statusText.textContent =
+          crystalTexts[currentLang || 'zh-CN'].holdStatus;
+  
+      // 状态复位
+      this.isHolding = false;
+      this.realUserHolding = false;
+      this.chargeComplete = false;
+  
+      // 粒子系统复位
+      this.nebula.reset();
+  
+      // SVG 进度环立即归零
+      this.chargeProgress.style.transition = 'none';
+      this.chargeProgress.style.strokeDashoffset = this.circumference;
+  
+      // 防止 reveal 结束瞬间立刻触发 demo
+      this.demoCooldownUntil = Date.now() + 1200;
   }
   
   destroy() {
@@ -605,13 +621,18 @@ class CrystalBallController {
 
   /** 单次演示周期：仅在完全空闲时触发 */
   _runDemoCycle() {
+
+    // 用户交互冷却期间禁止 demo
+    if (Date.now() < this.demoCooldownUntil) return;
+
     if (
-        this.demoPaused ||
         this.isHolding ||
         this.chargeComplete ||
         this.nebula.isRevealed
     ) return;
-  }
+
+    this._startDemoPress();
+}
 
   /** 模拟手指按下 */
   _startDemoPress() {
@@ -1593,6 +1614,7 @@ function backToWheelSelection() {
         
         if (crystalInstance) {
             crystalInstance.reset();
+            crystalInstance._pauseDemo(1500);
         }
 
         // 【修复 4】：返回首页时，恢复星轨标签的显示
