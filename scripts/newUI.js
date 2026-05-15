@@ -719,7 +719,7 @@ class CrystalBallController {
   
       this._hardReset();
   }
-
+} // ⬅️ 【加上这个右大括号】：用于闭合 class CrystalBallController
 // ══════════════════════════════════════════════
 // 初始化入口
 // ══════════════════════════════════════════════
