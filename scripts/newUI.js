@@ -342,6 +342,7 @@ class CrystalBallController {
     this.chargeDuration = 2000;    // 充满需要 2 秒
     this.demoChargeDuration = 3800;    // 【新增】演示模式：3.8 秒（舒缓优雅）
     this.chargeStartTime = 0;
+    this.isHolding = false;
     this.chargeComplete = false;
     
     // 选中回调
@@ -355,7 +356,6 @@ class CrystalBallController {
     // ══════════════════════════════════════════════
     this.isDemo = false;           // 是否处于系统演示中
     this.demoCooldownUntil = 0;
-    this.chargeLoopToken = 0;
     this.demoTimer = null;         // setInterval 句柄
     this.demoInterval = 3800+3800;      // 循环间隔 7.6 秒
     this.demoChargeMax = 0.82;     // 充能到 82% 自动回退（不触发 reveal）
@@ -415,8 +415,7 @@ class CrystalBallController {
     this.nebula.startCharging();
     
     // 开始充能循环
-    const token = ++this.chargeLoopToken;
-    this._chargeLoop(token);
+    this._chargeLoop();
   }
   
   _onPressMove(e) {
@@ -429,10 +428,7 @@ class CrystalBallController {
     this.isHolding = false;
     
     // 停止充能循环
-    if (this.chargeAnimId) {
-      cancelAnimationFrame(this.chargeAnimId);
-      this.chargeAnimId = null;
-    }
+    cancelAnimationFrame(this.chargeAnimId);
 
     // demo 模式绝不允许 reveal
     if (!this.realUserHolding) {
@@ -451,197 +447,158 @@ class CrystalBallController {
     }
 
     this.realUserHolding = false;
-  }  
-  
-  _chargeLoop(token = this.chargeLoopToken) {
-      if (this.isDemo) return;   // ⭐关键隔离（必须加这一行）
-  
-      if (token !== this.chargeLoopToken) return;
-  
-      if (
-          this.isDemo &&
-          Date.now() < this.demoCooldownUntil
-      ) {
-          return;
-      }
-  
-      if (!this.isHolding) return;
-  
-      const elapsed = Date.now() - this.chargeStartTime;
-  
-      const duration = this.isDemo
-          ? this.demoChargeDuration
-          : this.chargeDuration;
-  
-      const chargeLevel = Math.min(1, elapsed / duration);
-  
-      this.nebula.setChargeLevel(chargeLevel);
-  
-      const offset = this.circumference * (1 - chargeLevel);
-      this.chargeProgress.style.strokeDashoffset = offset;
-  
-      if (this.isDemo && chargeLevel >= this.demoChargeMax) {
-          this._endDemoPress();
-          return;
-      }
-  
-      if (!this.isDemo && chargeLevel >= 1) {
-          this.chargeComplete = true;
-          this._onChargeComplete();
-          return;
-      }
-  
-      this.chargeAnimId = requestAnimationFrame(() => {
-          this._chargeLoop(token);
-      });
   }
-
-  _demoChargeLoop(token) {
-    if (token !== this.demoChargeToken) return;
-    if (!this.isDemo || !this.isHolding) return;
-
-    const elapsed = Date.now() - this.chargeStartTime;
-    const duration = this.demoChargeDuration;
-
-    const level = Math.min(1, elapsed / duration);
-
-    this.nebula.setChargeLevel(level);
-
-    this.chargeProgress.style.strokeDashoffset =
-        this.circumference * (1 - level);
-
-    if (level >= this.demoChargeMax) {
-        this._endDemoPress();
-        return;
-    }
-
-    this.demoAnimId = requestAnimationFrame(() =>
-        this._demoChargeLoop(token)
-    );
-}
   
-  _reveal(forcedCategory = null) {
+  _chargeLoop() {
+    if (!this.isHolding) return;
+    
+    const elapsed = Date.now() - this.chargeStartTime;
+    
+    // 【修改】演示模式使用更长的充能时长
+    const duration = this.isDemo ? this.demoChargeDuration : this.chargeDuration;    
+    const chargeLevel = Math.min(1, elapsed / duration);
+    
+    // 更新粒子系统
+    this.nebula.setChargeLevel(chargeLevel);
+    
+    // 更新进度环
+    const circumference = 2 * Math.PI * 46;  // r=46
+    const offset = circumference * (1 - chargeLevel);
+    this.chargeProgress.style.strokeDashoffset = offset;    
 
-    // 1. 冻结所有动画
-    this.chargeLoopToken++;
-    if (this.chargeAnimId) {
-        cancelAnimationFrame(this.chargeAnimId);
-        this.chargeAnimId = null;
+    // [DEMO] 演示模式下达到阈值自动回退，绝不触发揭晓
+    if (this.isDemo && chargeLevel >= this.demoChargeMax) {
+      this._endDemoPress();
+      return;
     }
-
-    // 2. 清理 demo / hold 状态
-    this.isDemo = false;
-    this.isHolding = false;
-    this.realUserHolding = false;
-
-    // 3. UI 切换
+    
+    // 正常充满检查（真人触摸时）
+    if (!this.isDemo && chargeLevel >= 1) {
+      this.chargeComplete = true;
+      this._onChargeComplete();
+      return;
+    }
+    
+    this.chargeAnimId = requestAnimationFrame(() => this._chargeLoop());
+  }
+  
+  _onChargeComplete() {
+    // 充满但还未松手 → 保持震动，等待释放
+    this.statusText.textContent = crystalTexts[currentLang || 'zh-CN'].releasing;
+    
+    // 可选：自动释放（不等待松手）
+    // setTimeout(() => this._reveal(), 300);
+  }
+  
+   _reveal(forcedCategory = null) {
     this.ball.classList.remove('charging');
     this.ball.classList.add('revealed');
     this.chargeRing.classList.remove('visible');
     this.status.classList.add('hidden');
-
-    // 4. 粒子爆散
+    
+    // 粒子爆散
     this.nebula.reveal();
-
-    // 5. 选择类别
-    const selectedCat =
-        forcedCategory ||
-        NEBULA_CATEGORIES[Math.floor(Math.random() * NEBULA_CATEGORIES.length)];
-
+    
+    // 随机选择，或使用传入的强制大类
+    const selectedCat = forcedCategory || NEBULA_CATEGORIES[Math.floor(Math.random() * NEBULA_CATEGORIES.length)];
+    
+    // 【修复英文错乱问题】：统一使用 getCategoryName 保证与转盘、标签页的文案绝对同步！
+    // 之前错乱是因为英文模式下发生了事件穿透，或者 categoryNames 字典与全局 translations 没对齐
     const name = getCategoryName(selectedCat);
-    const enName = categoryNames[selectedCat]?.en || selectedCat;
-
-    // 6. 延迟展示结果
+    const enName = categoryNames[selectedCat]?.['en'] || selectedCat;
+    
     setTimeout(() => {
         this.resultText.textContent = name;
         this.resultSub.textContent = enName;
         this.result.classList.add('show');
-
-        // 7. 回调 + reset
+        
         setTimeout(() => {
-            this.onSelect?.(selectedCat);
+            if (this.onSelect) this.onSelect(selectedCat);
             this.reset();
-        }, 1800);
-
-    }, 400);
-}
+        }, 2000);
+    }, 500);
+  }
   
   // 新增：极简优雅的强制触发方法
   forceSelect(category) {
-
-    // 1. 先杀所有动画循环（关键）
-    this.chargeLoopToken++;
-    this.demoTimer && clearInterval(this.demoTimer);
-    this.demoTimer = null;
-    cancelAnimationFrame(this.chargeAnimId);
-
-    this.isDemo = false;
-    this.isHolding = false;
-
-    // 2. 再做 UI
+    this.demoCooldownUntil = Infinity;
+    if (this.chargeComplete || this.isHolding) return; // 如果正在操作则忽略
+    
+    this.chargeComplete = true; 
+    
+    // UI 瞬间高光充能状态
     this.ball.classList.add('charging');
     this.chargeRing.classList.add('visible');
-
+    this.hint.classList.add('hidden');
+    this.statusText.textContent = crystalTexts[currentLang || 'zh-CN'].releasing;
+    
+    // 粒子系统瞬间满充能
     this.nebula.startCharging();
-    this.nebula.setChargeLevel(1);
-
+    this.nebula.setChargeLevel(1); 
+    
+    // 给予0.6秒的视觉缓冲（水晶球亮起）后，爆发揭晓动画
     setTimeout(() => {
-        this._reveal(category);
+      this._reveal(category);
     }, 600);
- }
+  }  
   
- _cancelCharge() {
-    this._hardReset();
- }
+  _cancelCharge() {
+    // 未充满松手 → 平滑回退
+    this.ball.classList.remove('charging');
+    this.chargeRing.classList.remove('visible');
+    this.hint.classList.remove('hidden');
+    this.statusText.textContent = crystalTexts[currentLang || 'zh-CN'].holdStatus;
+    
+    this.nebula.stopCharging();
+    this.nebula.setChargeLevel(0);
+    
+    // 进度环回弹动画
+    this.chargeProgress.style.transition = 'stroke-dashoffset 0.5s ease-out';
+    this.chargeProgress.style.strokeDashoffset = this.circumference; //原来是 289
+    
+    setTimeout(() => {
+      this.chargeProgress.style.transition = 'none'; // 【修复抖动】回弹结束后，彻底移除transition, 'stroke-dashoffset 0.1s linear'，绝不留到下一次充能 
+    }, 500);
+    
+  }
 
   _pauseDemo(ms = 3000) {
     this.demoCooldownUntil = Date.now() + ms;
   }
   
-   reset() {  
-      this._hardReset();
+  reset() {
+  
+      // [DEMO] 清理演示状态
+      this.isDemo = false;
+  
+      // 清理所有动画帧
+      cancelAnimationFrame(this.chargeAnimId);
+  
+      // UI 复位
+      this.ball.classList.remove('charging', 'revealed');
+      this.hint.classList.remove('hidden');
+      this.result.classList.remove('show');
+      this.status.classList.remove('hidden');
+      this.chargeRing.classList.remove('visible');
+  
+      this.statusText.textContent =
+          crystalTexts[currentLang || 'zh-CN'].holdStatus;
+  
+      // 状态复位
+      this.isHolding = false;
+      this.realUserHolding = false;
+      this.chargeComplete = false;
+  
+      // 粒子系统复位
+      this.nebula.reset();
+  
+      // SVG 进度环立即归零
+      this.chargeProgress.style.transition = 'none';
+      this.chargeProgress.style.strokeDashoffset = this.circumference;
+  
+      // 防止 reveal 结束瞬间立刻触发 demo
       this.demoCooldownUntil = Date.now() + 1200;
   }
-
-  _hardReset() {
-    // 1. 终止所有 loop token
-    this.chargeLoopToken++;
-
-    // 2. RAF
-    if (this.chargeAnimId) {
-        cancelAnimationFrame(this.chargeAnimId);
-        this.chargeAnimId = null;
-    }
-
-    // 3. demo interval
-    if (this.demoTimer) {
-        clearInterval(this.demoTimer);
-        this.demoTimer = null;
-    }
-
-    // 4. 状态统一归零
-    this.isDemo = false;
-    this.isHolding = false;
-    this.realUserHolding = false;
-    this.chargeComplete = false;
-
-    // 5. nebula 强制重置
-    this.nebula.stopCharging?.();
-    this.nebula.reset();
-
-    // 6. UI 统一恢复
-    this.ball.classList.remove('charging', 'revealed');
-    this.hint.classList.remove('hidden');
-    this.status.classList.remove('hidden');
-    this.chargeRing.classList.remove('visible');
-
-    this.statusText.textContent =
-        crystalTexts[currentLang || 'zh-CN'].holdStatus;
-
-    // 7. progress 归零
-    this.chargeProgress.style.transition = 'none';
-    this.chargeProgress.style.strokeDashoffset = this.circumference;
-}
   
   destroy() {
     // [DEMO] 清理循环，防止内存泄漏
@@ -699,27 +656,25 @@ class CrystalBallController {
     
     // 粒子系统进入充能
     this.nebula.startCharging();
-    const token = ++this.chargeLoopToken;
-    this._chargeLoop(token);
-    this.demoChargeToken = ++this.chargeLoopToken;
-    this._demoChargeLoop(this.demoChargeToken);
+    this._chargeLoop();
   }
 
   /** 模拟手指松开（提前取消，绝不进入 reveal） */
   _endDemoPress() {
-      if (!this.isDemo) return;
-  
-      this.isDemo = false;
-      this.isHolding = false;
-  
-      if (this.demoAnimId) {
-          cancelAnimationFrame(this.demoAnimId);
-          this.demoAnimId = null;
-      }
-  
-      this._hardReset();
+    if (!this.isDemo) return;
+    this.isDemo = false;
+    this.isHolding = false;
+    cancelAnimationFrame(this.chargeAnimId);
+    this._cancelCharge();   // 走"未充满回退"分支，带动画回弹
   }
-} // ⬅️ 【加上这个右大括号】：用于闭合 class CrystalBallController
+
+  /** 外部调用：强制中断演示（如用户点击星轨按钮） */
+  stopDemo() {
+    if (this.isDemo) this._endDemoPress();
+  }
+  
+}
+
 // ══════════════════════════════════════════════
 // 初始化入口
 // ══════════════════════════════════════════════
@@ -786,7 +741,7 @@ function renderNebulaManualSelector() {
             // 【关键修复】：阻止事件冒泡，防止点击按钮时误触了水晶球引发 "随机选择(Finance)"
             e.stopPropagation(); 
             if (crystalInstance) {
-                crystalInstance._endDemoPress();          // [DEMO] 中断演示
+                crystalInstance.stopDemo();          // [DEMO] 中断演示
                 selector.classList.add('fading-out');
                 crystalInstance.forceSelect(cat);
             }
