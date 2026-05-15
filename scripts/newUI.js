@@ -355,6 +355,7 @@ class CrystalBallController {
     // [DEMO] 自动演示模式：模拟触摸，不触发揭晓
     // ══════════════════════════════════════════════
     this.isDemo = false;           // 是否处于系统演示中
+    this.demoPaused = false;       // 用户交互期间暂停 demo
     this.demoTimer = null;         // setInterval 句柄
     this.demoInterval = 3800+3800;      // 循环间隔 7.6 秒
     this.demoChargeMax = 0.82;     // 充能到 82% 自动回退（不触发 reveal）
@@ -395,6 +396,7 @@ class CrystalBallController {
     if (e.cancelable) e.preventDefault();
 
     this.realUserHolding = true;
+    this.demoPaused = true;
 
     this.isHolding = true;
     this.chargeStartTime = Date.now();
@@ -520,6 +522,7 @@ class CrystalBallController {
   
   // 新增：极简优雅的强制触发方法
   forceSelect(category) {
+    this.demoPaused = true;
     if (this.chargeComplete || this.isHolding) return; // 如果正在操作则忽略
     
     this.chargeComplete = true; 
@@ -575,6 +578,10 @@ class CrystalBallController {
     this.isHolding = false;
     this.chargeComplete = false;
     this.nebula.reset();
+    // 延迟恢复 demo，避免 reveal 结束瞬间抢状态
+    setTimeout(() => {
+        this.demoPaused = false;
+    }, 1200);
   }
   
   destroy() {
@@ -598,8 +605,12 @@ class CrystalBallController {
 
   /** 单次演示周期：仅在完全空闲时触发 */
   _runDemoCycle() {
-    if (this.isHolding || this.chargeComplete || this.nebula.isRevealed) return;
-    this._startDemoPress();
+    if (
+        this.demoPaused ||
+        this.isHolding ||
+        this.chargeComplete ||
+        this.nebula.isRevealed
+    ) return;
   }
 
   /** 模拟手指按下 */
