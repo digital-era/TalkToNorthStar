@@ -597,7 +597,10 @@ class CrystalBallController {
       this.chargeProgress.style.strokeDashoffset = this.circumference;
   
       // 防止 reveal 结束瞬间立刻触发 demo
-      this.demoCooldownUntil = Date.now() + 1200;
+      // 【最小代价修复】：如果是强制选择（Infinity），则保持永远冻结，不要解除锁定
+      if (this.demoCooldownUntil !== Infinity) {
+          this.demoCooldownUntil = Date.now() + 1200;
+      }
   }
   
   destroy() {
