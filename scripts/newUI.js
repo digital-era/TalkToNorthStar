@@ -340,6 +340,7 @@ class CrystalBallController {
     
     // 充能参数
     this.chargeDuration = 2000;    // 充满需要 2 秒
+    this.demoChargeDuration = 3800;    // 【新增】演示模式：3.8 秒（舒缓优雅）
     this.chargeStartTime = 0;
     this.isHolding = false;
     this.chargeComplete = false;
@@ -435,7 +436,10 @@ class CrystalBallController {
     if (!this.isHolding) return;
     
     const elapsed = Date.now() - this.chargeStartTime;
-    const chargeLevel = Math.min(1, elapsed / this.chargeDuration);
+    
+    // 【修改】演示模式使用更长的充能时长
+    const duration = this.isDemo ? this.demoChargeDuration : this.chargeDuration;    
+    const chargeLevel = Math.min(1, elapsed / duration);
     
     // 更新粒子系统
     this.nebula.setChargeLevel(chargeLevel);
@@ -443,7 +447,7 @@ class CrystalBallController {
     // 更新进度环
     const circumference = 2 * Math.PI * 46;  // r=46
     const offset = circumference * (1 - chargeLevel);
-    this.chargeProgress.style.strokeDashoffset = offset;
+    this.chargeProgress.style.strokeDashoffset = offset;    
 
     // [DEMO] 演示模式下达到阈值自动回退，绝不触发揭晓
     if (this.isDemo && chargeLevel >= this.demoChargeMax) {
