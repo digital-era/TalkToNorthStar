@@ -358,6 +358,9 @@ class CrystalBallController {
     this.demoTimer = null;         // setInterval 句柄
     this.demoInterval = 3800+3800;      // 循环间隔 7.6 秒
     this.demoChargeMax = 0.82;     // 充能到 82% 自动回退（不触发 reveal）
+    //
+    this.isHolding = false;
+    this.realUserHolding = false; // 是否是真人触摸
   }
   
   _bindEvents() {
@@ -379,13 +382,20 @@ class CrystalBallController {
   }
   
   _onPressStart(e) {
-    // [DEMO] 用户真实触摸时，立即中断系统演示
+    // 如果正在 demo，先彻底结束，并直接 return
+    // 避免 demo 状态与真实触摸状态串帧
     if (this.isDemo) {
       this._endDemoPress();
+      // 等下一次真实触摸
+      // 非常关键：阻断本次事件继续执行
+      return;
     }
+    
     if (this.chargeComplete) return;
     if (e.cancelable) e.preventDefault();
-    
+
+    this.realUserHolding = true;
+
     this.isHolding = true;
     this.chargeStartTime = Date.now();
     this.chargeComplete = false;
@@ -418,18 +428,24 @@ class CrystalBallController {
     
     // 停止充能循环
     cancelAnimationFrame(this.chargeAnimId);
+
+    // demo 模式绝不允许 reveal
+    if (!this.realUserHolding) {
+        this._cancelCharge();
+        return;
+    }
     
     // 检查是否充满
     const elapsed = Date.now() - this.chargeStartTime;
     const chargeLevel = Math.min(1, elapsed / this.chargeDuration);
-    
-    if (chargeLevel >= 1) {
-      // 充满 → 揭晓
-      this._reveal();
+
+    if (chargeLevel >= 1 && this.chargeComplete) {
+        this._reveal();
     } else {
-      // 未充满 → 回弹
-      this._cancelCharge();
+        this._cancelCharge();
     }
+
+    this.realUserHolding = false;
   }
   
   _chargeLoop() {
@@ -456,7 +472,7 @@ class CrystalBallController {
     }
     
     // 正常充满检查（真人触摸时）
-    if (chargeLevel >= 1) {
+    if (!this.isDemo && chargeLevel >= 1) {
       this.chargeComplete = true;
       this._onChargeComplete();
       return;
@@ -589,6 +605,8 @@ class CrystalBallController {
   /** 模拟手指按下 */
   _startDemoPress() {
     if (this.chargeComplete || this.isHolding) return;
+    
+    this.realUserHolding = false;    
     this.isDemo = true;
     this.isHolding = true;
     this.chargeStartTime = Date.now();
