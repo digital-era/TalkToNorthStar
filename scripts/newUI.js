@@ -340,6 +340,14 @@ class CrystalBallController {
     
     this._bindEvents();
     this.nebula.start();
+
+    // ══════════════════════════════════════════════
+    // [DEMO] 自动演示模式：模拟触摸，不触发揭晓
+    // ══════════════════════════════════════════════
+    this.isDemo = false;           // 是否处于系统演示中
+    this.demoTimer = null;         // setInterval 句柄
+    this.demoInterval = 3500;      // 循环间隔 3.5 秒
+    this.demoChargeMax = 0.82;     // 充能到 82% 自动回退（不触发 reveal）
   }
   
   _bindEvents() {
@@ -361,6 +369,10 @@ class CrystalBallController {
   }
   
   _onPressStart(e) {
+    // [DEMO] 用户真实触摸时，立即中断系统演示
+    if (this.isDemo) {
+      this._endDemoPress();
+    }
     if (this.chargeComplete) return;
     if (e.cancelable) e.preventDefault();
     
@@ -419,8 +431,14 @@ class CrystalBallController {
     const circumference = 2 * Math.PI * 46;  // r=46
     const offset = circumference * (1 - chargeLevel);
     this.chargeProgress.style.strokeDashoffset = offset;
+
+    // [DEMO] 演示模式下达到阈值自动回退，绝不触发揭晓
+    if (this.isDemo && chargeLevel >= this.demoChargeMax) {
+      this._endDemoPress();
+      return;
+    }
     
-    // 检查是否充满
+    // 正常充满检查（真人触摸时）
     if (chargeLevel >= 1) {
       this.chargeComplete = true;
       this._onChargeComplete();
@@ -508,6 +526,10 @@ class CrystalBallController {
   }
   
   reset() {
+    
+    // [DEMO] 清理演示标记，但不断掉循环定时器
+    this.isDemo = false;
+    
     this.ball.classList.remove('charging', 'revealed');
     this.hint.classList.remove('hidden');
     this.result.classList.remove('show');
@@ -521,8 +543,63 @@ class CrystalBallController {
   }
   
   destroy() {
+    // [DEMO] 清理循环，防止内存泄漏
+    if (this.demoTimer) {
+      clearInterval(this.demoTimer);
+      this.demoTimer = null;
+    }
     this.nebula.stop();
   }
+
+  // ══════════════════════════════════════════════
+  // [DEMO] 演示循环控制
+  // ══════════════════════════════════════════════
+  
+  /** 启动循环演示：首次延迟 800ms，之后每 3s 一次 */
+  startDemoLoop() {
+    setTimeout(() => this._runDemoCycle(), 800);
+    this.demoTimer = setInterval(() => this._runDemoCycle(), this.demoInterval);
+  }
+
+  /** 单次演示周期：仅在完全空闲时触发 */
+  _runDemoCycle() {
+    if (this.isHolding || this.chargeComplete || this.nebula.isRevealed) return;
+    this._startDemoPress();
+  }
+
+  /** 模拟手指按下 */
+  _startDemoPress() {
+    if (this.chargeComplete || this.isHolding) return;
+    this.isDemo = true;
+    this.isHolding = true;
+    this.chargeStartTime = Date.now();
+    this.chargeComplete = false;
+
+    // UI 状态与真实触摸完全一致
+    this.ball.classList.add('charging');
+    this.chargeRing.classList.add('visible');
+    this.hint.classList.add('hidden');
+    this.statusText.textContent = crystalTexts[currentLang || 'zh-CN'].chargingStatus;
+
+    // 粒子系统进入充能
+    this.nebula.startCharging();
+    this._chargeLoop();
+  }
+
+  /** 模拟手指松开（提前取消，绝不进入 reveal） */
+  _endDemoPress() {
+    if (!this.isDemo) return;
+    this.isDemo = false;
+    this.isHolding = false;
+    cancelAnimationFrame(this.chargeAnimId);
+    this._cancelCharge();   // 走"未充满回退"分支，带动画回弹
+  }
+
+  /** 外部调用：强制中断演示（如用户点击星轨按钮） */
+  stopDemo() {
+    if (this.isDemo) this._endDemoPress();
+  }
+  
 }
 
 // ══════════════════════════════════════════════
@@ -550,6 +627,9 @@ function initCrystalBall() {
   
   crystalInstance = new CrystalBallController();
   crystalInstance.onSelect = (cat) => selectCategory(cat);
+
+  // [DEMO] 启动自动演示循环
+  crystalInstance.startDemoLoop();
 }
 
 // ══════════════════════════════════════════════
@@ -588,6 +668,7 @@ function renderNebulaManualSelector() {
             // 【关键修复】：阻止事件冒泡，防止点击按钮时误触了水晶球引发 "随机选择(Finance)"
             e.stopPropagation(); 
             if (crystalInstance) {
+                crystalInstance.stopDemo();          // [DEMO] 中断演示
                 selector.classList.add('fading-out');
                 crystalInstance.forceSelect(cat);
             }
