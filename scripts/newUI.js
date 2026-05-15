@@ -430,7 +430,10 @@ class CrystalBallController {
     this.isHolding = false;
     
     // 停止充能循环
-    cancelAnimationFrame(this.chargeAnimId);
+    if (this.chargeAnimId) {
+      cancelAnimationFrame(this.chargeAnimId);
+      this.chargeAnimId = null;
+    }
 
     // demo 模式绝不允许 reveal
     if (!this.realUserHolding) {
@@ -450,6 +453,8 @@ class CrystalBallController {
 
     this.realUserHolding = false;
   }
+
+  
   
   _chargeLoop(token = this.chargeLoopToken) {
   
@@ -495,130 +500,127 @@ class CrystalBallController {
       });
   }
   
-   _reveal(forcedCategory = null) {
+  _reveal(forcedCategory = null) {
+
+    // 1. 冻结所有动画
+    this.chargeLoopToken++;
+    if (this.chargeAnimId) {
+        cancelAnimationFrame(this.chargeAnimId);
+        this.chargeAnimId = null;
+    }
+
+    // 2. 清理 demo / hold 状态
+    this.isDemo = false;
+    this.isHolding = false;
+    this.realUserHolding = false;
+
+    // 3. UI 切换
     this.ball.classList.remove('charging');
     this.ball.classList.add('revealed');
     this.chargeRing.classList.remove('visible');
     this.status.classList.add('hidden');
-    
-    // 粒子爆散
+
+    // 4. 粒子爆散
     this.nebula.reveal();
-    
-    // 随机选择，或使用传入的强制大类
-    const selectedCat = forcedCategory || NEBULA_CATEGORIES[Math.floor(Math.random() * NEBULA_CATEGORIES.length)];
-    
-    // 【修复英文错乱问题】：统一使用 getCategoryName 保证与转盘、标签页的文案绝对同步！
-    // 之前错乱是因为英文模式下发生了事件穿透，或者 categoryNames 字典与全局 translations 没对齐
+
+    // 5. 选择类别
+    const selectedCat =
+        forcedCategory ||
+        NEBULA_CATEGORIES[Math.floor(Math.random() * NEBULA_CATEGORIES.length)];
+
     const name = getCategoryName(selectedCat);
-    const enName = categoryNames[selectedCat]?.['en'] || selectedCat;
-    
+    const enName = categoryNames[selectedCat]?.en || selectedCat;
+
+    // 6. 延迟展示结果
     setTimeout(() => {
         this.resultText.textContent = name;
         this.resultSub.textContent = enName;
         this.result.classList.add('show');
-        
+
+        // 7. 回调 + reset
         setTimeout(() => {
-            if (this.onSelect) this.onSelect(selectedCat);
+            this.onSelect?.(selectedCat);
             this.reset();
-        }, 2000);
-    }, 500);
-  }
+        }, 1800);
+
+    }, 400);
+}
   
   // 新增：极简优雅的强制触发方法
   forceSelect(category) {
-    // 杀死所有旧 chargeLoop
+
+    // 1. 先杀所有动画循环（关键）
     this.chargeLoopToken++;
-    // 先彻底杀掉当前 demo
-    if (this.isDemo) {
-        this._endDemoPress();
-    }
-    this.demoCooldownUntil = Infinity;
-    if (this.chargeComplete || this.isHolding) return; // 如果正在操作则忽略
-    
-    this.chargeComplete = true; 
-    
-    // UI 瞬间高光充能状态
+    this.demoTimer && clearInterval(this.demoTimer);
+    this.demoTimer = null;
+    cancelAnimationFrame(this.chargeAnimId);
+
+    this.isDemo = false;
+    this.isHolding = false;
+
+    // 2. 再做 UI
     this.ball.classList.add('charging');
     this.chargeRing.classList.add('visible');
-    this.hint.classList.add('hidden');
-    this.statusText.textContent = crystalTexts[currentLang || 'zh-CN'].releasing;
-    
-    // 粒子系统瞬间满充能
+
     this.nebula.startCharging();
-    this.nebula.setChargeLevel(1); 
-    
-    // 给予0.6秒的视觉缓冲（水晶球亮起）后，爆发揭晓动画
+    this.nebula.setChargeLevel(1);
+
     setTimeout(() => {
-      this._reveal(category);
+        this._reveal(category);
     }, 600);
-  }  
+ }
   
-  _cancelCharge() {
-    // 未充满松手 → 平滑回退
-    this.ball.classList.remove('charging');
-    this.chargeRing.classList.remove('visible');
-    this.hint.classList.remove('hidden');
-    this.statusText.textContent = crystalTexts[currentLang || 'zh-CN'].holdStatus;
-    
-    this.nebula.stopCharging();
-    this.nebula.setChargeLevel(0);
-    
-    // 进度环回弹动画
-    this.chargeProgress.style.transition = 'stroke-dashoffset 0.5s ease-out';
-    this.chargeProgress.style.strokeDashoffset = this.circumference; //原来是 289
-    
-    setTimeout(() => {
-      this.chargeProgress.style.transition = 'none'; // 【修复抖动】回弹结束后，彻底移除transition, 'stroke-dashoffset 0.1s linear'，绝不留到下一次充能 
-    }, 500);
-    
-  }
+ _cancelCharge() {
+    this._hardReset();
+ }
 
   _pauseDemo(ms = 3000) {
     this.demoCooldownUntil = Date.now() + ms;
   }
   
-  reset() {
+   reset() {  
+      this._hardReset();
+      this.demoCooldownUntil = Date.now() + 1200;
+  }
 
-    // ① 彻底废弃所有正在运行的 chargeLoop
+  _hardReset() {
+    // 1. 终止所有 loop token
     this.chargeLoopToken++;
 
-    // ② 关闭 demo 状态（关键）
-    this.isDemo = false;
+    // 2. RAF
+    if (this.chargeAnimId) {
+        cancelAnimationFrame(this.chargeAnimId);
+        this.chargeAnimId = null;
+    }
 
-    // ③ 清理 RAF（防止最后一帧偷跑）
-    cancelAnimationFrame(this.chargeAnimId);
-    this.chargeAnimId = null;
-
-    // ④ 如果你有 demo interval，一定要停（非常关键）
+    // 3. demo interval
     if (this.demoTimer) {
         clearInterval(this.demoTimer);
         this.demoTimer = null;
     }
 
-    // ⑤ UI 重置
+    // 4. 状态统一归零
+    this.isDemo = false;
+    this.isHolding = false;
+    this.realUserHolding = false;
+    this.chargeComplete = false;
+
+    // 5. nebula 强制重置
+    this.nebula.stopCharging?.();
+    this.nebula.reset();
+
+    // 6. UI 统一恢复
     this.ball.classList.remove('charging', 'revealed');
     this.hint.classList.remove('hidden');
-    this.result.classList.remove('show');
     this.status.classList.remove('hidden');
     this.chargeRing.classList.remove('visible');
 
     this.statusText.textContent =
         crystalTexts[currentLang || 'zh-CN'].holdStatus;
 
-    // ⑥ 状态重置
-    this.isHolding = false;
-    this.realUserHolding = false;
-    this.chargeComplete = false;
-
-    // ⑦ 粒子系统复位
-    this.nebula.reset();
-
-    // ⑧ SVG 进度条立即归零（无动画）
+    // 7. progress 归零
     this.chargeProgress.style.transition = 'none';
     this.chargeProgress.style.strokeDashoffset = this.circumference;
-
-    // ⑨ 冷却窗口（防止 reveal / demo 交叉帧）
-    this.demoCooldownUntil = Date.now() + 1200;
 }
   
   destroy() {
@@ -683,18 +685,9 @@ class CrystalBallController {
 
   /** 模拟手指松开（提前取消，绝不进入 reveal） */
   _endDemoPress() {
-  
       if (!this.isDemo) return;
   
-      this.isDemo = false;
-      this.isHolding = false;
-  
-      // 让旧 RAF 全部失效
-      this.chargeLoopToken++;
-  
-      cancelAnimationFrame(this.chargeAnimId);
-  
-      this._cancelCharge();
+      this._hardReset();   // ❗关键统一
   }
 
 // ══════════════════════════════════════════════
