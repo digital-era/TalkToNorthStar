@@ -342,7 +342,6 @@ class CrystalBallController {
     this.chargeDuration = 2000;    // 充满需要 2 秒
     this.demoChargeDuration = 3800;    // 【新增】演示模式：3.8 秒（舒缓优雅）
     this.chargeStartTime = 0;
-    this.isHolding = false;
     this.chargeComplete = false;
     
     // 选中回调
@@ -452,16 +451,13 @@ class CrystalBallController {
     }
 
     this.realUserHolding = false;
-  }
-
-  
+  }  
   
   _chargeLoop(token = this.chargeLoopToken) {
+      if (this.isDemo) return;   // ⭐关键隔离（必须加这一行）
   
-      // token 不一致，说明当前循环已失效
       if (token !== this.chargeLoopToken) return;
   
-      // demo 冻结期间立即停止
       if (
           this.isDemo &&
           Date.now() < this.demoCooldownUntil
@@ -499,6 +495,30 @@ class CrystalBallController {
           this._chargeLoop(token);
       });
   }
+
+  _demoChargeLoop(token) {
+    if (token !== this.demoChargeToken) return;
+    if (!this.isDemo || !this.isHolding) return;
+
+    const elapsed = Date.now() - this.chargeStartTime;
+    const duration = this.demoChargeDuration;
+
+    const level = Math.min(1, elapsed / duration);
+
+    this.nebula.setChargeLevel(level);
+
+    this.chargeProgress.style.strokeDashoffset =
+        this.circumference * (1 - level);
+
+    if (level >= this.demoChargeMax) {
+        this._endDemoPress();
+        return;
+    }
+
+    this.demoAnimId = requestAnimationFrame(() =>
+        this._demoChargeLoop(token)
+    );
+}
   
   _reveal(forcedCategory = null) {
 
@@ -681,13 +701,23 @@ class CrystalBallController {
     this.nebula.startCharging();
     const token = ++this.chargeLoopToken;
     this._chargeLoop(token);
+    this.demoChargeToken = ++this.chargeLoopToken;
+    this._demoChargeLoop(this.demoChargeToken);
   }
 
   /** 模拟手指松开（提前取消，绝不进入 reveal） */
   _endDemoPress() {
       if (!this.isDemo) return;
   
-      this._hardReset();   // ❗关键统一
+      this.isDemo = false;
+      this.isHolding = false;
+  
+      if (this.demoAnimId) {
+          cancelAnimationFrame(this.demoAnimId);
+          this.demoAnimId = null;
+      }
+  
+      this._hardReset();
   }
 
 // ══════════════════════════════════════════════
@@ -756,7 +786,7 @@ function renderNebulaManualSelector() {
             // 【关键修复】：阻止事件冒泡，防止点击按钮时误触了水晶球引发 "随机选择(Finance)"
             e.stopPropagation(); 
             if (crystalInstance) {
-                crystalInstance.stopDemo();          // [DEMO] 中断演示
+                crystalInstance._endDemoPress();          // [DEMO] 中断演示
                 selector.classList.add('fading-out');
                 crystalInstance.forceSelect(cat);
             }
