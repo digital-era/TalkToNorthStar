@@ -287,7 +287,7 @@
 	   底部状态文字
 	   ═══════════════════════════════════════════════ */
 	.crystal-status {
-		margin-top: 0;
+		margin-top: 10; //0->10
 		margin-bottom: 30px;
 		display: flex;
 		align-items: center;
