@@ -870,21 +870,40 @@ function updateEndpointByModel(modelValue) {
     }
 }
 
+const getNextSampleQuestion = (function() {
+    let count = 0;
+    const config = [
+        { key: 'sampleQuestionText1', theme: 'thought',   color: '#00DFD8', glow: 'rgba(0, 223, 216, 0.7)' },      // 思想·青
+        { key: 'sampleQuestionText2', theme: 'practice',  color: '#F39C12', glow: 'rgba(243, 156, 18, 0.6)' },     // 实践·琥珀金
+        { key: 'sampleQuestionText3', theme: 'potential', color: '#D2E6FF', glow: 'rgba(210, 230, 255, 0.8)' }      // 潜能·折射白蓝
+    ];
+    return function() {
+        const current = config[count % 3];
+        count++;
+        return current;
+    };
+})();
+
 function fillSampleQuestion() {
     const textarea = document.getElementById('userQuestion');
+    const { key, color, glow } = getNextSampleQuestion();
     
-    // 直接从 translations 全局对象读取，支持 i18n
-    const text = translations[currentLang]?.sampleQuestionText 
-              || translations['zh-CN'].sampleQuestionText;
+    const text = translations[currentLang]?.[key] 
+              || translations['zh-CN']?.[key] 
+              || '';
     
     textarea.value = text;
-    textarea.focus();
+    // textarea.focus();  // ← 删除或注释掉，手机端不再弹键盘
     
-    // 按钮瞬时反馈
-    const btn = document.querySelector('.sample-question-btn');
-    if (btn) {
-        btn.style.color = '#00dfd8';
-        setTimeout(() => btn.style.color = '', 800);
+    // 图标反馈保持不变
+    const icon = document.querySelector('.sample-q-icon');
+    if (icon) {
+        icon.style.color = color;
+        icon.style.textShadow = `0 0 15px ${glow}, 0 0 30px ${glow}`;
+        setTimeout(() => {
+            icon.style.color = '';
+            icon.style.textShadow = '';
+        }, 800);
     }
 }
 
