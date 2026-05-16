@@ -71,7 +71,7 @@
       font-family: 'Playfair Display', 'Ma Shan Zheng', cursive, serif; 
       /* --- 修改结束 --- */
       text-align: center;
-      margin-top: 30px; /* 根据实际 Logo 和按钮高度调整，从100-》30 */
+      margin-top: 0px; /* 根据实际 Logo 和按钮高度调整，从100-》30-》0 */
       margin-bottom: 5px; /* 标题底部留一点空间 */
       font-size: 2.5em;  /* 稍微加大一点字号，因为毛笔字在视觉上通常比黑体显小 2.8->2.5 */ 
       font-weight: 400; /* 毛笔字体自带粗细，设为 400 即可，不用 600 */
