@@ -51,7 +51,7 @@
 ========================================= */
 .splash-side {
     position: absolute;
-    top: 46%; /* 垂直对齐光圈中心 */
+    top: 46%; 
     transform: translateY(-50%);
     z-index: 10;
     color: #f5e7c4;
@@ -62,40 +62,31 @@
     align-items: center;
 }
 
-/* 
-   关键修改：使用相对于中心的偏移 (calc)
-   这样无论屏幕多宽，文字都能锁定在图片内的光圈位置
-*/
+/* 中文模式下的间距控制 */
 .splash-left {
-    /* 在中心点左侧 25% 处（根据 16:9 比例调整） */
     left: calc(50% - 32%); 
 }
-
 .splash-right {
-    /* 在中心点右侧 25% 处 */
     right: calc(50% - 32%);
 }
 
-/* 符号 + / - */
 .splash-symbol {
     font-size: 2.2rem;
     margin-bottom: 5px;
-    font-weight: 200; /* 更纤细 */
+    font-weight: 200;
     opacity: 0.8;
 }
 
-/* 侧边标题 */
 .splash-title {
-    font-size: 1.5rem; /* 调小一点更精致 */
+    font-size: 1.5rem;
     font-weight: 400;
     margin-bottom: 15px;
-    letter-spacing: 4px; /* 增加字间距 */
+    letter-spacing: 4px;
     font-family: "Noto Serif SC", serif;
 }
 
-/* 文案行 */
 .splash-lines {
-    font-size: 0.95rem; /* 调小 */
+    font-size: 0.95rem;
     line-height: 2;
     opacity: 0.8;
     font-weight: 300;
@@ -104,11 +95,11 @@
 }
 
 /* =========================================
-   底部标题区域
+   底部标题区域 (下移优化：避开中间光柱遮挡)
 ========================================= */
 .splash-bottom {
     position: absolute;
-    bottom: 10%;
+    bottom: 7.5%; /* 从 10% 下调到 7.5%，避开遮挡 */
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
@@ -118,10 +109,11 @@
 .splash-main-title {
     font-size: 2.4rem;
     margin-bottom: 8px;
-    letter-spacing: 8px; /* 增加呼吸感 */
+    letter-spacing: 8px;
     font-weight: 400;
     font-family: "Noto Serif SC", serif;
     color: #f7e5c0;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5); /* 增加投影提高可读性 */
 }
 
 .splash-sub-title {
@@ -132,10 +124,34 @@
 }
 
 /* =========================================
+   英文模式专用优化 (解决英文单词长、易遮挡问题)
+========================================= */
+/* 增加两侧距离，防止英文单词戳进发光圈 */
+html[lang="en"] .splash-left { left: calc(50% - 36%); }
+html[lang="en"] .splash-right { right: calc(50% - 36%); }
+
+/* 英文标题字号微调 */
+html[lang="en"] .splash-title {
+    font-size: 1.3rem;
+    letter-spacing: 2px;
+}
+
+/* 英文细则字号微调，增加透明度以显得更精致 */
+html[lang="en"] .splash-lines {
+    font-size: 0.85rem;
+    line-height: 1.8;
+}
+
+/* 英文主标题字号微调 */
+html[lang="en"] .splash-main-title {
+    font-size: 2.1rem;
+    letter-spacing: 4px;
+}
+
+/* =========================================
    动画与状态控制
 ========================================= */
 .splash-hidden {
-    /* 保持原有的向左翻页感 */
     transform: perspective(2000px) rotateY(-75deg) translateX(-20%);
     transform: translateX(-100%) scale(0.95);
     opacity: 0 !important;
@@ -147,7 +163,7 @@ body.splash-active {
 }
 
 /* =========================================
-   手机端适配 (保持比例)
+   手机端适配
 ========================================= */
 @media (max-width: 768px) {
     #splash-screen img {
@@ -155,11 +171,15 @@ body.splash-active {
         border-radius: 0;
     }
     
-    .splash-left { left: 5%; }
-    .splash-right { right: 5%; }
+    .splash-left { left: 4% !important; }
+    .splash-right { right: 4% !important; }
     
     .splash-title { font-size: 1.1rem; letter-spacing: 2px; }
     .splash-lines { font-size: 0.75rem; }
     .splash-main-title { font-size: 1.6rem; letter-spacing: 4px; }
     .splash-symbol { font-size: 1.5rem; }
+    
+    .splash-bottom {
+        bottom: 12%; /* 手机端由于屏幕窄，底部标题可以稍微往上提一点点 */
+    }
 }
