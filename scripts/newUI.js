@@ -730,14 +730,16 @@ function renderNebulaManualSelector() {
 
     const selector = document.createElement('div');
     selector.id = 'nebula-manual-selector';
-    selector.className = 'nebula-manual-selector';
+    selector.className = 'nebula-manual-selector';    
 
     const hintText = document.createElement('div');
     hintText.className = 'manual-selector-hint';
-    // 【修复文字过长】：精简英文文案，防止撑爆容器
-    hintText.textContent = (typeof currentLang !== 'undefined' && currentLang === 'en') 
+    // 【修改点】：确保判断条件使用 window.currentLang
+    const lang = window.currentLang || 'zh-CN';
+    hintText.textContent = (lang === 'en') 
         ? '— Or, Choose your star —' 
         : '— 或，亲自选择星辰 —';
+  
     selector.appendChild(hintText);
 
     const chipsWrap = document.createElement('div');
@@ -775,7 +777,8 @@ function renderNebulaManualSelector() {
 // 语言切换支持
 // ══════════════════════════════════════════════
 function updateCrystalLanguage() {
-  const lang = currentLang || 'zh-CN';
+  // 确保这里取 window.currentLang
+  const lang = window.currentLang || 'zh-CN'; 
   const texts = crystalTexts[lang];
   
   const hintText = document.querySelector('.crystal-hint .hint-text');
@@ -864,9 +867,11 @@ let currentSelectedCategory = null;
 
 // 大类中文 / 英文名称（从 translations 动态获取）
 function getCategoryName(cat) {
+  // 这里的 currentLang 必须取自全局 window
+  const lang = window.currentLang || 'zh-CN';
   const key = 'tab' + cat.charAt(0).toUpperCase() + cat.slice(1);
-  if (typeof translations !== 'undefined' && translations[currentLang]) {
-    return translations[currentLang][key] || cat;
+  if (typeof translations !== 'undefined' && translations[lang]) {
+    return translations[lang][key] || cat;
   }
   return cat;
 }
