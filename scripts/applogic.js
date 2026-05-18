@@ -870,40 +870,24 @@ function updateEndpointByModel(modelValue) {
     }
 }
 
-const getNextSampleQuestion = (function() {
-    let count = 0;
-    const config = [
-        { key: 'sampleQuestionText1', theme: 'thought',   color: '#00DFD8', glow: 'rgba(0, 223, 216, 0.7)' },      // 思想·青
-        { key: 'sampleQuestionText2', theme: 'practice',  color: '#F39C12', glow: 'rgba(243, 156, 18, 0.6)' },     // 实践·琥珀金
-        { key: 'sampleQuestionText3', theme: 'potential', color: '#D2E6FF', glow: 'rgba(210, 230, 255, 0.8)' }      // 潜能·折射白蓝
-    ];
-    return function() {
-        const current = config[count % 3];
-        count++;
-        return current;
-    };
-})();
-
-function fillSampleQuestion() {
+function fillSampleQuestion(type) {
     const textarea = document.getElementById('userQuestion');
-    const { key, color, glow } = getNextSampleQuestion();
+    const key = 'sampleQuestionText' + type;
     
     const text = translations[currentLang]?.[key] 
               || translations['zh-CN']?.[key] 
               || '';
     
     textarea.value = text;
-    // textarea.focus();  // ← 删除或注释掉，手机端不再弹键盘
     
-    // 图标反馈保持不变
-    const icon = document.querySelector('.sample-q-icon');
+    // 对应图标触发点击反馈动画
+    const iconClass = type === 1 ? '.sample-q-icon' 
+                    : type === 2 ? '.sample-q-icon2' 
+                    : '.sample-q-icon3';
+    const icon = document.querySelector(iconClass);
     if (icon) {
-        icon.style.color = color;
-        icon.style.textShadow = `0 0 15px ${glow}, 0 0 30px ${glow}`;
-        setTimeout(() => {
-            icon.style.color = '';
-            icon.style.textShadow = '';
-        }, 800);
+        icon.classList.add('active');
+        setTimeout(() => icon.classList.remove('active'), 600);
     }
 }
 
