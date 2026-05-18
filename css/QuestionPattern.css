@@ -45,6 +45,21 @@
       
       /* 默认颜色 */
       color: rgba(0, 223, 216, 0.5);   /* 思想默认，其他在各自选择器覆盖 */
+
+      /* 移除焦点轮廓 */
+      outline: none;
+      
+      /* 移动端移除点击高亮 */
+      -webkit-tap-highlight-color: transparent;
+  }
+
+  /* 键盘导航时保留可见焦点（无障碍最佳实践） */
+  .sample-q-icon:focus-visible,
+  .sample-q-icon2:focus-visible,
+  .sample-q-icon3:focus-visible {
+      outline: 2px solid rgba(0, 223, 216, 0.5);
+      outline-offset: 2px;
+      border-radius: 4px;
   }
   
   /* 思想 · 青色灯泡 */
