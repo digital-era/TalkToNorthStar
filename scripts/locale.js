@@ -567,6 +567,28 @@
             }
         }  
 
+
+        // === 新增：页面加载时的语言初始化逻辑 ===
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. 尝试从 localStorage 获取保存的语言，如果没有，则检测浏览器语言，最后默认为 'zh-CN'
+            const savedLang = localStorage.getItem('preferredLang');
+            const browserLang = navigator.language.startsWith('en') ? 'en' : 'zh-CN';
+            const initialLang = savedLang || browserLang || 'zh-CN';
+        
+            // 2. 确保页面上的语言选择下拉框（如果存在）显示正确的选项
+            const langSelector = document.getElementById('languageSelector');
+            if (langSelector) {
+                langSelector.value = initialLang;
+            }
+        
+            // 3. 执行一次语言设置
+            // 延迟一小会儿执行，确保其他业务脚本（如 masters.js）已经加载完成，
+            // 这样 setLanguage 里的 populateLeaders() 等函数才能正常工作
+            setTimeout(() => {
+                setLanguage(initialLang);
+            }, 50); 
+        });
+
         // 在你的翻译脚本最底部添加
         window.translations = translations;
         window.currentLang = currentLang;
