@@ -575,7 +575,7 @@
         }  
 
 
-        / /=== 修正后的语言初始化逻辑 ===
+        //=== 修正后的语言初始化逻辑 ===
         document.addEventListener('DOMContentLoaded', () => {
             // 1. 计算初始语言
             const savedLang = localStorage.getItem('preferredLang');
