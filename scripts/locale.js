@@ -504,7 +504,14 @@
             // 1. 【核心修复】同步到全局 window 对象，确保 contextManager.js 的 _t 函数能获取最新语言
             window.currentLang = lang; 
             currentLang = lang; // 更新当前作用域变量
-            
+
+            // 【关键修复：同步 UI 状态】
+            // 无论从哪里调用 setLanguage，都强制让下拉框的显示值与语言值一致
+            const langSelector = document.getElementById('languageSelector');
+            if (langSelector) {
+                langSelector.value = lang;
+            }
+                    
             // 2. 更新 HTML 属性及持久化配置
             document.documentElement.lang = currentLang;
             if (translations[currentLang].pageTitle) {
