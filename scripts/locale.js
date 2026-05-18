@@ -463,7 +463,7 @@
                  "coverHumanTitle": "Humans · Add",
                  "coverHuman1": "Create Meaning",
                  "coverHuman2": "Seek Truth",
-                 "coverHuman3": "Build Emotional Connection",                
+                 "coverHuman3": "Build Emotional Link",                
                  "coverMainTitle": "Talk to North Star",
                  "coverSubTitle": "Infinite · Thought",
                     
