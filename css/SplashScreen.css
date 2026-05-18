@@ -84,7 +84,7 @@ html[lang="en"] .splash-right { right: calc(50% - 38%); }
 html[lang="en"] .splash-main-title { font-size: 2.1rem; }
 
 /* =========================================
-   手机端适配 (针对竖屏专门优化)
+   手机端适配 (仅针对解释文案下移优化)
 ========================================= */
 @media (max-width: 768px) {
     #splash-screen img {
@@ -92,76 +92,80 @@ html[lang="en"] .splash-main-title { font-size: 2.1rem; }
         border-radius: 0;
     }
 
-    /* 【核心修正】文字大幅度缩小，并贴近手机左右边缘 */
+    /* 侧边文字容器：保持在环形中位线 */
     .splash-side {
-        top: 48%; /* 稍微下调，对齐无限符号圆心 */
-        text-shadow: 0 0 5px rgba(0,0,0,1); /* 手机端背景小，加深阴影保证清晰 */
+        top: 48%; 
+        text-shadow: 0 0 8px rgba(0,0,0,1);
     }
 
+    /* 贴边处理 */
     .splash-left { 
-        left: 2% !important; /* 强制贴左边 */
-        align-items: flex-start; /* 改为左对齐，腾出右侧空间 */
-        padding-left: 10px;
+        left: 2% !important; 
+        align-items: flex-start; 
+        padding-left: 5px;
     }
 
     .splash-right { 
-        right: 2% !important; /* 强制贴右边 */
-        align-items: flex-end; /* 改为右对齐，腾出左侧空间 */
-        padding-right: 10px;
+        right: 2% !important; 
+        align-items: flex-end; 
+        padding-right: 5px;
     }
 
-    .splash-symbol { font-size: 1.1rem; margin-bottom: 2px; }
+    .splash-symbol { 
+        font-size: 1.1rem; 
+        margin-bottom: 2px; 
+    }
 
+    /* 标题：保留现状 (大小和位置不动) */
     .splash-title {
-        font-size: 0.8rem; /* 显著减小 */
-        margin-bottom: 8px;
+        font-size: 0.8rem; 
         letter-spacing: 1px;
-        white-space: nowrap;
+        white-space: nowrap; 
+        margin-bottom: 0; /* 这里的间距由下方的 margin-top 控制 */
     }
 
+    /* 【核心修改】详细文案：通过大幅度 margin-top 整体下移 */
+    /* 这会让这三行字沉到无限符号圆环的下方 */
     .splash-lines {
-        font-size: 0.6rem; /* 极致小字 */
+        font-size: 0.6rem; 
         line-height: 1.4;
-        letter-spacing: 0;
-        /* 手机端如果字还是多，可以稍微减弱透明度 */
-        opacity: 0.7;
+        opacity: 0.75;
+        margin-top: 40px; /* 增加这个数值，直到文字完全避开发光环形 */
     }
 
-    /* 底部文字优化：进入底部的黑边区域 */
+    /* 底部标题位置：保持在黑边区域 */
     .splash-bottom {
-        bottom: 18%; /* 往黑边里推 */
+        bottom: 12%; 
     }
 
     .splash-main-title {
-        font-size: 1.6rem;
-        letter-spacing: 4px;
+        font-size: 1.5rem;
+        letter-spacing: 3px;
         margin-bottom: 4px;
     }
 
     .splash-sub-title {
         font-size: 0.7rem;
-        letter-spacing: 5px;
+        letter-spacing: 4px;
     }
 
-    /* 【英文极致适配】解决单词太长的问题 */
-    html[lang="en"] .splash-left,
-    html[lang="en"] .splash-right {
-        left: 1% !important;
-        right: 1% !important;
-    }
-
+    /* =========================================
+       手机端英文模式额外微调
+    ========================================= */
+    /* 英文单词较长，标题字号稍作微调以适应单行，文案加大下移力度 */
     html[lang="en"] .splash-title {
-        font-size: 0.65rem; /* 英文单词长，再小一点 */
+        font-size: 0.7rem; 
         letter-spacing: 0.5px;
     }
 
     html[lang="en"] .splash-lines {
         font-size: 0.55rem;
-        line-height: 1.2;
+        /* 英文标题占地稍大，文案再往下多推一点点 */
+        margin-top: 45px; 
     }
-    
+
     html[lang="en"] .splash-main-title {
-        font-size: 1.3rem; /* 防止 "Talk to North Star" 换行太难看 */
+        font-size: 1.3rem;
     }
 }
 
