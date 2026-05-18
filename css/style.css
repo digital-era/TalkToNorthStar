@@ -843,7 +843,7 @@
       box-shadow: 0 0 15px rgba(74, 144, 226, 0.3) !important;
       transform: translateY(-2px);
   }
-      
+
   /* --- 修改开始：调整选中北极星信息的样式支持 Flex 布局 --- */
   #selected-leader-info {
       margin-bottom: 15px;
@@ -881,7 +881,6 @@
       gap: 10px;
   }
   
-  .sample-q-icon,
   .copy-leader-btn {
       width: 28px;           /* 统一宽度 */
       height: 28px;          /* 统一高度 */
@@ -890,19 +889,7 @@
       justify-content: center;
       border-radius: 4px;    /* 统一圆角 */
   }
-  
-  .sample-q-icon {
-      font-size: 14px;
-      color: rgba(255, 255, 255, 0.35);
-      cursor: pointer;
-      transition: all 0.25s ease;
-  }
-  
-  .sample-q-icon:hover {
-      color: #f59e0b;
-      transform: scale(1.15);
-      text-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
-  }
+ 
   
   .copy-leader-btn {
       cursor: pointer;
