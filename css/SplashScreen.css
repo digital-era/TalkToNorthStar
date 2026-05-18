@@ -163,23 +163,68 @@ body.splash-active {
 }
 
 /* =========================================
-   手机端适配
+   手机端适配 (重点优化：针对竖屏窄图)
 ========================================= */
 @media (max-width: 768px) {
     #splash-screen img {
         max-height: 100vh;
         border-radius: 0;
     }
-    
-    .splash-left { left: 4% !important; }
-    .splash-right { right: 4% !important; }
-    
-    .splash-title { font-size: 1.1rem; letter-spacing: 2px; }
-    .splash-lines { font-size: 0.75rem; }
-    .splash-main-title { font-size: 1.6rem; letter-spacing: 4px; }
-    .splash-symbol { font-size: 1.5rem; }
-    
-    .splash-bottom {
-        bottom: 12%; /* 手机端由于屏幕窄，底部标题可以稍微往上提一点点 */
+
+    /* 侧边文字：大幅缩小字体并拉开距离 */
+    .splash-side {
+        top: 48%; /* 稍微下移一点点以匹配手机端的视觉重心 */
     }
+
+    .splash-left { left: 3% !important; }
+    .splash-right { right: 3% !important; }
+
+    .splash-symbol {
+        font-size: 1.2rem; /* 显著缩小 */
+        margin-bottom: 2px;
+    }
+
+    .splash-title {
+        font-size: 0.85rem; /* 显著缩小，防止盖住图形 */
+        margin-bottom: 6px;
+        letter-spacing: 1px;
+    }
+
+    .splash-lines {
+        font-size: 0.6rem; /* 极小字号，仅作为装饰美感 */
+        line-height: 1.5;
+        letter-spacing: 0;
+    }
+
+    /* 底部标题优化 */
+    .splash-bottom {
+        bottom: 15%; /* 手机端背景图上下有大量黑边，底部文字往上提，进入黑边边缘 */
+    }
+
+    .splash-main-title {
+        font-size: 1.5rem;
+        letter-spacing: 3px;
+        margin-bottom: 4px;
+    }
+
+    .splash-sub-title {
+        font-size: 0.7rem;
+        letter-spacing: 4px;
+    }
+
+    /* 手机端英文模式：由于英文单词更长，需要进一步极致缩小 */
+    html[lang="en"] .splash-title {
+        font-size: 0.7rem; 
+        letter-spacing: 0.5px;
+    }
+    html[lang="en"] .splash-lines {
+        font-size: 0.55rem;
+        line-height: 1.3;
+    }
+    html[lang="en"] .splash-main-title {
+        font-size: 1.3rem;
+        letter-spacing: 2px;
+    }
+    html[lang="en"] .splash-left { left: 1% !important; }
+    html[lang="en"] .splash-right { right: 1% !important; }
 }
