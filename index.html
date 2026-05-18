@@ -483,19 +483,35 @@
         </div>
         
         <div class="interaction-area">
-            <h2 data-i18n-key="interactWithLeader">与北极星对话</h2>
+			<div class="interaction-header">
+	            <h2 data-i18n-key="interactWithLeader">与北极星对话</h2>
+			    <div class="sample-icons-group">
+			        <i class="fas fa-lightbulb sample-q-icon"
+			           onclick="fillSampleQuestion(1)"
+			           data-i18n-key="tooltipSampleQuestionThought"
+			           data-i18n-target="aria-label"
+			           aria-label="Sample question: Thought"></i>
+			        <i class="fas fa-compass sample-q-icon2"
+			           onclick="fillSampleQuestion(2)"
+			           data-i18n-key="tooltipSampleQuestionPractice"
+			           data-i18n-target="aria-label"
+			           aria-label="Sample question: Practice"></i>
+			        <i class="fas fa-mountain sample-q-icon3"
+			           onclick="fillSampleQuestion(3)"
+			           data-i18n-key="tooltipSampleQuestionPotential"
+			           data-i18n-target="aria-label"
+			           aria-label="Sample question: Potential"></i>
+			    </div>
+			</div>
+			
             <!-- --- 修改开始：增加右侧小图标 --- -->
-            <div id="selected-leader-info">
+            <div id="selected-leader-info">			
                 <div>
                     <span data-i18n-key="currentSelectedLeaderPrefix">当前选择的北极星: </span>
                     <span id="selectedLeaderName" data-i18n-key="noLeaderSelectedInitial">无</span>
                 </div>
 				<!-- 新增：图标容器 -->
 			    <div class="leader-info-actions">
-					<!-- 示例问题图标 -->
-					<i class="fas fa-lightbulb sample-q-icon"
-					   onclick="fillSampleQuestion()"></i>
-	                <!-- 点击此图标调用新的合并拷贝功能 -->
 	                <i class="fas fa-copy copy-leader-btn"
 	                   onclick="copyConversationToClipboard()"
 	                   aria-label="Copy conversation"
