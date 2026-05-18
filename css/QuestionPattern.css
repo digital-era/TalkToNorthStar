@@ -38,54 +38,52 @@
       font-size: 13px;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+      
+      /* 移除边框 */
+      border: none;
+      background: transparent;
+      
+      /* 默认颜色 */
+      color: rgba(0, 223, 216, 0.5);   /* 思想默认，其他在各自选择器覆盖 */
   }
   
-  /* ═══ 思想 · 青色灯泡 ═══ */
+  /* 思想 · 青色灯泡 */
   .sample-q-icon {
       color: rgba(0, 223, 216, 0.5);
-      background: rgba(0, 223, 216, 0.08);
-      border: 1px solid rgba(0, 223, 216, 0.2);
   }
   
   .sample-q-icon:hover {
       color: #00DFD8;
-      background: rgba(0, 223, 216, 0.2);
-      border-color: rgba(0, 223, 216, 0.6);
-      box-shadow: 0 0 15px rgba(0, 223, 216, 0.4),
-                  inset 0 0 8px rgba(0, 223, 216, 0.1);
+      text-shadow: 0 0 15px rgba(0, 223, 216, 0.6),
+                   0 0 30px rgba(0, 223, 216, 0.3);
       transform: translateY(-2px) scale(1.1);
+      background: rgba(0, 223, 216, 0.1);  /* 极淡背景替代边框 */
   }
   
-  /* ═══ 实践 · 琥珀金指南针 ═══ */
+  /* 实践 · 琥珀金指南针 */
   .sample-q-icon2 {
       color: rgba(243, 156, 18, 0.5);
-      background: rgba(243, 156, 18, 0.08);
-      border: 1px solid rgba(243, 156, 18, 0.2);
   }
   
   .sample-q-icon2:hover {
       color: #F39C12;
-      background: rgba(243, 156, 18, 0.2);
-      border-color: rgba(243, 156, 18, 0.6);
-      box-shadow: 0 0 15px rgba(243, 156, 18, 0.4),
-                  inset 0 0 8px rgba(243, 156, 18, 0.1);
+      text-shadow: 0 0 15px rgba(243, 156, 18, 0.6),
+                   0 0 30px rgba(243, 156, 18, 0.3);
       transform: translateY(-2px) scale(1.1);
+      background: rgba(243, 156, 18, 0.1);
   }
   
-  /* ═══ 潜能 · 天空蓝山峰 ═══ */
+  /* 潜能 · 天空蓝山峰 */
   .sample-q-icon3 {
       color: rgba(74, 144, 226, 0.5);
-      background: rgba(74, 144, 226, 0.08);
-      border: 1px solid rgba(74, 144, 226, 0.2);
   }
   
   .sample-q-icon3:hover {
       color: #4A90E2;
-      background: rgba(74, 144, 226, 0.2);
-      border-color: rgba(74, 144, 226, 0.6);
-      box-shadow: 0 0 15px rgba(74, 144, 226, 0.4),
-                  inset 0 0 8px rgba(74, 144, 226, 0.1);
+      text-shadow: 0 0 15px rgba(74, 144, 226, 0.6),
+                   0 0 30px rgba(74, 144, 226, 0.3);
       transform: translateY(-2px) scale(1.1);
+      background: rgba(74, 144, 226, 0.1);
   }
   
   /* 点击反馈 */
