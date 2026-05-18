@@ -521,6 +521,7 @@ class CrystalBallController {
   
   // 新增：极简优雅的强制触发方法
   forceSelect(category) {
+    this.stopDemoLoop();
     this.demoCooldownUntil = Infinity;
     if (this.chargeComplete || this.isHolding) return; // 如果正在操作则忽略
     
@@ -618,9 +619,18 @@ class CrystalBallController {
   
   /** 启动循环演示：首次延迟 800ms，之后每 3s 一次 */
   startDemoLoop() {
+    this.stopDemoLoop();   
     setTimeout(() => this._runDemoCycle(), 800);
     this.demoTimer = setInterval(() => this._runDemoCycle(), this.demoInterval);
   }
+
+  stopDemoLoop() {
+    if (this.demoTimer) {
+        clearInterval(this.demoTimer);
+        this.demoTimer = null;
+    }
+    this.stopDemo();            // 终止当前演示
+ }
 
   /** 单次演示周期：仅在完全空闲时触发 */
   _runDemoCycle() {
@@ -753,6 +763,11 @@ function renderNebulaManualSelector() {
     });
 
     selector.appendChild(chipsWrap);
+
+    // ⭐ 在这里添加事件拦截：阻止 mousedown 和 touchstart 冒泡到水晶球
+    chipsWrap.addEventListener('mousedown', (e) => e.stopPropagation());
+    chipsWrap.addEventListener('touchstart', (e) => e.stopPropagation());
+  
     crystalContainer.appendChild(selector);
 }
 
