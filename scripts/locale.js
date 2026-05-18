@@ -223,6 +223,17 @@
                 "ctxInjectionTitle": "【星语上下文 · 参考资料】",
                 "ctxInjectionHeader": "上下文",
                 "ctxInjectionFooter": "上下文结束 · 请结合以上资料回答后续问题",
+
+                "coverMachineTitle": "机器 · 做减法",
+                "coverMachine1": "剥离表象",
+                "coverMachine2": "过滤噪音",
+                "coverMachine3": "消除匮乏",                
+                "coverHumanTitle": "人类 · 做加法",
+                "coverHuman1": "注入意义",
+                "coverHuman2": "探索真理",
+                "coverHuman3": "创造情感联结",                
+                "coverMainTitle": "对话北极星",
+                "coverSubTitle": "无限 · 思想",
                     
                  "footerRight": "© AI范式进化. 保留所有权利。",
             },
@@ -444,6 +455,17 @@
                 "ctxInjectionTitle": "[Star Context · Reference Materials]",
                 "ctxInjectionHeader": "Context",
                 "ctxInjectionFooter": "End of Context · Please use these materials for following answers",
+
+                 "coverMachineTitle": "Machines · Subtract",
+                 "coverMachine1": "Strip Illusions",
+                 "coverMachine2": "Filter Noise",
+                 "coverMachine3": "Remove Scarcity",                
+                 "coverHumanTitle": "Humans · Add",
+                 "coverHuman1": "Create Meaning",
+                 "coverHuman2": "Seek Truth",
+                 "coverHuman3": "Build Emotional Connection",                
+                 "coverMainTitle": "Talk to North Star",
+                 "coverSubTitle": "Infinite · Thought",
                     
                  "footerRight": "© AI Paradigm Evolution. All rights reserved.",                
             }
