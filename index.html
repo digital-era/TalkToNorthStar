@@ -146,9 +146,47 @@
 </head>
 <body>
     <!-- [新增] 3D 画卷翻页进入封面 -->
-    <div id="splash-screen">
-        <img src="images/CoverTalkToNorthStar-cn.jpg" alt="对话北极星 - 封面">
-    </div>
+	<div id="splash-screen">
+	    <!-- 背景图 -->
+	    <img id="splash-image"
+	         src="images/CoverTalkToNorthStar-clean.jpg"
+	         alt="Talk to North Star Cover">
+	    <!-- 左侧：机器 -->
+	    <div class="splash-side splash-left">
+	        <div class="splash-symbol">⊖</div>
+	        <div class="splash-title" data-i18n-key="coverMachineTitle">
+	            机器 · 做减法
+	        </div>
+	        <div class="splash-lines">
+	            <div data-i18n-key="coverMachine1">剥离表象</div>
+	            <div data-i18n-key="coverMachine2">过滤噪音</div>
+	            <div data-i18n-key="coverMachine3">消除匮乏</div>
+	        </div>
+	    </div>
+	    <!-- 右侧：人类 -->
+	    <div class="splash-side splash-right">
+	        <div class="splash-symbol">⊕</div>
+	        <div class="splash-title" data-i18n-key="coverHumanTitle">
+	            人类 · 做加法
+	        </div>
+	        <div class="splash-lines">
+	            <div data-i18n-key="coverHuman1">注入意义</div>
+	            <div data-i18n-key="coverHuman2">探索真理</div>
+	            <div data-i18n-key="coverHuman3">创造情感联结</div>
+	        </div>
+	    </div>
+	    <!-- 底部标题 -->
+	    <div class="splash-bottom">
+	        <div class="splash-main-title"
+	             data-i18n-key="coverMainTitle">
+	            对话北极星
+	        </div>	
+	        <div class="splash-sub-title"
+	             data-i18n-key="coverSubTitle">
+	            无限 · 思想
+	        </div>
+	    </div>
+	</div>
 
   <header>
         <div class="logo-container">
