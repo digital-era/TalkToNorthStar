@@ -750,34 +750,30 @@
     }
     
     /* =====================================
-       标题间距最终修正：紧跟上文的标题不再额外留白
+       垂直间距彻底统一：6px 间隙，呼吸感仅保留给大标题
        ===================================== */
-    #print-overlay .thought-node h1,
-    #print-overlay .thought-node h2,
-    #print-overlay .thought-node h3 {
+    #rint-overlay .thought-node h1,
+    #rint-overlay .thought-node h2,
+    #rint-overlay .thought-node h3 {
         font-family: -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif !important;
         color: #111111 !important;
         border-bottom: 1px solid #eeeeee !important;
         padding-bottom: 4px !important;
+        margin-top: 0 !important;          /* 取消所有标题的默认上边距 */
+        margin-bottom: 6px !important;    /* 标题底部与正文段落统一 */
     }
     
-    /* 大标题 (h1/h2)：章节前保持舒展，下边距与正文统一 */
-    #print-overlay .thought-node h1,
-    #print-overlay .thought-node h2 {
+    /* 大标题上方保留章节呼吸感（只由 margin-top 提供） */
+    #rint-overlay .thought-node h1,
+    #rint-overlay .thought-node h2 {
         margin-top: 20px !important;
-        margin-bottom: 10px !important;
+        margin-bottom: 6px !important;
     }
     
-    /* 小标题 (h3)：默认上下边距（用于标题之间或列表后） */
-    #print-overlay .thought-node h3 {
-        margin-top: 10px !important;
-        margin-bottom: 10px !important;
-    }
-    
-    /* 关键修复：当段落直接后跟小标题时，取消 h3 的上边距，
-       让间距完全由段落的 margin-bottom 决定，与正文间距统一 */
-    #print-overlay .thought-node p + h3 {
-        margin-top: 0 !important;
+    /* 同时统一列表与后续内容的间距，避免额外叠加 */
+    #rint-overlay .thought-node ul,
+    #rint-overlay .thought-node ol {
+        margin-bottom: 6px !important;    /* 原来是 8px，现与正文统一 */
     }
     
     #print-overlay .thought-node strong, #print-overlay .thought-node b {
