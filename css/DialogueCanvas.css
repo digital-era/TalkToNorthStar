@@ -987,3 +987,18 @@
         opacity: 0.15;
     }
 }
+
+/* ==========================================
+   修复：各级标题紧接时的间距
+   ========================================== */
+
+/* 1) 大标题后紧跟小标题（如 h1 + h2） */
+#print-overlay .thought-node h1 + h2 {
+    margin-top: 8px !important;
+}
+
+/* 2) 小标题与小小标题互接时（h2 + h3 或 h3 + h2） */
+#print-overlay .thought-node h2 + h3,
+#print-overlay .thought-node h3 + h2 {
+    margin-top: 8px !important;
+}
