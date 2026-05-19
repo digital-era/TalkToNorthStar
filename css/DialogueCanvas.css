@@ -672,31 +672,7 @@
         box-sizing: border-box !important; 
         text-align: left !important;
     }    
-  
-    /* =====================================
-   标题间距精调：呼吸感 + 层级收敛
-   ===================================== */
-    #print-overlay .thought-node h1,
-    #print-overlay .thought-node h2,
-    #print-overlay .thought-node h3 {
-        font-family: -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif !important;
-        color: #111111 !important;
-        border-bottom: 1px solid #eeeeee !important;
-        padding-bottom: 4px !important;
-    }
-    
-    /* 大标题 (h1/h2)：章节前的留白保持舒展 */
-    #print-overlay .thought-node h1,
-    #print-overlay .thought-node h2 {
-        margin-top: 20px !important;
-        margin-bottom: 10px !important;
-    }
-    
-    /* 小标题 (h3)：紧跟大标题或上文，距离收紧但保留呼吸感 */
-    #print-overlay .thought-node h3 {
-        margin-top: 10px !important;
-        margin-bottom: 10px !important;
-    }
+
 
     /* ==========================================
        User 提问区块 
@@ -773,13 +749,29 @@
         display: inline !important; 
     }
     
-    #print-overlay .thought-node h1, #print-overlay .thought-node h2, #print-overlay .thought-node h3 {
+    /* =====================================
+   标题间距精调：呼吸感 + 层级收敛
+   ===================================== */
+    #print-overlay .thought-node h1,
+    #print-overlay .thought-node h2,
+    #print-overlay .thought-node h3 {
         font-family: -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif !important;
         color: #111111 !important;
-        margin-top: 15px !important; 
-        margin-bottom: 8px !important; /* 标题下方留白稍微收紧 */
+        border-bottom: 1px solid #eeeeee !important;
         padding-bottom: 4px !important;
-        border-bottom: 1px solid #eeeeee !important; 
+    }
+    
+    /* 大标题 (h1/h2)：章节前的留白保持舒展 */
+    #print-overlay .thought-node h1,
+    #print-overlay .thought-node h2 {
+        margin-top: 20px !important;
+        margin-bottom: 10px !important;
+    }
+    
+    /* 小标题 (h3)：紧跟大标题或上文，距离收紧但保留呼吸感 */
+    #print-overlay .thought-node h3 {
+        margin-top: 10px !important;
+        margin-bottom: 10px !important;
     }
     
     #print-overlay .thought-node strong, #print-overlay .thought-node b {
