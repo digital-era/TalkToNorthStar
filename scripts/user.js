@@ -63,8 +63,18 @@ function checkActionAuth(actionName) {
 
 function showAuthMsg(msgKey, color) {
     const box = document.getElementById('auth-status-msg');
-    if(!box) return;
-    const translatedMsg = translations[currentLang][msgKey] || msgKey;
+    if (!box) return;
+
+    // 1. 获取当前语言 (例如 'zh-CN' 或 'en')
+    const lang = window.currentLang || 'zh-CN';
+
+    // 2. 查字典逻辑：
+    // 如果 translations[lang][msgKey] 存在，则使用翻译
+    // 否则直接显示 msgKey (这处理了后端返回的原始错误信息)
+    const translatedMsg = (translations[lang] && translations[lang][msgKey]) 
+                          ? translations[lang][msgKey] 
+                          : msgKey;
+
     box.innerText = translatedMsg;
     box.style.color = color;
 }
