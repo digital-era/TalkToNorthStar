@@ -190,7 +190,13 @@
                  "authMsgPwUpdated": "密码已更新，请重新登录...",
                  "authMsgUpdateFailed": "更新失败",
                  "authSessionExpired": "登录已过期，请重新登录。",
-                 "authActionDenied": "> [拒绝操作] 执行 ${action} 前请先在设置中登录。",                
+                 "authActionDenied": "> [拒绝操作] 执行 ${action} 前请先在设置中登录。",     
+                 "Invalid username or password": "无效的用户名或密码",     
+                 "Server error": "服务器错误",     
+                 "Missing credentials": "未授权缺少凭据",    
+        	 "Invalid or expired token": "未授权缺少凭据",  
+        	 "User not found": "未授权缺少凭据",  
+        	 "Old password incorrect": "老密码不正确",  
 
                 "contextPanelTitle": "星语上下文",
                 "contextTabPaste": "粘贴文本",
@@ -436,6 +442,17 @@
                  "authMsgUpdateFailed": "UPDATE FAILED",
                  "authSessionExpired": "Session expired, please login again.",
                  "authActionDenied": "> [DENIED] Please login in Settings before performing ${action}.",
+
+                  "Server error": "Server error",     
+                 "Missing credentials": "Missing credentials",    
+        	 "Invalid or expired token": "Invalid or expired token",  
+        	 "User not found": "User not found",  
+        	 "Old password incorrect": "Old password incorrect",  
+                 "Invalid username or password": "Invalid username or password",     
+                 "Server error": "Server error",     
+                 "Missing credentials": "Missing credentials",    
+
+                    
 
                 "contextPanelTitle": "Star Context",
                 "contextTabPaste": "Paste Text",
