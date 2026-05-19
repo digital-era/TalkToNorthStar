@@ -1293,8 +1293,8 @@
 }
 
 .settings-tab-btn.active {
-    color: var(--primary-color, #0056b3); /* 使用你主题的主色调 */
-    border-bottom: 2px solid var(--primary-color, #0056b3);
+    color: var(--primary-color, #58A6FF); /* 使用你主题的主色调 */
+    border-bottom: 2px solid var(--primary-color, #58A6FF);
     font-weight: bold;
 }
 
