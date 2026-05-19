@@ -748,13 +748,40 @@
         display: inline !important; 
     }
     
-    #print-overlay .thought-node h1, #print-overlay .thought-node h2, #print-overlay .thought-node h3 {
+    /* ==========================================
+       【优化】打印模式：各级标题间距精细化控制 
+       ========================================== */
+       
+    /* 1. 大标题 (H1, H2)：保持适度呼吸感 */
+    #print-overlay .thought-node h1, 
+    #print-overlay .thought-node h2 {
         font-family: -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif !important;
         color: #111111 !important;
-        margin-top: 15px !important; 
-        margin-bottom: 8px !important; /* 标题下方留白稍微收紧 */
+        margin-top: 12px !important;    /* 适度减小上方间距 */
+        margin-bottom: 6px !important;  /* 与正文保持紧凑的距离 */
         padding-bottom: 4px !important;
         border-bottom: 1px solid #eeeeee !important; 
+    }
+    
+    /* 2. 小标题 (H3, H4, H5)：大幅收紧间距 */
+    #print-overlay .thought-node h3, 
+    #print-overlay .thought-node h4, 
+    #print-overlay .thought-node h5 {
+        font-family: -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif !important;
+        color: #111111 !important;
+        margin-top: 6px !important;     /* 【核心修复】大幅调小小标题与上方内容的距离 */
+        margin-bottom: 4px !important; 
+        padding-bottom: 2px !important;
+        border-bottom: none !important; /* 小标题通常不需要下划线，显得更清爽 */
+    }
+
+    /* 3. 【核心修复】消除连续标题之间的冗余距离 
+       (例如：大标题二紧接着小标题1时，把小标题的上方间距直接归零) */
+    #print-overlay .thought-node h1 + h2,
+    #print-overlay .thought-node h2 + h3,
+    #print-overlay .thought-node h3 + h4,
+    #print-overlay .thought-node h4 + h5 {
+        margin-top: 2px !important; 
     }
     
     #print-overlay .thought-node strong, #print-overlay .thought-node b {
