@@ -796,6 +796,11 @@
         border-radius: 4px !important;
         font-size: 9pt !important;
     }
+
+    /* 底部北极星 Insight 装饰块：拉开与正文的距离 */
+    #print-overlay .star-decoration-bottom {
+        margin-top: 40px !important;   /* 原为 25px，增大到 40px */
+    }
     
     #print-overlay .node-divider {
         height: 1px !important;
