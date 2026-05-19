@@ -711,14 +711,14 @@
         border-top: 3px solid #D4AF37 !important; 
     }
 
-    /* --- 排版细节：段落与列表 (核心修复间距) --- */
+/* --- 排版细节：段落与列表 (针对加粗段落与列表间距修复) --- */
     #print-overlay .thought-node * {
         margin-top: 0 !important;
         box-shadow: none !important; 
     }
 
+    /* 1. 大标题与正文的基础间距：统一为 6px */
     #print-overlay .thought-node p {
-        /* 【修改点】：段落间距从 12px 减小到 6px */
         margin-bottom: 6px !important; 
         text-align: justify !important; 
         line-height: 1.6 !important;
@@ -727,25 +727,39 @@
     #print-overlay .thought-node p:last-child { margin-bottom: 0 !important; }
     #print-overlay .thought-node p:empty { display: none !important; }
     
+    /* 2. 【核心修复一】消除大标题与小标题（列表）之间的过大间距 */
     #print-overlay .thought-node ul, 
     #print-overlay .thought-node ol {
-        margin-top: 4px !important;
-        /* 【修改点】：列表整体底部留白缩小 */
-        margin-bottom: 8px !important; 
+        margin-top: 0 !important; /* 将顶部间距归零，完全依赖上一个元素的 6px，确保大标题与小标题的距离 = 大标题与正文距离 */
+        margin-bottom: 6px !important; 
         padding-left: 20px !important; 
     }
     
+    /* 3. 小标题（列表项）本身的基础设置 */
     #print-overlay .thought-node li {
-        /* 【修改点】：每个列表项之间间距收紧到 4px */
-        margin-bottom: 4px !important; 
+        margin-bottom: 6px !important; /* 统一行间距 */
         line-height: 1.6 !important;
     }
     
-    /* 【核弹级修改】：强制剥夺列表中 <p> 标签的边距！
-       防止 Markdown 渲染出 <li><p>文本</p></li> 导致的边距双重叠加 */
-    #print-overlay .thought-node li p {
+    /* 4. 【核心修复二】修复小标题三和小标题二的小小标题之间的巨大裂缝 */
+    #print-overlay .thought-node li > ul,
+    #print-overlay .thought-node li > ol {
+        margin-top: 4px !important;    /* 小标题与自身的小小标题之间，保留一点点紧凑距离 */
+        margin-bottom: 0 !important;   /* 【最重要的一句】消除嵌套列表底部的间距，防止它把下一个小标题推得太远！ */
+    }
+
+    /* 防止 Markdown 在列表中额外生成 p 导致双重间距叠加 */
+    #print-overlay .thought-node li > p {
         margin-bottom: 0 !important;
         display: inline !important; 
+    }
+    
+    /* 修复引用块（由于AI回复包裹在 > 中）自带的多余内边距 */
+    #print-overlay .thought-node blockquote {
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        background: transparent !important;
     }
     
     /* ==========================================
