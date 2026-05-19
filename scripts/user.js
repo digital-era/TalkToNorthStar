@@ -59,8 +59,9 @@ function checkActionAuth(actionName) {
     }
 
     if (!isLoggedIn) {
-        // 如果未登录，通过 alert 弹出报错信息并直接返回 false
-        alert(`> [DENIED] 操作被拒绝: 执行 ${actionName} 前请先在 Settings 中完成登录验证。`);
+        // 使用模板替换
+        let alertMsg = translations[currentLang].authActionDenied.replace('${action}', actionName);
+        alert(alertMsg);
         return false;
     }
 
@@ -83,36 +84,36 @@ function parseJWTClientSide(token) {
     } catch(e) { return null; }
 }
 
-function showAuthMsg(msg, color) {
+function showAuthMsg(msgKey, color) {
     const box = document.getElementById('auth-status-msg');
-    box.innerText = msg;
+    // 尝试从翻译表中获取，如果不存在（比如是后端传回的错误），则显示原文
+    const translatedMsg = translations[currentLang][msgKey] || msgKey;
+    box.innerText = translatedMsg;
     box.style.color = color;
 }
 
-function checkAuthStatus() {
-    const token = localStorage.getItem('qgr_jwt_token');
-    if (token) {
-        const decoded = parseJWTClientSide(token);
-        if (decoded) {
-            document.getElementById('loginSection').classList.add('auth-hidden');
-            document.getElementById('cpwSection').classList.remove('auth-hidden');
-            document.getElementById('loggedInUser').innerText = decoded.user.toUpperCase();
-            return true;
+async function handleLogin() {
+    const u = document.getElementById('auth_username').value.trim();
+    const p = document.getElementById('auth_password').value;
+    if(!u || !p) return showAuthMsg("authMsgMissing", "#EF4444");
+
+    showAuthMsg("authMsgAuthenticating", "#FFD700");
+
+    try {
+        const response = await fetch('/api/login', { /*...*/ });
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            // ...
+            showAuthMsg("authMsgSuccess", "#10B981");
+            setTimeout(() => { window.location.reload(); }, 800);
         } else {
-            // [修改] Token 存在但是解析失败或已过期 (被动登出)
-            localStorage.removeItem('qgr_jwt_token'); 
-            if (typeof ossClient !== 'undefined') ossClient = null;
-            window.CURRENT_OSS_PREFIX = '';
-            
-            // 提示用户登录已过期，并刷新页面清空残留数据
-            alert("登录已过期，请重新登录。");
-            window.location.reload();
-            return false;
+            // 如果后端有具体错误显示具体错误，否则显示通用的“拒绝访问”
+            showAuthMsg(data.error || "authMsgDenied", "#EF4444");
         }
+    } catch (error) {
+        showAuthMsg("authMsgNetworkError", "#EF4444");
     }
-    document.getElementById('loginSection').classList.remove('auth-hidden');
-    document.getElementById('cpwSection').classList.add('auth-hidden');
-    return false;
 }
 
 async function handleLogin() {
@@ -162,12 +163,9 @@ function handleLogout() {
     localStorage.removeItem('qgr_jwt_token');
     
     // 2. [新增] 强制清除 OSS 客户端实例，防止 STS Token 泄露或被下个登录者复用
-    if (typeof ossClient !== 'undefined') {
-        ossClient = null; 
-    }
-    
-    // 3. [新增] 清除用户目录隔离前缀
-    window.CURRENT_OSS_PREFIX = '';
+    checkAuthStatus();
+    showAuthMsg("authMsgLoggedOut", "#10B981"); // 全球化
+    setTimeout(() => { window.location.reload(); }, 500);
 
     // 4. 更新 UI 状态
     checkAuthStatus();
@@ -178,46 +176,70 @@ function handleLogout() {
     }, 500); // 半秒后刷新回到干净的初始状态
 }
 
+/**
+ * 修改密码逻辑 - 已整合全球化
+ */
 async function handleChangePassword() {
+    // 1. 验证登录状态
     const token = localStorage.getItem('qgr_jwt_token');
     const decoded = parseJWTClientSide(token);
-    if(!decoded) return handleLogout();
+    if (!decoded) {
+        // 如果 Token 无效，直接执行登出流程
+        return handleLogout();
+    }
 
+    // 2. 获取 UI 输入
     const oldP = document.getElementById('cpw_old').value;
     const newP = document.getElementById('cpw_new').value;
-    if(!oldP || !newP) return showAuthMsg("FIELDS CANNOT BE EMPTY", "#EF4444");
 
-    showAuthMsg("UPDATING PASSWORD...", "#FFD700");
+    // 3. 基础校验：不能为空 (使用全球化 Key)
+    if (!oldP || !newP) {
+        return showAuthMsg("authMsgEmptyFields", "#EF4444");
+    }
+
+    // 4. 显示正在更新状态 (使用全球化 Key)
+    showAuthMsg("authMsgUpdatingPw", "#FFD700");
 
     try {
+        // 5. 发起后端请求
         const response = await fetch('/api/changepw', {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}` 
             },
-            body: JSON.stringify({ oldPassword: oldP, newPassword: newP })
+            body: JSON.stringify({ 
+                oldPassword: oldP, 
+                newPassword: newP 
+            })
         });
 
         const data = await response.json();
 
+        // 6. 处理响应结果
         if (response.ok && data.success) {
-            showAuthMsg("PASSWORD UPDATED. PLEASE RELOGIN...", "#10B981");
+            // 成功：显示全球化成功提示
+            showAuthMsg("authMsgPwUpdated", "#10B981");
             
-            // [新增] 密码修改成功后，强制登出并重载页面
+            // 7. 清除当前会话信息，强制重新登录
             localStorage.removeItem('qgr_jwt_token');
-            if (typeof ossClient !== 'undefined') ossClient = null;
+            if (typeof ossClient !== 'undefined') {
+                ossClient = null;
+            }
             window.CURRENT_OSS_PREFIX = '';
             
+            // 留 1.5 秒给用户阅读“修改成功”的提示，然后刷新页面
             setTimeout(() => {
                 window.location.reload();
-            }, 1000); // 留1秒钟给用户看“修改成功”的提示
+            }, 1500);
             
         } else {
-            showAuthMsg(data.error || "UPDATE FAILED", "#EF4444");
+            // 失败：优先显示后端返回的具体错误消息，否则显示通用失败 Key
+            showAuthMsg(data.error || "authMsgUpdateFailed", "#EF4444");
         }
     } catch (error) {
-        showAuthMsg("NETWORK ERROR", "#EF4444");
+        // 网络异常
+        showAuthMsg("authMsgNetworkError", "#EF4444");
         console.error('Change password error:', error);
     }
 }
