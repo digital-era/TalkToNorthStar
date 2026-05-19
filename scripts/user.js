@@ -68,6 +68,34 @@ function checkActionAuth(actionName) {
     return true;
 }
 
+function checkAuthStatus() {
+    const token = localStorage.getItem('qgr_jwt_token');
+    if (token) {
+        const decoded = parseJWTClientSide(token);
+        if (decoded) {
+            document.getElementById('loginSection').classList.add('auth-hidden');
+            document.getElementById('cpwSection').classList.remove('auth-hidden');
+            document.getElementById('loggedInUser').innerText = decoded.user.toUpperCase();
+            return true;
+        } else {
+            // [修改] Token 存在但是解析失败或已过期 (被动登出)
+            localStorage.removeItem('qgr_jwt_token'); 
+            alert(translations[currentLang].authSessionExpired); // 使用全球化文字
+            
+            if (typeof ossClient !== 'undefined') ossClient = null;
+            window.CURRENT_OSS_PREFIX = 'f';
+            
+            // 提示用户登录已过期，并刷新页面清空残留数据
+            alert("登录已过期，请重新登录。");
+            window.location.reload();
+            return false;
+        }
+    }
+    document.getElementById('loginSection').classList.remove('auth-hidden');
+    document.getElementById('cpwSection').classList.add('auth-hidden');
+    return false;
+}
+
 // ==========================================
 // 核心逻辑：基于 Cloudflare API 的真实认证机制
 // ==========================================
