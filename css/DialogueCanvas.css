@@ -761,17 +761,17 @@
         padding-bottom: 4px !important;
     }
     
-    /* 大标题 (h1/h2)：章节前的留白保持舒展 */
+    /* 大标题 (h1/h2)：章节前保持舒展，下边距与正文统一 */
     #print-overlay .thought-node h1,
     #print-overlay .thought-node h2 {
-        margin-top: 20px !important;
-        margin-bottom: 10px !important;
+        margin-top: 20px !important;   /* 新章节前的呼吸空间 */
+        margin-bottom: 10px !important; /* 标题到正文的距离 */
     }
     
-    /* 小标题 (h3)：紧跟大标题或上文，距离收紧但保留呼吸感 */
+    /* 小标题 (h3)：收紧与上一段落/列表的距离，保持视觉统一 */
     #print-overlay .thought-node h3 {
-        margin-top: 10px !important;
-        margin-bottom: 10px !important;
+        margin-top: 4px !important;    /* 关键：与上一段的6px合并后 = 10px */
+        margin-bottom: 10px !important; /* 小标题到其下文内容距离 */
     }
     
     #print-overlay .thought-node strong, #print-overlay .thought-node b {
