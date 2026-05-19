@@ -661,15 +661,15 @@
    /* --- 对话气泡全局容器 --- */
     #print-overlay .thought-node {
         position: relative;
-        width: 100% !important; 
+        width: 100% !important;
         max-width: 100% !important;
-        page-break-inside: avoid !important; 
-        margin-bottom: 20px !important; 
-        padding: 20px 25px !important; 
+        page-break-inside: avoid !important;
+        margin-bottom: 20px !important;
+        padding: 20px 25px !important;
         border-radius: 8px !important;
-        box-shadow: none !important; 
-        white-space: normal !important;      /* ← 核心修复：不再保留源码空白 */
-        box-sizing: border-box !important; 
+        box-shadow: none !important;
+        white-space: normal !important;      /* 关键：折叠空白 */
+        box-sizing: border-box !important;
         text-align: left !important;
     }
 
@@ -719,9 +719,8 @@
     }
 
     #print-overlay .thought-node p {
-        /* 【修改点】：段落间距从 12px 减小到 6px */
-        margin-bottom: 6px !important; 
-        text-align: justify !important; 
+        margin-bottom: 10px !important;       /* 从 6px 增加到 10px */
+        text-align: justify !important;
         line-height: 1.6 !important;
     }
     
@@ -731,14 +730,12 @@
     #print-overlay .thought-node ul, 
     #print-overlay .thought-node ol {
         margin-top: 4px !important;
-        /* 【修改点】：列表整体底部留白缩小 */
-        margin-bottom: 8px !important; 
-        padding-left: 20px !important; 
+        margin-bottom: 10px !important;       /* 与段落统一 */
+        padding-left: 20px !important;
     }
     
     #print-overlay .thought-node li {
-        /* 【修改点】：每个列表项之间间距收紧到 4px */
-        margin-bottom: 4px !important; 
+        margin-bottom: 6px !important;        /* 列表项间稍微紧一点，仍可读 */
         line-height: 1.6 !important;
     }
     
@@ -749,9 +746,7 @@
         display: inline !important; 
     }
     
-    /* =====================================
-       垂直间距彻底统一：6px 间隙，呼吸感仅保留给大标题
-       ===================================== */
+    /* --- 标题间距：分级呼吸感 --- */
     #print-overlay .thought-node h1,
     #print-overlay .thought-node h2,
     #print-overlay .thought-node h3 {
@@ -759,15 +754,26 @@
         color: #111111 !important;
         border-bottom: 1px solid #eeeeee !important;
         padding-bottom: 4px !important;
-        margin-top: 16px !important;
-        margin-bottom: 8px !important;
     }
-    /* 第一个标题不需要顶部留白 */
+    
+    /* 大标题：章节间隔明显，与下方内容保持适度距离 */
+    #print-overlay .thought-node h1,
+    #print-overlay .thought-node h2 {
+        margin-top: 24px !important;          /* 章节前呼吸感 */
+        margin-bottom: 12px !important;
+    }
+    /* 大标题如果是节点内第一个元素，去掉顶部空白 */
     #print-overlay .thought-node h1:first-child,
-    #print-overlay .thought-node h2:first-child,
-    #print-overlay .thought-node h3:first-child {
+    #print-overlay .thought-node h2:first-child {
         margin-top: 0 !important;
     }
+    
+    /* 小标题：与上文（段落或列表）保持自然间隔，与下文紧密 */
+    #print-overlay .thought-node h3 {
+        margin-top: 4px !important;           /* 加上前文的 10px 底部 ≈ 14px */
+        margin-bottom: 12px !important;
+    }
+    /* 小标题紧跟大标题时，上边距合并后约为 12px，不会过大 */
     
     #print-overlay .thought-node strong, #print-overlay .thought-node b {
         font-weight: 800 !important;
