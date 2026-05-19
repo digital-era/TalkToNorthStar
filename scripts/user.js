@@ -84,14 +84,6 @@ function parseJWTClientSide(token) {
     } catch(e) { return null; }
 }
 
-function showAuthMsg(msgKey, color) {
-    const box = document.getElementById('auth-status-msg');
-    // 尝试从翻译表中获取，如果不存在（比如是后端传回的错误），则显示原文
-    const translatedMsg = translations[currentLang][msgKey] || msgKey;
-    box.innerText = translatedMsg;
-    box.style.color = color;
-}
-
 async function handleLogin() {
     const u = document.getElementById('auth_username').value.trim();
     const p = document.getElementById('auth_password').value;
