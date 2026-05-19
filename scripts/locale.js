@@ -106,6 +106,7 @@
                 "promptReplyInEnglish": "开始你的思考和英文回复:",
                 "settingsBtnText": "设置",
                 "modalTitle": "API及模型设置",
+                "loginTitle": "账号登录",
                 "saveBtnText": "保存设置",
                 "aboutBtnText": "了解我们",    
                 // --- 新增宣言模态框的翻译 ---
@@ -340,7 +341,8 @@
                 "promptReplyInChinese": "begin your thinking and reply in Chinese:",
                 "promptReplyInEnglish": "begin your thinking and reply in English:",                    
                 "settingsBtnText": "Setting",
-                "modalTitle": "API&Modal Setting",
+                "modalTitle": "API&Model Setting",
+                "loginTitle": "Login",
                 "saveBtnText": "Save Setting",                    
                 "aboutBtnText": "About Us",    
                  // --- 新增宣言模态框的翻译 ---
