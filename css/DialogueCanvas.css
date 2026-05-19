@@ -719,7 +719,7 @@
     }
 
     #print-overlay .thought-node p {
-        margin-bottom: 10px !important;       /* 从 6px 增加到 10px */
+        margin-bottom: 20px !important;       /* 从 6px 增加到 10px */
         text-align: justify !important;
         line-height: 1.6 !important;
     }
@@ -729,13 +729,13 @@
     
     #print-overlay .thought-node ul, 
     #print-overlay .thought-node ol {
-        margin-top: 4px !important;
-        margin-bottom: 10px !important;       /* 与段落统一 */
+        margin-top: 8px !important;
+        margin-bottom: 20px !important;       /* 与段落统一 */
         padding-left: 20px !important;
     }
     
     #print-overlay .thought-node li {
-        margin-bottom: 6px !important;        /* 列表项间稍微紧一点，仍可读 */
+        margin-bottom: 12px !important;        /* 列表项间稍微紧一点，仍可读 */
         line-height: 1.6 !important;
     }
     
@@ -753,14 +753,14 @@
         font-family: -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif !important;
         color: #111111 !important;
         border-bottom: 1px solid #eeeeee !important;
-        padding-bottom: 4px !important;
+        padding-bottom: 8px !important;
     }
     
     /* 大标题：章节间隔明显，与下方内容保持适度距离 */
     #print-overlay .thought-node h1,
     #print-overlay .thought-node h2 {
-        margin-top: 24px !important;          /* 章节前呼吸感 */
-        margin-bottom: 12px !important;
+        margin-top: 48px !important;          /* 章节前呼吸感 */
+        margin-bottom: 24px !important;
     }
     /* 大标题如果是节点内第一个元素，去掉顶部空白 */
     #print-overlay .thought-node h1:first-child,
@@ -770,8 +770,8 @@
     
     /* 小标题：与上文（段落或列表）保持自然间隔，与下文紧密 */
     #print-overlay .thought-node h3 {
-        margin-top: 4px !important;           /* 加上前文的 10px 底部 ≈ 14px */
-        margin-bottom: 12px !important;
+        margin-top: 8px !important;           /* 加上前文的 10px 底部 ≈ 14px */
+        margin-bottom: 24px !important;
     }
     /* 小标题紧跟大标题时，上边距合并后约为 12px，不会过大 */
     
