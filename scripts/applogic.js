@@ -1830,19 +1830,25 @@ function exportToPDF() {
     `;
     overlay.appendChild(style);
 
+    // ★ 根据当前语言选择封面图片（英文版使用 -En 后缀）
+    const isEnglish = (window.currentLang === 'en');
+    const cover1Src = isEnglish ? 'images/对话北极星Cover1-En.jpg' : 'images/对话北极星Cover1.jpg';
+    const cover2Src = isEnglish ? 'images/对话北极星Cover2-En.jpg' : 'images/对话北极星Cover2.jpg';
+    const cover3Src = isEnglish ? 'images/对话北极星Cover3-En.jpg' : 'images/对话北极星Cover3.jpg';
+
     // --- 步骤 B: 第一页 商业级封面排版 ---
     const coverPage1 = document.createElement('div');
     // 强制内联样式，完美融合深空背景
     coverPage1.style.cssText = 'break-after: page; width: 100%; height: 260mm; display: flex; flex-direction: column; justify-content: center; background-color: #0b111e; margin-bottom: 20px;'; 
 
     const img1 = document.createElement('img');
-    img1.src = 'images/对话北极星Cover1.jpg'; 
+    img1.src = cover1Src; 
     img1.style.cssText = 'width: 100%; height: 50%; object-fit: contain; object-position: bottom; margin: 0; padding: 0; display: block; margin-bottom: -1px;'; 
     imagePromises.push(trackImageLoad(img1));
     coverPage1.appendChild(img1);
 
     const img2 = document.createElement('img');
-    img2.src = 'images/对话北极星Cover2.jpg'; 
+    img2.src = cover2Src; 
     img2.style.cssText = 'width: 100%; height: 50%; object-fit: contain; object-position: top; margin: 0; padding: 0; display: block; margin-top: -1px;'; 
     imagePromises.push(trackImageLoad(img2));
     coverPage1.appendChild(img2);
@@ -1882,7 +1888,7 @@ function exportToPDF() {
     backCoverWrapper.style.cssText = 'break-before: page; width: 100%; height: 260mm; display: flex; align-items: center; justify-content: center; background-color: #0f1524;'; 
     
     const img3 = document.createElement('img');
-    img3.src = 'images/对话北极星Cover3.jpg';
+    img3.src = cover3Src;
     img3.style.cssText = 'width: 100%; max-height: 85%; object-fit: contain;'; 
     imagePromises.push(trackImageLoad(img3));
     backCoverWrapper.appendChild(img3);
