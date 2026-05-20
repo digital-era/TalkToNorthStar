@@ -1832,9 +1832,9 @@ function exportToPDF() {
 
     // ★ 根据当前语言选择封面图片（英文版使用 -En 后缀）
     const isEnglish = (window.currentLang === 'en');
-    const cover1Src = isEnglish ? 'images/对话北极星Cover1-En.jpg' : 'images/对话北极星Cover1.jpg';
-    const cover2Src = isEnglish ? 'images/对话北极星Cover2-En.jpg' : 'images/对话北极星Cover2.jpg';
-    const cover3Src = isEnglish ? 'images/对话北极星Cover3-En.jpg' : 'images/对话北极星Cover3.jpg';
+    const cover1Src = isEnglish ? 'images/对话北极星Cover1-EN.jpg' : 'images/对话北极星Cover1.jpg';
+    const cover2Src = isEnglish ? 'images/对话北极星Cover2-EN.jpg' : 'images/对话北极星Cover2.jpg';
+    const cover3Src = isEnglish ? 'images/对话北极星Cover3-EN.jpg' : 'images/对话北极星Cover3.jpg';
 
     // --- 步骤 B: 第一页 商业级封面排版 ---
     const coverPage1 = document.createElement('div');
