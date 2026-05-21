@@ -311,7 +311,7 @@ const artMasters = [
     },
     {
         id: "maksim_mrvica", name: "Maksim Mrvica (马克西姆·姆尔维察)",
-        contribution": {
+        contribution: {
             "zh-CN": "以《出埃及记》《克罗地亚狂想曲》《野蜂飞舞》等作品闻名，将古典钢琴曲目与电子、流行及现代节奏融合，推广古典跨界音乐。",
             "en": "Famous for works such as Exodus, Croatian Rhapsody, and Flight of the Bumblebee; fused classical piano repertoire with electronic, pop, and modern rhythmic elements to popularize classical crossover music."
         },
