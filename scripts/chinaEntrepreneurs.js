@@ -264,6 +264,22 @@ const chinaEntrepreneurs = [
               }
             },
             {
+              id: "wang_ning",
+              name: "王宁 (Wang Ning)",
+              contribution: {
+                "zh-CN": "泡泡玛特国际集团创始人、董事长兼CEO，引领中国潮玩行业崛起，推动盲盒文化与设计师玩具全球化，孵化Molly、Labubu等全球知名IP。",
+                "en": "Founder, Chairman and CEO of POP MART International Group, led the rise of China's trendy toy industry, promoted the globalization of blind box culture and designer toys, and incubated globally renowned IPs such as Molly and Labubu."
+              },
+              field: {
+                "zh-CN": "潮玩、盲盒、IP孵化、设计师玩具、消费文化。",
+                "en": "Trendy Toys, Blind Boxes, IP Incubation, Designer Toys, Consumer Culture."
+              },
+              remarks: {
+                "zh-CN": "2020年带领泡泡玛特成为中国首家上市潮玩企业；2024-2025年Labubu全球爆火，公司营收显著增长，推动中国文化与制造走向世界。",
+                "en": "Led POP MART in 2020, becoming China's first listed trendy toy company; Labubu achieved global success in 2024-2025, driving significant revenue growth, promoting Chinese culture and manufacturing to the world."
+              }
+            },
+            {
               id: "yu_donglai", name: "于东来 (Yu Donglai)",
               contribution: {
                 "zh-CN": "胖东来商贸集团创始人兼董事长，以‘自由·爱’为核心价值观，打造中国零售业人文关怀标杆，坚持高品质商品、极致服务与员工福利优先的经营模式。",
