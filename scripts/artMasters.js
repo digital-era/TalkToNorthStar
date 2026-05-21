@@ -295,18 +295,33 @@ const artMasters = [
       }
     },
     {
-        "id": "richard_clayderman", "name": "Richard Clayderman (理查德·克莱德曼)",
-        "contribution": {
-        "zh-CN": "演奏并改编《水边的阿狄丽娜》《星空》等作品，开创通俗钢琴音乐新潮流，促进古典音乐大众化；长期致力于中西方音乐交流。",
-        "en": "Performed and arranged classics such as Ballade pour Adeline and Lyphard Melody, pioneering the popular piano music trend and making classical music accessible to mass audiences; dedicated to Sino-Western musical exchange."
+        id: "richard_clayderman", name: "Richard Clayderman (理查德·克莱德曼)",
+        contribution: {
+            "zh-CN": "演奏并改编《水边的阿狄丽娜》《星空》等作品，开创通俗钢琴音乐新潮流，促进古典音乐大众化；长期致力于中西方音乐交流。",
+            "en": "Performed and arranged classics such as Ballade pour Adeline and Lyphard Melody, pioneering the popular piano music trend and making classical music accessible to mass audiences; dedicated to Sino-Western musical exchange."
+            },
+        field: {
+            "zh-CN": "通俗钢琴音乐、轻音乐、跨界音乐。",
+            "en": "Popular Piano Music, Easy Listening, Crossover Music."
+            },
+        remarks: {
+            "zh-CN": "以浪漫抒情的演奏风格和亲和力征服数亿听众，被誉为“浪漫钢琴王子”。",
+            "en": "Known for his romantic and lyrical style and approachability, captivating hundreds of millions; often dubbed the 'Prince of Romance'."
+        }
+    },
+    {
+        id: "maksim_mrvica", name: "Maksim Mrvica (马克西姆·姆尔维察)",
+        contribution": {
+            "zh-CN": "以《出埃及记》《克罗地亚狂想曲》《野蜂飞舞》等作品闻名，将古典钢琴曲目与电子、流行及现代节奏融合，推广古典跨界音乐。",
+            "en": "Famous for works such as Exodus, Croatian Rhapsody, and Flight of the Bumblebee; fused classical piano repertoire with electronic, pop, and modern rhythmic elements to popularize classical crossover music."
         },
-        "field": {
-        "zh-CN": "通俗钢琴音乐、轻音乐、跨界音乐。",
-        "en": "Popular Piano Music, Easy Listening, Crossover Music."
+        field: {
+            "zh-CN": "古典跨界音乐、流行钢琴、电子古典融合、电影音乐改编。",
+            "en": "Classical Crossover, Popular Piano, Electro-Classical Fusion, Film Music Arrangements."
         },
-        "remarks": {
-        "zh-CN": "以浪漫抒情的演奏风格和亲和力征服数亿听众，被誉为“浪漫钢琴王子”。",
-        "en": "Known for his romantic and lyrical style and approachability, captivating hundreds of millions; often dubbed the 'Prince of Romance'."
+        remarks: {
+            "zh-CN": "欧洲新古典钢琴王子，以炫技演奏、时尚舞台形象和强劲节奏感著称，成功吸引年轻世代接触古典音乐。",
+            "en": "The Prince of European New Classical Piano; renowned for virtuosic technique, stylish stage presence, and powerful rhythmic energy, successfully introducing classical music to younger audiences."
         }
     },
     { id: "bob_dylan",   name: "Bob Dylan (鲍勃·迪伦)",
