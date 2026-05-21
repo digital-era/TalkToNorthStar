@@ -650,6 +650,51 @@ const humanitiesMasters = [
       }
     },
     {
+      id: "cao_zhi",  name: "曹植 (Cao Zhi)",
+      contribution: {
+        "zh-CN": "创作《洛神赋》《七步诗》《白马篇》，建安文学杰出代表，推动五言诗成熟发展。",
+        "en": "Authored Luoshen Fu, Seven-Step Poem, and White Horse, outstanding representative of Jian'an literature, promoted the maturation of five-character poetry."
+      },
+      field: {
+        "zh-CN": "五言诗、辞赋、建安文学。",
+        "en": "Five-Character Poetry, Fu Prose, Jian'an Literature."
+      },
+      remarks: {
+        "zh-CN": "建安之杰，才高八斗，政治上备受压制，仍以华茂骨奇的诗风成为魏晋文学高峰的标志性人物。",
+        "en": "Jian'an outstanding talent, 'talent enough for eight dou', despite political suppression, his vigorous and ornate poetic style marked the pinnacle of Wei-Jin literature."
+      }
+    },
+    {
+      id: "wang_xizhi", name: "王羲之 (Wang Xizhi)",
+      contribution: {
+        "zh-CN": "创作《兰亭集序》，被誉为“天下第一行书”，兼善各体书法，笔法精妙自然。",
+        "en": "Created Lantingji Xu (Preface to the Poems Collected from the Orchid Pavilion), known as the 'First Running Script under Heaven', proficient in multiple script styles with refined and natural technique."
+      },
+      field: {
+        "zh-CN": "书法艺术、行书与草书。",
+        "en": "Calligraphy, Running Script and Cursive Script."
+      },
+      remarks: {
+        "zh-CN": "中国古代“书圣”，其书法尚意尚韵，确立了中国书法美学典范，对后世影响深远。",
+        "en": "China's ancient 'Sage of Calligraphy', his works emphasize artistic conception and elegance, establishing the aesthetic paradigm of Chinese calligraphy with profound influence on later generations."
+      }
+    },
+    {
+      id: "tao_yuanming", name: "陶渊明 (Tao Yuanming)",
+      contribution: {
+        "zh-CN": "创作《归园田居》《饮酒》《桃花源记》，开创田园诗派，描绘隐逸生活与理想社会。",
+        "en": "Authored Returning to Fields and Gardens, Drinking Wine, and Peach Blossom Spring, pioneered the pastoral poetry genre, depicting reclusive life and ideal society."
+      },
+      field: {
+        "zh-CN": "田园诗歌、隐逸文学、辞赋。",
+        "en": "Pastoral Poetry, Reclusive Literature, Fu Prose."
+      },
+      remarks: {
+        "zh-CN": "古今隐逸诗人之宗，诗风平淡自然，体现魏晋士人追求精神自由与自然和谐的高洁品格。",
+        "en": "Foremost reclusive poet of all ages, his plain and natural style embodies the noble character of Wei-Jin literati in their pursuit of spiritual freedom and harmony with nature."
+      }
+    },
+    {
       id: "wang_bo", name: "王勃 (Wang Bo)",
       contribution: {
         "zh-CN": "创作《滕王阁序》《送杜少府之任蜀州》，初唐四杰之首，革新骈文与五律，开启盛唐气象。",
