@@ -473,6 +473,19 @@ const financeMasters = [
     "remarks": {
     "zh-CN": "主张直接税立法以调节贫富差距，批判美元霸权和资本外流现象，观点鲜明且有争议性。",
     "en": "Advocates for direct tax legislation to address wealth inequality, critiques US dollar hegemony and capital outflows, known for his sharp and controversial views."
+    },
+    {"id": "liu_run", "name": "Liu Run (刘润)",
+      "contribution": {
+        "zh-CN": "知名商业战略顾问、作家、《刘润·5分钟商学院》主理人，润米咨询创始人。",
+        "en": "Renowned business strategy consultant, author, and host of 'Liu Run · 5-Minute Business School', founder of Runmi Consulting."
+      },
+      "field": {
+        "zh-CN": "商业战略、企业转型、商业底层逻辑、数字化变革。",
+        "en": "Business Strategy, Corporate Transformation, Business Underlying Logic, Digital Transformation."
+      },
+      "remarks": {
+        "zh-CN": "以逻辑清晰、实战导向的风格讲解商业本质，帮助企业理解复杂环境下的价值创造与进化路径。",
+        "en": "Explains the essence of business with clear logic and practical orientation, helping enterprises understand value creation and evolutionary paths in complex environments."
+      }
     }
-}
 ];
