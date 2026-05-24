@@ -462,17 +462,18 @@ const financeMasters = [
         }
     },
     { "id": "lu_qiyuan", "name": "Lu Qiyuan (卢麒元)",
-    "contribution": {
-    "zh-CN": "独立经济学者、财经评论人，对财政税收、资本流动有深入研究。",
-    "en": "Independent economist, financial commentator, with in-depth research on fiscal taxation and capital flows."
-    },
-    "field": {
-    "zh-CN": "财政学、税收政策、地缘政治经济学。",
-    "en": "Public Finance, Tax Policy, Geopolitical Economics."
-    },
-    "remarks": {
-    "zh-CN": "主张直接税立法以调节贫富差距，批判美元霸权和资本外流现象，观点鲜明且有争议性。",
-    "en": "Advocates for direct tax legislation to address wealth inequality, critiques US dollar hegemony and capital outflows, known for his sharp and controversial views."
+        "contribution": {
+        "zh-CN": "独立经济学者、财经评论人，对财政税收、资本流动有深入研究。",
+        "en": "Independent economist, financial commentator, with in-depth research on fiscal taxation and capital flows."
+        },
+        "field": {
+        "zh-CN": "财政学、税收政策、地缘政治经济学。",
+        "en": "Public Finance, Tax Policy, Geopolitical Economics."
+        },
+        "remarks": {
+        "zh-CN": "主张直接税立法以调节贫富差距，批判美元霸权和资本外流现象，观点鲜明且有争议性。",
+        "en": "Advocates for direct tax legislation to address wealth inequality, critiques US dollar hegemony and capital outflows, known for his sharp and controversial views."
+        }
     },
     {"id": "liu_run", "name": "Liu Run (刘润)",
       "contribution": {
