@@ -180,6 +180,16 @@ const ContextUI = {
         }
       };
 
+      // 【新增】星际穿越上下文按钮
+      const warpBtn = document.createElement('button');
+      warpBtn.className = 'ctx-canvas-btn warp-context-btn';
+      warpBtn.title = this._t('warpContextTitle');
+      warpBtn.innerHTML = '<i class="fas fa-rocket"></i>';
+      warpBtn.onclick = (e) => {
+        e.stopPropagation();
+        this.addAllDataAsContext();
+      };
+
       const deleteBtn = node.querySelector('.node-delete-btn');
       if (deleteBtn) {
         node.insertBefore(btn, deleteBtn);
@@ -187,6 +197,84 @@ const ContextUI = {
         node.appendChild(btn);
       }
     });
+  },
+
+  /* ── 【新增】加入星际穿越上下文 ── */
+  addAllDataAsContext() {
+    const lang = window.currentLang || 'zh-CN';
+    
+    if (window.starContext.isFull()) {
+      if (confirm(this._t('ctxErrorFullCleanup'))) {
+        this.openPanel();
+      }
+      return;
+    }
+
+    const content = this._buildAllDataContext(lang);
+    const title = lang === 'zh-CN' 
+      ? '星际穿越' 
+      : 'Warp Drive · North Star Panorama';
+
+    const res = window.starContext.addFromText(content, title);
+    
+    if (res.success) {
+      this._showToast(this._t('warpContextSuccess'));
+      this._refreshCanvasButtons();
+    } else {
+      alert(res.message);
+    }
+  },
+
+    /* ── 【新增】构建过滤后的 allData 文本 ── */
+  _buildAllDataContext(lang) {
+      const data = window.allData;
+      if (!data) return '';
+  
+      const lines = [];
+      lines.push(`# ${lang === 'zh-CN' ? '北极星星际穿越' : 'North Star Interstellar'}\n`);
+  
+      for (const [cat, masters] of Object.entries(data)) {
+          // 使用全局 getCategoryName，无则回退到 categoryNames，再无则原样显示
+          let catName = cat;
+          if (typeof getCategoryName === 'function') {
+              catName = getCategoryName(cat);
+          } else if (window.categoryNames && window.categoryNames[cat]) {
+              catName = window.categoryNames[cat][lang] || window.categoryNames[cat]['zh-CN'] || cat;
+          }
+          
+          lines.push(`## ${catName}`);
+          
+          masters.forEach((m, i) => {
+              lines.push(`${i + 1}. **${m.name}**`);
+              
+              const field = this._extractLang(m.field, lang);
+              const contrib = this._extractLang(m.contribution, lang);
+              const remarks = this._extractLang(m.remarks, lang);
+  
+              if (field) lines.push(`   - ${lang === 'zh-CN' ? '领域' : 'Field'}: ${field}`);
+              if (contrib) {
+                  const short = contrib.length > 100 ? contrib.slice(0, 100) + '...' : contrib;
+                  lines.push(`   - ${lang === 'zh-CN' ? '贡献' : 'Contribution'}: ${short}`);
+              }
+              if (remarks) {
+                  const short = remarks.length > 80 ? remarks.slice(0, 80) + '...' : remarks;
+                  lines.push(`   - ${lang === 'zh-CN' ? '评注' : 'Remarks'}: ${short}`);
+              }
+          });
+          lines.push('');
+      }
+  
+      const total = Object.values(data).reduce((s, arr) => s + arr.length, 0);
+      lines.push(`---\n*${total} ${lang === 'zh-CN' ? '位北极星' : 'North Stars'}*`);
+  
+      return lines.join('\n');
+  },
+
+    /* ── 【新增】提取指定语言内容 ── */
+  _extractLang(obj, lang) {
+    if (!obj) return '';
+    if (typeof obj === 'string') return obj;
+    return obj[lang] || obj['zh-CN'] || obj['en'] || '';
   },
 
   /* ── 标签切换 ── */
