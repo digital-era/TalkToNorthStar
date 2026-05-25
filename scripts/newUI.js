@@ -585,6 +585,11 @@ class CrystalBallController {
   }
   
   reset() {
+
+      // 【新增】如果 demo 状态异常卡死，强制清理（不动 Infinity 逻辑）
+      if (this.isDemo && this.isHolding) {
+          this._endDemoPress();  // 强制结束 demo，清理 isDemo/isHolding
+      }
   
       // [DEMO] 清理演示状态
       this.isDemo = false;
