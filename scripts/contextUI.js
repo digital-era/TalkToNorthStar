@@ -5,7 +5,16 @@
  * ═══════════════════════════════════════════════
  */
 
-const ContextUI = {
+// 安全初始化：如果已存在则清理旧实例
+if (typeof window.ContextUI !== 'undefined') {
+    console.warn('[ContextUI] 已存在，清理旧实例');
+    const oldPanel = document.getElementById('starContextPanel');
+    if (oldPanel) oldPanel.remove();
+    const oldModal = document.getElementById('starContextBrowseModal');
+    if (oldModal) oldModal.remove();
+}
+
+window.ContextUI  = {
   panel: null,
   browseModal: null,
   isPanelOpen: false,
@@ -355,5 +364,7 @@ const ContextUI = {
   }
 };
 
-/* 初始化 */
-document.addEventListener('DOMContentLoaded', () => ContextUI.init());
+// 初始化
+document.removeEventListener('DOMContentLoaded', window.ContextUI._initHandler);
+window.ContextUI._initHandler = () => window.ContextUI.init();
+document.addEventListener('DOMContentLoaded', window.ContextUI._initHandler);
