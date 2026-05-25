@@ -146,138 +146,47 @@ const ContextUI = {
     setTimeout(() => this._injectCanvasButtons(), 500);
   },
 
-/* ── 画布按钮注入（国际化版 + 星际穿越） ── */
+  /* ── 画布按钮注入（国际化版） ── */
   _injectCanvasButtons() {
-      const nodes = document.querySelectorAll('.thought-node');
-      const history = (typeof getMergedHistory === 'function')
-        ? getMergedHistory(window.importedHistory || null, window.conversationHistory || [])
-        : [];
-  
-      nodes.forEach((node, idx) => {
-          // 【修复】同时检查两种按钮，防止重复注入
-          if (node.querySelector('.ctx-canvas-btn') || node.querySelector('.ctx-warp-btn')) return;
-          
-          const data = history[idx];
-          if (!data || !data.id) return;
-  
-          // 1. 加入上下文按钮（原有）
-          const inCtx = window.starContext.hasDialogueNode(data.id);
-          const ctxBtn = document.createElement('button');
-          ctxBtn.className = `ctx-canvas-btn ${inCtx ? 'in-context' : ''}`;
-          ctxBtn.title = inCtx ? this._t('contextCanvasRemoveTitle') : this._t('contextCanvasAddTitle');
-          ctxBtn.innerHTML = inCtx ? '<i class="fas fa-minus"></i>' : '<i class="fas fa-plus"></i>';
-  
-          ctxBtn.onclick = (e) => {
-              e.stopPropagation();
-              const res = window.starContext.addFromDialogue(data);
-              if (res.success) {
-                  // 成功处理...
-              } else {
-                  if (confirm(res.message)) {
-                      this.openPanel();
-                  }
-              }
-          };
-  
-          // 2. 【新增】星际穿越按钮
-          const warpBtn = document.createElement('button');
-          warpBtn.className = 'ctx-warp-btn';
-          warpBtn.title = this._t('warpContextTitle');
-          warpBtn.innerHTML = '<i class="fas fa-rocket"></i>';
-          
-          warpBtn.onclick = (e) => {
-              e.stopPropagation();
-              this.addAllDataAsContext();
-          };
-  
-          // 3. 插入按钮（从右到左：删除 → 加入上下文 → 星际穿越）
-          const deleteBtn = node.querySelector('.node-delete-btn');
-          if (deleteBtn) {
-              node.insertBefore(warpBtn, deleteBtn);   // 【新增】星际穿越按钮（最左）
-              node.insertBefore(btn, deleteBtn);      // 加入上下文按钮（中间）
-          } else {
-              node.appendChild(warpBtn);               // 【新增】
-              node.appendChild(btn);
-          }
-      });
-  },
-  
-  /* ── 【新增】加入星际穿越上下文 ── */
-  addAllDataAsContext() {
-    const lang = window.currentLang || 'zh-CN';
-    
-    if (window.starContext.isFull()) {
-      if (confirm(this._t('ctxErrorFullCleanup'))) {
-        this.openPanel();
+    const nodes = document.querySelectorAll('.thought-node');
+    const history = (typeof getMergedHistory === 'function')
+      ? getMergedHistory(window.importedHistory || null, window.conversationHistory || [])
+      : [];
+
+    nodes.forEach((node, idx) => {
+      if (node.querySelector('.ctx-canvas-btn')) return;
+      const data = history[idx];
+      if (!data || !data.id) return;
+
+      const inCtx = window.starContext.hasDialogueNode(data.id);
+      const btn = document.createElement('button');
+      btn.className = `ctx-canvas-btn ${inCtx ? 'in-context' : ''}`;
+      btn.title = inCtx ? this._t('contextCanvasRemoveTitle') : this._t('contextCanvasAddTitle');
+      btn.innerHTML = inCtx ? '<i class="fas fa-minus"></i>' : '<i class="fas fa-plus"></i>';
+
+      /* ── 画布按钮注入（国际化版） ── */
+      // 确保这部分代码和你发给我的一致，使用的是 res.message
+      // 如果还是中文，请全局搜索 "是否打开管理面板" 这几个字，找到并删掉硬编码
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const res = window.starContext.addFromDialogue(data);
+        if (res.success) {
+            // ... 成功处理
+        } else {
+            // 这里的 res.message 必须来自 Manager 的翻译
+            if (confirm(res.message)) {
+                this.openPanel();
+            }
+        }
+      };
+
+      const deleteBtn = node.querySelector('.node-delete-btn');
+      if (deleteBtn) {
+        node.insertBefore(btn, deleteBtn);
+      } else {
+        node.appendChild(btn);
       }
-      return;
-    }
-
-    const content = this._buildAllDataContext(lang);
-    const title = lang === 'zh-CN' 
-      ? '星际穿越' 
-      : 'Warp Drive · North Star Panorama';
-
-    const res = window.starContext.addFromText(content, title);
-    
-    if (res.success) {
-      this._showToast(this._t('warpContextSuccess'));
-      this._refreshCanvasButtons();
-    } else {
-      alert(res.message);
-    }
-  },
-
-    /* ── 【新增】构建过滤后的 allData 文本 ── */
-  _buildAllDataContext(lang) {
-      const data = window.allData;
-      if (!data) return '';
-  
-      const lines = [];
-      lines.push(`# ${lang === 'zh-CN' ? '北极星星际穿越' : 'North Star Interstellar'}\n`);
-  
-      for (const [cat, masters] of Object.entries(data)) {
-          // 使用全局 getCategoryName，无则回退到 categoryNames，再无则原样显示
-          let catName = cat;
-          if (typeof getCategoryName === 'function') {
-              catName = getCategoryName(cat);
-          } else if (window.categoryNames && window.categoryNames[cat]) {
-              catName = window.categoryNames[cat][lang] || window.categoryNames[cat]['zh-CN'] || cat;
-          }
-          
-          lines.push(`## ${catName}`);
-          
-          masters.forEach((m, i) => {
-              lines.push(`${i + 1}. **${m.name}**`);
-              
-              const field = this._extractLang(m.field, lang);
-              const contrib = this._extractLang(m.contribution, lang);
-              const remarks = this._extractLang(m.remarks, lang);
-  
-              if (field) lines.push(`   - ${lang === 'zh-CN' ? '领域' : 'Field'}: ${field}`);
-              if (contrib) {
-                  const short = contrib.length > 100 ? contrib.slice(0, 100) + '...' : contrib;
-                  lines.push(`   - ${lang === 'zh-CN' ? '贡献' : 'Contribution'}: ${short}`);
-              }
-              if (remarks) {
-                  const short = remarks.length > 80 ? remarks.slice(0, 80) + '...' : remarks;
-                  lines.push(`   - ${lang === 'zh-CN' ? '评注' : 'Remarks'}: ${short}`);
-              }
-          });
-          lines.push('');
-      }
-  
-      const total = Object.values(data).reduce((s, arr) => s + arr.length, 0);
-      lines.push(`---\n*${total} ${lang === 'zh-CN' ? '位北极星' : 'North Stars'}*`);
-  
-      return lines.join('\n');
-  },
-
-    /* ── 【新增】提取指定语言内容 ── */
-  _extractLang(obj, lang) {
-    if (!obj) return '';
-    if (typeof obj === 'string') return obj;
-    return obj[lang] || obj['zh-CN'] || obj['en'] || '';
+    });
   },
 
   /* ── 标签切换 ── */
@@ -429,8 +338,8 @@ const ContextUI = {
   },
 
   _refreshCanvasButtons() {
-      document.querySelectorAll('.ctx-canvas-btn, .ctx-warp-btn').forEach(b => b.remove());
-      this._injectCanvasButtons();
+    document.querySelectorAll('.ctx-canvas-btn').forEach(b => b.remove());
+    this._injectCanvasButtons();
   },
 
   _showToast(msg) {
