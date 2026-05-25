@@ -411,56 +411,10 @@
     opacity: 0;             /* 默认隐藏，与删除按钮行为一致 */
 }
 
-/* 【新增】星际穿越上下文按钮 — 放在加入上下文按钮左侧 */
-.ctx-warp-btn {
-    position: absolute;
-    top: 5px;
-    right: 62px;            /* 加入上下文按钮(34px) + 间距(28px) */
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: rgba(0, 223, 216, 0.1);      /* 青色基调，与主色调呼应 */
-    border: 1.5px solid rgba(0, 223, 216, 0.35);
-    color: #00dfd8;                           /* 青色星标 */
-    font-size: 11px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-    z-index: 10;
-    padding: 0;
-    opacity: 0;             /* 默认隐藏，与上下文按钮行为一致 */
-}
-
 /* 鼠标悬停节点时显示 */
-.thought-node:hover .ctx-canvas-btn,
-.thought-node:hover .ctx-warp-btn {
+.thought-node:hover .ctx-canvas-btn {
     opacity: 1;
 }
-
-.ctx-warp-btn:hover {
-    background: rgba(0, 223, 216, 0.22);
-    border-color: rgba(0, 223, 216, 0.6);
-    box-shadow: 0 0 16px rgba(0, 223, 216, 0.25);
-    transform: scale(1.15);
-}
-
-.ctx-warp-btn:active {
-    transform: scale(0.95);
-}
-
-/* 点击后的瞬时反馈 */
-.ctx-warp-btn.just-added {
-    animation: warpAddedPulse 0.6s ease;
-}
-
-@keyframes warpAddedPulse {
-    0% { transform: scale(1); box-shadow: 0 0 0 rgba(0, 223, 216, 0); }
-    50% { transform: scale(1.25); box-shadow: 0 0 20px rgba(0, 223, 216, 0.4); }
-    100% { transform: scale(1); box-shadow: 0 0 0 rgba(0, 223, 216, 0); }
-}
-
 
 .ctx-canvas-btn:hover {
     background: rgba(0, 124, 240, 0.22);
@@ -493,13 +447,6 @@
         right: 38px;
         font-size: 12px;
     }
-    .ctx-warp-btn {
-     opacity: 0.6;
-     width: 28px;
-     height: 28px;
-     right: 70px;        /* 38 + 32 */
-     font-size: 12px;
-    }
 }
 
 @media (max-width: 480px) {
@@ -509,13 +456,6 @@
         height: 26px;
         font-size: 11px;
     }
-    .ctx-warp-btn {
-     right: 66px;        /* 36 + 30 */
-     width: 26px;
-     height: 26px;
-     font-size: 11px;
-    }
-
 }
 
 /* ── Toast ── */
