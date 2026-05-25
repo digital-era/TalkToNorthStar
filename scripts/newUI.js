@@ -1448,30 +1448,38 @@ function renderCategoryLayout(category) {
   console.log('category:', category);
   console.log('chipsContainer:', chipsContainer);
   console.log('generateChipsForCategory exists:', typeof generateChipsForCategory === 'function');
-  if (typeof generateChipsForCategory === 'function' && chipsContainer) {
-    console.log('calling generateChipsForCategory...');
-    generateChipsForCategory(category, chipsContainer);
-    console.log('after call, chips HTML:', chipsContainer.innerHTML);
-    chipsContainer.querySelectorAll('.chip').forEach(chip => {
-        chip.addEventListener('click', function() {
-            const isAlreadyActive = this.classList.contains('active');
-            const isAllChip = this.dataset.filter === 'all';
-            
-            if (isAlreadyActive && !isAllChip) {
-                // 【deselect】点击已激活的子类 → 切换到全部
-                chipsContainer.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-                const allChip = chipsContainer.querySelector('.chip[data-filter="all"]');
-                if (allChip) allChip.classList.add('active');
-            } else {
-                // 【正常选择】
-                chipsContainer.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-                this.classList.add('active');
-            }
-            
-            showFirstCandidate(category);
+      if (typeof generateChipsForCategory === 'function' && chipsContainer) {
+        console.log('calling generateChipsForCategory...');
+        generateChipsForCategory(category, chipsContainer);
+        console.log('after call, chips HTML:', chipsContainer.innerHTML);
+        
+        // 【修复】清除旧事件监听器，避免与传统模式 filterModernGrid 冲突
+        chipsContainer.querySelectorAll('.chip').forEach(chip => {
+            const cleanChip = chip.cloneNode(true);
+            chip.replaceWith(cleanChip);
         });
-    });
-  } else {
+        
+        // 重新获取清理后的芯片，绑定水晶球专用 deselect 逻辑
+        chipsContainer.querySelectorAll('.chip').forEach(chip => {
+            chip.addEventListener('click', function() {
+                const isAlreadyActive = this.classList.contains('active');
+                const isAllChip = this.dataset.filter === 'all';
+                
+                if (isAlreadyActive && !isAllChip) {
+                    // 【deselect】点击已激活的子类 → 切换到全部
+                    chipsContainer.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+                    const allChip = chipsContainer.querySelector('.chip[data-filter="all"]');
+                    if (allChip) allChip.classList.add('active');
+                } else {
+                    // 【正常选择】
+                    chipsContainer.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                }
+                
+                showFirstCandidate(category);
+            });
+        });
+    } else {
     console.error('cannot call generateChipsForCategory!', {
       hasFunction: typeof generateChipsForCategory === 'function',
       hasContainer: !!chipsContainer
