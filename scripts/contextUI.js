@@ -365,6 +365,8 @@ window.ContextUI  = {
 };
 
 // 初始化
-document.removeEventListener('DOMContentLoaded', window.ContextUI._initHandler);
-window.ContextUI._initHandler = () => window.ContextUI.init();
-document.addEventListener('DOMContentLoaded', window.ContextUI._initHandler);
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => window.ContextUI.init());
+} else {
+    window.ContextUI.init();
+}
