@@ -27,6 +27,16 @@ const crystalTexts = {
 let crystalInstance = null;
 let wheelInstance = null;
 
+// 统一取值：支持字符串和多语言对象
+function getFieldValue(obj, lang, fallbackLang = 'zh-CN') {
+    if (!obj) return '';
+    if (typeof obj === 'string') return obj;
+    if (typeof obj === 'object') {
+        return obj[lang] || obj[fallbackLang] || '';
+    }
+    return String(obj);
+}
+
 // ══════════════════════════════════════════════
 // 星云粒子系统
 // ══════════════════════════════════════════════
@@ -1481,36 +1491,47 @@ function renderCategoryLayout(category) {
   let isFlipping = false;
   
   if (randomBtn) {
+    // 在 renderCategoryLayout 的随机按钮逻辑中
+    let lastRandomIndex = -1;
+    
     randomBtn.onclick = () => {
-      if (isFlipping) return;
-      isFlipping = true;
-      
-      // 暂停翻书动画
-      if (layoutLeft) layoutLeft.classList.add('flipping-paused');
-      if (coverFront) coverFront.classList.add('active-flip');
-      
-      // 随机逻辑
-      const candidates = getFilteredCandidates(category);
-      if (candidates.length === 0) {
-        alert(t('noMatch'));
+        if (isFlipping) return;
+        isFlipping = true;
+        
+        if (layoutLeft) layoutLeft.classList.add('flipping-paused');
+        if (coverFront) coverFront.classList.add('active-flip');
+        
+        const candidates = getFilteredCandidates(category);
+        if (candidates.length === 0) {
+            alert(t('noMatch'));
+            setTimeout(() => {
+                if (coverFront) coverFront.classList.remove('active-flip');
+                if (layoutLeft) layoutLeft.classList.remove('flipping-paused');
+                isFlipping = false;
+            }, 400);
+            return;
+        }
+        
+        // 如果有多张，尽量不与上次重复
+        let randomIndex;
+        if (candidates.length > 1) {
+            do {
+                randomIndex = Math.floor(Math.random() * candidates.length);
+            } while (randomIndex === lastRandomIndex);
+        } else {
+            randomIndex = 0;
+        }
+        lastRandomIndex = randomIndex;
+        
+        const random = candidates[randomIndex];
+        selectLeader(random, category, null);
+        updateSingleCard(random);
+        
         setTimeout(() => {
-          if (coverFront) coverFront.classList.remove('active-flip');
-          if (layoutLeft) layoutLeft.classList.remove('flipping-paused');
-          isFlipping = false;
-        }, 400);
-        return;
-      }
-      
-      const random = candidates[Math.floor(Math.random() * candidates.length)];
-      selectLeader(random, category, null);
-      updateSingleCard(random);
-      
-      // 恢复翻书
-      setTimeout(() => {
-        if (coverFront) coverFront.classList.remove('active-flip');
-        if (layoutLeft) layoutLeft.classList.remove('flipping-paused');
-        isFlipping = false;
-      }, 800);
+            if (coverFront) coverFront.classList.remove('active-flip');
+            if (layoutLeft) layoutLeft.classList.remove('flipping-paused');
+            isFlipping = false;
+        }, 800);
     };
   }
   
@@ -1530,18 +1551,16 @@ function updateSingleCard(leader) {
   if (!card) return;
   
   const lang = window.currentLang || 'zh-CN';
-  
-  // 直接用 t() 获取标签，uiTexts 已包含映射
   const labelContribution = t('labelContribution');
   const labelField = t('labelField');
   const labelRemarks = t('labelRemarks');
   
-  const contrib = leader.contribution ? (leader.contribution[lang] || leader.contribution['zh-CN'] || '') : '';
-  const field = leader.field ? (leader.field[lang] || leader.field['zh-CN'] || '') : '';
-  const remarks = leader.remarks ? (leader.remarks[lang] || leader.remarks['zh-CN'] || '') : '';
+  const contrib = getFieldValue(leader.contribution, lang);
+  const field = getFieldValue(leader.field, lang);
+  const remarks = getFieldValue(leader.remarks, lang);
   
   card.innerHTML = `
-    <h2>${leader.name}</h2>
+    <h2>${getFieldValue(leader.name, lang)}</h2>
     <p class="contribution"><strong>${labelContribution}</strong> ${contrib}</p>
     <p class="field"><strong>${labelField}</strong> ${field}</p>
     ${remarks ? `<p class="remarks"><strong>${labelRemarks}</strong> ${remarks}</p>` : ''}
@@ -1559,26 +1578,36 @@ function getFilteredCandidates(category) {
   }
   
   let candidates = (allData[category] || []).slice();
+  
+  // 子类过滤
   if (activeSub) {
     const q = activeSub.toLowerCase();
     candidates = candidates.filter(m => {
-      const f = m.field ? (m.field[lang] || m.field['zh-CN'] || '').toLowerCase() : '';
+      const f = getFieldValue(m.field, lang).toLowerCase();
       return f.includes(q);
     });
   }
   
+  // 搜索过滤
   const searchInput = document.getElementById('newUI-search');
   if (searchInput && searchInput.value.trim()) {
     const sq = searchInput.value.trim().toLowerCase();
+    const keywords = sq.split(/\s+/).filter(k => k.length > 0);
+    
     candidates = candidates.filter(m => {
       const searchStr = [
-        m.name,
-        m.contribution ? (m.contribution[lang] || m.contribution['zh-CN'] || '') : '',
-        m.field ? (m.field[lang] || m.field['zh-CN'] || '') : ''
+        getFieldValue(m.name, lang),
+        getFieldValue(m.contribution, lang),
+        getFieldValue(m.field, lang)
       ].join(' ').toLowerCase();
-      return searchStr.includes(sq);
+      
+      // 多关键词：任一匹配即可
+      return keywords.some(k => searchStr.includes(k));
     });
   }
+  
+  // 【调试】确认过滤结果数量
+  console.log(`[Filter] category=${category}, activeSub=${activeSub}, search="${searchInput?.value}", matched=${candidates.length}`);
   
   return candidates;
 }
