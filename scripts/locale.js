@@ -242,6 +242,10 @@
                 "ctxInjectionTitle": "【星语上下文 · 参考资料】",
                 "ctxInjectionHeader": "上下文",
                 "ctxInjectionFooter": "上下文结束 · 请结合以上资料回答后续问题",
+                    
+                'warpContextTitle': '加入星际穿越上下文',
+                'warpContextSuccess': '已加入星际穿越上下文',
+                'warpContextBtnLabel': '星际穿越',
 
                 "coverMachineTitle": "机器 · 做减法",
                 "coverMachine1": "剥离表象",
@@ -500,6 +504,10 @@
                 "ctxInjectionHeader": "Context",
                 "ctxInjectionFooter": "End of Context · Please use these materials for following answers",
 
+                'warpContextTitle': 'Add Warp Drive Context',
+                'warpContextSuccess': 'Warp Drive context added: North Star Panorama',
+                'warpContextBtnLabel': 'Warp Drive',
+                    
                  "coverMachineTitle": "Machines · Subtract",
                  "coverMachine1": "Strip Illusions",
                  "coverMachine2": "Filter Noise",
