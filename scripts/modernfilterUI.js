@@ -284,27 +284,32 @@ function filterModernGrid(trigger, category = null) {
     // 获取当前语言
     const lang = window.currentLang || 'zh-CN';
 
-    // 1. 确定过滤条件
+    // 1. 确定过滤条件 + 胶囊 UI 状态（合并处理 deselect）
     let filterVal = 'all';
     if (trigger) {
         if (trigger.tagName === 'INPUT') {
             filterVal = trigger.value.trim();
-        } else if (trigger.dataset?.filter) {
-            filterVal = trigger.dataset.filter;
+        } else if (trigger.classList?.contains('chip')) {
+            const isAlreadyActive = trigger.classList.contains('active');
+            const isAllChip = trigger.dataset?.filter === 'all';
+            
+            if (isAlreadyActive && !isAllChip) {
+                // 【deselect】点击已激活的子类 → 切换到全部
+                const allChip = tab.querySelector('.chip[data-filter="all"]');
+                if (allChip) {
+                    tab.querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
+                    allChip.classList.add('active');
+                    allChip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                    filterVal = 'all';
+                }
+            } else {
+                // 【正常选择】激活当前芯片
+                tab.querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
+                trigger.classList.add('active');
+                trigger.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                filterVal = trigger.dataset.filter;
+            }
         }
-    }
-
-    // 2. 更新胶囊 UI 状态 (激活高亮 + 滚动居中)
-    if (trigger && trigger.classList?.contains('chip')) {
-        tab.querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
-        trigger.classList.add('active');
-        
-        // 关键：让选中的胶囊平滑滚动到可视区域中间
-        trigger.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'nearest', 
-            inline: 'center' 
-        });
     }
 
     // 3. 获取并过滤数据
