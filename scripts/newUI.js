@@ -1453,11 +1453,23 @@ function renderCategoryLayout(category) {
     generateChipsForCategory(category, chipsContainer);
     console.log('after call, chips HTML:', chipsContainer.innerHTML);
     chipsContainer.querySelectorAll('.chip').forEach(chip => {
-      chip.addEventListener('click', function() {
-        chipsContainer.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-        this.classList.add('active');
-        showFirstCandidate(category);
-      });
+        chip.addEventListener('click', function() {
+            const isAlreadyActive = this.classList.contains('active');
+            const isAllChip = this.dataset.filter === 'all';
+            
+            if (isAlreadyActive && !isAllChip) {
+                // 【deselect】点击已激活的子类 → 切换到全部
+                chipsContainer.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+                const allChip = chipsContainer.querySelector('.chip[data-filter="all"]');
+                if (allChip) allChip.classList.add('active');
+            } else {
+                // 【正常选择】
+                chipsContainer.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+            }
+            
+            showFirstCandidate(category);
+        });
     });
   } else {
     console.error('cannot call generateChipsForCategory!', {
