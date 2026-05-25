@@ -170,6 +170,19 @@ function loadApiSettings() {
 }
 
 
+
+// 在 renderDialogueCanvas 外部定义（或文件顶部）
+// 辅助函数：防止 LaTeX 中的 < 和 > 破坏 HTML 结构
+function escapeHtml(text) {
+    if (!text) return '';
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 function openTab(evt, tabName) {
     let i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tab-content");
@@ -1100,43 +1113,43 @@ function switchSettingsTab(event, tabId) {
 
 
 /* --- [新增] 优雅阅读模式逻辑 --- */
-// 【新增辅助函数】安全解析 Markdown，保护数学公式不被 marked.js 破坏
-function renderMarkdownWithMath(rawText) {
-    if (!rawText) return '';
+function parseMarkdownWithMath(rawText) {
+    if (!rawText) return "";
 
-    // 1. 临时占位符数组
-    const mathBlocks = [];
+    // 1. 存储公式的临时数组
+    const mathSegments = [];
     
-    // 2. 正则匹配 LaTeX 公式：
-    // 匹配 $$...$$, \[...\], \(...\), $...$
-    // 注意：这就要求 AI 返回标准的 LaTeX 格式
-    const protectMath = (text) => {
-        return text.replace(/(\$\$[\s\S]*?\$\$|\\\[[\s\S]*?\\\]|\\\(.*?\\\)|(?<!\\)\$.*?(?<!\\)\$)/gm, (match) => {
-            mathBlocks.push(match); // 存入数组
-            return `__MATH_BLOCK_${mathBlocks.length - 1}__`; // 用占位符替换
-        });
-    };
+    // 2. 保护公式：将 LaTeX 内容替换为占位符
+    const protectedText = rawText.replace(
+        /(\$\$[\s\S]*?\$\$|\\\[[\s\S]*?\\\]|\\\(.*?\\\)|(?<!\\)\$.*?(?<!\\)\$)/gm, 
+        (match) => {
+            mathSegments.push(match);
+            return `@@MATH_PLACEHOLDER_${mathSegments.length - 1}@@`;
+        }
+    );
 
-    // 3. 恢复公式
-    const restoreMath = (text) => {
-        return text.replace(/__MATH_BLOCK_(\d+)__/g, (match, index) => {
-            return mathBlocks[index];
-        });
-    };
+    // 【核心新增】3. 防止尖括号被 Markdown 解析器识别为 HTML 标签
+    // 例如：<<文章名>>、<<某标签> 会被 marked.js 吞掉或解析为 DOM 节点
+    // 注意：先转义 &，再转义 < >，避免双重转义
+    const safeText = protectedText
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
 
-    // 4. 执行流程
-    let protectedText = protectMath(rawText);
-    
-    let html = '';
-    // 如果引入了 marked.js 则使用，否则简单换行
+    // 4. Markdown 转换（此时 < > 已安全，不会被视为 HTML 标签）
+    let htmlContent = "";
     if (typeof marked !== 'undefined') {
-        html = marked.parse(protectedText);
+        htmlContent = marked.parse(safeText);
     } else {
-        html = protectedText.replace(/\n/g, '<br>');
+        htmlContent = safeText.replace(/\n/g, "<br>");
     }
 
-    // 5. 恢复公式并返回
-    return restoreMath(html);
+    // 5. 还原公式（公式内部可能含 < >，用 escapeHtml 避免破坏 HTML 结构）
+    const finalHtml = htmlContent.replace(/@@MATH_PLACEHOLDER_(\d+)@@/g, (match, index) => {
+        return escapeHtml(mathSegments[index]); 
+    });
+
+    return finalHtml;
 }
 
 function parseMarkdownWithMath(rawText) {
@@ -1173,16 +1186,6 @@ function parseMarkdownWithMath(rawText) {
     });
 
     return finalHtml;
-}
-
-// 辅助函数：防止 LaTeX 中的 < 和 > 破坏 HTML 结构
-function escapeHtml(text) {
-    return text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
 }
 
 /* --- [新增] 文字流动控制函数 --- */
@@ -1422,10 +1425,11 @@ function renderDialogueCanvas() {
 
         let contentHTML = '';
 
+        // 修改用户节点渲染逻辑
         if (isUser) {
             contentHTML = `
                 <div class="user-avatar-mark"><i class="fas fa-user-astronaut"></i></div>
-                <div class="node-content user-handwriting">${item.text}</div>
+                <div class="node-content user-handwriting">${escapeHtml(item.text)}</div>
             `;
         } else {
             let processedText = item._processedText;
@@ -1855,31 +1859,53 @@ function exportToPDF() {
     
     overlay.appendChild(coverPage1);
 
-    // --- 步骤 C: 处理对话内容 ---
+    // --- 步骤 C: 处理对话内容, 重新构建对话内容（修复尖括号丢失）--- */
     const contentWrapper = document.createElement('div');
     contentWrapper.id = 'print-content-wrapper';
     
-    const contentClone = source.cloneNode(true);
-    contentClone.removeAttribute('id');
-
-    const nodes = contentClone.children;
-    for (let i = 0; i < nodes.length; i++) {
-        const node = nodes[i];
-        if (!node.classList.contains('thought-node')) continue;
-
-        if (node.classList.contains('question-node')) {
-            let roleTitle = document.createElement('div');
-            roleTitle.className = 'print-role-title user-role';
-            roleTitle.innerText = "🧑 User"; 
-            node.insertBefore(roleTitle, node.firstChild);
-        } else if (node.classList.contains('answer-node')) {
-            let roleTitle = document.createElement('div');
-            roleTitle.className = 'print-role-title ai-role';
-            roleTitle.innerText = "✦ North Star"; 
-            node.insertBefore(roleTitle, node.firstChild);
+    const history = getMergedHistory(importedHistory, conversationHistory);
+    
+    history.forEach((item) => {
+        const isUser = item.role === 'user';
+        const node = document.createElement('div');
+        node.className = `thought-node ${isUser ? 'question-node' : 'answer-node'}`;
+    
+        if (isUser) {
+            // 用户节点：HTML 实体转义，防止 < > 被解析为标签
+            node.innerHTML = `
+                <div class="print-role-title user-role">🧑 User</div>
+                <div class="node-content user-handwriting">${escapeHtml(item.text)}</div>
+            `;
+        } else {
+            // AI 节点：使用已修复的 parseMarkdownWithMath，安全渲染 Markdown
+            let processedText = '';
+            if (typeof parseMarkdownWithMath === 'function') {
+                processedText = parseMarkdownWithMath(item.text);
+            } else {
+                processedText = escapeHtml(item.text).replace(/\n/g, '<br>');
+            }
+    
+            const info = item.leaderInfo || { name: 'Unknown', field: '', contribution: '' };
+    
+            node.innerHTML = `
+                <div class="print-role-title ai-role">✦ North Star</div>
+                <div class="leader-header">
+                    <div class="leader-name">${escapeHtml(info.name)}</div>
+                    <div class="leader-badges">
+                        <span class="badge-field">${escapeHtml(info.field)}</span>
+                    </div>
+                </div>
+                <div class="leader-contribution-hint" title="${escapeHtml(info.contribution || '')}">
+                    <i class="fas fa-quote-left"></i> ${escapeHtml(info.contribution?.substring(0, 30) || '')}...
+                </div>
+                <div class="node-divider"></div>
+                <div class="node-content star-content">${processedText}</div>
+            `;
         }
-    }
-    contentWrapper.appendChild(contentClone);
+    
+        contentWrapper.appendChild(node);
+    });
+    
     overlay.appendChild(contentWrapper);
 
     // --- 步骤 D: 最后一页 商业级封底排版 ---
@@ -1954,77 +1980,95 @@ function exportToPDF() {
 }
 
 /* --- 新增：导出为 HTML 功能 --- */
+/* --- 新增：导出为 HTML 功能（修复尖括号丢失）--- */
 function exportToHTML() {
-    // ★ 新增
     const history = getMergedHistory(importedHistory, conversationHistory);
     
     if (!history || history.length === 0) {
-        alert("画布为空，无法导出。");
+        alert(translations[currentLang].alertCanvasEmpty || "画布为空，无法导出。");
         return;
     }
 
-    // 1. 克隆内容节点，避免修改原始界面
-    const contentContainer = document.getElementById('thoughtStreamContent');
-    const clone = contentContainer.cloneNode(true);
-
-    // 2. 清理不需要的交互元素 (删除按钮)
-    const deleteBtns = clone.querySelectorAll('.node-delete-btn');
-    deleteBtns.forEach(btn => btn.remove());
-    
-    // 清理 onclick 属性，导出的页面不需要交互逻辑
-    const allElements = clone.querySelectorAll('*');
-    allElements.forEach(el => el.removeAttribute('onclick'));
-
-    // 3. 获取导出的文件名
     let fileName = "对话记录";
     if (typeof getExportFileName === 'function') {
         fileName = getExportFileName();
     }
 
-    // 4. 构建完整的 HTML 字符串
-    // 我们将把关键样式直接嵌入，确保导出的文件打开就是深色星空主题
+    // ═══════════════════════════════════════════════
+    // 【核心修复】基于原始数据重新构建 HTML，不再克隆 DOM
+    // ═══════════════════════════════════════════════
+    let nodesHtml = '';
+    
+    history.forEach((item) => {
+        const isUser = item.role === 'user';
+        
+        if (isUser) {
+            // 用户节点：HTML 实体转义，防止 < > 被浏览器解析为标签
+            nodesHtml += `
+                <div class="thought-node question-node">
+                    <div class="user-avatar-mark"><i class="fas fa-user-astronaut"></i></div>
+                    <div class="node-content user-handwriting">${escapeHtml(item.text)}</div>
+                </div>
+            `;
+        } else {
+            // AI 节点：使用已修复的 parseMarkdownWithMath，安全渲染 Markdown
+            let processedText = '';
+            if (typeof parseMarkdownWithMath === 'function') {
+                processedText = parseMarkdownWithMath(item.text);
+            } else {
+                processedText = escapeHtml(item.text).replace(/\n/g, '<br>');
+            }
+
+            const info = item.leaderInfo || { name: 'Unknown', field: '', contribution: '' };
+
+            nodesHtml += `
+                <div class="thought-node answer-node">
+                    <div class="star-decoration-top"><i class="fas fa-star-of-life"></i></div>
+                    <div class="leader-header">
+                        <div class="leader-name">${escapeHtml(info.name)}</div>
+                        <div class="leader-badges">
+                            <span class="badge-field">${escapeHtml(info.field)}</span>
+                        </div>
+                    </div>
+                    <div class="leader-contribution-hint" title="${escapeHtml(info.contribution || '')}">
+                        <i class="fas fa-quote-left"></i> ${escapeHtml(info.contribution?.substring(0, 30) || '')}...
+                    </div>
+                    <div class="node-divider"></div>
+                    <div class="node-content star-content">${processedText}</div>
+                    <div class="star-decoration-bottom"><i class="fas fa-feather-alt"></i> North Star Insight</div>
+                </div>
+            `;
+        }
+    });
+
     const htmlContent = `<!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="${window.currentLang || 'zh-CN'}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${fileName}</title>
-    <!-- 引入字体 -->
+    <title>${escapeHtml(fileName)}</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;700&family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
-    <!-- 引入图标库 (使用 CDN) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    
     <style>
-        /* --- 基础重置 --- */
         body { margin: 0; padding: 0; font-family: 'Noto Serif SC', serif; overflow-x: hidden; }
-        
-        /* --- 背景：复用 .canvas-modal 的深色星空样式 --- */
         body {
             background: linear-gradient(to bottom, #02060a 0%, #0d1620 100%);
             min-height: 100vh;
             color: #ccc;
         }
-
-        /* --- 简单的星空背景模拟 (简化版动画) --- */
         body::before {
             content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-image: radial-gradient(1px 1px at 10% 10%, #fff, transparent), radial-gradient(2px 2px at 50% 50%, #fff, transparent);
             background-size: 500px 500px; opacity: 0.5; z-index: -1; pointer-events: none;
         }
-
-        /* --- 容器布局 --- */
         .thought-stream {
             max-width: 900px; margin: 0 auto; padding: 80px 20px;
             display: flex; flex-direction: column; gap: 60px;
         }
-
-        /* --- 节点通用样式 --- */
         .thought-node {
             position: relative; max-width: 80%; padding: 0; border-radius: 4px;
             margin-bottom: 20px;
         }
-
-        /* --- User 样式 --- */
         .thought-node.question-node {
             align-self: flex-start;
             background: rgba(255, 255, 255, 0.1);
@@ -2042,8 +2086,6 @@ function exportToHTML() {
         .user-handwriting {
             font-family: 'Ma Shan Zheng', cursive; font-size: 1.3rem; line-height: 1.6; letter-spacing: 1px;
         }
-
-        /* --- North Star 样式 --- */
         .thought-node.answer-node {
             align-self: flex-end;
             background: #f4ecd8; color: #2c1e12;
@@ -2053,33 +2095,26 @@ function exportToHTML() {
             border: 1px solid rgba(139, 90, 43, 0.2);
             position: relative;
         }
-        /* 卷角效果 */
         .thought-node.answer-node::after {
             content: ''; position: absolute; bottom: 8px; right: 8px;
             width: 40px; height: 40px; z-index: -1;
             box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.4);
             transform: skew(15deg) rotate(5deg); border-radius: 50%;
         }
-
-        /* --- 内容排版 --- */
         .leader-name { font-family: 'Cinzel', serif; font-weight: 700; font-size: 1.4rem; color: #3e2723; text-align: center; }
         .badge-field { background: #3e2723; color: #d7ccc8; padding: 2px 8px; border-radius: 2px; font-size: 0.75rem; display: inline-block; }
         .leader-header { text-align: center; margin-bottom: 10px; }
         .leader-contribution-hint { font-size: 0.9rem; color: #6d4c41; font-style: italic; text-align: center; margin-bottom: 15px; }
         .node-divider { height: 1px; background: linear-gradient(to right, transparent, #8b5a2b, transparent); margin: 15px 0; opacity: 0.4; }
         .star-content { font-size: 1rem; line-height: 1.8; color: #1a1a1a; text-align: justify; }
-        
-        /* 装饰图标 */
         .star-decoration-top { text-align: center; color: #8b5a2b; margin-bottom: 10px; }
         .star-decoration-bottom { margin-top: 20px; text-align: right; font-size: 0.8rem; color: #8b5a2b; font-family: 'Cinzel', serif; opacity: 0.6; }
-
-        /* 页脚 */
         footer { text-align: center; padding: 50px; color: #555; font-size: 0.8rem; font-family: sans-serif; }
     </style>
 </head>
 <body>
     <div class="thought-stream">
-        ${clone.innerHTML}
+        ${nodesHtml}
     </div>
     <footer>
         Exported from Talk with North Stars • ${new Date().toLocaleString()}
@@ -2087,7 +2122,6 @@ function exportToHTML() {
 </body>
 </html>`;
 
-    // 5. 创建 Blob 并下载
     const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
