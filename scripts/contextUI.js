@@ -193,11 +193,11 @@ const ContextUI = {
           // 3. 插入按钮（从右到左：删除 → 加入上下文 → 星际穿越）
           const deleteBtn = node.querySelector('.node-delete-btn');
           if (deleteBtn) {
-              node.insertBefore(warpBtn, deleteBtn);  // 最左侧
-              node.insertBefore(ctxBtn, deleteBtn);   // 中间
+              node.insertBefore(warpBtn, deleteBtn);   // 【新增】星际穿越按钮（最左）
+              node.insertBefore(btn, deleteBtn);      // 加入上下文按钮（中间）
           } else {
-              node.appendChild(warpBtn);
-              node.appendChild(ctxBtn);
+              node.appendChild(warpBtn);               // 【新增】
+              node.appendChild(btn);
           }
       });
   },
