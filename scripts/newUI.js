@@ -1571,6 +1571,8 @@ function getFilteredCandidates(category) {
   const lang = window.currentLang || 'zh-CN';
   const chipsContainer = document.getElementById(`chips-${category}`);
   let activeSub = null;
+  
+  // ── 获取激活的子类（排除"全部/All"）──
   if (chipsContainer) {
     const activeChip = Array.from(chipsContainer.querySelectorAll('.chip.active'))
       .find(chip => chip.dataset.filter && chip.dataset.filter !== 'all');
@@ -1579,36 +1581,38 @@ function getFilteredCandidates(category) {
   
   let candidates = (allData[category] || []).slice();
   
-  // 子类过滤
+  // ═══════════════════════════════════════════════
+  // 【子类过滤】与传统样式 field 读取完全一致
+  // ═══════════════════════════════════════════════
   if (activeSub) {
     const q = activeSub.toLowerCase();
     candidates = candidates.filter(m => {
-      const f = getFieldValue(m.field, lang).toLowerCase();
-      return f.includes(q);
+      // 严格对齐 populateLeaders 中的 displayedField
+      const fieldText = m.field ? (m.field[lang] || m.field['zh-CN'] || '').toLowerCase() : '';
+      return fieldText.includes(q);
     });
   }
   
-  // 搜索过滤
+  // ═══════════════════════════════════════════════
+  // 【搜索过滤】与传统样式显示字段范围完全一致
+  // ═══════════════════════════════════════════════
   const searchInput = document.getElementById('newUI-search');
   if (searchInput && searchInput.value.trim()) {
     const sq = searchInput.value.trim().toLowerCase();
-    const keywords = sq.split(/\s+/).filter(k => k.length > 0);
     
     candidates = candidates.filter(m => {
-      const searchStr = [
-        getFieldValue(m.name, lang),
-        getFieldValue(m.contribution, lang),
-        getFieldValue(m.field, lang)
-      ].join(' ').toLowerCase();
+      // 严格对齐 populateLeaders 渲染的四个字段
+      const nameText     = m.name || '';
+      const contribText  = m.contribution ? (m.contribution[lang] || m.contribution['zh-CN'] || '') : '';
+      const fieldText    = m.field ? (m.field[lang] || m.field['zh-CN'] || '') : '';
+      const remarksText  = m.remarks ? (m.remarks[lang] || m.remarks['zh-CN'] || '') : '';
       
-      // 多关键词：任一匹配即可
-      return keywords.some(k => searchStr.includes(k));
+      const searchStr = [nameText, contribText, fieldText, remarksText].join(' ').toLowerCase();
+      return searchStr.includes(sq);
     });
   }
   
-  // 【调试】确认过滤结果数量
   console.log(`[Filter] category=${category}, activeSub=${activeSub}, search="${searchInput?.value}", matched=${candidates.length}`);
-  
   return candidates;
 }
 
