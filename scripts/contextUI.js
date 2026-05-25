@@ -146,59 +146,62 @@ const ContextUI = {
     setTimeout(() => this._injectCanvasButtons(), 500);
   },
 
-  /* ── 画布按钮注入（国际化版） ── */
+/* ── 画布按钮注入（国际化版 + 星际穿越） ── */
   _injectCanvasButtons() {
-    const nodes = document.querySelectorAll('.thought-node');
-    const history = (typeof getMergedHistory === 'function')
-      ? getMergedHistory(window.importedHistory || null, window.conversationHistory || [])
-      : [];
-
-    nodes.forEach((node, idx) => {
-      if (node.querySelector('.ctx-canvas-btn')) return;
-      const data = history[idx];
-      if (!data || !data.id) return;
-
-      const inCtx = window.starContext.hasDialogueNode(data.id);
-      const btn = document.createElement('button');
-      btn.className = `ctx-canvas-btn ${inCtx ? 'in-context' : ''}`;
-      btn.title = inCtx ? this._t('contextCanvasRemoveTitle') : this._t('contextCanvasAddTitle');
-      btn.innerHTML = inCtx ? '<i class="fas fa-minus"></i>' : '<i class="fas fa-plus"></i>';
-
-      /* ── 画布按钮注入（国际化版） ── */
-      // 确保这部分代码和你发给我的一致，使用的是 res.message
-      // 如果还是中文，请全局搜索 "是否打开管理面板" 这几个字，找到并删掉硬编码
-      btn.onclick = (e) => {
-        e.stopPropagation();
-        const res = window.starContext.addFromDialogue(data);
-        if (res.success) {
-            // ... 成功处理
-        } else {
-            // 这里的 res.message 必须来自 Manager 的翻译
-            if (confirm(res.message)) {
-                this.openPanel();
-            }
-        }
-      };
-
-      // 【新增】星际穿越上下文按钮
-      const warpBtn = document.createElement('button');
-      warpBtn.className = 'ctx-canvas-btn warp-context-btn';
-      warpBtn.title = this._t('warpContextTitle');
-      warpBtn.innerHTML = '<i class="fas fa-rocket"></i>';
-      warpBtn.onclick = (e) => {
-        e.stopPropagation();
-        this.addAllDataAsContext();
-      };
-
-      const deleteBtn = node.querySelector('.node-delete-btn');
-      if (deleteBtn) {
-        node.insertBefore(btn, deleteBtn);
-      } else {
-        node.appendChild(btn);
-      }
-    });
-  },
-
+      const nodes = document.querySelectorAll('.thought-node');
+      const history = (typeof getMergedHistory === 'function')
+        ? getMergedHistory(window.importedHistory || null, window.conversationHistory || [])
+        : [];
+  
+      nodes.forEach((node, idx) => {
+          // 【修复】同时检查两种按钮，防止重复注入
+          if (node.querySelector('.ctx-canvas-btn') || node.querySelector('.ctx-warp-btn')) return;
+          
+          const data = history[idx];
+          if (!data || !data.id) return;
+  
+          // 1. 加入上下文按钮（原有）
+          const inCtx = window.starContext.hasDialogueNode(data.id);
+          const ctxBtn = document.createElement('button');
+          ctxBtn.className = `ctx-canvas-btn ${inCtx ? 'in-context' : ''}`;
+          ctxBtn.title = inCtx ? this._t('contextCanvasRemoveTitle') : this._t('contextCanvasAddTitle');
+          ctxBtn.innerHTML = inCtx ? '<i class="fas fa-minus"></i>' : '<i class="fas fa-plus"></i>';
+  
+          ctxBtn.onclick = (e) => {
+              e.stopPropagation();
+              const res = window.starContext.addFromDialogue(data);
+              if (res.success) {
+                  // 成功处理...
+              } else {
+                  if (confirm(res.message)) {
+                      this.openPanel();
+                  }
+              }
+          };
+  
+          // 2. 【新增】星际穿越按钮
+          const warpBtn = document.createElement('button');
+          warpBtn.className = 'ctx-warp-btn';
+          warpBtn.title = this._t('warpContextTitle');
+          warpBtn.innerHTML = '<i class="fas fa-rocket"></i>';
+          
+          warpBtn.onclick = (e) => {
+              e.stopPropagation();
+              this.addAllDataAsContext();
+          };
+  
+          // 3. 插入按钮（从右到左：删除 → 加入上下文 → 星际穿越）
+          const deleteBtn = node.querySelector('.node-delete-btn');
+          if (deleteBtn) {
+              node.insertBefore(warpBtn, deleteBtn);  // 最左侧
+              node.insertBefore(ctxBtn, deleteBtn);   // 中间
+          } else {
+              node.appendChild(warpBtn);
+              node.appendChild(ctxBtn);
+          }
+      });
+  }
+  
   /* ── 【新增】加入星际穿越上下文 ── */
   addAllDataAsContext() {
     const lang = window.currentLang || 'zh-CN';
@@ -426,8 +429,8 @@ const ContextUI = {
   },
 
   _refreshCanvasButtons() {
-    document.querySelectorAll('.ctx-canvas-btn').forEach(b => b.remove());
-    this._injectCanvasButtons();
+      document.querySelectorAll('.ctx-canvas-btn, .ctx-warp-btn').forEach(b => b.remove());
+      this._injectCanvasButtons();
   },
 
   _showToast(msg) {
