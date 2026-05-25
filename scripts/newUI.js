@@ -430,6 +430,13 @@ class CrystalBallController {
     // 停止充能循环
     cancelAnimationFrame(this.chargeAnimId);
 
+     // 【关键修复】demo 模式下结束按压，强制清理 demo 状态
+    if (this.isDemo) {
+        this._endDemoPress();
+        this._pauseDemo(4000);
+        return;
+    }
+
     // demo 模式绝不允许 reveal
     if (!this.realUserHolding) {
         this._cancelCharge();
