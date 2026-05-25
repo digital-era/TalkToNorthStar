@@ -678,8 +678,9 @@ class CrystalBallController {
     this.isDemo = false;
     this.isHolding = false;
     cancelAnimationFrame(this.chargeAnimId);
-    this._cancelCharge();   // 走"未充满回退"分支，带动画回弹
-  }
+    this._cancelCharge();
+    this._pauseDemo(4000);  // ← 新增：确保 demo 结束后有冷却期
+}
 
   /** 外部调用：强制中断演示（如用户点击星轨按钮） */
   stopDemo() {
