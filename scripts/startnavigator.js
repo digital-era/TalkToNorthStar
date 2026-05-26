@@ -63,54 +63,77 @@ ${catalogText}
 }
 
 
+
 /**
  * 激活星际领航员模式
- * 现代模式下，自动选中星际领航员卡片，
+ * 优先匹配当前所在领域的领航员，而非全局第一个
  */
 function activateInterstellarNavigator() {
-    // 查找星际领航员数据（遍历所有领域）
     let navigatorLeader = null;
     let navigatorCategory = '';
-    
-    for (const [category, leaders] of Object.entries(allData)) {
-        const found = leaders.find(l => l.id === 'interstellar_navigator');
+
+    // ═══════════════════════════════════════════════
+    // 【修复】优先匹配当前页面所在类别
+    // ═══════════════════════════════════════════════
+    const currentCat = window.currentSelectedCategory;
+
+    if (currentCat && allData[currentCat]) {
+        const found = allData[currentCat].find(l => l.id === 'interstellar_navigator');
         if (found) {
             navigatorLeader = found;
-            navigatorCategory = category;
-            break;
+            navigatorCategory = currentCat;
         }
     }
-    
+
+    // 兜底：如果当前类别没有，再遍历全库
+    if (!navigatorLeader) {
+        for (const [category, leaders] of Object.entries(allData)) {
+            const found = leaders.find(l => l.id === 'interstellar_navigator');
+            if (found) {
+                navigatorLeader = found;
+                navigatorCategory = category;
+                break;
+            }
+        }
+    }
+
     if (!navigatorLeader) {
         console.error('星际领航员未找到');
-        alert(translations[currentLang]?.alertNavigatorNotFound || '星际领航员配置缺失');
+        const lang = window.currentLang || 'zh-CN';
+        alert(translations[lang]?.alertNavigatorNotFound || '星际领航员配置缺失');
         return;
     }
-    
+
     // 图标视觉反馈
     const icon = document.querySelector('.navigator-icon');
     if (icon) {
         icon.classList.add('active');
         icon.classList.remove('pulsing');
     }
-    
+
     // ═══════════════════════════════════════════════
-    // 【现代模式】
+    // 【现代模式】已进入左右布局
     // ═══════════════════════════════════════════════
     const layoutContainer = document.getElementById('category-layout-container');
     const isModernActive = layoutContainer && layoutContainer.style.display !== 'none';
-    
+
     if (isModernActive) {
+        // 如果当前类别与领航员所在类别不一致，先切换类别布局
         if (currentSelectedCategory !== navigatorCategory) {
             selectCategory(navigatorCategory);
         }
         selectLeader(navigatorLeader, navigatorCategory, null);
         updateSingleCard(navigatorLeader);
-        
+
         setTimeout(() => {
             document.querySelector('.interaction-area')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }, 100);
         return;
-    }   
+    }
 
+    // ═══════════════════════════════════════════════
+    // 【传统模式 / 兜底】未进入现代布局时的处理
+    // 可在此补充：打开标签页并选中领航员
+    // ═══════════════════════════════════════════════
+    // 例如：openTab(null, navigatorCategory); selectLeader(...);
 }
