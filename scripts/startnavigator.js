@@ -74,8 +74,10 @@ function activateInterstellarNavigator() {
 
     // ═══════════════════════════════════════════════
     // 【修复】优先匹配当前页面所在类别
+    // 注意：currentSelectedCategory 是 let 声明的全局变量，
+    //       不是 window 的属性，不能加 window. 前缀！
     // ═══════════════════════════════════════════════
-    const currentCat = window.currentSelectedCategory;
+    const currentCat = currentSelectedCategory;
 
     if (currentCat && allData[currentCat]) {
         const found = allData[currentCat].find(l => l.id === 'interstellar_navigator');
@@ -99,7 +101,7 @@ function activateInterstellarNavigator() {
 
     if (!navigatorLeader) {
         console.error('星际领航员未找到');
-        const lang = window.currentLang || 'zh-CN';
+        const lang = currentLang || 'zh-CN';
         alert(translations[lang]?.alertNavigatorNotFound || '星际领航员配置缺失');
         return;
     }
@@ -133,7 +135,6 @@ function activateInterstellarNavigator() {
 
     // ═══════════════════════════════════════════════
     // 【传统模式 / 兜底】未进入现代布局时的处理
-    // 可在此补充：打开标签页并选中领航员
     // ═══════════════════════════════════════════════
     // 例如：openTab(null, navigatorCategory); selectLeader(...);
 }
