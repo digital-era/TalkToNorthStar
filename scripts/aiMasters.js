@@ -630,5 +630,20 @@ const aiMasters = [
     "zh-CN": "其书籍与框架影响全球数百万创业者；强调价值先行、杠杆增长与可规模化系统，代表一人/小型团队实现巨额营收的巅峰范式。",
     "en": "Emphasizes value-first approach, leveraged growth, and scalable systems, exemplifying the pinnacle paradigm for achieving massive revenue with solo/small teams."
   }
-}     
+},
+{
+    "id": "interstellar_navigator",   "name": "星际领航员",
+    "contribution": {
+    "zh-CN": "作为‘对话北极星’领航员，针对用户问题，提供三位领域互补的‘北极星’人物建议。",
+    "en": "As navigator for Talk with North Stars,  provide recommendations for three complementary North Star figures based on user questions."
+    },
+    "field": {
+    "zh-CN": "星际领航",
+    "en": "Stellar Navigation Guide"
+    },
+    "remarks": {
+    "zh-CN": "追求北极星人物之间的跨学科洞见和化学反应。",
+    "en": "Pursuing interdisciplinary insights and chemical reactions among the North Star figures."
+    }
+}
 ];
