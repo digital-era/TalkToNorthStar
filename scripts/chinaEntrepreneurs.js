@@ -295,7 +295,7 @@ const chinaEntrepreneurs = [
               }
             },
             {
-                  "id": "interstellar_navigator",   "name": "Interstellar Navigator (星际领航员)",
+                  "id": "interstellar_navigator",   "name": "星际领航员 (Interstellar Navigator)",
                   "contribution": {
                     "zh-CN": "作为‘对话北极星’领航员，针对用户问题，提供三位领域互补的‘北极星’人物建议。",
                     "en": "As navigator for Talk with North Stars,  provide recommendations for three complementary North Star figures based on user questions."
