@@ -237,5 +237,20 @@ const QuantumMasters = [
         "zh-CN": "量子计算硬件领域的领军人物，补充硬件开发视角。",
         "en": "A leading figure in quantum computing hardware, supplementing the hardware development perspective."
       }
+    },
+    {
+      "id": "interstellar_navigator",   "name": "星际领航员",
+      "contribution": {
+        "zh-CN": "作为‘对话北极星’领航员，针对用户问题，提供三位领域互补的‘北极星’人物建议。",
+        "en": "As navigator for Talk with North Stars,  provide recommendations for three complementary North Star figures based on user questions."
+      },
+      "field": {
+        "zh-CN": "星际领航",
+        "en": "Stellar Navigation Guide"
+      },
+      "remarks": {
+        "zh-CN": "追求北极星人物之间的跨学科洞见和化学反应。",
+        "en": "Pursuing interdisciplinary insights and chemical reactions among the North Star figures."
+      }
     }
 ];
