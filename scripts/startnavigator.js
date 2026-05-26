@@ -68,7 +68,7 @@ ${catalogText}
  * 自动选中星际领航员卡片，兼容传统模式和现代模式
  */
 function activateInterstellarNavigator() {
-    // 查找星际领航员数据
+    // 查找星际领航员数据（遍历所有领域）
     let navigatorLeader = null;
     let navigatorCategory = '';
     
@@ -87,11 +87,11 @@ function activateInterstellarNavigator() {
         return;
     }
     
-    // 按钮视觉反馈
-    const btn = document.querySelector('.navigator-btn');
-    if (btn) {
-        btn.classList.add('active');
-        btn.classList.remove('pulsing');
+    // 图标视觉反馈
+    const icon = document.querySelector('.navigator-icon');
+    if (icon) {
+        icon.classList.add('active');
+        icon.classList.remove('pulsing');
     }
     
     // ═══════════════════════════════════════════════
@@ -114,27 +114,63 @@ function activateInterstellarNavigator() {
     }
     
     // ═══════════════════════════════════════════════
-    // 【传统模式】
+    // 【传统模式】强制立即渲染 + 取消动画延迟
     // ═══════════════════════════════════════════════
-    openTab(null, navigatorCategory);
+    const targetTab = document.getElementById(navigatorCategory);
+    const isTabActive = targetTab && targetTab.classList.contains('active');
+    
+    if (!isTabActive) {
+        // 1. 执行 Tab 切换
+        openTab(null, navigatorCategory);
+    }
+    
+    // 2. 【关键】强制卡片立即可见，取消任何入场动画
+    const grid = document.getElementById(`${navigatorCategory}Grid`);
+    if (grid) {
+        grid.querySelectorAll('.leader-card').forEach(card => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateX(0)';
+            card.style.animation = 'none';
+            card.style.filter = 'none';
+        });
+    }
+    
+    // 3. 选中领航员并高亮
     selectLeader(navigatorLeader, navigatorCategory, null);
+    highlightNavigatorCard(navigatorCategory);
     
-    setTimeout(() => {
-        const grid = document.getElementById(`${navigatorCategory}Grid`);
-        if (!grid) return;
-        
-        grid.querySelectorAll('.leader-card.selected').forEach(c => c.classList.remove('selected'));
-        
-        const navigatorCard = Array.from(grid.querySelectorAll('.leader-card'))
-            .find(card => card.dataset.id === 'interstellar_navigator');
-        
-        if (navigatorCard) {
-            navigatorCard.classList.add('selected');
-            navigatorCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-        }
-    }, 100);
+    // 4. 滚动到交互区
+    scrollToInteraction();
+}
+
+/**
+ * 高亮星际领航员卡片
+ */
+function highlightNavigatorCard(category) {
+    const grid = document.getElementById(`${category}Grid`);
+    if (!grid) return;
     
+    // 清除旧选中
+    grid.querySelectorAll('.leader-card.selected').forEach(c => c.classList.remove('selected'));
+    
+    // 查找并高亮领航员卡片
+    const navigatorCard = Array.from(grid.querySelectorAll('.leader-card'))
+        .find(card => card.dataset.id === 'interstellar_navigator');
+    
+    if (navigatorCard) {
+        navigatorCard.classList.add('selected');
+        navigatorCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+}
+
+/**
+ * 滚动到交互区
+ */
+function scrollToInteraction() {
     setTimeout(() => {
-        document.querySelector('.interaction-area')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 300);
+        document.querySelector('.interaction-area')?.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+        });
+    }, 150);
 }
