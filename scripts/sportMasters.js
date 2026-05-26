@@ -208,5 +208,20 @@ const sportMasters = [
         "zh-CN": "FPS竞技传奇，其超凡瞄准与游戏感重塑射击游戏标准，MVP纪录无人能及。",
         "en": "FPS legend; unparalleled aim and game sense reshaped shooter standards, MVP record unmatched."
       }
+    },
+    {
+      "id": "interstellar_navigator",   "name": "星际领航员",
+      "contribution": {
+        "zh-CN": "作为‘对话北极星’领航员，针对用户问题，提供三位领域互补的‘北极星’人物建议。",
+        "en": "As navigator for Talk with North Stars,  provide recommendations for three complementary North Star figures based on user questions."
+      },
+      "field": {
+        "zh-CN": "星际领航",
+        "en": "Stellar Navigation Guide"
+      },
+      "remarks": {
+        "zh-CN": "追求北极星人物之间的跨学科洞见和化学反应。",
+        "en": "Pursuing interdisciplinary insights and chemical reactions among the North Star figures."
+      }
     }
 ];
