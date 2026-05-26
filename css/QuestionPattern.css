@@ -248,23 +248,43 @@
 仅限桌面端微调（屏幕宽度 > 768px）
 ═══════════════════════════════════════════════ */
 @media (min-width: 769px) {
-    /* 1. 缩短导航图标组与 h2 标题的间距 */
-    .navigator-group {
-        margin-left: 0px; /* 从 4px 改为 0px，图标组紧贴标题；如需保留极小间隙可改为 2px */
+
+    /* 1. interaction-header 改成紧凑布局 */
+    .interaction-header {
+        justify-content: flex-start;
+        gap: 6px; /* 控制 h2 与 navigator-icon 的距离 */
     }
 
-    /* 2. 强制恢复桌面端图标颜色，防止被其他全局/深层样式覆盖 */
-    .navigator-icon {
-        color: rgba(0, 223, 216, 0.5) !important; 
+    /* 2. navigator-group 不再撑开中间空间 */
+    .navigator-group {
+        margin-left: 0;
+        margin-right: 0;
     }
-    
-    /* 关键修复：确保内部 Font Awesome 图标、伪元素、SVG 都强制继承父级颜色 */
-    .navigator-icon i,
-    .navigator-icon::before,
-    .navigator-icon svg,
-    .navigator-icon path {
+
+    /* 3. 右侧图标组自动推到最右 */
+    .sample-icons-group {
+        margin-left: auto;
+    }
+
+    /* 4. 强制桌面端 navigator-icon 使用青色 */
+    .navigator-icon {
+        color: rgba(0, 223, 216, 0.5) !important;
+    }
+
+    /* 5. Font Awesome SVG 修复（关键） */
+    .navigator-icon svg {
         color: inherit !important;
-        fill: currentColor !important; /* 兼容 SVG 图标 */
+        fill: currentColor !important;
+    }
+
+    .navigator-icon svg path {
+        fill: currentColor !important;
+    }
+
+    /* 6. i 标签兼容 */
+    .navigator-icon i,
+    .navigator-icon::before {
+        color: inherit !important;
     }
 }
 
