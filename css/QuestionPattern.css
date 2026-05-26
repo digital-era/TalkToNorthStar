@@ -250,18 +250,21 @@
 @media (min-width: 769px) {
     /* 1. 缩短导航图标组与 h2 标题的间距 */
     .navigator-group {
-        margin-left: 4px; /* 将原本的 10px 缩小，您可根据视觉效果微调（如 3px 或 5px） */
+        margin-left: 0px; /* 从 4px 改为 0px，图标组紧贴标题；如需保留极小间隙可改为 2px */
     }
 
-    /* 2. 强制恢复桌面端图标颜色，防止被其他全局样式覆盖 */
+    /* 2. 强制恢复桌面端图标颜色，防止被其他全局/深层样式覆盖 */
     .navigator-icon {
         color: rgba(0, 223, 216, 0.5) !important; 
     }
     
-    /* 确保内部图标或伪元素继承该颜色 */
+    /* 关键修复：确保内部 Font Awesome 图标、伪元素、SVG 都强制继承父级颜色 */
     .navigator-icon i,
-    .navigator-icon::before {
+    .navigator-icon::before,
+    .navigator-icon svg,
+    .navigator-icon path {
         color: inherit !important;
+        fill: currentColor !important; /* 兼容 SVG 图标 */
     }
 }
 
