@@ -29,7 +29,11 @@
                 "labelApiModel": "模型选择:",
                 "labelSetDefaultModel": "设为默认模型", // 新增
                 "settingsSaved": "设置已保存！", // 新增
-                "settingsCleared": "API信息已清除！", // 新增    
+                "settingsCleared": "API信息已清除！", // 新增  
+                    
+                "tooltipInterstellarNav": '星际领航',
+                "alertNavigatorNotFound": '星际领航员配置缺失',
+                    
                 "interactWithLeader": "与北极星对话",
                 "currentSelectedLeaderPrefix": "当前选择的北极星: ",
                 "noLeaderSelected": "无",
@@ -241,11 +245,7 @@
                 "ctxDialogueTitleTemplate": "对话 · ${role}",
                 "ctxInjectionTitle": "【星语上下文 · 参考资料】",
                 "ctxInjectionHeader": "上下文",
-                "ctxInjectionFooter": "上下文结束 · 请结合以上资料回答后续问题",
-                    
-                'warpContextTitle': '加入星际穿越上下文',
-                'warpContextSuccess': '已加入星际穿越上下文',
-                'warpContextBtnLabel': '星际穿越',
+                "ctxInjectionFooter": "上下文结束 · 请结合以上资料回答后续问题",            
 
                 "coverMachineTitle": "机器 · 做减法",
                 "coverMachine1": "剥离表象",
@@ -290,6 +290,10 @@
                 "labelSetDefaultModel": "Set as Default Model", // 新增
                 "settingsSaved": "Settings saved!", // 新增
                 "settingsCleared": "API info cleared!", // 新增
+                
+                "tooltipInterstellarNav": 'Interstellar Navigation ',
+                "alertNavigatorNotFound": 'Navigator configuration missing',
+                    
                 "interactWithLeader": "Talk with North Star",
                 "currentSelectedLeaderPrefix": "Currently Selected North Star: ",
                 "noLeaderSelected": "None",
@@ -503,10 +507,6 @@
                 "ctxInjectionTitle": "[Star Context · Reference Materials]",
                 "ctxInjectionHeader": "Context",
                 "ctxInjectionFooter": "End of Context · Please use these materials for following answers",
-
-                'warpContextTitle': 'Add Warp Drive Context',
-                'warpContextSuccess': 'Warp Drive context added: North Star Panorama',
-                'warpContextBtnLabel': 'Warp Drive',
                     
                  "coverMachineTitle": "Machines · Subtract",
                  "coverMachine1": "Strip Illusions",
