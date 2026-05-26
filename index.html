@@ -441,14 +441,15 @@
         </div>
         
         <div class="interaction-area">
-			<div class="interaction-header">
-	            <h2 data-i18n-key="interactWithLeader">与北极星对话</h2>
-				<!-- 独立分组：星际领航 -->
-			    <div class="navigator-group">
-			        <i class="fas fa-rocket navigator-icon" 
-			           onclick="activateInterstellarNavigator()" 
-			           title="星际领航" 
-			           data-i18n-title="tooltipInterstellarNav"></i>
+			    <!-- 左侧：标题 + 领航图标（紧密排列） -->
+			    <div style="display: flex; align-items: center;">
+			        <h2 data-i18n-key="interactWithLeader">与北极星对话</h2>
+			        <div class="navigator-group">
+			            <i class="fas fa-rocket navigator-icon" 
+			               onclick="activateInterstellarNavigator()" 
+			               title="星际领航" 
+			               data-i18n-title="tooltipInterstellarNav"></i>
+			        </div>
 			    </div>
 			    <div class="sample-icons-group">
 			        <i class="fas fa-lightbulb sample-q-icon"
