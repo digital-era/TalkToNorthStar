@@ -519,27 +519,67 @@ async function getAIResponse() {
      // ═══════════════════════════════════════════════
     // 【星语上下文注入】与 Prompt 完全解耦
     // ═══════════════════════════════════════════════
+        // ═══════════════════════════════════════════════
+    // 【星语上下文】原有逻辑
+    // ═══════════════════════════════════════════════
     const ctxMessages = (window.starContext && window.starContext.getAll().length > 0)
       ? window.starContext.getContextMessages()
       : [];
     const ctxSystemContent = ctxMessages.length > 0 ? ctxMessages[0].content : '';
 
+    // ═══════════════════════════════════════════════
+    // 【星际领航员模式】判断
+    // ═══════════════════════════════════════════════
+    const isNavigatorMode = currentSelectedLeader?.id === 'interstellar_navigator';
+
+    // ═══════════════════════════════════════════════
+    // 【系统指令合并】上下文 + 领航员指令（可叠加）
+    // ═══════════════════════════════════════════════
+    let finalSystemContent = '';
+    if (ctxSystemContent) finalSystemContent += ctxSystemContent + '\n\n';
+    if (isNavigatorMode) finalSystemContent += buildNavigatorSystemPrompt(currentLang);
+    finalSystemContent = finalSystemContent.trim();
+
     // 3. 构造 Body
     let requestBody;
+
     if (isGeminiModel) {
       const contents = [];
-      if (ctxSystemContent) {
-        contents.push({ role: "user", parts: [{ text: ctxSystemContent }] });
+      
+      if (isNavigatorMode) {
+        // 领航员模式：合并 system 内容 + 用户原始问题
+        const userQuestion = document.getElementById('userQuestion').value.trim();
+        const geminiUserContent = finalSystemContent 
+          ? finalSystemContent + "\n\n用户问题：" + userQuestion
+          : userQuestion;
+        contents.push({ role: "user", parts: [{ text: geminiUserContent }] });
+      } else {
+        // 普通模式：原有逻辑
+        if (finalSystemContent) {
+          contents.push({ role: "user", parts: [{ text: finalSystemContent }] });
+        }
+        contents.push({ role: "user", parts: [{ text: promptText }] });
       }
-      contents.push({ role: "user", parts: [{ text: promptText }] });
+      
       requestBody = {
         contents: contents,
         generationConfig: { temperature: 0.7 }
       };
+
     } else if (isQwenModel) {
       const messages = [];
-      if (ctxSystemContent) messages.push({ role: "system", content: ctxSystemContent });
-      messages.push({ role: "user", content: promptText });
+      
+      if (finalSystemContent) {
+        messages.push({ role: "system", content: finalSystemContent });
+      }
+      
+      messages.push({ 
+        role: "user", 
+        content: isNavigatorMode 
+          ? document.getElementById('userQuestion').value.trim() 
+          : promptText 
+      });
+      
       requestBody = {
         model: model,
         input: { messages: messages },
@@ -549,10 +589,22 @@ async function getAIResponse() {
           function_call: "auto"
         }
       };
+
     } else {
+      // OpenAI 兼容格式
       const messages = [];
-      if (ctxSystemContent) messages.push({ role: "system", content: ctxSystemContent });
-      messages.push({ role: "user", content: promptText });
+      
+      if (finalSystemContent) {
+        messages.push({ role: "system", content: finalSystemContent });
+      }
+      
+      messages.push({ 
+        role: "user", 
+        content: isNavigatorMode 
+          ? document.getElementById('userQuestion').value.trim() 
+          : promptText 
+      });
+      
       requestBody = {
         model: model,
         messages: messages,
