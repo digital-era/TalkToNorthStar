@@ -61,3 +61,80 @@ ${catalogText}
 4. Delve into the soul of figures; no encyclopedic listings
 5. Must select from the catalog above; no invented figures`;
 }
+
+
+/**
+ * 激活星际领航员模式
+ * 自动选中星际领航员卡片，兼容传统模式和现代模式
+ */
+function activateInterstellarNavigator() {
+    // 查找星际领航员数据
+    let navigatorLeader = null;
+    let navigatorCategory = '';
+    
+    for (const [category, leaders] of Object.entries(allData)) {
+        const found = leaders.find(l => l.id === 'interstellar_navigator');
+        if (found) {
+            navigatorLeader = found;
+            navigatorCategory = category;
+            break;
+        }
+    }
+    
+    if (!navigatorLeader) {
+        console.error('星际领航员未找到');
+        alert(translations[currentLang]?.alertNavigatorNotFound || '星际领航员配置缺失');
+        return;
+    }
+    
+    // 按钮视觉反馈
+    const btn = document.querySelector('.navigator-btn');
+    if (btn) {
+        btn.classList.add('active');
+        btn.classList.remove('pulsing');
+    }
+    
+    // ═══════════════════════════════════════════════
+    // 【现代模式】
+    // ═══════════════════════════════════════════════
+    const layoutContainer = document.getElementById('category-layout-container');
+    const isModernActive = layoutContainer && layoutContainer.style.display !== 'none';
+    
+    if (isModernActive) {
+        if (currentSelectedCategory !== navigatorCategory) {
+            selectCategory(navigatorCategory);
+        }
+        selectLeader(navigatorLeader, navigatorCategory, null);
+        updateSingleCard(navigatorLeader);
+        
+        setTimeout(() => {
+            document.querySelector('.interaction-area')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+        return;
+    }
+    
+    // ═══════════════════════════════════════════════
+    // 【传统模式】
+    // ═══════════════════════════════════════════════
+    openTab(null, navigatorCategory);
+    selectLeader(navigatorLeader, navigatorCategory, null);
+    
+    setTimeout(() => {
+        const grid = document.getElementById(`${navigatorCategory}Grid`);
+        if (!grid) return;
+        
+        grid.querySelectorAll('.leader-card.selected').forEach(c => c.classList.remove('selected'));
+        
+        const navigatorCard = Array.from(grid.querySelectorAll('.leader-card'))
+            .find(card => card.dataset.id === 'interstellar_navigator');
+        
+        if (navigatorCard) {
+            navigatorCard.classList.add('selected');
+            navigatorCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+    }, 100);
+    
+    setTimeout(() => {
+        document.querySelector('.interaction-area')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 300);
+}
