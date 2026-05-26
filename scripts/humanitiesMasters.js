@@ -1262,5 +1262,20 @@ const humanitiesMasters = [
         "zh-CN": "当代最具战略格局与框架感的历史讲解者，通过双向互鉴的视角，将中国置于世界坐标系中重新定位，反过来以全球史照见中国命运。",
         "en": "Among contemporary history explainers, possesses the strongest strategic vision and structural clarity; through bidirectional mutual illumination, repositions China within the global coordinate system while using world history to reflect on China's fate."
       }
+    },
+    {
+      "id": "interstellar_navigator",   "name": "星际领航员",
+      "contribution": {
+        "zh-CN": "作为‘对话北极星’领航员，针对用户问题，提供三位领域互补的‘北极星’人物建议。",
+        "en": "As navigator for Talk with North Stars,  provide recommendations for three complementary North Star figures based on user questions."
+      },
+      "field": {
+        "zh-CN": "星际领航",
+        "en": "Stellar Navigation Guide"
+      },
+      "remarks": {
+        "zh-CN": "追求北极星人物之间的跨学科洞见和化学反应。",
+        "en": "Pursuing interdisciplinary insights and chemical reactions among the North Star figures."
+      }
     }
 ];
