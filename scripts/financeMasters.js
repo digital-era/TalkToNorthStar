@@ -1,4 +1,4 @@
-zconst financeMasters = [
+const financeMasters = [
     { id: "warren_buffett", name: "Warren Buffett (沃伦·巴菲特)",
       contribution: {
         "zh-CN": "伯克希尔·哈撒韦首席执行官，价值投资代表，管理数百亿美元资产，以长期投资和资本配置著称。",
@@ -433,6 +433,34 @@ zconst financeMasters = [
         "en": "Challenges myths in energy transitions, highlighting physical limits of AI and renewables."
         }
     },
+    {  "id": "charlie_bilello", "name": "Charlie Bilello (查理·比莱洛)",
+        "contribution": {
+        "zh-CN": "Compound Advisors首席投资官，通过图表和评论提供市场洞见。",
+        "en": "CIO of Compound Advisors, provides market insights through charts and commentary."
+        },
+        "field": {
+        "zh-CN": "市场分析、投资、金融图表。",
+        "en": "Market Analysis, Investing, Financial Charts."
+        },
+        "remarks": {
+        "zh-CN": "使用数据可视化揭示市场趋势和极端，指导投资决策。",
+        "en": "Uses data visualizations to expose market trends and extremes, guiding investment decisions."
+        }
+    },
+    { "id": "peter_l_brandt", "name": "Peter L. Brandt (彼得·L·布兰特)",
+        "contribution": {
+        "zh-CN": "Factor LLC首席执行官，使用经典图表超过40年的专业交易员。",
+        "en": "CEO of Factor LLC, professional trader using classical charting for over 40 years."
+        },
+        "field": {
+        "zh-CN": "技术分析、大宗商品交易、外汇。",
+        "en": "Technical Analysis, Commodity Trading, Forex."
+        },
+        "remarks": {
+        "zh-CN": "强调在波动市场中的纪律风险管理和模式识别。",
+        "en": "Emphasizes disciplined risk management and pattern recognition in volatile markets."
+        }
+    },
     {
       "id": "mi_lei", "name": "Mi Lei (米磊)",
       "contribution": {
@@ -462,34 +490,6 @@ zconst financeMasters = [
         "zh-CN": "以工程师视角结合丰富实践经验，探讨商业本质、趋势判断与个人认知升级。",
         "en": "Combines an engineering perspective with extensive practical experience to explore business essence, trend analysis, and cognitive upgrading."
       }
-    },
-    {  "id": "charlie_bilello", "name": "Charlie Bilello (查理·比莱洛)",
-        "contribution": {
-        "zh-CN": "Compound Advisors首席投资官，通过图表和评论提供市场洞见。",
-        "en": "CIO of Compound Advisors, provides market insights through charts and commentary."
-        },
-        "field": {
-        "zh-CN": "市场分析、投资、金融图表。",
-        "en": "Market Analysis, Investing, Financial Charts."
-        },
-        "remarks": {
-        "zh-CN": "使用数据可视化揭示市场趋势和极端，指导投资决策。",
-        "en": "Uses data visualizations to expose market trends and extremes, guiding investment decisions."
-        }
-    },
-    { "id": "peter_l_brandt", "name": "Peter L. Brandt (彼得·L·布兰特)",
-        "contribution": {
-        "zh-CN": "Factor LLC首席执行官，使用经典图表超过40年的专业交易员。",
-        "en": "CEO of Factor LLC, professional trader using classical charting for over 40 years."
-        },
-        "field": {
-        "zh-CN": "技术分析、大宗商品交易、外汇。",
-        "en": "Technical Analysis, Commodity Trading, Forex."
-        },
-        "remarks": {
-        "zh-CN": "强调在波动市场中的纪律风险管理和模式识别。",
-        "en": "Emphasizes disciplined risk management and pattern recognition in volatile markets."
-        }
     },
     { "id": "lu_qiyuan", "name": "Lu Qiyuan (卢麒元)",
         "contribution": {
