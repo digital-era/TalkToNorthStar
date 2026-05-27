@@ -433,7 +433,7 @@ const universeMasters = [
       "zh-CN": "在细胞凋亡、γ-分泌酶及真核mRNA剪接体高分辨率结构解析等领域做出杰出贡献；放弃普林斯顿终身教职回国创办西湖大学。",
       "en": "Made outstanding contributions to high-resolution structural studies of apoptosis proteins, γ-secretase, and eukaryotic mRNA spliceosome. Resigned from a tenured position at Princeton to return to China and founded Westlake University, aiming to build a world-class research-oriented university."
     }
-  }
+  },
   {
       "id": "interstellar_navigator",   "name": "Interstellar Navigator (星际领航员)",
       "contribution": {
