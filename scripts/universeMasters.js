@@ -420,6 +420,21 @@ const universeMasters = [
     }
   },
   {
+    id: "shi_yigong", name: "Shi Yigong (施一公)",
+    contribution: {
+      "zh-CN": "国际著名结构生物学家、西湖大学创校校长，中国科学院院士，推动中国高等教育改革。",
+      "en": "Internationally renowned structural biologist, founding President of Westlake University, Academician of the Chinese Academy of Sciences, and promoter of higher education reform in China."
+    },
+    field: {
+      "zh-CN": "结构生物学、细胞凋亡与RNA剪接体研究、高等教育改革。",
+      "en": "Structural Biology, Apoptosis and RNA Spliceosome Research, Higher Education Reform."
+    },
+    remarks: {
+      "zh-CN": "在细胞凋亡、γ-分泌酶及真核mRNA剪接体高分辨率结构解析等领域做出杰出贡献；放弃普林斯顿终身教职回国创办西湖大学。",
+      "en": "Made outstanding contributions to high-resolution structural studies of apoptosis proteins, γ-secretase, and eukaryotic mRNA spliceosome. Resigned from a tenured position at Princeton to return to China and founded Westlake University, aiming to build a world-class research-oriented university."
+    }
+  }
+  {
       "id": "interstellar_navigator",   "name": "Interstellar Navigator (星际领航员)",
       "contribution": {
         "zh-CN": "作为‘对话北极星’领航员，针对用户问题，提供三位领域互补的‘北极星’人物建议。",
