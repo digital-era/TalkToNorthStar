@@ -1,109 +1,92 @@
 // functions/api/hotinfo.js
-// Cloudflare Pages Function：代理获取领域热点，服务端无 CORS 限制
-// 策略：ai/quantum/universe 走 Actually Relevant，其余走 The News API
+// Cloudflare Pages Function：使用 Currents API 获取每个类别的 Top 1 深度实时报道（完整文章内容）
 
-const AR_ENDPOINT = 'https://actually-relevant-api.onrender.com/api/stories';
-
-// 仅 ai/quantum/universe 走 Actually Relevant
-const AR_CATEGORIES = new Set(['ai', 'quantum', 'universe']);
-
-// The News API 分类映射
-const NEWS_CATEGORY_MAP = {
-  'ai': 'tech',
-  'quantum': 'tech',
-  'universe': 'science',
+// 仅使用您原有的 NEWS_CATEGORY_MAP 中的类别进行映射
+const CURRENTS_CATEGORY_MAP = {
+  'ai': 'science_technology',
+  'quantum': 'science_technology',
+  'universe': 'science_technology',
   'humanities': 'general',
-  'art': 'entertainment',
-  'finance': 'business',
-  'sport': 'sports',
-  'chinaEntrepreneurs': 'business'
+  'art': 'arts_culture_entertainment',
+  'finance': 'economy_business_finance',
+  'sport': 'sport',
+  'chinaEntrepreneurs': 'economy_business_finance'
 };
 
 export async function onRequestGet(context) {
   const { request, env } = context;
   const url = new URL(request.url);
+  
   const category = url.searchParams.get('category');
-  const lang = url.searchParams.get('lang') || 'zh-CN';
+  const langParam = url.searchParams.get('lang') || 'zh-CN';
 
   if (!category) {
-    return new Response(JSON.stringify({ success: false, error: 'Missing category' }), {
+    return new Response(JSON.stringify({ 
+      success: false, 
+      error: 'Missing category parameter' 
+    }), {
       status: 400,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+      headers: { 'Content-Type': 'application/json' }
     });
   }
 
+  // 语言转换
+  const language = langParam.startsWith('zh') ? 'zh' : 'en';
+
   let hotspots = [];
 
-  // ══════════════════════════════════════════════
-  // 第一层：Actually Relevant（仅科技类领域）
-  // 【注意】AR API 仅返回英文内容，中文模式下标题会标注 [EN]
-  // ══════════════════════════════════════════════
-  if (AR_CATEGORIES.has(category)) {
-    try {
-      // 尝试传递 language 参数（API 可能不支持，但无负面影响）
-      const langParam = lang === 'zh-CN' ? 'zh' : 'en';
-      const res = await fetch(
-        `${AR_ENDPOINT}?issueSlug=science-technology&language=${langParam}`,
-        { headers: { 'Accept': 'application/json' } }
-      );
-      if (res.ok) {
-        const data = await res.json();
-        hotspots = (data.data || []).slice(0, 3).map(s => ({
-          id: `ar-${s.slug}`,
-          title: s.title,
-          source: s.sourceTitle || s.sourceUrl,
-          time: s.datePublished,
-          summary: s.summary,
-          url: s.sourceUrl,
-          authority: 'AI-curated'  // 标记为 AI 精选，前端据此判断语言
-        }));
+  try {
+    // 使用原有类别映射，不增加新类别
+    const currentsCategory = CURRENTS_CATEGORY_MAP[category] || 'general';
+
+    const apiUrl = new URL('https://api.currentsapi.services/v1/latest-news');
+    apiUrl.searchParams.set('language', language);
+    apiUrl.searchParams.set('category', currentsCategory);
+    apiUrl.searchParams.set('page_size', '1');           // 仅返回 Top 1
+    apiUrl.searchParams.set('apiKey', env.CURRENTS_API_KEY);
+
+    const res = await fetch(apiUrl.toString(), {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; HotspotFetcher/1.0)'
       }
-    } catch (e) {
-      console.warn('[Hotspot API] Actually Relevant failed:', e);
+    });
+
+    if (!res.ok) {
+      throw new Error(`Currents API error: ${res.status}`);
     }
+
+    const data = await res.json();
+
+    if (data.news && data.news.length > 0) {
+      const article = data.news[0];
+
+      hotspots = [{
+        id: `currents-${article.id || Date.now()}`,
+        title: article.title,
+        summary: article.description || '',
+        content: article.content || article.description || '', // 完整文章内容
+        source: article.source?.name || article.author || 'Unknown',
+        time: article.published 
+          ? new Date(article.published).toLocaleString(langParam === 'zh-CN' ? 'zh-CN' : 'en-US')
+          : '',
+        url: article.url,
+        image: article.image || '',
+        authority: 'Currents'
+      }];
+    }
+
+  } catch (error) {
+    console.error('[Hotspot API - Currents] Error:', error);
   }
 
-  // ══════════════════════════════════════════════
-  // 第二层：The News API（非科技类领域直接走这里，科技类兜底也走这里）
-  // 【修复】中文请求改为 zh，但 The News API 返回繁体，需前端处理或接受
-  // ══════════════════════════════════════════════
-  if (hotspots.length === 0 && env.THE_NEWS_API_TOKEN) {
-    try {
-      const cat = NEWS_CATEGORY_MAP[category];
-      if (cat) {
-        // The News API 的 language 参数：zh 返回繁体，无法指定简体
-        const newsLang = lang === 'zh-CN' ? 'zh' : 'en';
-        const res = await fetch(
-          `https://api.thenewsapi.com/v1/news/top?` +
-          `api_token=${env.THE_NEWS_API_TOKEN}&` +
-          `categories=${cat}&limit=3&language=${newsLang}`
-        );
-        if (res.ok) {
-          const data = await res.json();
-          hotspots = (data.data || []).map(a => ({
-            id: `tn-${a.uuid}`,
-            title: a.title,
-            source: a.source,
-            time: a.published_at,
-            summary: a.snippet || a.description,
-            url: a.url,
-            authority: a.source  // 标记为真实媒体源
-          }));
-        }
-      }
-    } catch (e) {
-      console.warn('[Hotspot API] The News API failed:', e);
-    }
-  }
-
-  return new Response(JSON.stringify({ success: true, data: hotspots }), {
+  return new Response(JSON.stringify({ 
+    success: true, 
+    data: hotspots 
+  }), {
     headers: {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
-      'Cache-Control': 'public, max-age=300'
+      'Cache-Control': 'public, max-age=600'
     }
   });
 }
