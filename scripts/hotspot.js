@@ -3,12 +3,13 @@
 // 依赖：全局 currentLang / categoryNames
 // ══════════════════════════════════════════════
 
+// hotspot.js —— 领域今日热点（前端）
+
 const HOTSPOT_CACHE = new Map(); // category -> { data, timestamp }
 const HOTSPOT_TTL = 30 * 60 * 1000; // 30 分钟缓存
 
 /**
- * 获取领域今日 Top3 热点
- * 走同域 /api/hotinfo 代理，彻底规避第三方 CORS；本地 30 分钟缓存
+ * 获取领域今日 Top 1 深度热点
  */
 async function fetchCategoryHotspots(category) {
   const now = Date.now();
@@ -24,6 +25,7 @@ async function fetchCategoryHotspots(category) {
     const res = await fetch(
       `/api/hotinfo?category=${encodeURIComponent(category)}&lang=${encodeURIComponent(lang)}`
     );
+
     if (res.ok) {
       const json = await res.json();
       if (json.success && Array.isArray(json.data)) {
@@ -39,7 +41,7 @@ async function fetchCategoryHotspots(category) {
 }
 
 /**
- * 渲染热点弹窗
+ * 渲染热点弹窗（调整为 Top 1）
  */
 function renderHotspotDropdown(category, hotspots, anchorEl) {
   const old = document.getElementById('hotspot-dropdown');
@@ -54,8 +56,8 @@ function renderHotspotDropdown(category, hotspots, anchorEl) {
     position: absolute;
     top: calc(100% + 8px);
     right: 0;
-    width: 360px;
-    max-width: 90vw;
+    width: 380px;
+    max-width: 92vw;
     background: rgba(10, 15, 30, 0.95);
     backdrop-filter: blur(16px);
     border: 1px solid rgba(0, 223, 216, 0.25);
@@ -66,75 +68,50 @@ function renderHotspotDropdown(category, hotspots, anchorEl) {
     animation: fadeInDown 0.25s ease;
   `;
 
-  const titleText = lang === 'en' ? `Today's Top 3` : `今日 ${displayName} 热点`;
+  const titleText = lang === 'en' ? `Today's Top 1` : `今日 ${displayName} 热点`;
   const addText = lang === 'en' ? 'Add to context' : '加入上下文';
-  const emptyText = lang === 'en' ? 'No hotspots available' : '暂无热点数据';
+  const emptyText = lang === 'en' ? 'No hotspot available' : '暂无热点数据';
 
   dropdown.innerHTML = `
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
       <div style="font-size:14px; font-weight:600; color:#00dfd8; letter-spacing:1px;">${titleText}</div>
     </div>
     <div class="hotspot-list">
-      ${hotspots.length === 0 ? `<div style="color:rgba(255,255,255,0.4); font-size:13px; text-align:center; padding:20px;">${emptyText}</div>` :
-        hotspots.map((h, idx) => {
-          // 【修复】中文模式下，AR 来源的英文内容标注 [EN]
-          const isEnglishContent = lang === 'zh-CN' && h.authority === 'AI-curated';
-          const titleDisplay = isEnglishContent ? `${h.title} <span style="color:rgba(0,223,216,0.6);font-size:11px;">[EN]</span>` : h.title;
-          
-          return `
+      ${hotspots.length === 0 ? `<div style="color:rgba(255,255,255,0.4); font-size:13px; text-align:center; padding:40px;">${emptyText}</div>` :
+        hotspots.map((h) => `
         <div class="hotspot-item" style="
-          padding: 12px;
-          margin-bottom: 8px;
+          padding: 16px;
           background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(255,255,255,0.06);
-          border-radius: 8px;
-          transition: all 0.2s;
-          cursor: default;
+          border: 1px solid rgba(255,255,255,0.08);
+          border-radius: 10px;
         ">
-          <div style="display:flex; align-items:flex-start; gap:8px;">
-            <div style="
-              width: 20px; height: 20px; border-radius: 50%;
-              background: ${idx === 0 ? 'rgba(255,200,100,0.2)' : idx === 1 ? 'rgba(200,200,200,0.15)' : 'rgba(200,150,100,0.15)'};
-              color: ${idx === 0 ? '#ffc864' : idx === 1 ? '#ccc' : '#c89664'};
-              font-size: 11px; font-weight: 700;
-              display:flex; align-items:center; justify-content:center;
-              flex-shrink: 0;
-            ">${idx + 1}</div>
-            <div style="flex:1; min-width:0;">
-              <div style="font-size:13px; color:rgba(255,255,255,0.85); line-height:1.4; margin-bottom:4px;">${titleDisplay}</div>
-              <div style="font-size:11px; color:rgba(255,255,255,0.35); display:flex; gap:8px;">
-                <span>${h.source}</span><span>${h.time}</span>
-              </div>
-              <div style="font-size:12px; color:rgba(255,255,255,0.55); margin-top:6px; line-height:1.5;">${h.summary}</div>
-            </div>
+          <div style="font-size:14px; color:rgba(255,255,255,0.9); line-height:1.5; margin-bottom:8px;">${h.title}</div>
+          <div style="font-size:12px; color:rgba(255,255,255,0.55); line-height:1.6; margin-bottom:12px;">${h.content ? h.content.substring(0, 220) + '...' : h.summary}</div>
+          <div style="font-size:11px; color:rgba(255,255,255,0.4); display:flex; gap:8px; margin-bottom:12px;">
+            <span>${h.source}</span>
+            <span>${h.time}</span>
           </div>
           <button class="btn-add-context" data-id="${h.id}" style="
-            margin-top: 8px;
             width: 100%;
-            padding: 6px;
+            padding: 8px;
             background: rgba(0, 223, 216, 0.1);
-            border: 1px solid rgba(0, 223, 216, 0.25);
+            border: 1px solid rgba(0, 223, 216, 0.3);
             border-radius: 6px;
             color: #00dfd8;
-            font-size: 12px;
+            font-size: 13px;
             cursor: pointer;
-            transition: all 0.2s;
-            display:flex; align-items:center; justify-content:center; gap:4px;
           ">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 5v14M5 12h14"/>
-            </svg>
             ${addText}
           </button>
         </div>
-      `}).join('')}
+      `).join('')}
     </div>
   `;
 
+  // 定位与关闭逻辑（保持不变）
   const rect = anchorEl.getBoundingClientRect();
-  const dropLeft = Math.min(rect.left + window.scrollX, window.innerWidth - 380);
   dropdown.style.top = `${rect.bottom + window.scrollY + 8}px`;
-  dropdown.style.left = `${Math.max(8, dropLeft)}px`;
+  dropdown.style.left = `${Math.max(8, Math.min(rect.left + window.scrollX, window.innerWidth - 400))}px`;
 
   document.body.appendChild(dropdown);
 
