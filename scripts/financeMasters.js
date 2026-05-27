@@ -1,4 +1,4 @@
-const financeMasters = [
+zconst financeMasters = [
     { id: "warren_buffett", name: "Warren Buffett (沃伦·巴菲特)",
       contribution: {
         "zh-CN": "伯克希尔·哈撒韦首席执行官，价值投资代表，管理数百亿美元资产，以长期投资和资本配置著称。",
@@ -432,6 +432,36 @@ const financeMasters = [
         "zh-CN": "挑战能源转型中的神话，突出AI和可再生能源的物理极限。",
         "en": "Challenges myths in energy transitions, highlighting physical limits of AI and renewables."
         }
+    },
+    {
+      "id": "mi_lei", "name": "Mi Lei (米磊)",
+      "contribution": {
+        "zh-CN": "中科创星创始合伙人、中国“硬科技”理念提出者，光学博士背景的科技成果转化与早期投资先行者。",
+        "en": "Founding Partner of CAS Star , proposer of China's 'Hard Tech' concept, pioneer in technology commercialization and early-stage investment with an optics PhD background."
+      },
+      "field": {
+        "zh-CN": "硬科技投资、科技成果转化、早期风险投资、光子技术与先进制造。",
+        "en": "Hard Tech Investment, Technology Commercialization, Early-Stage Venture Capital, Photonics and Advanced Manufacturing."
+      },
+      "remarks": {
+        "zh-CN": "提出ESK价值投资理念（经济、社会、知识价值合一）及制造业“彩虹曲线”等理论，致力于构建硬科技创业生态。",
+        "en": "Proposed the ESK value investment framework (integrating Economic, Social, and Knowledge value) and the 'Rainbow Curve' for manufacturing. Focuses on building hard tech entrepreneurship ecosystems."
+      }
+    },
+    {
+      "id": "wu_jun", "name": "Wu Jun (吴军)",
+      "contribution": {
+        "zh-CN": "计算机科学家、硅谷投资人、畅销书作家，《见识》《浪潮之巅》等作品作者。",
+        "en": "Computer scientist, Silicon Valley investor, and bestselling author. Author of 'Seeing the Big Picture' , 'The Wave of the Tide'."
+      },
+      "field": {
+        "zh-CN": "人工智能、自然语言处理、风险投资、商业认知与科技史。",
+        "en": "Artificial Intelligence, Natural Language Processing, Venture Capital, Business Cognition, and History of Technology."
+      },
+      "remarks": {
+        "zh-CN": "以工程师视角结合丰富实践经验，探讨商业本质、趋势判断与个人认知升级。",
+        "en": "Combines an engineering perspective with extensive practical experience to explore business essence, trend analysis, and cognitive upgrading."
+      }
     },
     {  "id": "charlie_bilello", "name": "Charlie Bilello (查理·比莱洛)",
         "contribution": {
