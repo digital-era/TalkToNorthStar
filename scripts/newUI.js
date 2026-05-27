@@ -1412,7 +1412,6 @@ function renderCategoryLayout(category) {
   const categoryDisplayName = categoryNames[category]?.[lang] || categoryNames[category]?.['zh-CN'] || category;
   const placeholderText = t('searchPlaceholder');
   const navTooltip = lang === 'en' ? 'Interstellar Navigator' : '星际领航';
-  const hotTooltip = lang === 'en' ? `Today's ${categoryDisplayName} Hotspots` : `${categoryDisplayName} 今日热点`;
   
   // 【修改】双封面结构：同一张图片，front + back（back 水平镜像模拟背面）
   container.innerHTML = `
@@ -1425,7 +1424,7 @@ function renderCategoryLayout(category) {
     <div class="layout-right">
       <div class="card-stage">
         <div class="search-and-random">
-          <!-- 星际领航员图标按钮 -->
+          <!-- 【新增】星际领航员图标按钮：窄、无文字、tooltip -->
           <button 
             class="navigator-trigger-btn" 
             id="btn-navigator" 
@@ -1452,39 +1451,8 @@ function renderCategoryLayout(category) {
               <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
             </svg>
           </button>
-          
-          <!-- 搜索框 -->
+          <!-- 【调整】搜索框增加 flex:1，在整体长度不变时自适应收缩 -->
           <input type="text" class="modern-search-input" id="newUI-search" placeholder="${placeholderText}" style="flex: 1; min-width: 0;">
-          
-          <!-- 【新增】领域今日热点图标按钮 -->
-          <button 
-            class="hotspot-trigger-btn" 
-            id="btn-hotspot" 
-            title="${hotTooltip}" 
-            aria-label="${hotTooltip}"
-            style="
-              width: 32px; 
-              height: 32px; 
-              padding: 0; 
-              display: inline-flex; 
-              align-items: center; 
-              justify-content: center; 
-              background: rgba(0, 20, 40, 0.6); 
-              border: 1px solid rgba(0, 223, 216, 0.35); 
-              border-radius: 6px; 
-              color: #00dfd8; 
-              cursor: pointer; 
-              flex-shrink: 0; 
-              transition: all 0.2s ease;
-            "
-          >
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-              <path d="M2 17l10 5 10-5"/>
-              <path d="M2 12l10 5 10-5"/>
-            </svg>
-          </button>
-          
           <button class="magic-btn small" id="btn-random-leader">${t('spin')}</button>
           <button class="back-btn-inline" id="btn-back-inline" title="${t('backTooltip')}">
             <svg viewBox="0 0 24 24">
@@ -1577,38 +1545,6 @@ function renderCategoryLayout(category) {
   if (navBtn) {
     navBtn.addEventListener('click', () => {
       activateInterstellarNavigator();
-    });
-  }
-
-  // ══════════════════════════════════════════════
-  // 【新增】领域热点按钮点击事件
-  // ══════════════════════════════════════════════
-  const hotspotBtn = document.getElementById('btn-hotspot');
-  if (hotspotBtn) {
-    hotspotBtn.addEventListener('click', async (e) => {
-      e.stopPropagation();
-      // 视觉反馈：加载中
-      hotspotBtn.style.opacity = '0.5';
-      hotspotBtn.style.pointerEvents = 'none';
-      
-      const hotspots = await fetchCategoryHotspots(category);
-      
-      hotspotBtn.style.opacity = '1';
-      hotspotBtn.style.pointerEvents = 'auto';
-      
-      renderHotspotDropdown(category, hotspots, hotspotBtn);
-    });
-    
-    // 悬停发光
-    hotspotBtn.addEventListener('mouseenter', () => {
-      hotspotBtn.style.background = 'rgba(0, 223, 216, 0.15)';
-      hotspotBtn.style.borderColor = '#00dfd8';
-      hotspotBtn.style.boxShadow = '0 0 8px rgba(0, 223, 216, 0.3)';
-    });
-    hotspotBtn.addEventListener('mouseleave', () => {
-      hotspotBtn.style.background = 'rgba(0, 20, 40, 0.6)';
-      hotspotBtn.style.borderColor = 'rgba(0, 223, 216, 0.35)';
-      hotspotBtn.style.boxShadow = 'none';
     });
   }
 
