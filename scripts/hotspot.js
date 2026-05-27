@@ -1,46 +1,27 @@
 // ══════════════════════════════════════════════
-// 【新增】热点缓存与权威源配置
+// hotspot.js —— 领域今日热点（前端）
+// 依赖：全局 currentLang / categoryNames
 // ══════════════════════════════════════════════
+
 const HOTSPOT_CACHE = new Map(); // category -> { data, timestamp }
 const HOTSPOT_TTL = 30 * 60 * 1000; // 30 分钟缓存
 
-// ══════════════════════════════════════════════
-// 【推荐】分层热点获取策略
-// ══════════════════════════════════════════════
-
-const HOTSPOT_SOURCES = {
-  // 第一层：Actually Relevant（无 Key，AI 精选，优先尝试）
-  actuallyRelevant: {
-    endpoint: 'https://actually-relevant-api.onrender.com/api/stories',
-    issueMap: {
-      'ai': 'science-technology',
-      'quantum': 'science-technology', 
-      'universe': 'science-technology',
-      'humanities': 'human-development',
-      'art': 'human-development',
-      'finance': 'human-development', // 或 existential-threats（经济风险）
-      'sport': 'human-development',
-      'chinaEntrepreneurs': 'human-development'
-    }
-  },
-  
-  // 第二层：The News API（备用，有 Key 但免费商用）
-  theNewsApi: {
-    endpoint: 'https://api.thenewsapi.com/v1/news/top',
-    token: 'YOUR_TOKEN', // 注册获取
-    categoryMap: {
-      'ai': 'tech',
-      'quantum': 'tech',
-      'universe': 'science',
-      'humanities': 'general',
-      'art': 'entertainment',
-      'finance': 'business',
-      'sport': 'sports',
-      'chinaEntrepreneurs': 'business'
-    }
-  }
+// 权威源映射（仅用于弹窗展示）
+const AUTHORITATIVE_SOURCES = {
+  'ai':        'MIT Tech Review / Nature / 机器之心',
+  'quantum':   'Nature / IBM Quantum / 量子位',
+  'universe':  'NASA / ESA / Space.com',
+  'humanities':'三联生活周刊 / NYT / The Atlantic',
+  'art':       'Artsy / Artnet / 雅昌艺术网',
+  'finance':   'Reuters / Bloomberg / 财新',
+  'sport':     'ESPN / BBC Sport / 新浪竞技',
+  'chinaEntrepreneurs': '36氪 / 晚点LatePost / 福布斯中国'
 };
 
+/**
+ * 获取领域今日 Top3 热点
+ * 走同域 /api/hotinfo 代理，彻底规避第三方 CORS；本地 30 分钟缓存
+ */
 async function fetchCategoryHotspots(category) {
   const now = Date.now();
   const cached = HOTSPOT_CACHE.get(category);
@@ -48,62 +29,25 @@ async function fetchCategoryHotspots(category) {
     return cached.data;
   }
 
+  const lang = currentLang || 'zh-CN';
   let hotspots = [];
-  
-  // 尝试 Actually Relevant（无 Key，零门槛）
+
+  // 走 Cloudflare Function 代理（无 CORS 问题）
   try {
-    const issueSlug = HOTSPOT_SOURCES.actuallyRelevant.issueMap[category];
-    if (issueSlug) {
-      const res = await fetch(`${HOTSPOT_SOURCES.actuallyRelevant.endpoint}?issueSlug=${issueSlug}`);
-      if (res.ok) {
-        const data = await res.json();
-        // 取前 3 条，映射为统一格式
-        hotspots = data.stories?.slice(0, 3).map(s => ({
-          id: `ar-${s.slug}`,
-          title: s.title,
-          source: s.source,
-          time: s.publishedAt,
-          summary: s.summary || s.blurb,
-          url: s.url,
-          authority: 'AI-curated'
-        })) || [];
+    const res = await fetch(
+      `/api/hotinfo?category=${encodeURIComponent(category)}&lang=${encodeURIComponent(lang)}`
+    );
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success && Array.isArray(json.data)) {
+        hotspots = json.data;
       }
     }
   } catch (e) {
-    console.warn('[Hotspot] Actually Relevant failed:', e);
+    console.warn('[Hotspot] API fetch failed:', e);
   }
 
-  // 兜底：The News API
-  if (hotspots.length === 0) {
-    try {
-      const cat = HOTSPOT_SOURCES.theNewsApi.categoryMap[category];
-      const res = await fetch(
-        `${HOTSPOT_SOURCES.theNewsApi.endpoint}?` +
-        `api_token=${HOTSPOT_SOURCES.theNewsApi.token}&` +
-        `categories=${cat}&limit=3&language=${currentLang === 'zh-CN' ? 'zh' : 'en'}`
-      );
-      if (res.ok) {
-        const data = await res.json();
-        hotspots = data.data?.map(a => ({
-          id: `tn-${a.uuid}`,
-          title: a.title,
-          source: a.source,
-          time: a.published_at,
-          summary: a.snippet || a.description,
-          url: a.url,
-          authority: a.source
-        })) || [];
-      }
-    } catch (e) {
-      console.warn('[Hotspot] The News API failed:', e);
-    }
-  }
-
-  // 最终兜底：Mock（确保不空白）
-  if (hotspots.length === 0) {
-    hotspots = generateMockHotspots(category);
-  }
-
+  // 【注意】不再做 Mock 兜底，服务端返回空则弹窗显示"暂无热点数据"
   HOTSPOT_CACHE.set(category, { data: hotspots, timestamp: now });
   return hotspots;
 }
@@ -112,13 +56,13 @@ async function fetchCategoryHotspots(category) {
  * 渲染热点弹窗
  */
 function renderHotspotDropdown(category, hotspots, anchorEl) {
-  // 清除旧弹窗
   const old = document.getElementById('hotspot-dropdown');
   if (old) old.remove();
 
   const lang = currentLang || 'zh-CN';
-  const sourceInfo = AUTHORITATIVE_SOURCES[category] || { name: '权威媒体' };
-  
+  const displayName = (categoryNames[category] && categoryNames[category][lang]) || category;
+  const sourceInfo = AUTHORITATIVE_SOURCES[category] || '权威媒体';
+
   const dropdown = document.createElement('div');
   dropdown.id = 'hotspot-dropdown';
   dropdown.style.cssText = `
@@ -137,8 +81,8 @@ function renderHotspotDropdown(category, hotspots, anchorEl) {
     animation: fadeInDown 0.25s ease;
   `;
 
-  const titleText = lang === 'en' ? `Today's Top 3` : `今日 ${categoryDisplayName || category} 热点`;
-  const sourceText = lang === 'en' ? `Source: ${sourceInfo.name}` : `权威源: ${sourceInfo.name}`;
+  const titleText = lang === 'en' ? `Today's Top 3` : `今日 ${displayName} 热点`;
+  const sourceText = lang === 'en' ? `Source: ${sourceInfo}` : `权威源: ${sourceInfo}`;
   const addText = lang === 'en' ? 'Add to context' : '加入上下文';
   const emptyText = lang === 'en' ? 'No hotspots available' : '暂无热点数据';
 
@@ -148,7 +92,7 @@ function renderHotspotDropdown(category, hotspots, anchorEl) {
       <div style="font-size:10px; color:rgba(255,255,255,0.35);">${sourceText}</div>
     </div>
     <div class="hotspot-list">
-      ${hotspots.length === 0 ? `<div style="color:rgba(255,255,255,0.4); font-size:13px; text-align:center; padding:20px;">${emptyText}</div>` : 
+      ${hotspots.length === 0 ? `<div style="color:rgba(255,255,255,0.4); font-size:13px; text-align:center; padding:20px;">${emptyText}</div>` :
         hotspots.map((h, idx) => `
         <div class="hotspot-item" style="
           padding: 12px;
@@ -161,7 +105,7 @@ function renderHotspotDropdown(category, hotspots, anchorEl) {
         ">
           <div style="display:flex; align-items:flex-start; gap:8px;">
             <div style="
-              width: 20px; height: 20px; border-radius: 50%; 
+              width: 20px; height: 20px; border-radius: 50%;
               background: ${idx === 0 ? 'rgba(255,200,100,0.2)' : idx === 1 ? 'rgba(200,200,200,0.15)' : 'rgba(200,150,100,0.15)'};
               color: ${idx === 0 ? '#ffc864' : idx === 1 ? '#ccc' : '#c89664'};
               font-size: 11px; font-weight: 700;
@@ -199,14 +143,13 @@ function renderHotspotDropdown(category, hotspots, anchorEl) {
     </div>
   `;
 
-  // 定位到按钮下方
   const rect = anchorEl.getBoundingClientRect();
+  const dropLeft = Math.min(rect.left + window.scrollX, window.innerWidth - 380);
   dropdown.style.top = `${rect.bottom + window.scrollY + 8}px`;
-  dropdown.style.left = `${Math.min(rect.left + window.scrollX, window.innerWidth - 380)}px`;
-  
+  dropdown.style.left = `${Math.max(8, dropLeft)}px`;
+
   document.body.appendChild(dropdown);
 
-  // 点击外部关闭
   const closeHandler = (e) => {
     if (!dropdown.contains(e.target) && e.target !== anchorEl && !anchorEl.contains(e.target)) {
       dropdown.remove();
@@ -215,7 +158,6 @@ function renderHotspotDropdown(category, hotspots, anchorEl) {
   };
   setTimeout(() => document.addEventListener('click', closeHandler), 0);
 
-  // 绑定"加入上下文"按钮
   dropdown.querySelectorAll('.btn-add-context').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -223,7 +165,6 @@ function renderHotspotDropdown(category, hotspots, anchorEl) {
       const hotspot = hotspots.find(h => h.id === id);
       if (hotspot) {
         addHotspotToContext(hotspot, category);
-        // 视觉反馈
         btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#00dfd8" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg> ${lang === 'en' ? 'Added' : '已加入'}`;
         btn.style.background = 'rgba(0, 223, 216, 0.2)';
         btn.style.borderColor = '#00dfd8';
@@ -237,9 +178,8 @@ function renderHotspotDropdown(category, hotspots, anchorEl) {
  * 将热点加入北极星对话上下文
  */
 function addHotspotToContext(hotspot, category) {
-  // 假设全局对话上下文对象 window.northStarContext 存在
   if (!window.northStarContext) window.northStarContext = [];
-  
+
   const entry = {
     type: 'hotspot',
     category: category,
@@ -248,14 +188,12 @@ function addHotspotToContext(hotspot, category) {
     source: hotspot.source,
     addedAt: new Date().toISOString()
   };
-  
+
   window.northStarContext.push(entry);
-  
-  // 触发全局事件，通知对话系统上下文已更新
-  window.dispatchEvent(new CustomEvent('northstar:context:updated', { 
-    detail: entry 
+  window.dispatchEvent(new CustomEvent('northstar:context:updated', {
+    detail: entry
   }));
-  
+
   console.log('[Hotspot] Added to context:', entry);
 }
 
