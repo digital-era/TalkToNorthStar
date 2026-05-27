@@ -6,18 +6,6 @@
 const HOTSPOT_CACHE = new Map(); // category -> { data, timestamp }
 const HOTSPOT_TTL = 30 * 60 * 1000; // 30 分钟缓存
 
-// 权威源映射（仅用于弹窗展示）
-const AUTHORITATIVE_SOURCES = {
-  'ai':        'MIT Tech Review / Nature / 机器之心',
-  'quantum':   'Nature / IBM Quantum / 量子位',
-  'universe':  'NASA / ESA / Space.com',
-  'humanities':'三联生活周刊 / NYT / The Atlantic',
-  'art':       'Artsy / Artnet / 雅昌艺术网',
-  'finance':   'Reuters / Bloomberg / 财新',
-  'sport':     'ESPN / BBC Sport / 新浪竞技',
-  'chinaEntrepreneurs': '36氪 / 晚点LatePost / 福布斯中国'
-};
-
 /**
  * 获取领域今日 Top3 热点
  * 走同域 /api/hotinfo 代理，彻底规避第三方 CORS；本地 30 分钟缓存
@@ -32,7 +20,6 @@ async function fetchCategoryHotspots(category) {
   const lang = currentLang || 'zh-CN';
   let hotspots = [];
 
-  // 走 Cloudflare Function 代理（无 CORS 问题）
   try {
     const res = await fetch(
       `/api/hotinfo?category=${encodeURIComponent(category)}&lang=${encodeURIComponent(lang)}`
@@ -47,7 +34,6 @@ async function fetchCategoryHotspots(category) {
     console.warn('[Hotspot] API fetch failed:', e);
   }
 
-  // 【注意】不再做 Mock 兜底，服务端返回空则弹窗显示"暂无热点数据"
   HOTSPOT_CACHE.set(category, { data: hotspots, timestamp: now });
   return hotspots;
 }
@@ -61,7 +47,6 @@ function renderHotspotDropdown(category, hotspots, anchorEl) {
 
   const lang = currentLang || 'zh-CN';
   const displayName = (categoryNames[category] && categoryNames[category][lang]) || category;
-  const sourceInfo = AUTHORITATIVE_SOURCES[category] || '权威媒体';
 
   const dropdown = document.createElement('div');
   dropdown.id = 'hotspot-dropdown';
@@ -82,18 +67,21 @@ function renderHotspotDropdown(category, hotspots, anchorEl) {
   `;
 
   const titleText = lang === 'en' ? `Today's Top 3` : `今日 ${displayName} 热点`;
-  const sourceText = lang === 'en' ? `Source: ${sourceInfo}` : `权威源: ${sourceInfo}`;
   const addText = lang === 'en' ? 'Add to context' : '加入上下文';
   const emptyText = lang === 'en' ? 'No hotspots available' : '暂无热点数据';
 
   dropdown.innerHTML = `
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
       <div style="font-size:14px; font-weight:600; color:#00dfd8; letter-spacing:1px;">${titleText}</div>
-      <div style="font-size:10px; color:rgba(255,255,255,0.35);">${sourceText}</div>
     </div>
     <div class="hotspot-list">
       ${hotspots.length === 0 ? `<div style="color:rgba(255,255,255,0.4); font-size:13px; text-align:center; padding:20px;">${emptyText}</div>` :
-        hotspots.map((h, idx) => `
+        hotspots.map((h, idx) => {
+          // 【修复】中文模式下，AR 来源的英文内容标注 [EN]
+          const isEnglishContent = lang === 'zh-CN' && h.authority === 'AI-curated';
+          const titleDisplay = isEnglishContent ? `${h.title} <span style="color:rgba(0,223,216,0.6);font-size:11px;">[EN]</span>` : h.title;
+          
+          return `
         <div class="hotspot-item" style="
           padding: 12px;
           margin-bottom: 8px;
@@ -113,7 +101,7 @@ function renderHotspotDropdown(category, hotspots, anchorEl) {
               flex-shrink: 0;
             ">${idx + 1}</div>
             <div style="flex:1; min-width:0;">
-              <div style="font-size:13px; color:rgba(255,255,255,0.85); line-height:1.4; margin-bottom:4px;">${h.title}</div>
+              <div style="font-size:13px; color:rgba(255,255,255,0.85); line-height:1.4; margin-bottom:4px;">${titleDisplay}</div>
               <div style="font-size:11px; color:rgba(255,255,255,0.35); display:flex; gap:8px;">
                 <span>${h.source}</span><span>${h.time}</span>
               </div>
@@ -139,7 +127,7 @@ function renderHotspotDropdown(category, hotspots, anchorEl) {
             ${addText}
           </button>
         </div>
-      `).join('')}
+      `}).join('')}
     </div>
   `;
 
