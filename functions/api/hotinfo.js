@@ -39,16 +39,18 @@ export async function onRequestGet(context) {
 
   // ══════════════════════════════════════════════
   // 第一层：Actually Relevant（仅科技类领域）
+  // 【注意】AR API 仅返回英文内容，中文模式下标题会标注 [EN]
   // ══════════════════════════════════════════════
   if (AR_CATEGORIES.has(category)) {
     try {
+      // 尝试传递 language 参数（API 可能不支持，但无负面影响）
+      const langParam = lang === 'zh-CN' ? 'zh' : 'en';
       const res = await fetch(
-        `${AR_ENDPOINT}?issueSlug=science-technology`,
+        `${AR_ENDPOINT}?issueSlug=science-technology&language=${langParam}`,
         { headers: { 'Accept': 'application/json' } }
       );
       if (res.ok) {
         const data = await res.json();
-        // 注意：API 返回 { data: [...] }，不是 { stories: [...] }
         hotspots = (data.data || []).slice(0, 3).map(s => ({
           id: `ar-${s.slug}`,
           title: s.title,
@@ -56,7 +58,7 @@ export async function onRequestGet(context) {
           time: s.datePublished,
           summary: s.summary,
           url: s.sourceUrl,
-          authority: 'AI-curated'
+          authority: 'AI-curated'  // 标记为 AI 精选，前端据此判断语言
         }));
       }
     } catch (e) {
@@ -66,16 +68,18 @@ export async function onRequestGet(context) {
 
   // ══════════════════════════════════════════════
   // 第二层：The News API（非科技类领域直接走这里，科技类兜底也走这里）
-  // 需环境变量 THE_NEWS_API_TOKEN
+  // 【修复】中文请求改为 zh，但 The News API 返回繁体，需前端处理或接受
   // ══════════════════════════════════════════════
   if (hotspots.length === 0 && env.THE_NEWS_API_TOKEN) {
     try {
       const cat = NEWS_CATEGORY_MAP[category];
       if (cat) {
+        // The News API 的 language 参数：zh 返回繁体，无法指定简体
+        const newsLang = lang === 'zh-CN' ? 'zh' : 'en';
         const res = await fetch(
           `https://api.thenewsapi.com/v1/news/top?` +
           `api_token=${env.THE_NEWS_API_TOKEN}&` +
-          `categories=${cat}&limit=3&language=${lang === 'zh-CN' ? 'zh' : 'en'}`
+          `categories=${cat}&limit=3&language=${newsLang}`
         );
         if (res.ok) {
           const data = await res.json();
@@ -86,7 +90,7 @@ export async function onRequestGet(context) {
             time: a.published_at,
             summary: a.snippet || a.description,
             url: a.url,
-            authority: a.source
+            authority: a.source  // 标记为真实媒体源
           }));
         }
       }
@@ -94,9 +98,6 @@ export async function onRequestGet(context) {
       console.warn('[Hotspot API] The News API failed:', e);
     }
   }
-
-  // 不做 Mock 兜底，外部 API 都失败则返回空数组
-  // 前端弹窗会显示"暂无热点数据"
 
   return new Response(JSON.stringify({ success: true, data: hotspots }), {
     headers: {
