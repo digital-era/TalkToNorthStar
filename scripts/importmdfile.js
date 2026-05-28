@@ -69,90 +69,110 @@ function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+
 /**
  * 专门处理旧格式（### User: / ### 人物名:）的解析函数
- * 已针对头部元信息、🧩 信息块剥离、leaderInfo 正确传递进行优化
- */
-/**
- * 专门处理旧格式（### User: / ### 人物名:）的解析函数
- * 已针对头部元信息、🧩 信息块剥离、leaderInfo 正确传递进行优化
- * 【修复】兼容移动端MD使用英文冒号(:)的情况
+ * 【最终稳定修复版】
+ * 修复：
+ * 1. Interstellar Navigator 被正文 ### 标题误切分
+ * 2. assistant 节点丢失
+ * 3. leaderInfo 错位
+ * 4. 正文中的 markdown 标题被误识别为角色头
  */
 function parseOldFormatMD(normalized) {
-    const history = [];
-    // 仅按真正角色头切分，避免正文中的 ### 标题误解析
-    const roleHeaderRegex =
-        /(?=^###\s+(?:User|[A-Za-z0-9\u4e00-\u9fa5·\-\s()（）.'"]{1,80}):\s*$)/gm;    
-    const sections = normalized.split(roleHeaderRegex).filter(Boolean);
 
-    // 跳过头部元信息
-    let startIndex = 0;
-    for (let i = 0; i < sections.length; i++) {
-        if (sections[i].trim().match(/对话北极星|Talk with North Stars|Exported on|---/)) {
-            startIndex = i + 1;
-            continue;
-        }
-        break;
-    }
+    const history = [];
+
+    // =========================================================
+    // 核心修复：
+    // 只匹配真正角色头：
+    //
+    // ### User:
+    // ### Jensen Huang (黄仁勋):
+    //
+    // 不再误匹配正文里的：
+    // ### 第一颗星：xxx
+    // ### 总结
+    // =========================================================
+    const roleBlockRegex =
+        /^###\s+(.+?):\s*$([\s\S]*?)(?=^###\s+.+?:\s*$|$)/gm;
+
+    const matches = [...normalized.matchAll(roleBlockRegex)];
+
+    if (!matches.length) return [];
 
     let pendingUser = null;
 
-    for (let i = startIndex; i < sections.length; i++) {
-        const section = sections[i].trim();
-        if (!section) continue;
+    for (const match of matches) {
 
-        const lines = section.split('\n');
-        const roleName = lines[0]
-            .replace(/^###\s+/, '')
-            .trim()
-            .replace(/:$/, '');
+        // =====================================================
+        // 角色名
+        // =====================================================
+        const roleName = (match[1] || '').trim();
 
-        // 原始文本行
-        let rawLines = lines.slice(1);
+        // =====================================================
+        // 当前块正文
+        // =====================================================
+        const body = (match[2] || '').trim();
 
+        if (!body) continue;
+
+        let rawLines = body.split('\n');
+
+        // =====================================================
+        // USER 节点处理
+        // =====================================================
         if (roleName === 'User') {
-            // ★ 关键强化：User 段落的完整清理 + 信息块剥离
+
             let userLines = rawLines.map(line => {
-                // 去掉引用符
+
+                // 去掉 markdown 引用 >
                 if (line.trim().startsWith('>')) {
                     return line.replace(/^>\s?/, '');
                 }
+
                 return line;
             });
 
             let userText = userLines.join('\n');
 
-            // ★【修复】剥离 🧩 关联信息块（兼容中英文冒号）
+            // =================================================
+            // 提取关联北极星信息块
+            // =================================================
             const infoBlockPatterns = [
-                // 模式1: **🧩 关联北极星人物**：姓名 (中文/英文冒号)
-                /\*\*🧩 关联北极星人物\*\*[：:]\s*(.+?)\n\s*-\s*领域[：:]\s*(.+?)\n\s*-\s*贡献[：:]\s*(.+?)(?=\n|$)/s,
-                // 模式2: 🧩 关联北极星人物：姓名 (无加粗，兼容冒号)
-                /🧩 关联北极星人物[：:]\s*(.+?)\n\s*-\s*领域[：:]\s*(.+?)\n\s*-\s*贡献[：:]\s*(.+?)(?=\n|$)/s,
-                // 模式3: 宽松匹配（兼容冒号，非贪婪）
-                /\*\*🧩 关联北极星人物\*\*[：:](.+?)(?:-\s*领域[：:](.+?))?(?:-\s*贡献[：:](.+?))?/s
+
+                // 标准格式
+                /\*\*🧩\s*关联北极星人物\*\*[：:]\s*(.+?)\n\s*-\s*领域[：:]\s*(.+?)\n\s*-\s*贡献[：:]\s*(.+?)(?=\n|$)/s,
+
+                // 无加粗格式
+                /🧩\s*关联北极星人物[：:]\s*(.+?)\n\s*-\s*领域[：:]\s*(.+?)\n\s*-\s*贡献[：:]\s*(.+?)(?=\n|$)/s,
+
+                // 宽松兼容
+                /\*\*🧩\s*关联北极星人物\*\*[：:](.+?)(?:-\s*领域[：:](.+?))?(?:-\s*贡献[：:](.+?))?/s
             ];
 
             let extractedLeaderInfo = null;
+
             for (const pattern of infoBlockPatterns) {
+
                 const match = userText.match(pattern);
+
                 if (match) {
-                    const name = (match[1] || '').trim();
-                    const field = (match[2] || '').trim();
-                    const contribution = (match[3] || '').trim();
 
                     extractedLeaderInfo = {
-                        name: name || 'Unknown',
-                        field: field || '',
-                        contribution: contribution || ''
+                        name: (match[1] || '').trim() || 'Unknown',
+                        field: (match[2] || '').trim(),
+                        contribution: (match[3] || '').trim()
                     };
 
-                    // 移除整个信息块
+                    // 删除整个信息块
                     userText = userText.replace(pattern, '').trim();
+
                     break;
                 }
             }
 
-            // 最终清理：保留段落换行，只去多余空行
+            // 清理多余空行
             userText = userText
                 .replace(/\n{3,}/g, '\n\n')
                 .trim();
@@ -163,7 +183,7 @@ function parseOldFormatMD(normalized) {
                 leaderInfo: null
             };
 
-            // 如果剥离出了信息块，保存给下一个 assistant 用
+            // 临时保存 leaderInfo 给下一个 assistant
             if (extractedLeaderInfo) {
                 pendingUser._tempLeaderInfo = extractedLeaderInfo;
             }
@@ -171,11 +191,17 @@ function parseOldFormatMD(normalized) {
             continue;
         }
 
-        // assistant 节点处理（保持换行修复）
+        // =====================================================
+        // ASSISTANT 节点处理
+        // =====================================================
+
         let textLines = rawLines.map(line => {
+
+            // 去掉 markdown 引用 >
             if (line.trim().startsWith('>')) {
                 return line.replace(/^>\s?/, '');
             }
+
             return line;
         });
 
@@ -185,31 +211,58 @@ function parseOldFormatMD(normalized) {
             .replace(/\n{3,}/g, '\n\n')
             .trim();
 
-        // 移除可能的角色名重复
+        // =====================================================
+        // 防止正文重复角色名
+        // =====================================================
         if (roleName && text) {
-            const prefixRegex = new RegExp(`^\\s*${escapeRegExp(roleName)}[：:]?\\s*`, 'i');
+
+            const prefixRegex = new RegExp(
+                `^\\s*${escapeRegExp(roleName)}[：:]?\\s*`,
+                'i'
+            );
+
             text = text.replace(prefixRegex, '').trim();
         }
 
-        // 额外防护：移除残余标题语法
+        // =====================================================
+        // 清理残余 markdown 噪音
+        // =====================================================
         text = text
-            .replace(/^#{1,6}\s*/gm, '')
             .replace(/^(?:-{3,}|={3,})\s*$/gm, '---')
             .trim();
 
-        let leaderInfo = { name: roleName, field: '', contribution: '' };
+        // =====================================================
+        // 默认 leaderInfo
+        // =====================================================
+        let leaderInfo = {
+            name: roleName,
+            field: '',
+            contribution: ''
+        };
 
-        // 使用 User 段提取的信息（最可靠）
+        // =====================================================
+        // 优先使用 User 中提取的关联信息
+        // =====================================================
         if (pendingUser && pendingUser._tempLeaderInfo) {
+
             leaderInfo = pendingUser._tempLeaderInfo;
+
             delete pendingUser._tempLeaderInfo;
         }
 
+        // =====================================================
+        // 先 push user
+        // =====================================================
         if (pendingUser) {
+
             history.push(pendingUser);
+
             pendingUser = null;
         }
 
+        // =====================================================
+        // push assistant
+        // =====================================================
         history.push({
             role: 'assistant',
             text: text,
@@ -217,9 +270,14 @@ function parseOldFormatMD(normalized) {
         });
     }
 
-    if (pendingUser) history.push(pendingUser);
+    // =========================================================
+    // 收尾
+    // =========================================================
+    if (pendingUser) {
+        history.push(pendingUser);
+    }
 
-    return history;
+    return history.filter(item => item && item.text?.trim());
 }
 
 /**
