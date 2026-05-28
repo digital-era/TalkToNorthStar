@@ -1952,6 +1952,7 @@ function exportToPDF() {
                 </div>
                 <div class="node-divider"></div>
                 <div class="node-content star-content">${processedText}</div>
+                <div class="star-decoration-bottom"><i class="fas fa-feather-alt"></i> North Star Insight</div>
             `;
         }
     
