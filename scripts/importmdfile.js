@@ -74,12 +74,23 @@ function escapeRegExp(string) {
  * 专门处理旧格式（### User: / ### 人物名:）的解析函数
  * 已针对头部元信息、🧩 信息块剥离、leaderInfo 正确传递进行优化
  * 【修复】兼容移动端MD使用英文冒号(:)的情况
- * 【修复】兼容 Interstellar Navigator 等领航员答复中的 ### 内容标题被误分割的问题
+ * 【优化】针对“星际领航员”内容中嵌套的 ### 标题进行预处理降级，防止节点被误切分
  */
 function parseOldFormatMD(normalized) {
+    // ─── 新增：针对“星际领航员”嵌套标题的优化处理 ───
+    // 匹配从 "### 星际领航员" 开始，到下一个 "### User" 或文档结尾处的内容
+    // 将其内部所有的 "### " 替换为 "#### "，避免干扰节点切分
+    normalized = normalized.replace(
+        /(^###\s+(?:Interstellar\s+Navigator|星际领航员)[^\n]*\n)([\s\S]*?)(?=(?:^###\s+User\b|$))/gim,
+        (match, header, content) => {
+            const updatedContent = content.replace(/^###\s+/gm, '#### ');
+            return header + updatedContent;
+        }
+    );
+    // ──────────────────────────────────────────────
+
     const history = [];
-    // 【核心修改】只把真正的对话分隔符（User 或 人物名(英文名): ）作为分割点
-    const sections = normalized.split(/^###\s+(?=(?:User|[^\n]*?\([^)]+\))[:：]\s*$)/m).filter(Boolean);
+    const sections = normalized.split(/^###\s+/m).filter(Boolean);
 
     // 跳过头部元信息
     let startIndex = 0;
@@ -104,9 +115,8 @@ function parseOldFormatMD(normalized) {
         let rawLines = lines.slice(1);
 
         if (roleName === 'User') {
-            // ★ 关键强化：User 段落的完整清理 + 信息块剥离
+            // User 段落的完整清理 + 信息块剥离
             let userLines = rawLines.map(line => {
-                // 去掉引用符
                 if (line.trim().startsWith('>')) {
                     return line.replace(/^>\s?/, '');
                 }
@@ -115,13 +125,10 @@ function parseOldFormatMD(normalized) {
 
             let userText = userLines.join('\n');
 
-            // ★【修复】剥离 🧩 关联信息块（兼容中英文冒号）
+            // 剥离 🧩 关联信息块
             const infoBlockPatterns = [
-                // 模式1: **🧩 关联北极星人物**：姓名 (中文/英文冒号)
                 /\*\*🧩 关联北极星人物\*\*[：:]\s*(.+?)\n\s*-\s*领域[：:]\s*(.+?)\n\s*-\s*贡献[：:]\s*(.+?)(?=\n|$)/s,
-                // 模式2: 🧩 关联北极星人物：姓名 (无加粗，兼容冒号)
                 /🧩 关联北极星人物[：:]\s*(.+?)\n\s*-\s*领域[：:]\s*(.+?)\n\s*-\s*贡献[：:]\s*(.+?)(?=\n|$)/s,
-                // 模式3: 宽松匹配（兼容冒号，非贪婪）
                 /\*\*🧩 关联北极星人物\*\*[：:](.+?)(?:-\s*领域[：:](.+?))?(?:-\s*贡献[：:](.+?))?/s
             ];
 
@@ -139,13 +146,11 @@ function parseOldFormatMD(normalized) {
                         contribution: contribution || ''
                     };
 
-                    // 移除整个信息块
                     userText = userText.replace(pattern, '').trim();
                     break;
                 }
             }
 
-            // 最终清理：保留段落换行，只去多余空行
             userText = userText
                 .replace(/\n{3,}/g, '\n\n')
                 .trim();
@@ -156,7 +161,6 @@ function parseOldFormatMD(normalized) {
                 leaderInfo: null
             };
 
-            // 如果剥离出了信息块，保存给下一个 assistant 用
             if (extractedLeaderInfo) {
                 pendingUser._tempLeaderInfo = extractedLeaderInfo;
             }
@@ -164,7 +168,7 @@ function parseOldFormatMD(normalized) {
             continue;
         }
 
-        // assistant 节点处理（保持换行修复）
+        // assistant 节点处理
         let textLines = rawLines.map(line => {
             if (line.trim().startsWith('>')) {
                 return line.replace(/^>\s?/, '');
@@ -178,13 +182,11 @@ function parseOldFormatMD(normalized) {
             .replace(/\n{3,}/g, '\n\n')
             .trim();
 
-        // 移除可能的角色名重复
         if (roleName && text) {
             const prefixRegex = new RegExp(`^\\s*${escapeRegExp(roleName)}[：:]?\\s*`, 'i');
             text = text.replace(prefixRegex, '').trim();
         }
 
-        // 额外防护：移除残余标题语法
         text = text
             .replace(/^#{1,6}\s*/gm, '')
             .replace(/^(?:-{3,}|={3,})\s*$/gm, '---')
@@ -192,7 +194,6 @@ function parseOldFormatMD(normalized) {
 
         let leaderInfo = { name: roleName, field: '', contribution: '' };
 
-        // 使用 User 段提取的信息（最可靠）
         if (pendingUser && pendingUser._tempLeaderInfo) {
             leaderInfo = pendingUser._tempLeaderInfo;
             delete pendingUser._tempLeaderInfo;
@@ -214,6 +215,7 @@ function parseOldFormatMD(normalized) {
 
     return history;
 }
+
 
 
 /**
