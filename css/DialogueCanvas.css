@@ -797,26 +797,33 @@
         font-size: 9pt !important;
     }
 
-    /* 底部北极星 Insight 装饰块：拉开与正文的距离 */
+    /* ==========================================
+   底部北极星 Insight 装饰块：打印修复
+   ========================================== */
     #print-overlay .star-decoration-bottom {
-        margin-top: 40px !important;         /* 原为 25px，增大到 40px */
-        color: #b8860b !important;        /* 加深为暗金色，确保白底可见 */
-        opacity: 1 !important;             /* 移除半透明，打印更清晰 */
-        font-size: 9pt !important;         /* 统一打印字号 */
+        margin-top: 40px !important;   /* 原为 25px，增大到 40px */
+        text-align: right !important;
+        font-size: 9pt !important;
+        color: #b8860b !important;           /* 暗金色，白底上清晰可见 */
+        font-family: 'Cinzel', 'Times New Roman', serif !important; /* 增加回退字体 */
+        opacity: 1 !important;               /* 移除半透明 */
         display: flex !important;
         align-items: center !important;
         justify-content: flex-end !important;
         gap: 6px !important;
-    }
-
-    /* 如果羽毛是图标字体，确保打印时可见 */
-    #print-overlay .star-decoration-bottom i,
-    #print-overlay .star-decoration-bottom svg,
-    #print-overlay .star-decoration-bottom .feather-icon {
-        color: #b8860b !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
+
+    /* 如果羽毛是 Font Awesome 图标 */
+    #print-overlay .star-decoration-bottom i,
+    #print-overlay .star-decoration-bottom svg,
+    #print-overlay .star-decoration-bottom .feather-icon,
+    #print-overlay .star-decoration-bottom::before {
+        color: #b8860b !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }   
     
     #print-overlay .node-divider {
         height: 1px !important;
