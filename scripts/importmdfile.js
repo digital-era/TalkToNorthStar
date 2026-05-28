@@ -95,7 +95,7 @@ function parseOldFormatMD(normalized) {
     // ### 总结
     // =========================================================
     const roleBlockRegex =
-        /^###\s+(.+?):\s*$([\s\S]*?)(?=^###\s+.+?:\s*$|$)/gm;
+        /^###\s+(.+?):\s*\n([\s\S]*?)(?=^###\s+.+?:\s*$|(?![\s\S]))/gm;
 
     const matches = [...normalized.matchAll(roleBlockRegex)];
 
