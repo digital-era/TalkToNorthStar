@@ -78,7 +78,8 @@ function escapeRegExp(string) {
  */
 function parseOldFormatMD(normalized) {
     const history = [];
-    const sections = normalized.split(/^###\s+/m).filter(Boolean);
+    // 【核心修改】只把真正的对话分隔符（User 或 人物名(英文名): ）作为分割点
+    const sections = normalized.split(/^###\s+(?=(?:User|[^\n]*?\([^)]+\))[:：]\s*$)/m).filter(Boolean);
 
     // 跳过头部元信息
     let startIndex = 0;
@@ -91,7 +92,6 @@ function parseOldFormatMD(normalized) {
     }
 
     let pendingUser = null;
-    let lastAssistant = null; // 【新增】追踪上一个真实Assistant，用于合并被误分割的内容
 
     for (let i = startIndex; i < sections.length; i++) {
         const section = sections[i].trim();
@@ -99,37 +99,9 @@ function parseOldFormatMD(normalized) {
 
         const lines = section.split('\n');
         const roleName = lines[0].trim().replace(/:$/, '');
+
+        // 原始文本行
         let rawLines = lines.slice(1);
-
-        // 【新增】判断是否为内容节点（非真实对话节点）
-        // 真实对话节点特征：User 或包含中英文括号的人物名
-        const isContentNode = roleName !== 'User' && !roleName.includes('(') && !roleName.includes('（');
-
-        // 【新增】如果是内容节点且存在上一个真实Assistant，合并内容到该Assistant
-        if (isContentNode && lastAssistant) {
-            let textLines = rawLines.map(line => {
-                if (line.trim().startsWith('>')) {
-                    return line.replace(/^>\s?/, '');
-                }
-                return line;
-            });
-            textLines = textLines.map(l => l.trimEnd());
-            let text = textLines.join('\n')
-                .replace(/\n{3,}/g, '\n\n')
-                .trim();
-
-            // 清理残余标题语法（将 ### 转为纯文本，避免干扰渲染）
-            text = text
-                .replace(/^#{1,6}\s*/gm, '')
-                .replace(/^(?:-{3,}|={3,})\s*$/gm, '---')
-                .trim();
-
-            if (text) {
-                // 保留原标题行作为内容分隔，使合并后的文本结构清晰
-                lastAssistant.text += '\n\n' + roleName + '\n' + text;
-            }
-            continue;
-        }
 
         if (roleName === 'User') {
             // ★ 关键强化：User 段落的完整清理 + 信息块剥离
@@ -189,7 +161,6 @@ function parseOldFormatMD(normalized) {
                 pendingUser._tempLeaderInfo = extractedLeaderInfo;
             }
 
-            lastAssistant = null; // 【新增】遇到新User时重置合并追踪
             continue;
         }
 
@@ -232,21 +203,18 @@ function parseOldFormatMD(normalized) {
             pendingUser = null;
         }
 
-        const assistantNode = {
+        history.push({
             role: 'assistant',
             text: text,
             leaderInfo: leaderInfo
-        };
-        history.push(assistantNode);
-
-        // 【新增】记录最后一个真实Assistant，供后续内容节点合并使用
-        lastAssistant = assistantNode;
+        });
     }
 
     if (pendingUser) history.push(pendingUser);
 
     return history;
 }
+
 
 /**
  * 从【问题 / Question】块中精确提取用户真正提问
