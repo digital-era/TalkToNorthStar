@@ -1320,6 +1320,7 @@
   }
 
   footer {
+      font-size: 0.85rem;
       text-align: left;
       padding: 20px 50px;
       background: rgba(0, 0, 0, 0.5);
@@ -1435,6 +1436,8 @@
       #immersiveModal .manifesto-text h4 {
           font-size: 0.9em;
       }
+    
+      footer {font-size: 0.6rem;}
   }
 
 /* 手机端小屏幕样式 (max-width: 480px) - 最终合并修复版 */
@@ -1587,6 +1590,8 @@
   #apiSettingsModal h2 {
       font-size: 1.5em;
   }
+
+  footer {font-size: 0.6rem;}
 }    
 
   /* === 全局滚动条美化 (Chrome, Edge, Safari) === */
