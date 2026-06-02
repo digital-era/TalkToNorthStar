@@ -377,7 +377,63 @@ const universeMasters = [
       "en": "1952 Nobel Prize in Physiology or Medicine; drove the industrialization of antibiotic production."
     }
   },
-  { id: "joshua_lederberg", name: "Joshua Lederberg (乔舒亚·莱德伯格)",
+  { id: "jane_goodall", name: "Jane Goodall (珍·古道尔)",
+    contribution: {
+      "zh-CN": "通过在坦桑尼亚贡贝长期野外研究黑猩猩，发现其使用和制造工具、狩猎行为、复杂社会结构等，彻底改变了灵长类学和人类对动物的认知。",
+      "en": "Through decades of field research on wild chimpanzees in Gombe, Tanzania, discovered tool-making and use, hunting behavior, and complex social structures, fundamentally transforming primatology and our understanding of animals."
+    },
+    field: {
+      "zh-CN": "灵长类学、动物行为学、保护生物学。",
+      "en": "Primatology, Animal Behavior, Conservation Biology."
+    },
+    remarks: {
+      "zh-CN": "Jane Goodall Institute创始人，联合国和平使者。其工作极大提升了公众对生物多样性保护的意识，是当代最具影响力的动物学家之一。",
+      "en": "Founder of the Jane Goodall Institute and UN Messenger of Peace. Her work significantly raised global awareness of biodiversity conservation and remains one of the most influential zoologists of our time."
+    }
+ },
+ { id: "david_attenborough",   name: "Sir David Attenborough (大卫·爱登堡爵士)",
+    contribution: {
+      "zh-CN": "制作并主持多部开创性自然历史纪录片（如《Life》系列、《蓝色星球》），向全球观众普及动物学与生态知识，推动生物多样性保护意识。",
+      "en": "Produced and narrated groundbreaking natural history documentaries (e.g., Life series, Blue Planet), educating millions worldwide on zoology and ecology while advancing biodiversity conservation awareness."
+    },
+    field: {
+      "zh-CN": "自然历史、野生动物纪录片、环境保护倡导。",
+      "en": "Natural History, Wildlife Documentary, Environmental Advocacy."
+    },
+    remarks: {
+      "zh-CN": "通过电视媒体极大提升了公众对自然世界的理解与保护热情，是现代自然历史传播和环境保护的标志性人物。",
+      "en": "Significantly enhanced public understanding and appreciation of the natural world through media; a defining figure in nature communication and environmental advocacy."
+    }
+ },
+ { id: "kazuo_shinozaki",   name: "Kazuo Shinozaki (筱崎一雄)",
+    contribution: {
+      "zh-CN": "在植物逆境（干旱、高盐、低温）响应机制领域取得突破，发现关键调控基因和信号通路，推动植物分子生物学与抗逆育种研究。",
+      "en": "Pioneered research on plant responses to abiotic stresses (drought, high salt, low temperature), identifying key regulatory genes and signaling pathways, advancing plant molecular biology and stress-resistant breeding."
+    },
+    field: {
+      "zh-CN": "植物分子生物学、环境胁迫生理学。",
+      "en": "Plant Molecular Biology, Abiotic Stress Physiology."
+    },
+    remarks: {
+      "zh-CN": "高被引植物科学家之一，其研究为理解植物胁迫耐受机制和应对气候变化提供了重要分子基础。",
+      "en": "One of the most highly cited plant scientists; his work provides critical molecular insights into plant stress tolerance and climate change adaptation."
+    }
+ },
+ { id: "rattan_lal",   name: "Rattan Lal (拉坦·拉尔)",
+  contribution: {
+    "zh-CN": "致力于土壤健康、碳固存与可持续农业研究，推动土壤管理在缓解气候变化、提升粮食安全和生态恢复中的作用。",
+    "en": "Advanced research on soil health, carbon sequestration, and sustainable agriculture, highlighting the role of soil management in climate change mitigation, food security, and ecosystem restoration."
+  },
+  field: {
+    "zh-CN": "土壤科学、农学、环境可持续性。",
+    "en": "Soil Science, Agronomy, Environmental Sustainability."
+  },
+  remarks: {
+    "zh-CN": "全球土壤碳与可持续农业领域的领先专家，其贡献对应对气候变化和保障世界粮食安全具有重要政策与实践意义。",
+    "en": "Leading expert in soil carbon and sustainable agriculture; his contributions have significant policy and practical implications for climate change mitigation and global food security."
+  }
+},
+{ id: "joshua_lederberg", name: "Joshua Lederberg (乔舒亚·莱德伯格)",
     contribution: {
       "zh-CN": "发现细菌遗传重组与接合、转导现象，奠定细菌遗传学基础；1958年诺贝尔生理学或医学奖得主。",
       "en": "Discovered bacterial genetic recombination, conjugation, and transduction; established bacterial genetics; 1958 Nobel Prize in Physiology or Medicine laureate."
@@ -419,8 +475,7 @@ const universeMasters = [
       "en": "Extremely high H-index; his research advanced modern approaches to infectious disease diagnosis and treatment."
     }
   },
-  {
-    id: "shi_yigong", name: "Shi Yigong (施一公)",
+  { id: "shi_yigong", name: "Shi Yigong (施一公)",
     contribution: {
       "zh-CN": "国际著名结构生物学家、西湖大学创校校长，中国科学院院士，推动中国高等教育改革。",
       "en": "Internationally renowned structural biologist, founding President of Westlake University, Academician of the Chinese Academy of Sciences, and promoter of higher education reform in China."
