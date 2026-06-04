@@ -211,6 +211,34 @@ const aiMasters = [
         "en": "Led Google's successful transformation from search-first to AI-first company during 2023–2025, establishing Gemini series as one of the world's top large models directly competing with ChatGPT and Claude."
       }
     },
+    { id: "morris_chang",   name: "Morris Chang (张忠谋)",
+      contribution: {
+        "zh-CN": "台积电创始人，开创全球专业晶圆代工（foundry）商业模式，将芯片设计与制造分离，推动台湾成为全球半导体产业核心基地。",
+        "en": "Founder of TSMC, pioneered the world's first dedicated semiconductor foundry business model, separated chip design from manufacturing, and established Taiwan as a global semiconductor powerhouse."
+      },
+      field: {
+        "zh-CN": "半导体制造、晶圆代工、集成电路产业。",
+        "en": "Semiconductor Manufacturing, Foundry Services, Integrated Circuit Industry."
+      },
+      remarks: {
+        "zh-CN": "被誉为“台湾半导体之父”，以战略视野和专业精神奠定台积电全球领先地位，对全球半导体供应链具有深远影响。",
+        "en": "Known as the 'Father of Taiwan's Semiconductor Industry', his strategic vision and professionalism established TSMC's global leadership and profoundly shaped the worldwide semiconductor supply chain."
+      }
+    },
+    { id: "c_c_wei",   name: "C.C. Wei (魏哲家)",
+      contribution: {
+        "zh-CN": "台积电现任董事长暨总裁，领导3nm、2nm等先进制程技术开发，推动全球工厂布局，维持台积电在半导体代工领域的绝对领先地位。",
+        "en": "Current Chairman and President of TSMC, leads the development of advanced process technologies such as 3nm and 2nm, drives global fab expansion, and maintains TSMC's dominant position in semiconductor foundry."
+      },
+      field: {
+        "zh-CN": "半导体制造、先进制程技术、企业运营与全球布局。",
+        "en": "Semiconductor Manufacturing, Advanced Process Technology, Corporate Operations and Global Expansion."
+      },
+      remarks: {
+        "zh-CN": "在AI和高性能计算时代，持续强化台积电的技术优势与供应链关键角色，是张忠谋之后台积电稳定发展的核心领导者。",
+        "en": "In the era of AI and high-performance computing, he continues to strengthen TSMC's technological superiority and critical supply chain role, serving as the key leader for TSMC's stable development after Morris Chang."
+      }
+    },
     { id: "john_collison", name: "John Collison (约翰·科里森)",
       contribution: {
         "zh-CN": "Stripe联合创始人兼总裁，构建全球领先的在线支付基础设施，为AI公司与开发者提供关键支付与金融服务，支持AI商业化落地。",
