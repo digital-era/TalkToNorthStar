@@ -112,6 +112,14 @@ function enterStarryColumn() {
             tc.style.display = 'none';
         });
 
+        // ═══════════════════════════════════════════════
+        // 【关键修复】设置全局状态
+        // ═══════════════════════════════════════════════
+        window.currentSelectedCategory = 'starryColumn';
+        window.starryColumnViewMode = 'list';
+        window.currentSelectedLeader = null;
+        window.currentSelectedCard = null;
+
         renderStarryColumnLayout();
 
         if (overlay) overlay.classList.remove('active');
@@ -132,6 +140,9 @@ function renderStarryColumnLayout() {
 
     const lang = window.currentLang || 'zh-CN';
     const isAdmin = checkAdminPermission();
+
+    // 确保状态正确
+    window.starryColumnViewMode = 'list';
 
     layout.style.display = 'flex';
     layout.innerHTML = `
