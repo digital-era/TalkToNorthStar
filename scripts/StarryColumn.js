@@ -275,6 +275,7 @@ function selectStarryCard(card) {
 
     window.currentSelectedCard = card;
     window.currentSelectedCategory = 'starryColumn';
+    window.starryColumnViewMode = 'card';  // ← 【添加这行】
 
     // 准备专家数据
     let resolvedExperts;
