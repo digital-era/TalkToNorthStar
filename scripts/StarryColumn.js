@@ -794,18 +794,19 @@ function loadStarryColumnCards() {
 
 /**
  * 检查是否为管理员
- * 实际项目中应接入用户系统
+ * 基于 qgr_jwt_token 的客户端 JWT 解析
  */
 function checkAdminPermission() {
-    // 方案1：从 URL 参数判断
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('admin') === 'true') return true;
+    const token = localStorage.getItem('qgr_jwt_token');
+    if (!token) return false;
 
-    // 方案2：从 localStorage 判断
-    if (localStorage.getItem('isAdmin') === 'true') return true;
+    const decoded = parseJWTClientSide(token);
+    if (!decoded) return false;
 
-    // 方案3：默认 false
-    return false;
+    const username = decoded.user;
+    const isAdmin = username === 'admin';
+    
+    return isAdmin;
 }
 
 // 在应用初始化时调用
