@@ -368,6 +368,7 @@ function renderStarryColumnLayoutForLeader(hostCategory) {
         </div>
         <div class="layout-right" id="starryRight">
             <div class="starry-header">
+                <!-- 左上角：返回首页 -->
                 <button class="back-btn-inline" id="btn-starry-back" 
                         title="${getFieldValue(starryColumnTexts.backTooltip, lang)}">
                     <svg viewBox="0 0 24 24">
@@ -377,15 +378,24 @@ function renderStarryColumnLayoutForLeader(hostCategory) {
                 <h3 class="starry-list-title">
                     ${getFieldValue(starryColumnTexts.columnName, lang)}
                 </h3>
+                <!-- 右上角：返回专栏列表 -->
+                <button class="back-to-list-btn" id="btn-back-to-list" 
+                        title="${lang === 'zh-CN' ? '返回专栏列表' : 'Back to Column List'}">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
             </div>
-            <!-- selectLeader 需要的结构 -->
             <div id="single-northstar-card" class="northstar-single-card"></div>
-            <!-- 交互区：selectLeader 会操作这里的 DOM -->
             <div class="interaction-area" id="interactionArea"></div>
         </div>
     `;
 
+    // 左上角：返回首页
     document.getElementById('btn-starry-back')?.addEventListener('click', backToWheelSelection);
+    
+    // 右上角：返回专栏列表
+    document.getElementById('btn-back-to-list')?.addEventListener('click', backToStarryColumnList);
 }
 
 /**
