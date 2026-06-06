@@ -399,6 +399,48 @@ function renderStarryColumnLayoutForLeader(hostCategory) {
 }
 
 /**
+ * 从星空专栏卡片详情返回列表页
+ * 清理对话状态，恢复列表视图
+ */
+function backToStarryColumnList() {
+    const lang = window.currentLang || 'zh-CN';
+
+    // 1. 清除当前选中状态
+    window.currentSelectedLeader = null;
+    window.currentSelectedCard = null;
+    window.starryColumnViewMode = 'list';
+
+    // 2. 清理对话区域内容（避免残留）
+    const promptArea = document.getElementById('prompt-display-area');
+    if (promptArea) promptArea.style.display = 'none';
+
+    const promptContent = document.getElementById('prompt-collapsible-content');
+    if (promptContent) promptContent.style.display = 'none';
+
+    const toggleIcon = document.getElementById('prompt-toggle-icon');
+    if (toggleIcon) toggleIcon.classList.remove('icon-rotated');
+
+    const responseArea = document.getElementById('ai-response-area');
+    if (responseArea) responseArea.style.display = 'none';
+
+    const promptText = document.getElementById('generatedPromptText');
+    if (promptText) promptText.value = '';
+
+    const responseText = document.getElementById('aiResponseText');
+    if (responseText) responseText.textContent = '';
+
+    // 3. 清除全局提示状态
+    currentGeneratedPrompt = '';
+
+    // 4. 重新渲染星空专栏列表
+    renderStarryColumnLayout();
+    renderStarryCardsList();
+
+    // 5. 滚动到顶部
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/**
  * 构建融合体系统指令
  * 兼容两种调用方式：原始 card 对象 或 虚拟领袖对象
  */
