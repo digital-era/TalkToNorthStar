@@ -329,18 +329,24 @@ function selectStarryCard(card) {
 
 
 /**
- * 构建融合系统指令
+ * 构建融合体系统指令
+ * 兼容两种调用方式：原始 card 对象 或 虚拟领袖对象
  */
-function buildFusionSystemPrompt(card, lang = 'zh-CN') {
+function buildFusionSystemPrompt(source, lang = 'zh-CN') {
     const isZh = lang === 'zh-CN';
-    const experts = resolveCardExperts(card);
+    
+    // 统一提取字段（兼容 card 和 virtualLeader）
+    const experts = source._experts || resolveCardExperts(source);
+    const fusionStrategy = source._fusionStrategy || source.fusionStrategy;
     
     if (!experts || experts.length === 0) {
-        return isZh ? '系统错误：未配置任何专家。' : 'System error: No experts configured.';
+        return isZh 
+            ? '系统错误：未配置任何专家。' 
+            : 'System error: No experts configured.';
     }
 
     const expertLines = experts.map(e => `  · ${e.name} [${e.field}]`).join('\n');
-    const strategy = card.fusionStrategy || { mode: 'synthesis' };
+    const strategy = fusionStrategy || { mode: 'synthesis' };
 
     const modeDescriptions = {
         roundtable: {
@@ -440,76 +446,6 @@ function findExpertCategory(id) {
         if (leaders.some(l => l.id === id)) return category;
     }
     return null;
-}
-
-/**
- * 从虚拟领袖对象构建融合体系统指令
- * 与 buildFusionSystemPrompt 逻辑一致，但接收 leader 对象
- */
-function buildFusionSystemPromptFromLeader(leader, lang = 'zh-CN') {
-    const isZh = lang === 'zh-CN';
-    const experts = leader._experts;
-
-    if (!experts || experts.length === 0) {
-        return isZh 
-            ? '系统错误：未配置任何专家。'
-            : 'System error: No experts configured.';
-    }
-
-    // 构建专家目录文本
-    const expertLines = experts.map(e => 
-        `  · ${e.name} [${e.field}]`
-    ).join('\n');
-
-    // 获取融合策略
-    const strategy = leader._fusionStrategy || { mode: 'synthesis' };
-
-    const modeDescriptions = {
-        roundtable: {
-            'zh-CN': '以圆桌会议的形式，让各位专家依次发言，最后形成共识。',
-            'en': 'In a roundtable format, let each expert speak in turn, then reach consensus.'
-        },
-        synthesis: {
-            'zh-CN': '综合各位专家的视角，给出一个融合性的深度回答。',
-            'en': 'Synthesize perspectives from all experts into a comprehensive deep answer.'
-        },
-        debate: {
-            'zh-CN': '呈现各位专家的不同观点，展开思想交锋。',
-            'en': 'Present differing viewpoints from experts and let ideas clash.'
-        }
-    };
-
-    const modeDesc = modeDescriptions[strategy.mode]?.[lang] || modeDescriptions.synthesis[lang];
-
-    return isZh
-        ? `你是"对话北极星"星空专栏的融合智慧体。你的任务是针对用户的核心问题，融合以下多位"北极星"人物的洞察，给出深度回答。
-
-【参与专家】
-${expertLines}
-
-【融合模式】
-${modeDesc}
-
-【任务要求】
-1. 深入理解每位专家的思想体系和核心方法论
-2. 从各自专业视角分析问题，展现多元思维
-3. 在分歧处呈现张力，在共识处深化洞见
-4. 输出必须标注引用专家的姓名和领域
-5. 追求跨学科的思想化学反应，而非简单并列`
-        : `You are the Fusion Wisdom of "Talk with North Stars" Starry Column. Your task is to synthesize insights from the following "North Star" figures to provide a deep answer.
-
-【Participating Experts】
-${expertLines}
-
-【Fusion Mode】
-${modeDesc}
-
-【Requirements】
-1. Deeply understand each expert's framework and core methodology
-2. Analyze the problem from each professional perspective
-3. Present tension where views diverge, deepen insight where they converge
-4. Cite each expert's name and field in your response
-5. Pursue interdisciplinary chemical reactions, not simple juxtaposition`;
 }
 
 
