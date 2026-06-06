@@ -1,6 +1,6 @@
-let currentSelectedLeader = null;
-let currentSelectedLeaderCategory = '';
-let currentGeneratedPrompt = '';
+window.currentSelectedLeader = null;
+window.currentSelectedLeaderCategory = '';
+window.currentGeneratedPrompt = '';
 
 // --- [新增] 对话画布相关全局变量 ---
 let conversationHistory = []; // 存储 {role, text, leaderName, timestamp}
@@ -198,7 +198,7 @@ function openTab(evt, tabName) {
     document.getElementById(tabName).classList.add("active");
     if(evt) evt.currentTarget.className += " active";
 
-    if (currentSelectedLeader && currentSelectedLeaderCategory !== tabName) {
+    if (window.currentSelectedLeader && window.currentSelectedLeaderCategory !== tabName) {
         clearSelection();
     }
     updateAllScrollButtonStates();
@@ -237,16 +237,16 @@ function populateLeaders() {
 }
 
 function clearSelection() {
-    if (currentSelectedLeader) {
-        const prevSelectedCard = document.querySelector(`.leader-card.selected[data-category='${currentSelectedLeaderCategory}']`);
+    if (window.currentSelectedLeader) {
+        const prevSelectedCard = document.querySelector(`.leader-card.selected[data-category='${window.currentSelectedLeaderCategory}']`);
         if (prevSelectedCard) {
             prevSelectedCard.classList.remove('selected');
         }
     }
-    currentSelectedLeader = null;
-    currentSelectedLeaderCategory = '';
+    window.currentSelectedLeader = null;
+    window.currentSelectedLeaderCategory = '';
     document.getElementById('selectedLeaderName').textContent = translations[currentLang].noLeaderSelected;
-    currentGeneratedPrompt = '';
+    window.currentGeneratedPrompt = '';
     document.getElementById('prompt-display-area').style.display = 'none';
     
     // --- 新增：重置折叠状态 ---
@@ -260,9 +260,9 @@ function clearSelection() {
 
 function selectLeader(leader, category, cardElement) {
     // 清除之前选中的高亮（仅当有 cardElement 时才操作 DOM）
-    if (currentSelectedLeader) {
+    if (window.currentSelectedLeader) {
         const prevSelectedCard = document.querySelector(
-            `.leader-card.selected[data-category='${currentSelectedLeaderCategory}']`
+            `.leader-card.selected[data-category='${window.currentSelectedLeaderCategory}']`
         );
         if (prevSelectedCard) {
             prevSelectedCard.classList.remove('selected');
@@ -270,8 +270,8 @@ function selectLeader(leader, category, cardElement) {
     }
 
     // 设置新的全局状态
-    currentSelectedLeader = leader;
-    currentSelectedLeaderCategory = category;
+    window.currentSelectedLeader = leader;
+    window.currentSelectedLeaderCategory = category;
     document.getElementById('selectedLeaderName').textContent = leader.name;
 
     // 如果有新的卡片元素，高亮它（新 UI 中 cardElement 为 null，跳过）
@@ -280,7 +280,7 @@ function selectLeader(leader, category, cardElement) {
     }
 
     // 重置提示区和回复区（原有逻辑保持不变）
-    currentGeneratedPrompt = '';
+    window.currentGeneratedPrompt = '';
     document.getElementById('prompt-display-area').style.display = 'none';
     document.getElementById('prompt-collapsible-content').style.display = 'none';
     const toggleIcon = document.getElementById('prompt-toggle-icon');
@@ -367,7 +367,7 @@ function generateBasePrompt() {
     const question = document.getElementById('userQuestion').value.trim();
     const lang = currentLang;
 
-    if (!currentSelectedLeader) {
+    if (!window.currentSelectedLeader) {
         alert(translations[lang].alertSelectLeaderFirst);
         return "";
     }
@@ -376,9 +376,9 @@ function generateBasePrompt() {
         return "";
     }
 
-    const leaderContribution = currentSelectedLeader.contribution[lang] || currentSelectedLeader.contribution['zh-CN'];
-    const leaderField = currentSelectedLeader.field[lang] || currentSelectedLeader.field['zh-CN'];
-    const leaderRemarks = currentSelectedLeader.remarks ? (currentSelectedLeader.remarks[lang] || currentSelectedLeader.remarks['zh-CN']) : '';
+    const leaderContribution = window.currentSelectedLeader.contribution[lang] || window.currentSelectedLeader.contribution['zh-CN'];
+    const leaderField = window.currentSelectedLeader.field[lang] || window.currentSelectedLeader.field['zh-CN'];
+    const leaderRemarks = window.currentSelectedLeader.remarks ? (window.currentSelectedLeader.remarks[lang] || window.currentSelectedLeader.remarks['zh-CN']) : '';
 
     const remarksText = leaderRemarks || translations[lang].promptBaseRemarksNone;
     const remarksSection = leaderRemarks
@@ -389,25 +389,25 @@ function generateBasePrompt() {
 
     return `
 ${translations[lang].promptBackgroundSetting}
-${translations[lang].promptYouAre} ${currentSelectedLeader.name}. ${translations[lang].promptBasedOnPublicContributions}
+${translations[lang].promptYouAre} ${window.currentSelectedLeader.name}. ${translations[lang].promptBasedOnPublicContributions}
 
-${currentSelectedLeader.name}${translations[lang].promptCoreInfoFor}
+${window.currentSelectedLeader.name}${translations[lang].promptCoreInfoFor}
 - ${translations[lang].promptMainContributions} ${leaderContribution}
 - ${translations[lang].promptExpertise} ${leaderField}
 - ${translations[lang].promptKeyRemarksFeatures} ${remarksText}
 
-${translations[lang].promptThinkingFrameworkGuidance.replace('${name}', currentSelectedLeader.name)}
+${translations[lang].promptThinkingFrameworkGuidance.replace('${name}', window.currentSelectedLeader.name)}
 1.  **${translations[lang].promptFirstPrinciplesThinking}**: ${translations[lang].promptFirstPrinciplesDetail}
 2.  **${translations[lang].promptDomainExpertise}**: ${translations[lang].promptDomainExpertiseDetail1.replace('${field}', leaderField)} ${translations[lang].promptDomainExpertiseDetail2}
-3.  **${translations[lang].promptCorePhilosophyDrivingForce}**: ${translations[lang].promptCorePhilosophyDetail1.replace('${name}', currentSelectedLeader.name).replace('${remarksSection}', remarksSection)}
+3.  **${translations[lang].promptCorePhilosophyDrivingForce}**: ${translations[lang].promptCorePhilosophyDetail1.replace('${name}', window.currentSelectedLeader.name).replace('${remarksSection}', remarksSection)}
 4.  **${translations[lang].promptProblemAnalysis}**: ${translations[lang].promptProblemAnalysisDetail}
-5.  **${translations[lang].promptSolutionInsight}**: ${translations[lang].promptSolutionInsightDetail1.replace('${name}', currentSelectedLeader.name)} ${translations[lang].promptSolutionInsightDetail2}
-6.  **${translations[lang].promptLanguageStyle}**: ${translations[lang].promptLanguageStyleDetail1.replace('${name}', currentSelectedLeader.name)} ${translations[lang].promptLanguageStyleDetail2}
+5.  **${translations[lang].promptSolutionInsight}**: ${translations[lang].promptSolutionInsightDetail1.replace('${name}', window.currentSelectedLeader.name)} ${translations[lang].promptSolutionInsightDetail2}
+6.  **${translations[lang].promptLanguageStyle}**: ${translations[lang].promptLanguageStyleDetail1.replace('${name}', window.currentSelectedLeader.name)} ${translations[lang].promptLanguageStyleDetail2}
 
 ${translations[lang].promptUserQuestion}
 "${question}"
 
-${translations[lang].promptAs} ${currentSelectedLeader.name}, ${translations[lang][replyInstructionKey]}
+${translations[lang].promptAs} ${window.currentSelectedLeader.name}, ${translations[lang][replyInstructionKey]}
 `;
 }
 
@@ -427,7 +427,7 @@ function togglePromptCollapse() {
 }
 
 function generateAndShowPrompt() {
-    currentGeneratedPrompt = generateBasePrompt();
+    window.currentGeneratedPrompt = generateBasePrompt();
     const promptDisplayArea = document.getElementById('prompt-display-area');
     const promptTextElement = document.getElementById('generatedPromptText');
     
@@ -435,8 +435,8 @@ function generateAndShowPrompt() {
     const content = document.getElementById('prompt-collapsible-content');
     const icon = document.getElementById('prompt-toggle-icon');
 
-    if (currentGeneratedPrompt) {
-        promptTextElement.value = currentGeneratedPrompt.trim();
+    if (window.currentGeneratedPrompt) {
+        promptTextElement.value = window.currentGeneratedPrompt.trim();
         promptDisplayArea.style.display = 'block'; // 显示整个提示词区域
         
         // 建议：点击“生成”后，默认仍保持折叠状态（如需自动展开，请把下面设为 'block' 并 add class）
@@ -530,12 +530,12 @@ async function getAIResponse() {
     // ═══════════════════════════════════════════════
     // 【星际领航员模式】判断
     // ═══════════════════════════════════════════════
-    const isNavigatorMode = currentSelectedLeader?.id === 'interstellar_navigator';
+    const isNavigatorMode = window.currentSelectedLeader?.id === 'interstellar_navigator';
 
     // ═══════════════════════════════════════════════
     // 【星空专栏融合模式】判断 —— 新增
     // ═══════════════════════════════════════════════
-    const isStarryFusionMode = currentSelectedLeader?._isStarryCard === true &&  currentSelectedLeader?._cardType === 'fusion';
+    const isStarryFusionMode = window.currentSelectedLeader?._isStarryCard === true &&  window.currentSelectedLeader?._cardType === 'fusion';
 
     // ═══════════════════════════════════════════════
     // 【系统指令合并】上下文 + 领航员指令 + 融合体指令（可叠加）
@@ -547,7 +547,7 @@ async function getAIResponse() {
         finalSystemContent += buildNavigatorSystemPrompt(currentLang);
     } else if (isStarryFusionMode) {
         // 直接传 virtualLeader，函数内部兼容处理
-        finalSystemContent += buildFusionSystemPrompt(currentSelectedLeader, currentLang);
+        finalSystemContent += buildFusionSystemPrompt(window.currentSelectedLeader, currentLang);
     }
     
     finalSystemContent = finalSystemContent.trim();
@@ -682,10 +682,10 @@ async function getAIResponse() {
         const rawUserQuestion = document.getElementById('userQuestion').value.trim();
     
         // 2. 准备北极星的元数据 (防止当前没选人报错)
-        const leaderMeta = currentSelectedLeader ? {
-            name: currentSelectedLeader.name,
-            field: currentSelectedLeader.field[currentLang] || currentSelectedLeader.field['zh-CN'],
-            contribution: currentSelectedLeader.contribution[currentLang] || currentSelectedLeader.contribution['zh-CN']
+        const leaderMeta = window.currentSelectedLeader ? {
+            name: window.currentSelectedLeader.name,
+            field: window.currentSelectedLeader.field[currentLang] || window.currentSelectedLeader.field['zh-CN'],
+            contribution: window.currentSelectedLeader.contribution[currentLang] || window.currentSelectedLeader.contribution['zh-CN']
         } : { name: 'North Star', field: 'General AI', contribution: '' };
     
         // 3. 存入历史 - 用户提问
@@ -973,7 +973,7 @@ const immersiveModal = document.getElementById('immersiveModal');
 
 function handleImmersiveMode() {
     // 1. 获取参数
-    const pLeader = currentSelectedLeader; // 参数(1)
+    const pLeader = window.currentSelectedLeader; // 参数(1)
     const pUserQuestion = document.getElementById('userQuestion').value; // 参数(2)
     const pPrompt = document.getElementById('generatedPromptText').value; // 参数(3)
     const pAiResponse = document.getElementById('aiResponseText').innerHTML; // 参数(4)
