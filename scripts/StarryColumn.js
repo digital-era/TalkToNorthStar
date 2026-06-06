@@ -1087,6 +1087,54 @@ function parseJWTClientSide(token) {
     }
 }
 
+
+/**
+ * 刷新星空专栏界面语言 - 局部更新，保留交互状态
+ */
+function updateStarryColumnLanguage() {
+    const lang = window.currentLang || 'zh-CN';
+    const layout = document.getElementById('category-layout-container');
+    if (!layout || layout.style.display === 'none') return;
+    
+    // 1. 更新左侧封面
+    const coverTitle = layout.querySelector('.starry-cover-title');
+    if (coverTitle) coverTitle.textContent = getFieldValue(starryColumnTexts.title, lang);
+    
+    const coverSubtitle = layout.querySelector('.starry-cover-subtitle');
+    if (coverSubtitle) coverSubtitle.textContent = getFieldValue(starryColumnTexts.subtitle, lang);
+    
+    // 2. 更新右侧头部
+    const listTitle = layout.querySelector('.starry-list-title');
+    if (listTitle) listTitle.textContent = getFieldValue(starryColumnTexts.columnName, lang);
+    
+    // 3. 更新按钮 title
+    const backBtn = document.getElementById('btn-starry-back');
+    if (backBtn) backBtn.title = getFieldValue(starryColumnTexts.backTooltip, lang);
+    
+    const backToListBtn = document.getElementById('btn-back-to-list');
+    if (backToListBtn) {
+        backToListBtn.title = lang === 'zh-CN' ? '返回专栏列表' : 'Back to Column List';
+    }
+    
+    // 4. 根据模式更新内容
+    if (window.starryColumnViewMode === 'card' && window.currentSelectedLeader) {
+        // 更新卡片显示
+        updateSingleCard(window.currentSelectedLeader);
+        
+        // 更新 selectLeader 渲染的标题
+        const selectedLeaderName = document.getElementById('selectedLeaderName');
+        if (selectedLeaderName) {
+            selectedLeaderName.textContent = window.currentSelectedLeader.name;
+        }
+        
+        // 注意：不触碰交互区域，保留对话状态
+    } else {
+        // 列表模式：重新渲染卡片列表
+        renderStarryCardsList();
+    }
+}
+
+
 // ═══════════════════════════════════════════════
 // 初始化
 // ═══════════════════════════════════════════════
