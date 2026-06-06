@@ -1902,6 +1902,7 @@ function updateWheelLanguage() {
   }
 }
 
+// 修改 onLanguageChanged
 (function() {
     const origLangChanged = window.onLanguageChanged;
     window.onLanguageChanged = function() {
@@ -1909,48 +1910,24 @@ function updateWheelLanguage() {
             origLangChanged();
         }
         
-        // 2. 刷新转盘页面按钮
         const wheelSection = document.getElementById('wheel-of-destiny');
         if (wheelSection && wheelSection.style.display !== 'none') {
             updateWheelLanguage();
         }
         
-        // 3. 刷新左右布局页面
         const layout = document.getElementById('category-layout-container');
         if (layout && layout.style.display !== 'none' && currentSelectedCategory) {
-            
-            // ═══════════════════════════════════════════════
-            // 【新增】判断当前是否是星空专栏模式
-            // ═══════════════════════════════════════════════
             if (currentSelectedCategory === 'starryColumn') {
-                // 刷新星空专栏列表或卡片详情
-                if (window.starryColumnViewMode === 'card' && window.currentSelectedCard) {
-                    // 卡片详情模式：重新渲染布局 + 更新卡片内容
-                    const hostCategory = Object.keys(allData).find(cat => allData[cat]?.length > 0) || 'ai';
-                    renderStarryColumnLayoutForLeader(hostCategory);
-                    if (window.currentSelectedLeader) {
-                        updateSingleCard(window.currentSelectedLeader);
-                    }
-                } else {
-                    // 列表模式：重新渲染列表
-                    renderStarryColumnLayout();
-                    renderStarryCardsList();
-                }
+                updateStarryColumnLanguage();
             } else {
-                // 标准分类模式
                 renderCategoryLayout(currentSelectedCategory);
                 if (currentSelectedLeader && currentSelectedLeaderCategory === currentSelectedCategory) {
                     updateSingleCard(currentSelectedLeader);
                 }
             }
-            
-        } else {
-            if (typeof updateWheelLanguage === 'function' && wheelInstance) {
-                updateWheelLanguage();
-            }
         }
         
-        // 4. 【新增】刷新水晶球页面的星空专栏入口
+        // 刷新水晶球页面的星空专栏入口
         const nebulaCrystal = document.getElementById('nebula-crystal');
         if (nebulaCrystal && nebulaCrystal.style.display !== 'none') {
             renderStarryColumnEntry();
