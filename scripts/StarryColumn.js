@@ -1,28 +1,110 @@
+const starryColumnTexts = {
+    title: {
+        'zh-CN': '星空专栏',
+        'en': 'Starry Column'
+    },
+    subtitle: {
+        'zh-CN': '跨领域智慧融合',
+        'en': 'Cross-domain Wisdom Fusion'
+    },
+    columnName: {
+        'zh-CN': '星空专栏',
+        'en': 'Starry Column'
+    },
+    backTooltip: {
+        'zh-CN': '返回首页',
+        'en': 'Back to Home'
+    },
+    addCard: {
+        'zh-CN': '添加卡片',
+        'en': 'Add Card'
+    },
+    statusNotConfigured: {
+        'zh-CN': '未配置',
+        'en': 'Not Configured'
+    },
+    statusExpertsCount: {
+        'zh-CN': '位专家',
+        'en': 'Experts'
+    },
+    wisdomResponse: {
+        'zh-CN': '智慧回应',
+        'en': 'Wisdom Response'
+    },
+    askButton: {
+        'zh-CN': '提问',
+        'en': 'Ask'
+    },
+    questionPlaceholder: {
+        'zh-CN': '输入你的问题，让智慧指引你...',
+        'en': 'Enter your question, let wisdom guide you...'
+    },
+    configureCard: {
+        'zh-CN': '配置卡片',
+        'en': 'Configure Card'
+    },
+    fusionMode: {
+        'zh-CN': '融合模式',
+        'en': 'Fusion Mode'
+    },
+    selectExperts: {
+        'zh-CN': '选择专家',
+        'en': 'Select Experts'
+    },
+    modeRoundtable: {
+        'zh-CN': '圆桌会议',
+        'en': 'Roundtable'
+    },
+    modeSynthesis: {
+        'zh-CN': '综合融合',
+        'en': 'Synthesis'
+    },
+    modeDebate: {
+        'zh-CN': '思想交锋',
+        'en': 'Debate'
+    },
+    cancel: {
+        'zh-CN': '取消',
+        'en': 'Cancel'
+    },
+    save: {
+        'zh-CN': '保存',
+        'en': 'Save'
+    },
+    copy: {
+        'zh-CN': '复制',
+        'en': 'Copy'
+    },
+    participantsLabel: {
+        'zh-CN': '参与专家：',
+        'en': 'Participants: '
+    }
+};
+
+
+// ═══════════════════════════════════════════════
+// 星空专栏 - 入口与布局
+// ═══════════════════════════════════════════════
+
 /**
  * 进入星空专栏页面
- * 复用 category-layout-container 的左右布局结构
  */
 function enterStarryColumn() {
-    // 停止水晶球演示，避免后台动画消耗
     if (crystalInstance) {
         crystalInstance.stopDemoLoop();
         crystalInstance._pauseDemo(Infinity);
     }
 
-    // 过渡动画
     const overlay = document.getElementById('pageTransitionOverlay');
     if (overlay) overlay.classList.add('active');
 
     setTimeout(() => {
-        // 隐藏水晶球首页
         const nebulaCrystal = document.getElementById('nebula-crystal');
         if (nebulaCrystal) nebulaCrystal.style.display = 'none';
 
-        // 隐藏旧转盘（兼容）
         const wheelSection = document.getElementById('wheel-of-destiny');
         if (wheelSection) wheelSection.style.display = 'none';
 
-        // 隐藏传统容器
         const mainContainer = document.querySelector('.container');
         if (mainContainer) mainContainer.style.display = 'none';
 
@@ -30,7 +112,6 @@ function enterStarryColumn() {
             tc.style.display = 'none';
         });
 
-        // 渲染星空专栏布局
         renderStarryColumnLayout();
 
         if (overlay) overlay.classList.remove('active');
@@ -39,10 +120,8 @@ function enterStarryColumn() {
     }, 300);
 }
 
-
 /**
- * 渲染星空专栏的左右布局
- * 左侧：固定封面图  右侧：星空专栏卡片列表
+ * 渲染星空专栏布局
  */
 function renderStarryColumnLayout() {
     const layout = document.getElementById('category-layout-container');
@@ -84,9 +163,7 @@ function renderStarryColumnLayout() {
                     ${getFieldValue(starryColumnTexts.columnName, lang)}
                 </h3>
             </div>
-            <div class="starry-cards-container" id="starryCardsContainer">
-                <!-- 卡片列表由 JS 渲染 -->
-            </div>
+            <div class="starry-cards-container" id="starryCardsContainer"></div>
             ${isAdmin ? `
                 <button class="add-card-btn" id="btn-add-card">
                     <span>+</span>
@@ -96,18 +173,13 @@ function renderStarryColumnLayout() {
         </div>
     `;
 
-    // 绑定返回按钮
     document.getElementById('btn-starry-back')?.addEventListener('click', backToWheelSelection);
-
-    // 渲染卡片列表
     renderStarryCardsList();
 
-    // 绑定添加卡片按钮（管理员）
     if (isAdmin) {
         document.getElementById('btn-add-card')?.addEventListener('click', showAddCardModal);
     }
 }
-
 
 /**
  * 渲染星空专栏卡片列表
@@ -117,26 +189,26 @@ function renderStarryCardsList() {
     if (!container) return;
 
     const lang = window.currentLang || 'zh-CN';
-
     container.innerHTML = '';
 
     starryColumnCards.forEach(card => {
-        const isEmpty = card.type === 'fusion' && 
-                       (!card.experts || card.experts.length === 0);
-        
+        const isEmpty = card.type === 'fusion' && (!card.experts || card.experts.length === 0);
         const isConfigurable = card.configurable;
         const cardEl = document.createElement('div');
         cardEl.className = `starry-card ${card.builtIn ? 'built-in' : ''} ${isEmpty ? 'empty' : ''}`;
         cardEl.dataset.cardId = card.id;
 
+        const statusText = isEmpty 
+            ? getFieldValue(starryColumnTexts.statusNotConfigured, lang)
+            : `${card.experts.length} ${getFieldValue(starryColumnTexts.statusExpertsCount, lang)}`;
+
         cardEl.innerHTML = `
             <div class="starry-card-header">
-                <div class="starry-card-icon">
-                    ${getCardTypeIcon(card.type)}
-                </div>
+                <div class="starry-card-icon">${getCardTypeIcon(card.type)}</div>
                 <h4 class="starry-card-name">${getFieldValue(card.name, lang)}</h4>
                 ${isConfigurable ? `
-                    <button class="starry-card-config" data-card-id="${card.id}" title="${lang === 'en' ? 'Configure' : '配置'}">
+                    <button class="starry-card-config" data-card-id="${card.id}" 
+                            title="${getFieldValue(starryColumnTexts.configureCard, lang)}">
                         ⚙️
                     </button>
                 ` : ''}
@@ -144,28 +216,22 @@ function renderStarryCardsList() {
             <p class="starry-card-contribution">${getFieldValue(card.contribution, lang)}</p>
             <div class="starry-card-meta">
                 <span class="starry-card-field">${getFieldValue(card.field, lang)}</span>
-                ${isEmpty 
-                    ? `<span class="starry-card-status empty">${lang === 'en' ? 'Not Configured' : '未配置'}</span>`
-                    : `<span class="starry-card-status active">${card.experts.length} ${lang === 'en' ? 'Experts' : '位专家'}</span>`
-                }
+                <span class="starry-card-status ${isEmpty ? 'empty' : 'active'}">${statusText}</span>
             </div>
             <p class="starry-card-remarks">${getFieldValue(card.remarks, lang)}</p>
         `;
 
-        // 点击卡片进入对话（空配置卡片除外）
         if (!isEmpty || card.type === 'navigator') {
             cardEl.addEventListener('click', (e) => {
-                // 避免点击配置按钮时触发
                 if (e.target.closest('.starry-card-config')) return;
                 selectStarryCard(card);
             });
             cardEl.style.cursor = 'pointer';
         } else {
             cardEl.style.cursor = 'not-allowed';
-            cardEl.style.opacity = '0.6';
+            cardEl.style.opacity = '0.5';
         }
 
-        // 配置按钮事件
         const configBtn = cardEl.querySelector('.starry-card-config');
         if (configBtn) {
             configBtn.addEventListener('click', (e) => {
@@ -178,61 +244,49 @@ function renderStarryCardsList() {
     });
 }
 
-
 /**
  * 获取卡片类型图标
  */
 function getCardTypeIcon(type) {
     if (type === 'navigator') {
-        // 指南针图标
         return `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"/>
             <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
         </svg>`;
     }
-    // 融合体图标：群星
     return `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
     </svg>`;
 }
 
 /**
- * 选择星空专栏卡片，进入对话模式
- * 复用现有的 selectLeader / getAIResponse 流程
+ * 选择星空卡片进入对话
  */
 function selectStarryCard(card) {
     const lang = window.currentLang || 'zh-CN';
-
-    // 设置当前选中的卡片上下文
     window.currentSelectedCard = card;
 
-    // 根据卡片类型准备专家数据
     let resolvedExperts;
     if (card.type === 'navigator') {
-        // 领航员：动态提取全库
         resolvedExperts = buildInterstellarSnapshot(lang);
     } else {
-        // 融合体：解析配置的专家
         resolvedExperts = resolveCardExperts(card);
     }
 
-    // 创建虚拟 leader 对象，复用现有对话流程
     const virtualLeader = {
         id: card.id,
         name: card.name,
         field: card.field,
         contribution: card.contribution,
         remarks: card.remarks,
-        _isStarryCard: true,        // 标记为星空卡片
-        _cardType: card.type,        // 'navigator' | 'fusion'
-        _experts: resolvedExperts,  // 解析后的专家列表
+        _isStarryCard: true,
+        _cardType: card.type,
+        _experts: resolvedExperts,
         _systemPromptBuilder: card.systemPromptBuilder
     };
 
-    // 更新 UI 为对话模式
     renderStarryDialogMode(card, virtualLeader);
 
-    // 滚动到交互区
     setTimeout(() => {
         document.querySelector('.interaction-area')?.scrollIntoView({ 
             behavior: 'smooth', 
@@ -242,27 +296,31 @@ function selectStarryCard(card) {
 }
 
 /**
- * 渲染星空卡片的对话界面
- * 复用现有的大卡片 + 交互区结构
+ * 渲染对话模式
  */
 function renderStarryDialogMode(card, virtualLeader) {
     const layoutRight = document.getElementById('starryRight');
     if (!layoutRight) return;
 
     const lang = window.currentLang || 'zh-CN';
-
-    // 清空右侧，保留返回按钮
     const header = layoutRight.querySelector('.starry-header');
     layoutRight.innerHTML = '';
     if (header) layoutRight.appendChild(header);
 
-    // 创建对话区域
     const dialogArea = document.createElement('div');
     dialogArea.className = 'starry-dialog-area';
 
-    // 卡片信息展示
     const infoSection = document.createElement('div');
     infoSection.className = 'starry-dialog-info';
+
+    const participantsLabel = getFieldValue(starryColumnTexts.participantsLabel, lang);
+    const expertTags = card.type === 'fusion' && card.experts.length > 0
+        ? card.experts.map(id => {
+            const expert = findExpertById(id);
+            return expert ? `<span class="expert-tag">${getFieldValue(expert.name, lang)}</span>` : '';
+        }).join('')
+        : '';
+
     infoSection.innerHTML = `
         <div class="starry-dialog-card-brief">
             <div class="brief-icon">${getCardTypeIcon(card.type)}</div>
@@ -272,31 +330,22 @@ function renderStarryDialogMode(card, virtualLeader) {
             </div>
         </div>
         <p class="brief-desc">${getFieldValue(card.contribution, lang)}</p>
-        ${card.type === 'fusion' && card.experts.length > 0 ? `
+        ${expertTags ? `
             <div class="brief-experts">
-                <span class="experts-label">${lang === 'en' ? 'Participants: ' : '参与专家：'}</span>
-                ${card.experts.map(id => {
-                    const expert = findExpertById(id);
-                    return expert ? `<span class="expert-tag">${getFieldValue(expert.name, lang)}</span>` : '';
-                }).join('')}
+                <span class="experts-label">${participantsLabel}</span>
+                ${expertTags}
             </div>
         ` : ''}
     `;
 
-    // 用户输入区
     const inputSection = document.createElement('div');
     inputSection.className = 'starry-input-section';
     inputSection.innerHTML = `
-        <textarea 
-            id="starryUserQuestion" 
-            class="starry-question-input"
-            placeholder="${lang === 'en' 
-                ? 'Enter your question, let wisdom guide you...' 
-                : '输入你的问题，让智慧指引你...'}"
-            rows="4"
-        ></textarea>
+        <textarea id="starryUserQuestion" class="starry-question-input"
+            placeholder="${getFieldValue(starryColumnTexts.questionPlaceholder, lang)}"
+            rows="4"></textarea>
         <button class="starry-submit-btn" id="btnStarrySubmit">
-            <span>${lang === 'en' ? 'Ask' : '提问'}</span>
+            <span>${getFieldValue(starryColumnTexts.askButton, lang)}</span>
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="22" y1="2" x2="11" y2="13"/>
                 <polygon points="22 2 15 22 11 13 2 9 22 2"/>
@@ -304,15 +353,15 @@ function renderStarryDialogMode(card, virtualLeader) {
         </button>
     `;
 
-    // AI 回复区
     const responseSection = document.createElement('div');
     responseSection.className = 'starry-response-section';
     responseSection.id = 'starryResponseSection';
     responseSection.style.display = 'none';
     responseSection.innerHTML = `
         <div class="starry-response-header">
-            <span class="response-label">${lang === 'en' ? 'Wisdom Response' : '智慧回应'}</span>
-            <button class="copy-btn" id="btnCopyResponse" title="${lang === 'en' ? 'Copy' : '复制'}">📋</button>
+            <span class="response-label">${getFieldValue(starryColumnTexts.wisdomResponse, lang)}</span>
+            <button class="copy-btn" id="btnCopyResponse" 
+                title="${getFieldValue(starryColumnTexts.copy, lang)}">📋</button>
         </div>
         <div class="starry-response-content" id="starryResponseText"></div>
     `;
@@ -322,18 +371,15 @@ function renderStarryDialogMode(card, virtualLeader) {
     dialogArea.appendChild(responseSection);
     layoutRight.appendChild(dialogArea);
 
-    // 绑定提交事件
     document.getElementById('btnStarrySubmit')?.addEventListener('click', () => {
         submitStarryQuestion(card, virtualLeader);
     });
 
-    // 绑定复制事件
     document.getElementById('btnCopyResponse')?.addEventListener('click', copyStarryResponse);
 }
 
 /**
- * 提交星空卡片的问题
- * 复用 getAIResponse 的核心逻辑，但使用星空卡片的系统指令
+ * 提交问题
  */
 async function submitStarryQuestion(card, virtualLeader) {
     const questionInput = document.getElementById('starryUserQuestion');
@@ -348,13 +394,11 @@ async function submitStarryQuestion(card, virtualLeader) {
     const responseText = document.getElementById('starryResponseText');
     const submitBtn = document.getElementById('btnStarrySubmit');
 
-    // 显示加载状态
     responseSection.style.display = 'block';
     responseText.innerHTML = `<div class="starry-loading"><span class="loading-dots">...</span></div>`;
     submitBtn.disabled = true;
 
     try {
-        // 构建系统指令
         let systemPrompt = '';
         if (card.type === 'navigator') {
             systemPrompt = buildNavigatorSystemPrompt(window.currentLang || 'zh-CN');
@@ -362,20 +406,16 @@ async function submitStarryQuestion(card, virtualLeader) {
             systemPrompt = buildFusionSystemPrompt(card, window.currentLang || 'zh-CN');
         }
 
-        // 构建消息
         const messages = [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: question }
         ];
 
-        // 调用 API（复用现有配置）
         const response = await callStarryAPI(messages);
         
-        // 显示结果
         responseText.dataset.raw = response;
         responseText.innerHTML = response.replace(/\n/g, '<br>');
 
-        // 保存到对话历史
         saveStarryConversation(card, question, response);
 
     } catch (error) {
@@ -387,27 +427,17 @@ async function submitStarryQuestion(card, virtualLeader) {
 }
 
 /**
- * 构建融合体卡片的系统指令
- * @param {Object} card - 星空卡片配置
- * @param {string} lang - 语言代码
+ * 构建融合系统指令
  */
 function buildFusionSystemPrompt(card, lang = 'zh-CN') {
     const isZh = lang === 'zh-CN';
-
-    // 解析配置的专家列表
     const experts = resolveCardExperts(card);
+    
     if (!experts || experts.length === 0) {
-        return isZh 
-            ? '系统错误：未配置任何专家。'
-            : 'System error: No experts configured.';
+        return isZh ? '系统错误：未配置任何专家。' : 'System error: No experts configured.';
     }
 
-    // 构建专家目录文本
-    const expertLines = experts.map(e => 
-        `  · ${e.name} [${e.field}]`
-    ).join('\n');
-
-    // 获取融合策略
+    const expertLines = experts.map(e => `  · ${e.name} [${e.field}]`).join('\n');
     const strategy = card.fusionStrategy || { mode: 'synthesis' };
 
     const modeDescriptions = {
@@ -428,7 +458,7 @@ function buildFusionSystemPrompt(card, lang = 'zh-CN') {
     const modeDesc = modeDescriptions[strategy.mode]?.[lang] || modeDescriptions.synthesis[lang];
 
     return isZh
-        ? `你是"对话北极星"的融合智慧体。你的任务是针对用户的核心问题，融合以下多位"北极星"人物的洞察，给出深度回答。
+        ? `你是"对话北极星"星空专栏的融合智慧体。你的任务是针对用户的核心问题，融合以下多位"北极星"人物的洞察，给出深度回答。
 
 【参与专家】
 ${expertLines}
@@ -442,7 +472,7 @@ ${modeDesc}
 3. 在分歧处呈现张力，在共识处深化洞见
 4. 输出必须标注引用专家的姓名和领域
 5. 追求跨学科的思想化学反应，而非简单并列`
-        : `You are the Fusion Wisdom of "Talk with North Stars". Your task is to synthesize insights from the following "North Star" figures to provide a deep answer.
+        : `You are the Fusion Wisdom of "Talk with North Stars" Starry Column. Your task is to synthesize insights from the following "North Star" figures to provide a deep answer.
 
 【Participating Experts】
 ${expertLines}
@@ -459,22 +489,18 @@ ${modeDesc}
 }
 
 /**
- * 根据卡片配置解析实际专家列表
+ * 解析卡片专家
  */
 function resolveCardExperts(card) {
     const lang = window.currentLang || 'zh-CN';
 
     if (card.type === 'navigator') {
-        // 领航员：动态提取全库（排除自身）
         return buildInterstellarSnapshot(lang);
     }
 
     if (card.type === 'fusion') {
-        if (!card.experts || card.experts.length === 0) {
-            return null;
-        }
+        if (!card.experts || card.experts.length === 0) return null;
 
-        // 根据 ID 列表从 allData 提取
         const resolved = [];
         for (const expertId of card.experts) {
             const expert = findExpertById(expertId);
@@ -494,34 +520,28 @@ function resolveCardExperts(card) {
 }
 
 /**
- * 根据 ID 查找专家完整数据
+ * 查找专家
  */
 function findExpertById(id) {
     for (const [category, leaders] of Object.entries(allData)) {
         const found = leaders.find(l => l.id === id);
         if (found) {
-            found._category = category; // 临时标记类别
+            found._category = category;
             return found;
         }
     }
     return null;
 }
 
-/**
- * 查找专家所属类别
- */
 function findExpertCategory(id) {
     for (const [category, leaders] of Object.entries(allData)) {
-        if (leaders.some(l => l.id === id)) {
-            return category;
-        }
+        if (leaders.some(l => l.id === id)) return category;
     }
     return null;
 }
 
 /**
- * 星空专栏的 API 调用
- * 复用 getAIResponse 的配置逻辑
+ * API 调用
  */
 async function callStarryAPI(messages) {
     const apiBaseUrl = apiEndpointSelect.value;
@@ -533,7 +553,6 @@ async function callStarryAPI(messages) {
     const isGeminiModel = model.toLowerCase().includes("gemini");
     const isQwenModel = apiBaseUrl === "https://qwenapi.aivibeinvest.com";
 
-    // 构造 URL（复用现有逻辑）
     let fullApiUrl;
     if (isGeminiModel) {
         const baseUrl = apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl;
@@ -547,7 +566,6 @@ async function callStarryAPI(messages) {
         headers['Authorization'] = `Bearer ${apiKey}`;
     }
 
-    // 构造 Body
     let requestBody;
     if (isGeminiModel) {
         const contents = messages.map(m => ({
@@ -578,7 +596,6 @@ async function callStarryAPI(messages) {
 
     const data = await response.json();
 
-    // 解析响应（复用现有逻辑）
     if (isGeminiModel) {
         return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
     } else if (isQwenModel) {
@@ -589,7 +606,7 @@ async function callStarryAPI(messages) {
 }
 
 /**
- * 保存星空专栏对话到历史
+ * 保存对话历史
  */
 function saveStarryConversation(card, question, response) {
     const lang = window.currentLang || 'zh-CN';
@@ -601,7 +618,6 @@ function saveStarryConversation(card, question, response) {
         field: getFieldValue(card.field, lang)
     };
 
-    // 用户提问
     conversationHistory.push({
         id: Date.now() + '_starry_user',
         role: 'user',
@@ -611,7 +627,6 @@ function saveStarryConversation(card, question, response) {
         timestamp: new Date()
     });
 
-    // AI 回答
     conversationHistory.push({
         id: Date.now() + '_starry_ai',
         role: 'ai',
@@ -624,96 +639,315 @@ function saveStarryConversation(card, question, response) {
     saveCanvasSession();
 }
 
+// ═══════════════════════════════════════════════
+// 配置模态框 - 完整字段编辑 + 模糊搜索
+// ═══════════════════════════════════════════════
+
 /**
- * 显示卡片配置模态框
+ * 显示配置模态框
  */
 function showConfigModal(card) {
     const lang = window.currentLang || 'zh-CN';
-    
-    // 创建模态框
+    const otherLang = lang === 'zh-CN' ? 'en' : 'zh-CN';
+
+    // 当前值
+    const currentName = getFieldValue(card.name, lang);
+    const currentNameOther = getFieldValue(card.name, otherLang);
+    const currentContribution = getFieldValue(card.contribution, lang);
+    const currentContributionOther = getFieldValue(card.contribution, otherLang);
+    const currentField = getFieldValue(card.field, lang);
+    const currentFieldOther = getFieldValue(card.field, otherLang);
+    const currentRemarks = getFieldValue(card.remarks, lang);
+    const currentRemarksOther = getFieldValue(card.remarks, otherLang);
+
+    const modeOptions = [
+        { value: 'roundtable', label: getFieldValue(starryColumnTexts.modeRoundtable, lang) },
+        { value: 'synthesis', label: getFieldValue(starryColumnTexts.modeSynthesis, lang) },
+        { value: 'debate', label: getFieldValue(starryColumnTexts.modeDebate, lang) }
+    ];
+
     const modal = document.createElement('div');
     modal.className = 'starry-modal';
     modal.id = 'starryConfigModal';
-    
-    // 构建可选专家列表
-    const allExperts = [];
-    for (const [category, leaders] of Object.entries(allData)) {
-        leaders.forEach(l => {
-            if (l.id !== 'interstellar_navigator') {
-                allExperts.push({
-                    ...l,
-                    _category: category
-                });
-            }
-        });
-    }
 
     modal.innerHTML = `
-        <div class="starry-modal-overlay">
-            <div class="starry-modal-content">
-                <div class="starry-modal-header">
-                    <h3>${lang === 'en' ? 'Configure Card' : '配置卡片'}: ${getFieldValue(card.name, lang)}</h3>
-                    <button class="modal-close" onclick="closeConfigModal()">×</button>
+        <div class="starry-modal-overlay" onclick="if(event.target===this)closeConfigModal()"></div>
+        <div class="starry-modal-content">
+            <div class="starry-modal-header">
+                <h3>${getFieldValue(starryColumnTexts.configureCard, lang)}: ${currentName}</h3>
+                <button class="modal-close" onclick="closeConfigModal()">×</button>
+            </div>
+            
+            <div class="starry-modal-body">
+                <!-- 卡片名称 -->
+                <div class="config-section">
+                    <label class="config-label">
+                        ${lang === 'zh-CN' ? '卡片名称' : 'Card Name'}
+                        <span class="lang-tag">${lang === 'zh-CN' ? '中文' : 'English'}</span>
+                    </label>
+                    <input type="text" class="config-input" id="configNamePrimary" 
+                           value="${currentName}" placeholder="${lang === 'zh-CN' ? '输入中文名称' : 'Enter English name'}">
+                    
+                    <label class="config-label secondary">
+                        ${lang === 'zh-CN' ? '英文名称' : '中文名称'}
+                        <span class="lang-tag secondary">${lang === 'zh-CN' ? 'English' : '中文'}</span>
+                    </label>
+                    <input type="text" class="config-input" id="configNameSecondary" 
+                           value="${currentNameOther}" placeholder="${lang === 'zh-CN' ? 'Enter English name' : '输入中文名称'}">
                 </div>
-                <div class="starry-modal-body">
-                    <div class="config-section">
-                        <label>${lang === 'en' ? 'Fusion Mode' : '融合模式'}</label>
-                        <select id="configFusionMode">
-                            <option value="roundtable" ${card.fusionStrategy?.mode === 'roundtable' ? 'selected' : ''}>
-                                ${lang === 'en' ? 'Roundtable' : '圆桌会议'}
+
+                <!-- 功能描述 -->
+                <div class="config-section">
+                    <label class="config-label">
+                        ${lang === 'zh-CN' ? '功能描述' : 'Description'}
+                        <span class="lang-tag">${lang === 'zh-CN' ? '中文' : 'English'}</span>
+                    </label>
+                    <textarea class="config-textarea" id="configContributionPrimary" rows="3"
+                        placeholder="${lang === 'zh-CN' ? '描述这张卡片的功能...' : 'Describe the function...'}">${currentContribution}</textarea>
+                    
+                    <label class="config-label secondary">
+                        ${lang === 'zh-CN' ? '英文描述' : '中文描述'}
+                        <span class="lang-tag secondary">${lang === 'zh-CN' ? 'English' : '中文'}</span>
+                    </label>
+                    <textarea class="config-textarea" id="configContributionSecondary" rows="3"
+                        placeholder="${lang === 'zh-CN' ? 'Describe in English...' : '用中文描述...'}">${currentContributionOther}</textarea>
+                </div>
+
+                <!-- 领域标签 -->
+                <div class="config-section">
+                    <label class="config-label">
+                        ${lang === 'zh-CN' ? '领域标签' : 'Field Tag'}
+                        <span class="lang-tag">${lang === 'zh-CN' ? '中文' : 'English'}</span>
+                    </label>
+                    <input type="text" class="config-input" id="configFieldPrimary" 
+                           value="${currentField}" placeholder="${lang === 'zh-CN' ? '如：AI融合、人文跨界' : 'e.g. AI Fusion'}">
+                    
+                    <label class="config-label secondary">
+                        ${lang === 'zh-CN' ? '英文标签' : '中文标签'}
+                        <span class="lang-tag secondary">${lang === 'zh-CN' ? 'English' : '中文'}</span>
+                    </label>
+                    <input type="text" class="config-input" id="configFieldSecondary" 
+                           value="${currentFieldOther}" placeholder="${lang === 'zh-CN' ? 'e.g. AI Fusion' : '如：AI融合'}">
+                </div>
+
+                <!-- 备注格言 -->
+                <div class="config-section">
+                    <label class="config-label">
+                        ${lang === 'zh-CN' ? '备注格言' : 'Remarks'}
+                        <span class="lang-tag">${lang === 'zh-CN' ? '中文' : 'English'}</span>
+                    </label>
+                    <input type="text" class="config-input" id="configRemarksPrimary" 
+                           value="${currentRemarks}" placeholder="${lang === 'zh-CN' ? '一句标志性的格言...' : 'A signature motto...'}">
+                    
+                    <label class="config-label secondary">
+                        ${lang === 'zh-CN' ? '英文格言' : '中文格言'}
+                        <span class="lang-tag secondary">${lang === 'zh-CN' ? 'English' : '中文'}</span>
+                    </label>
+                    <input type="text" class="config-input" id="configRemarksSecondary" 
+                           value="${currentRemarksOther}" placeholder="${lang === 'zh-CN' ? 'English motto...' : '中文格言...'}">
+                </div>
+
+                <!-- 融合模式 -->
+                <div class="config-section">
+                    <label class="config-label">${getFieldValue(starryColumnTexts.fusionMode, lang)}</label>
+                    <select class="config-select" id="configFusionMode">
+                        ${modeOptions.map(opt => `
+                            <option value="${opt.value}" ${card.fusionStrategy?.mode === opt.value ? 'selected' : ''}>
+                                ${opt.label}
                             </option>
-                            <option value="synthesis" ${card.fusionStrategy?.mode === 'synthesis' ? 'selected' : ''}>
-                                ${lang === 'en' ? 'Synthesis' : '综合融合'}
-                            </option>
-                            <option value="debate" ${card.fusionStrategy?.mode === 'debate' ? 'selected' : ''}>
-                                ${lang === 'en' ? 'Debate' : '思想交锋'}
-                            </option>
-                        </select>
+                        `).join('')}
+                    </select>
+                </div>
+
+                <!-- 专家选择（模糊匹配） -->
+                <div class="config-section">
+                    <label class="config-label">
+                        ${getFieldValue(starryColumnTexts.selectExperts, lang)}
+                        <span class="hint-text">${lang === 'zh-CN' ? '输入名称或领域，模糊匹配' : 'Type name or field to search'}</span>
+                    </label>
+                    
+                    <div class="expert-search-box">
+                        <input type="text" class="config-input expert-search-input" id="expertSearchInput"
+                               placeholder="${lang === 'zh-CN' ? '输入专家姓名或领域...' : 'Type expert name or field...'}"
+                               autocomplete="off">
+                        <div class="expert-search-icon">🔍</div>
                     </div>
-                    <div class="config-section">
-                        <label>${lang === 'en' ? 'Select Experts' : '选择专家'}</label>
-                        <div class="experts-grid">
-                            ${allExperts.map(expert => {
-                                const isSelected = card.experts?.includes(expert.id);
-                                return `
-                                    <div class="expert-option ${isSelected ? 'selected' : ''}" 
-                                         data-expert-id="${expert.id}"
-                                         onclick="toggleExpertSelection(this)">
-                                        <span class="expert-name">${getFieldValue(expert.name, lang)}</span>
-                                        <span class="expert-field">${getFieldValue(expert.field, lang)}</span>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
+                    
+                    <div class="expert-dropdown" id="expertDropdown"></div>
+                    
+                    <div class="selected-experts-area">
+                        <label class="config-label sub">
+                            ${lang === 'zh-CN' ? '已选专家' : 'Selected Experts'}
+                            <span class="count-badge" id="selectedCount">${card.experts?.length || 0}</span>
+                        </label>
+                        <div class="selected-experts-list" id="selectedExpertsList"></div>
                     </div>
                 </div>
-                <div class="starry-modal-footer">
-                    <button class="btn-secondary" onclick="closeConfigModal()">
-                        ${lang === 'en' ? 'Cancel' : '取消'}
-                    </button>
-                    <button class="btn-primary" onclick="saveCardConfig('${card.id}')">
-                        ${lang === 'en' ? 'Save' : '保存'}
-                    </button>
-                </div>
+            </div>
+            
+            <div class="starry-modal-footer">
+                <button class="btn-secondary" onclick="closeConfigModal()">
+                    ${getFieldValue(starryColumnTexts.cancel, lang)}
+                </button>
+                <button class="btn-primary" onclick="saveCardConfig('${card.id}')">
+                    ${getFieldValue(starryColumnTexts.save, lang)}
+                </button>
             </div>
         </div>
     `;
 
     document.body.appendChild(modal);
+    
+    // 初始化已选专家
+    window._tempSelectedExperts = [...(card.experts || [])];
+    renderSelectedExperts(window._tempSelectedExperts);
+    
+    // 绑定搜索事件
+    const searchInput = document.getElementById('expertSearchInput');
+    let searchTimeout;
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            handleExpertSearch(e.target.value, lang);
+        }, 300);
+    });
+    
+    // 点击外部关闭下拉
+    document.addEventListener('click', closeExpertDropdownHandler);
 }
 
 /**
  * 关闭配置模态框
  */
 function closeConfigModal() {
+    document.removeEventListener('click', closeExpertDropdownHandler);
+    window._tempSelectedExperts = null;
     document.getElementById('starryConfigModal')?.remove();
+}
+
+/**
+ * 关闭下拉处理器
+ */
+function closeExpertDropdownHandler(e) {
+    const dropdown = document.getElementById('expertDropdown');
+    const searchBox = document.querySelector('.expert-search-box');
+    if (!dropdown || !searchBox) return;
+    if (!searchBox.contains(e.target)) {
+        dropdown.classList.remove('active');
+    }
+}
+
+/**
+ * 处理专家搜索
+ */
+function handleExpertSearch(query, lang) {
+    const dropdown = document.getElementById('expertDropdown');
+    if (!query || query.trim().length < 1) {
+        dropdown.innerHTML = '';
+        dropdown.classList.remove('active');
+        return;
+    }
+    
+    const results = fuzzySearchExperts(query, lang, 8);
+    
+    if (results.length === 0) {
+        dropdown.innerHTML = `
+            <div class="dropdown-empty">
+                ${lang === 'zh-CN' ? '未找到匹配专家' : 'No matching experts found'}
+            </div>
+        `;
+        dropdown.classList.add('active');
+        return;
+    }
+    
+    dropdown.innerHTML = results.map(r => {
+        const isSelected = (window._tempSelectedExperts || []).includes(r.id);
+        return `
+            <div class="dropdown-item ${isSelected ? 'selected' : ''}" 
+                 data-expert-id="${r.id}"
+                 onclick="toggleExpertSelect('${r.id}', '${r.display.replace(/'/g, "\\'")}')">
+                <span class="dropdown-item-text">${r.display}</span>
+                <span class="dropdown-item-category">${getCategoryName(r.category)}</span>
+                ${isSelected ? '<span class="dropdown-check">✓</span>' : ''}
+            </div>
+        `;
+    }).join('');
+    
+    dropdown.classList.add('active');
 }
 
 /**
  * 切换专家选择
  */
-function toggleExpertSelection(el) {
-    el.classList.toggle('selected');
+function toggleExpertSelect(expertId, displayText) {
+    if (!window._tempSelectedExperts) window._tempSelectedExperts = [];
+    
+    const idx = window._tempSelectedExperts.indexOf(expertId);
+    if (idx > -1) {
+        window._tempSelectedExperts.splice(idx, 1);
+    } else {
+        window._tempSelectedExperts.push(expertId);
+    }
+    
+    renderSelectedExperts(window._tempSelectedExperts);
+    
+    // 更新下拉显示
+    const dropdown = document.getElementById('expertDropdown');
+    if (dropdown?.classList.contains('active')) {
+        const query = document.getElementById('expertSearchInput')?.value || '';
+        handleExpertSearch(query, window.currentLang || 'zh-CN');
+    }
+}
+
+/**
+ * 渲染已选专家
+ */
+function renderSelectedExperts(expertIds) {
+    const container = document.getElementById('selectedExpertsList');
+    const countBadge = document.getElementById('selectedCount');
+    if (!container) return;
+    
+    window._tempSelectedExperts = expertIds;
+    if (countBadge) countBadge.textContent = expertIds.length;
+    
+    const lang = window.currentLang || 'zh-CN';
+    
+    if (expertIds.length === 0) {
+        container.innerHTML = `
+            <div class="selected-empty">
+                ${lang === 'en' ? 'No experts selected' : '尚未选择专家'}
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = expertIds.map(id => {
+        const expert = findExpertById(id);
+        if (!expert) return '';
+        
+        const display = lang === 'en' 
+            ? `${getFieldValue(expert.field, 'en')}: ${getFieldValue(expert.name, 'en')}`
+            : `${getFieldValue(expert.field, 'zh-CN')}: ${getFieldValue(expert.name, 'zh-CN')}`;
+        
+        return `
+            <div class="selected-expert-tag" data-expert-id="${id}">
+                <span class="tag-text">${display}</span>
+                <button class="tag-remove" onclick="removeSelectedExpert('${id}')" title="Remove">×</button>
+            </div>
+        `;
+    }).join('');
+}
+
+/**
+ * 移除已选专家
+ */
+function removeSelectedExpert(expertId) {
+    if (!window._tempSelectedExperts) return;
+    const idx = window._tempSelectedExperts.indexOf(expertId);
+    if (idx > -1) {
+        window._tempSelectedExperts.splice(idx, 1);
+        renderSelectedExperts(window._tempSelectedExperts);
+    }
 }
 
 /**
@@ -723,78 +957,148 @@ function saveCardConfig(cardId) {
     const card = starryColumnCards.find(c => c.id === cardId);
     if (!card) return;
 
-    // 获取选中的专家
-    const selectedExperts = Array.from(
-        document.querySelectorAll('.expert-option.selected')
-    ).map(el => el.dataset.expertId);
+    const lang = window.currentLang || 'zh-CN';
+    const otherLang = lang === 'zh-CN' ? 'en' : 'zh-CN';
 
-    // 获取融合模式
+    // 读取所有字段
+    const namePrimary = document.getElementById('configNamePrimary')?.value.trim();
+    const nameSecondary = document.getElementById('configNameSecondary')?.value.trim();
+    const contribPrimary = document.getElementById('configContributionPrimary')?.value.trim();
+    const contribSecondary = document.getElementById('configContributionSecondary')?.value.trim();
+    const fieldPrimary = document.getElementById('configFieldPrimary')?.value.trim();
+    const fieldSecondary = document.getElementById('configFieldSecondary')?.value.trim();
+    const remarksPrimary = document.getElementById('configRemarksPrimary')?.value.trim();
+    const remarksSecondary = document.getElementById('configRemarksSecondary')?.value.trim();
     const fusionMode = document.getElementById('configFusionMode')?.value || 'synthesis';
+    const selectedExperts = window._tempSelectedExperts || [];
 
-    // 更新卡片配置
+    // 校验
+    if (!namePrimary || !contribPrimary || !fieldPrimary) {
+        alert(lang === 'zh-CN' ? '请填写主要语言的所有必填字段' : 'Please fill all required fields in primary language');
+        return;
+    }
+
+    // 更新数据
+    card.name = { [lang]: namePrimary, [otherLang]: nameSecondary || namePrimary };
+    card.contribution = { [lang]: contribPrimary, [otherLang]: contribSecondary || contribPrimary };
+    card.field = { [lang]: fieldPrimary, [otherLang]: fieldSecondary || fieldPrimary };
+    card.remarks = { [lang]: remarksPrimary, [otherLang]: remarksSecondary || remarksPrimary };
     card.experts = selectedExperts;
     card.fusionStrategy = {
         mode: fusionMode,
-        description: card.fusionStrategy?.description || {}
+        description: { 'zh-CN': '（已配置）', 'en': '(Configured)' }
     };
 
-    // 更新领域标签（根据选中专家自动推断）
-    if (selectedExperts.length > 0) {
-        const fields = selectedExperts.map(id => {
-            const expert = findExpertById(id);
-            return expert ? getFieldValue(expert.field, window.currentLang || 'zh-CN') : '';
-        }).filter(Boolean);
-        
-        // 去重后拼接
-        const uniqueFields = [...new Set(fields.flatMap(f => f.split(/[,、]/)))].slice(0, 3).join('、');
-        card.field = {
-            'zh-CN': uniqueFields || '融合领域',
-            'en': 'Fusion Domain'
-        };
-    }
+    // 清理
+    window._tempSelectedExperts = null;
+    document.removeEventListener('click', closeExpertDropdownHandler);
 
-    // 关闭模态框并刷新列表
+    // 刷新
     closeConfigModal();
     renderStarryCardsList();
-    
-    // 持久化（需接入后端或 localStorage）
     persistStarryColumnCards();
 }
 
+// ═══════════════════════════════════════════════
+// 专家搜索工具
+// ═══════════════════════════════════════════════
+
 /**
- * 持久化配置（示例：localStorage）
+ * 构建专家搜索索引
  */
+function buildExpertSearchIndex() {
+    const index = [];
+    for (const [category, leaders] of Object.entries(allData)) {
+        leaders.forEach(leader => {
+            if (leader.id === 'interstellar_navigator') return;
+            
+            const nameZh = getFieldValue(leader.name, 'zh-CN');
+            const nameEn = getFieldValue(leader.name, 'en');
+            const fieldZh = getFieldValue(leader.field, 'zh-CN');
+            const fieldEn = getFieldValue(leader.field, 'en');
+            
+            index.push({
+                id: leader.id,
+                name: leader.name,
+                field: leader.field,
+                category: category,
+                searchKeyZh: `${fieldZh} ${nameZh} ${category}`.toLowerCase(),
+                searchKeyEn: `${fieldEn} ${nameEn} ${category}`.toLowerCase(),
+                displayZh: `${fieldZh}: ${nameZh}`,
+                displayEn: `${fieldEn}: ${nameEn}`
+            });
+        });
+    }
+    return index;
+}
+
+/**
+ * 模糊搜索专家
+ */
+function fuzzySearchExperts(query, lang = 'zh-CN', limit = 10) {
+    if (!query || query.trim().length < 1) return [];
+    
+    const searchIndex = buildExpertSearchIndex();
+    const q = query.toLowerCase().trim();
+    
+    const scored = searchIndex.map(expert => {
+        const searchKey = lang === 'en' ? expert.searchKeyEn : expert.searchKeyZh;
+        const display = lang === 'en' ? expert.displayEn : expert.displayZh;
+        
+        let score = 0;
+        
+        // 精确匹配
+        if (searchKey.includes(q)) score += 100;
+        if (searchKey.startsWith(q)) score += 60;
+        
+        // 分词匹配
+        const queryChars = q.split('');
+        const matchCount = queryChars.filter(c => searchKey.includes(c)).length;
+        score += (matchCount / queryChars.length) * 40;
+        
+        return { ...expert, score, display };
+    });
+    
+    return scored
+        .filter(s => s.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, limit);
+}
+
+// ═══════════════════════════════════════════════
+// 数据持久化
+// ═══════════════════════════════════════════════
+
 function persistStarryColumnCards() {
     localStorage.setItem('starryColumnCards', JSON.stringify(starryColumnCards));
 }
 
-/**
- * 加载持久化配置
- */
 function loadStarryColumnCards() {
     const saved = localStorage.getItem('starryColumnCards');
-    if (saved) {
-        try {
-            const parsed = JSON.parse(saved);
-            // 合并保存的配置到默认卡片（保留内置卡片结构）
-            parsed.forEach(savedCard => {
-                const existing = starryColumnCards.find(c => c.id === savedCard.id);
-                if (existing && existing.configurable) {
-                    existing.experts = savedCard.experts || [];
-                    existing.fusionStrategy = savedCard.fusionStrategy || { mode: 'synthesis' };
-                    existing.field = savedCard.field || existing.field;
-                }
-            });
-        } catch (e) {
-            console.error('Failed to load starry column cards:', e);
-        }
+    if (!saved) return;
+    
+    try {
+        const parsed = JSON.parse(saved);
+        parsed.forEach(savedCard => {
+            const existing = starryColumnCards.find(c => c.id === savedCard.id);
+            if (existing && existing.configurable) {
+                existing.name = savedCard.name || existing.name;
+                existing.contribution = savedCard.contribution || existing.contribution;
+                existing.field = savedCard.field || existing.field;
+                existing.remarks = savedCard.remarks || existing.remarks;
+                existing.experts = savedCard.experts || [];
+                existing.fusionStrategy = savedCard.fusionStrategy || { mode: 'synthesis' };
+            }
+        });
+    } catch (e) {
+        console.error('Failed to load starry column cards:', e);
     }
 }
 
-/**
- * 检查是否为管理员
- * 基于 qgr_jwt_token 的客户端 JWT 解析
- */
+// ═══════════════════════════════════════════════
+// 权限检查
+// ═══════════════════════════════════════════════
+
 function checkAdminPermission() {
     const token = localStorage.getItem('qgr_jwt_token');
     if (!token) return false;
@@ -802,13 +1106,29 @@ function checkAdminPermission() {
     const decoded = parseJWTClientSide(token);
     if (!decoded) return false;
 
-    const username = decoded.user;
-    const isAdmin = username === 'admin';
-    
-    return isAdmin;
+    return decoded.user === 'admin';
 }
 
-// 在应用初始化时调用
+function parseJWTClientSide(token) {
+    try {
+        const parts = token.split('.');
+        if (parts.length !== 3) return null;
+        
+        const payload = parts[1];
+        const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+        const json = atob(base64);
+        return JSON.parse(json);
+    } catch (e) {
+        console.error('JWT parse error:', e);
+        return null;
+    }
+}
+
+// ═══════════════════════════════════════════════
+// 初始化
+// ═══════════════════════════════════════════════
+
 function initStarryColumn() {
     loadStarryColumnCards();
 }
+
