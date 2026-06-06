@@ -888,7 +888,7 @@ function t(key) {
   return uiTexts[lang]?.[key] || uiTexts['zh-CN'][key];
 }
 
-let currentSelectedCategory = null;
+// let currentSelectedCategory = null;
 
 // 大类中文 / 英文名称（从 translations 动态获取）
 function getCategoryName(cat) {
@@ -1407,7 +1407,7 @@ function renderStarryColumnEntry() {
 // 选择大类后：进入左右布局
 // ══════════════════════════════════════════════
 function selectCategory(category) {
-    currentSelectedCategory = category;
+    window.currentSelectedCategory = category;
     
     // 隐藏水晶球
     const nebulaCrystal = document.getElementById('nebula-crystal');
@@ -1777,7 +1777,7 @@ function backToWheelSelection() {
         const tabsBar = document.querySelector('.tabs');
         if (tabsBar) tabsBar.style.display = 'flex';
         
-        currentSelectedCategory = null;
+        window.currentSelectedCategory = null;
         if (wheelInstance) {
             wheelInstance.clearPending();
             wheelInstance.draw();
@@ -1814,7 +1814,7 @@ function initSwipeBack() {
     const hint = document.getElementById('swipeBackHint');
     
     document.addEventListener('touchstart', (e) => {
-        if (!currentSelectedCategory) return;
+        if (!window.currentSelectedCategory) return;
         
         touchStartX = e.touches[0].clientX;
         touchStartY = e.touches[0].clientY;
@@ -1827,7 +1827,7 @@ function initSwipeBack() {
     }, { passive: true });
     
     document.addEventListener('touchmove', (e) => {
-        if (!isSwiping || !currentSelectedCategory) return;
+        if (!isSwiping || !window.currentSelectedCategory) return;
         
         const currentX = e.touches[0].clientX;
         const currentY = e.touches[0].clientY;
@@ -1916,13 +1916,15 @@ function updateWheelLanguage() {
         }
         
         const layout = document.getElementById('category-layout-container');
-        if (layout && layout.style.display !== 'none' && currentSelectedCategory) {
-            if (currentSelectedCategory === 'starryColumn') {
+        // 【修复】使用 window.currentSelectedCategory 而不是局部 currentSelectedCategory
+        if (layout && layout.style.display !== 'none' && window.currentSelectedCategory) {
+            
+            if (window.currentSelectedCategory === 'starryColumn') {
                 updateStarryColumnLanguage();
             } else {
-                renderCategoryLayout(currentSelectedCategory);
-                if (currentSelectedLeader && currentSelectedLeaderCategory === currentSelectedCategory) {
-                    updateSingleCard(currentSelectedLeader);
+                renderCategoryLayout(window.currentSelectedCategory);
+                if (window.currentSelectedLeader && window.currentSelectedLeaderCategory === window.currentSelectedCategory) {
+                    updateSingleCard(window.currentSelectedLeader);
                 }
             }
         }
