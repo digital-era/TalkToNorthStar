@@ -273,24 +273,35 @@ function selectStarryCard(card) {
         resolvedExperts = resolveCardExperts(card);
     }
 
-    // 创建虚拟领袖
+    // ═══════════════════════════════════════════════
+    // 【关键修复】创建适配 selectLeader 的虚拟领袖对象
+    // 所有字段必须提前解析为当前语言的字符串，不能传多语言对象
+    // ═══════════════════════════════════════════════
     const virtualLeader = {
         id: card.id,
-        name: card.name,
-        field: card.field,
-        contribution: card.contribution,
-        remarks: card.remarks,
+        // 提前解析为字符串，兼容 selectLeader 的读取方式
+        name: getFieldValue(card.name, lang),
+        field: getFieldValue(card.field, lang),
+        contribution: getFieldValue(card.contribution, lang),
+        remarks: getFieldValue(card.remarks, lang),
+        
+        // 保留原始多语言对象和扩展数据，供后续融合体逻辑使用
         _isStarryCard: true,
         _cardType: card.type,
         _experts: resolvedExperts,
         _systemPromptBuilder: card.systemPromptBuilder,
-        _fusionStrategy: card.fusionStrategy
+        _fusionStrategy: card.fusionStrategy,
+        // 保留原始多语言对象，供 buildFusionSystemPrompt 等函数使用
+        _rawName: card.name,
+        _rawField: card.field,
+        _rawContribution: card.contribution,
+        _rawRemarks: card.remarks
     };
 
     // 设置全局当前选中领袖
     window.currentSelectedLeader = virtualLeader;
 
-    // 切换布局（保持原有逻辑）
+    // 切换布局
     const layout = document.getElementById('category-layout-container');
     if (!layout || layout.style.display === 'none') {
         const nebulaCrystal = document.getElementById('nebula-crystal');
@@ -311,13 +322,9 @@ function selectStarryCard(card) {
     }
 
     // ═══════════════════════════════════════════════
-    // 恢复 selectLeader 调用，渲染交互区
+    // 恢复调用 selectLeader，复用原有对话区域逻辑
     // ═══════════════════════════════════════════════
-    if (typeof selectLeader === 'function') {
-        selectLeader(virtualLeader);
-    } else {
-        console.error('selectLeader is not defined');
-    }
+    selectLeader(virtualLeader, 'starryColumn', null);
 
     // 滚动到交互区
     setTimeout(() => {
@@ -334,6 +341,7 @@ function buildFusionSystemPrompt(source, lang = 'zh-CN') {
     const isZh = lang === 'zh-CN';
     
     // 统一提取字段（兼容 card 和 virtualLeader）
+    // 优先使用原始多语言对象，回退到已解析的字符串
     const experts = source._experts || resolveCardExperts(source);
     const fusionStrategy = source._fusionStrategy || source.fusionStrategy;
     
