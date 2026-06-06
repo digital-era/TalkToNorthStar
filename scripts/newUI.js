@@ -813,6 +813,8 @@ function updateCrystalLanguage() {
   }
 
    renderNebulaManualSelector(); // <--- 新增这行，切换语言时重绘星轨
+   // 【新增】星空专栏入口（紧跟星轨指引之后）
+   renderStarryColumnEntry();
   
 }
 
@@ -1347,6 +1349,9 @@ function initNebulaCrystal() {
   initCrystalBall();
   renderNebulaManualSelector(); // <--- 新增这行，初始化时渲染星轨
   
+  // 【新增】星空专栏入口（紧跟星轨指引之后）
+  renderStarryColumnEntry();
+  
   const nebulaCrystal = document.getElementById('nebula-crystal');
   if (nebulaCrystal) nebulaCrystal.style.display = 'flex';
   
@@ -1362,6 +1367,40 @@ function initNebulaCrystal() {
   document.querySelectorAll('.tab-content').forEach(tc => {
     tc.style.display = 'none';
   });
+}
+
+function renderStarryColumnEntry() {
+    const crystalSection = document.getElementById('nebula-crystal');
+    if (!crystalSection) return;
+    
+    // 如果已存在则移除
+    let existing = document.getElementById('starry-column-entry');
+    if (existing) existing.remove();
+    
+    const lang = window.currentLang || 'zh-CN';
+    const hintText = lang === 'en' ? '— Or, Enter the Starry Column —' : '— 或，走进星空专栏 —';
+    const btnText = lang === 'en' ? 'Starry Column' : '星空专栏';
+    
+    const entry = document.createElement('div');
+    entry.id = 'starry-column-entry';
+    entry.className = 'starry-column-entry';
+    entry.innerHTML = `
+        <div class="starry-column-hint">
+            <span class="hint-line">${hintText}</span>
+        </div>
+        <button class="starry-column-btn" onclick="enterStarryColumn()">
+            <span class="btn-glow"></span>
+            <span class="btn-icon">✦</span>
+            <span class="btn-text">${btnText}</span>
+        </button>
+    `;
+    
+    // 阻止事件冒泡到水晶球
+    entry.addEventListener('mousedown', (e) => e.stopPropagation());
+    entry.addEventListener('touchstart', (e) => e.stopPropagation());
+    
+    // 【关键】append 到 nebula-crystal，自然位于星轨指引之后
+    crystalSection.appendChild(entry);
 }
 
 // ──────────────────────────────────────────────
