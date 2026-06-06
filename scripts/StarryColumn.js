@@ -266,11 +266,9 @@ function getCardTypeIcon(type) {
 function selectStarryCard(card) {
     const lang = window.currentLang || 'zh-CN';
 
-    // 标记当前为星空专栏模式
     window.currentSelectedCard = card;
     window.currentSelectedCategory = 'starryColumn';
 
-    // 根据卡片类型准备专家数据
     let resolvedExperts;
     if (card.type === 'navigator') {
         resolvedExperts = buildInterstellarSnapshot(lang);
@@ -278,52 +276,45 @@ function selectStarryCard(card) {
         resolvedExperts = resolveCardExperts(card);
     }
 
-    // 创建虚拟领袖对象，兼容原有数据结构
     const virtualLeader = {
         id: card.id,
-        name: card.name,                    // 多语言对象，getFieldValue 兼容
-        field: card.field,                  // 多语言对象
-        contribution: card.contribution,    // 多语言对象
-        remarks: card.remarks,              // 多语言对象
-        
-        // 标记属性，用于后续逻辑判断
+        name: card.name,
+        field: card.field,
+        contribution: card.contribution,
+        remarks: card.remarks,
         _isStarryCard: true,
-        _cardType: card.type,               // 'navigator' | 'fusion'
+        _cardType: card.type,
         _experts: resolvedExperts,
         _systemPromptBuilder: card.systemPromptBuilder,
         _fusionStrategy: card.fusionStrategy
     };
 
-    // ═══════════════════════════════════════════════
-    // 【关键】复用原有流程进入对话界面
-    // ═══════════════════════════════════════════════
-    
-    // 1. 如果当前不在左右布局，先进入
+    // 如果当前不在左右布局，先进入
     const layout = document.getElementById('category-layout-container');
     if (!layout || layout.style.display === 'none') {
-        // 隐藏其他页面
-        document.getElementById('nebula-crystal')?.style.display = 'none';
-        document.getElementById('wheel-of-destiny')?.style.display = 'none';
-        document.querySelector('.container')?.style.display = 'none';
+        const nebulaCrystal = document.getElementById('nebula-crystal');
+        if (nebulaCrystal) nebulaCrystal.style.display = 'none';
+
+        const wheelSection = document.getElementById('wheel-of-destiny');
+        if (wheelSection) wheelSection.style.display = 'none';
+
+        const mainContainer = document.querySelector('.container');
+        if (mainContainer) mainContainer.style.display = 'none';
+
         document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
+
+        if (layout) layout.style.display = 'flex';
         
-        // 显示布局
-        layout.style.display = 'flex';
-        document.querySelector('.container').style.display = 'block';
+        const container = document.querySelector('.container');
+        if (container) container.style.display = 'block';
     }
 
-    // 2. 复用 selectLeader —— 这会触发 populateInteractionArea 等原有逻辑
     selectLeader(virtualLeader, 'starryColumn', null);
-
-    // 3. 复用 updateSingleCard —— 渲染右侧大卡片
     updateSingleCard(virtualLeader);
 
-    // 4. 滚动到交互区
     setTimeout(() => {
-        document.querySelector('.interaction-area')?.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center' 
-        });
+        const interactionArea = document.querySelector('.interaction-area');
+        if (interactionArea) interactionArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 100);
 }
 
@@ -630,7 +621,10 @@ function showConfigModal(card) {
  * 关闭配置模态框
  */
 function closeConfigModal() {
-    document.removeEventListener('click', closeExpertDropdownHandler);
+    // 移除下拉点击事件
+    const dropdown = document.getElementById('expertDropdown');
+    if (dropdown) dropdown.onclick = null;
+    
     window._tempSelectedExperts = null;
     document.getElementById('starryConfigModal')?.remove();
 }
@@ -670,13 +664,13 @@ function handleExpertSearch(query, lang) {
         return;
     }
     
+    // 使用事件委托，不绑定内联 onclick
     dropdown.innerHTML = results.map(r => {
         const isSelected = (window._tempSelectedExperts || []).includes(r.id);
         return `
             <div class="dropdown-item ${isSelected ? 'selected' : ''}" 
-                 data-expert-id="${r.id}"
-                 onclick="toggleExpertSelect('${r.id}', '${r.display.replace(/'/g, "\\'")}')">
-                <span class="dropdown-item-text">${r.display}</span>
+                 data-expert-id="${r.id}">
+                <span class="dropdown-item-text">${escapeHtml(r.display)}</span>
                 <span class="dropdown-item-category">${getCategoryName(r.category)}</span>
                 ${isSelected ? '<span class="dropdown-check">✓</span>' : ''}
             </div>
@@ -684,13 +678,30 @@ function handleExpertSearch(query, lang) {
     }).join('');
     
     dropdown.classList.add('active');
+    
+    // 绑定一次性点击事件（事件委托）
+    dropdown.onclick = function(e) {
+        const item = e.target.closest('.dropdown-item');
+        if (!item) return;
+        
+        const expertId = item.dataset.expertId;
+        if (expertId) {
+            toggleExpertSelect(expertId);
+        }
+    };
 }
+
 
 /**
  * 切换专家选择
  */
-function toggleExpertSelect(expertId, displayText) {
-    if (!window._tempSelectedExperts) window._tempSelectedExperts = [];
+/**
+ * 切换专家选择
+ */
+function toggleExpertSelect(expertId) {
+    if (!window._tempSelectedExperts) {
+        window._tempSelectedExperts = [];
+    }
     
     const idx = window._tempSelectedExperts.indexOf(expertId);
     if (idx > -1) {
@@ -699,14 +710,34 @@ function toggleExpertSelect(expertId, displayText) {
         window._tempSelectedExperts.push(expertId);
     }
     
+    // 更新已选标签显示
     renderSelectedExperts(window._tempSelectedExperts);
     
-    // 更新下拉显示
+    // 更新下拉列表中的选中状态（不重新搜索，避免闪烁）
+    updateDropdownSelection();
+}
+
+/**
+ * 更新下拉列表选中状态（不重新搜索）
+ */
+function updateDropdownSelection() {
     const dropdown = document.getElementById('expertDropdown');
-    if (dropdown?.classList.contains('active')) {
-        const query = document.getElementById('expertSearchInput')?.value || '';
-        handleExpertSearch(query, window.currentLang || 'zh-CN');
-    }
+    if (!dropdown) return;
+    
+    const items = dropdown.querySelectorAll('.dropdown-item');
+    items.forEach(item => {
+        const id = item.dataset.expertId;
+        const isSelected = (window._tempSelectedExperts || []).includes(id);
+        item.classList.toggle('selected', isSelected);
+        
+        // 更新勾选标记
+        const check = item.querySelector('.dropdown-check');
+        if (isSelected && !check) {
+            item.insertAdjacentHTML('beforeend', '<span class="dropdown-check">✓</span>');
+        } else if (!isSelected && check) {
+            check.remove();
+        }
+    });
 }
 
 /**
