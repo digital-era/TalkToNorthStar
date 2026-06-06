@@ -1,65 +1,15 @@
 /* ═══════════════════════════════════════════════
-   【新增】星空专栏入口
+   星空专栏入口按钮
    ═══════════════════════════════════════════════ */
 
-.starry-column-entry {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    z-index: 10;
-    width: 100%;
-    max-width: 600px;
-    padding: 0 20px 60px;
-    opacity: 1;
-    transition: opacity 0.5s ease, transform 0.5s ease;
-    flex-shrink: 0;
-    margin-top: 10px;
-}
-
-.starry-column-entry.fading-out {
-    opacity: 0;
-    transform: translateY(20px);
-    pointer-events: none;
-}
-
-.starry-column-hint {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.4);
-    letter-spacing: 2px;
-    margin-bottom: 16px;
-    text-transform: uppercase;
-    font-family: "Noto Serif SC", "Poppins", serif;
-    text-shadow: 0 0 10px rgba(0, 223, 216, 0.2);
-}
-
-.starry-column-hint .hint-line {
-    display: block;
-}
-
-/* ═══════════════════════════════════════════════
-   星空专栏按钮
-   【修改点】高度、字体大小与 .manual-star-chip 完全一致
-   【保持】按钮长度更长（padding 左右更大）
-   ═══════════════════════════════════════════════ */
 .starry-column-btn {
     position: relative;
     background: rgba(10, 20, 35, 0.6);
     border: 1.5px solid rgba(0, 223, 216, 0.25);
     color: rgba(255, 255, 255, 0.85);
-    
-    /* ═══ 与 .manual-star-chip 完全一致 ═══ */
-    padding: 8px 0;              /* 上下内边距与 chip 相同 → 高度一致 */
-    font-size: 14px;             /* 字体大小与 chip 相同 */
-    /* ═══════════════════════════════════ */
-    
-    /* ═══ 保持按钮长度更长 ═══ */
-    /* 通过更大的水平 padding 实现，而不是 width */
-    padding-left: 40px;           /* 左侧额外空间 */
-    padding-right: 40px;         /* 右侧额外空间 */
-    /* ═══════════════════════ */
-    
-    border-radius: 30px;           /* 圆角与 chip 相同 */
+    padding: 8px 40px;
+    font-size: 14px;
+    border-radius: 30px;
     font-family: 'Noto Serif SC', serif;
     cursor: pointer;
     overflow: hidden;
@@ -68,94 +18,35 @@
     transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
     text-align: center;
     white-space: nowrap;
-    letter-spacing: 3px;         /* 保持更宽松的字母间距 */
+    letter-spacing: 3px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
 }
 
-/* 按钮内部发光层 */
-.starry-column-btn .btn-glow {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: radial-gradient(circle, rgba(0, 223, 216, 0.5) 0%, rgba(100, 200, 255, 0.2) 40%, transparent 70%);
-    transform: translate(-50%, -50%);
-    transition: width 0.5s ease, height 0.5s ease;
-    z-index: 1;
-    border-radius: 50%;
-    pointer-events: none;
-}
-
-.starry-column-btn .btn-icon {
-    position: relative;
-    z-index: 2;
-    font-size: 16px;             /* 图标稍大，保持视觉平衡 */
-    color: rgba(0, 223, 216, 0.9);
-    text-shadow: 0 0 10px rgba(0, 223, 216, 0.5);
-    animation: iconPulse 3s ease-in-out infinite;
-}
-
-.starry-column-btn .btn-text {
-    position: relative;
-    z-index: 2;
-    font-weight: 300;            /* 与 .chip-text 一致 */
-    letter-spacing: 1px;         /* 与 .chip-text 一致 */
-}
-
-/* 悬停效果 */
 .starry-column-btn:hover {
     color: #fff;
     border-color: rgba(0, 223, 216, 0.7);
     box-shadow: 
         0 0 25px rgba(0, 223, 216, 0.4),
         inset 0 0 15px rgba(0, 223, 216, 0.15);
-    transform: translateY(-2px);  /* 与 chip 悬停幅度一致 */
+    transform: translateY(-2px);
 }
 
-.starry-column-btn:hover .btn-glow {
-    width: 150px;                /* 与 chip hover 一致 */
-    height: 150px;
-}
-
-/* 点击反馈 */
 .starry-column-btn:active {
-    transform: scale(0.95);      /* 与 chip 一致 */
+    transform: scale(0.95);
 }
 
 
 /* ═══════════════════════════════════════════════
-   【补充】星空专栏页面 - 完整样式
+   星空专栏页面布局
    ═══════════════════════════════════════════════ */
 
-/* ─────────────────────────────────────────────
-   星空专栏布局覆盖
-   ───────────────────────────────────────────── */
-#category-layout-container.starry-column-mode {
-    background: linear-gradient(135deg, #080c14 0%, #0d1b2a 50%, #080c14 100%);
-}
-
-/* 左侧封面区域 - 星空专栏专用 */
 #starryLeft {
     background: linear-gradient(135deg, #0a0e17 0%, #121a2b 100%);
     position: relative;
     overflow: hidden;
-}
-
-#starryLeft::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-image:
-        radial-gradient(1px 1px at 20% 30%, rgba(0, 223, 216, 0.3), transparent),
-        radial-gradient(1.5px 1.5px at 70% 20%, rgba(100, 200, 255, 0.2), transparent),
-        radial-gradient(1px 1px at 50% 70%, rgba(200, 100, 255, 0.15), transparent);
-    background-size: 200px 200px, 300px 300px, 250px 250px;
-    animation: starTwinkle 10s ease-in-out infinite alternate;
-    pointer-events: none;
 }
 
 .starry-cover-wrapper {
@@ -215,14 +106,17 @@
     margin: 0;
 }
 
+
 /* ─────────────────────────────────────────────
-   右侧头部
+   右侧头部（含双返回按钮）
    ───────────────────────────────────────────── */
+
 .starry-header {
     width: 100%;
     max-width: 500px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 15px;
     margin-bottom: 30px;
     padding-bottom: 15px;
@@ -239,9 +133,67 @@
     text-align: center;
 }
 
+/* 左上角：返回首页 */
+.back-btn-inline {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 20, 40, 0.6);
+    border: 1px solid rgba(0, 223, 216, 0.35);
+    border-radius: 6px;
+    color: #00dfd8;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.back-btn-inline:hover {
+    background: rgba(0, 223, 216, 0.15);
+    border-color: rgba(0, 223, 216, 0.6);
+}
+
+.back-btn-inline svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+/* 右上角：返回专栏列表 */
+.back-to-list-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 20, 40, 0.6);
+    border: 1px solid rgba(0, 223, 216, 0.35);
+    border-radius: 6px;
+    color: #00dfd8;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.back-to-list-btn:hover {
+    background: rgba(0, 223, 216, 0.15);
+    border-color: rgba(0, 223, 216, 0.6);
+}
+
+.back-to-list-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+}
+
+
 /* ─────────────────────────────────────────────
    卡片列表容器
    ───────────────────────────────────────────── */
+
 .starry-cards-container {
     width: 100%;
     max-width: 500px;
@@ -268,9 +220,11 @@
     border-radius: 2px;
 }
 
+
 /* ─────────────────────────────────────────────
    星空卡片
    ───────────────────────────────────────────── */
+
 .starry-card {
     position: relative;
     background: rgba(15, 25, 45, 0.6);
@@ -287,8 +241,10 @@
 .starry-card::before {
     content: '';
     position: absolute;
-    top: 0; left: 0;
-    width: 3px; height: 100%;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
     background: linear-gradient(to bottom, #00dfd8, #007cf0);
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -307,7 +263,6 @@
     opacity: 1;
 }
 
-/* 内置卡片特殊标识 */
 .starry-card.built-in {
     border-color: rgba(0, 223, 216, 0.2);
     background: rgba(0, 223, 216, 0.05);
@@ -323,7 +278,6 @@
     text-shadow: 0 0 10px rgba(0, 223, 216, 0.3);
 }
 
-/* 空状态卡片 */
 .starry-card.empty {
     opacity: 0.5;
     cursor: not-allowed;
@@ -335,9 +289,11 @@
     box-shadow: none;
 }
 
+
 /* ─────────────────────────────────────────────
    卡片头部
    ───────────────────────────────────────────── */
+
 .starry-card-header {
     display: flex;
     align-items: center;
@@ -372,7 +328,6 @@
     letter-spacing: 1px;
 }
 
-/* 配置按钮 */
 .starry-card-config {
     width: 32px;
     height: 32px;
@@ -396,9 +351,11 @@
     transform: rotate(30deg);
 }
 
+
 /* ─────────────────────────────────────────────
    卡片内容
    ───────────────────────────────────────────── */
+
 .starry-card-contribution {
     font-size: 13px;
     color: rgba(255, 255, 255, 0.6);
@@ -453,9 +410,11 @@
     letter-spacing: 1px;
 }
 
+
 /* ─────────────────────────────────────────────
    添加卡片按钮（管理员）
    ───────────────────────────────────────────── */
+
 .add-card-btn {
     margin-top: 20px;
     padding: 10px 30px;
@@ -485,261 +444,17 @@
     font-weight: 300;
 }
 
-/* ─────────────────────────────────────────────
-   对话模式区域
-   ───────────────────────────────────────────── */
-.starry-dialog-area {
-    width: 100%;
-    max-width: 500px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-/* 卡片简介 */
-.starry-dialog-info {
-    background: rgba(15, 25, 45, 0.6);
-    border: 1px solid rgba(0, 223, 216, 0.15);
-    border-radius: 16px;
-    padding: 20px;
-    backdrop-filter: blur(12px);
-}
-
-.starry-dialog-card-brief {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 12px;
-}
-
-.starry-dialog-card-brief .brief-icon {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 223, 216, 0.1);
-    border-radius: 12px;
-    border: 1px solid rgba(0, 223, 216, 0.2);
-    color: #00dfd8;
-    font-size: 20px;
-}
-
-.starry-dialog-card-brief .brief-text h4 {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 18px;
-    color: rgba(255, 255, 255, 0.95);
-    margin: 0 0 4px 0;
-}
-
-.starry-dialog-card-brief .brief-text p {
-    font-size: 13px;
-    color: rgba(0, 223, 216, 0.8);
-    margin: 0;
-    letter-spacing: 1px;
-}
-
-.starry-dialog-info .brief-desc {
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.6);
-    line-height: 1.6;
-    margin: 0 0 12px 0;
-}
-
-.brief-experts {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    align-items: center;
-}
-
-.experts-label {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.4);
-    margin-right: 4px;
-}
-
-.expert-tag {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.7);
-    background: rgba(0, 223, 216, 0.1);
-    border: 1px solid rgba(0, 223, 216, 0.2);
-    padding: 3px 10px;
-    border-radius: 20px;
-    letter-spacing: 1px;
-}
-
-/* ─────────────────────────────────────────────
-   输入区域
-   ───────────────────────────────────────────── */
-.starry-input-section {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.starry-question-input {
-    width: 100%;
-    min-height: 100px;
-    padding: 15px 20px;
-    background: rgba(15, 25, 45, 0.6);
-    border: 1px solid rgba(0, 223, 216, 0.15);
-    border-radius: 16px;
-    color: rgba(255, 255, 255, 0.9);
-    font-family: 'Noto Serif SC', serif;
-    font-size: 14px;
-    line-height: 1.8;
-    resize: vertical;
-    transition: all 0.3s ease;
-    outline: none;
-}
-
-.starry-question-input::placeholder {
-    color: rgba(255, 255, 255, 0.3);
-}
-
-.starry-question-input:focus {
-    border-color: rgba(0, 223, 216, 0.4);
-    box-shadow: 
-        0 0 20px rgba(0, 223, 216, 0.1),
-        inset 0 0 20px rgba(0, 223, 216, 0.05);
-}
-
-.starry-submit-btn {
-    align-self: flex-end;
-    padding: 10px 28px;
-    background: linear-gradient(135deg, rgba(0, 223, 216, 0.2), rgba(0, 124, 240, 0.2));
-    border: 1.5px solid rgba(0, 223, 216, 0.3);
-    border-radius: 30px;
-    color: #00dfd8;
-    font-family: 'Noto Serif SC', serif;
-    font-size: 14px;
-    letter-spacing: 2px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s ease;
-}
-
-.starry-submit-btn:hover {
-    background: linear-gradient(135deg, rgba(0, 223, 216, 0.3), rgba(0, 124, 240, 0.3));
-    border-color: rgba(0, 223, 216, 0.5);
-    box-shadow: 0 0 25px rgba(0, 223, 216, 0.2);
-    transform: translateY(-1px);
-}
-
-.starry-submit-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-}
-
-.starry-submit-btn svg {
-    width: 16px;
-    height: 16px;
-}
-
-/* ─────────────────────────────────────────────
-   回复区域
-   ───────────────────────────────────────────── */
-.starry-response-section {
-    background: rgba(15, 25, 45, 0.6);
-    border: 1px solid rgba(0, 223, 216, 0.15);
-    border-radius: 16px;
-    padding: 20px;
-    backdrop-filter: blur(12px);
-    animation: fadeInUp 0.5s ease;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.starry-response-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid rgba(0, 223, 216, 0.1);
-}
-
-.response-label {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 14px;
-    color: rgba(0, 223, 216, 0.8);
-    letter-spacing: 2px;
-}
-
-.copy-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.5);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    transition: all 0.2s ease;
-}
-
-.copy-btn:hover {
-    background: rgba(0, 223, 216, 0.15);
-    border-color: rgba(0, 223, 216, 0.3);
-    color: #00dfd8;
-}
-
-.starry-response-content {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.85);
-    line-height: 1.8;
-    white-space: pre-wrap;
-}
-
-.starry-response-content br {
-    display: block;
-    margin: 8px 0;
-    content: '';
-}
-
-/* 加载动画 */
-.starry-loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px;
-}
-
-.loading-dots {
-    font-size: 24px;
-    color: #00dfd8;
-    letter-spacing: 4px;
-    animation: loadingPulse 1.5s ease-in-out infinite;
-}
-
-@keyframes loadingPulse {
-    0%, 100% { opacity: 0.3; }
-    50% { opacity: 1; }
-}
 
 /* ─────────────────────────────────────────────
    配置模态框
    ───────────────────────────────────────────── */
+
 .starry-modal {
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index: 1000;
     display: flex;
     align-items: center;
@@ -748,8 +463,10 @@
 
 .starry-modal-overlay {
     position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -769,18 +486,7 @@
     box-shadow: 
         0 20px 60px rgba(0, 0, 0, 0.5),
         0 0 40px rgba(0, 223, 216, 0.1);
-    animation: modalEnter 0.3s ease;
-}
-
-@keyframes modalEnter {
-    from {
-        opacity: 0;
-        transform: scale(0.95) translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
+    animation: fadeInUp 0.3s ease;
 }
 
 .starry-modal-header {
@@ -829,107 +535,6 @@
     scrollbar-color: rgba(0, 223, 216, 0.3) transparent;
 }
 
-.config-section {
-    margin-bottom: 24px;
-}
-
-.config-section:last-child {
-    margin-bottom: 0;
-}
-
-.config-section label {
-    display: block;
-    font-family: 'Noto Serif SC', serif;
-    font-size: 14px;
-    color: rgba(0, 223, 216, 0.8);
-    margin-bottom: 12px;
-    letter-spacing: 1px;
-}
-
-.config-section select {
-    width: 100%;
-    padding: 10px 15px;
-    background: rgba(15, 25, 45, 0.8);
-    border: 1px solid rgba(0, 223, 216, 0.2);
-    border-radius: 10px;
-    color: rgba(255, 255, 255, 0.9);
-    font-family: 'Noto Serif SC', serif;
-    font-size: 14px;
-    outline: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.config-section select:focus {
-    border-color: rgba(0, 223, 216, 0.4);
-    box-shadow: 0 0 15px rgba(0, 223, 216, 0.1);
-}
-
-.config-section select option {
-    background: #0d1b2a;
-    color: rgba(255, 255, 255, 0.9);
-    padding: 8px;
-}
-
-/* 专家网格 */
-.experts-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 10px;
-    max-height: 300px;
-    overflow-y: auto;
-    padding-right: 4px;
-}
-
-.expert-option {
-    padding: 10px 12px;
-    background: rgba(15, 25, 45, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.expert-option:hover {
-    background: rgba(0, 223, 216, 0.1);
-    border-color: rgba(0, 223, 216, 0.3);
-}
-
-.expert-option.selected {
-    background: rgba(0, 223, 216, 0.15);
-    border-color: rgba(0, 223, 216, 0.5);
-    box-shadow: 0 0 15px rgba(0, 223, 216, 0.15);
-}
-
-.expert-option.selected::after {
-    content: '✓';
-    position: absolute;
-    top: 6px;
-    right: 8px;
-    font-size: 12px;
-    color: #00dfd8;
-}
-
-.expert-option .expert-name {
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.9);
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.expert-option .expert-field {
-    font-size: 11px;
-    color: rgba(0, 223, 216, 0.6);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
 .starry-modal-footer {
     display: flex;
     justify-content: flex-end;
@@ -976,101 +581,20 @@
     box-shadow: 0 0 20px rgba(0, 223, 216, 0.2);
 }
 
+
 /* ─────────────────────────────────────────────
-   响应式适配
+   模态框配置表单
    ───────────────────────────────────────────── */
-@media (max-width: 768px) {
-    .starry-cover-wrapper {
-        width: 95%;
-        height: 90%;
-    }
-    
-    .starry-cover-title {
-        font-size: 20px;
-        letter-spacing: 4px;
-    }
-    
-    .starry-cover-subtitle {
-        font-size: 12px;
-    }
-    
-    .starry-cards-container {
-        max-height: calc(100vh - 200px);
-    }
-    
-    .starry-card {
-        padding: 16px 20px;
-    }
-    
-    .starry-card-contribution,
-    .starry-card-meta,
-    .starry-card-remarks {
-        padding-left: 0;
-    }
-    
-    .starry-card-header {
-        margin-bottom: 8px;
-    }
-    
-    .starry-modal-content {
-        width: 95%;
-        max-height: 90vh;
-    }
-    
-    .experts-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .starry-dialog-info {
-        padding: 16px;
-    }
-    
-    .starry-question-input {
-        min-height: 80px;
-        padding: 12px 16px;
-    }
+
+.config-section {
+    margin-bottom: 24px;
+    position: relative;
 }
 
-@media (max-width: 360px) {
-    .starry-card-name {
-        font-size: 16px;
-    }
-    
-    .starry-card-icon {
-        width: 32px;
-        height: 32px;
-    }
-    
-    .experts-grid {
-        grid-template-columns: 1fr;
-    }
+.config-section:last-child {
+    margin-bottom: 0;
 }
 
-
-/* ═══════════════════════════════════════════════
-   【补充】配置模态框 - 模糊搜索 + 完整字段编辑
-   ═══════════════════════════════════════════════ */
-
-/* ── 语言标签 ── */
-.lang-tag {
-    display: inline-block;
-    font-size: 10px;
-    padding: 2px 8px;
-    border-radius: 10px;
-    background: rgba(0, 223, 216, 0.15);
-    color: #00dfd8;
-    margin-left: 8px;
-    font-weight: normal;
-    letter-spacing: 1px;
-    font-family: 'Poppins', sans-serif;
-}
-
-.lang-tag.secondary {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.5);
-}
-
-/* ── 配置标签 ── */
 .config-label {
     display: block;
     font-family: 'Noto Serif SC', serif;
@@ -1094,6 +618,24 @@
     gap: 8px;
 }
 
+.lang-tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(0, 223, 216, 0.15);
+    color: #00dfd8;
+    margin-left: 8px;
+    font-weight: normal;
+    letter-spacing: 1px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.lang-tag.secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.5);
+}
+
 .hint-text {
     font-size: 11px;
     color: rgba(255, 255, 255, 0.3);
@@ -1102,7 +644,6 @@
     margin-left: 8px;
 }
 
-/* ── 输入框统一样式 ── */
 .config-input,
 .config-textarea,
 .config-select {
@@ -1147,7 +688,11 @@
     padding: 8px;
 }
 
-/* ── 专家搜索框 ── */
+
+/* ─────────────────────────────────────────────
+   专家搜索下拉
+   ───────────────────────────────────────────── */
+
 .expert-search-box {
     position: relative;
     margin-bottom: 8px;
@@ -1173,7 +718,6 @@
     color: #00dfd8;
 }
 
-/* ── 下拉匹配结果 ── */
 .expert-dropdown {
     position: absolute;
     left: 0;
@@ -1262,7 +806,11 @@
     font-style: italic;
 }
 
-/* ── 已选专家区域 ── */
+
+/* ─────────────────────────────────────────────
+   已选专家标签
+   ───────────────────────────────────────────── */
+
 .selected-experts-area {
     margin-top: 16px;
     padding-top: 16px;
@@ -1320,17 +868,6 @@
     border-color: rgba(0, 223, 216, 0.5);
 }
 
-@keyframes tagIn {
-    from {
-        opacity: 0;
-        transform: scale(0.8);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
 .tag-text {
     white-space: nowrap;
     overflow: hidden;
@@ -1362,38 +899,76 @@
     transform: rotate(90deg);
 }
 
-/* ── 配置区块间距 ── */
-.config-section {
-    margin-bottom: 24px;
-    position: relative;
+
+/* ─────────────────────────────────────────────
+   动画
+   ───────────────────────────────────────────── */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.config-section:last-child {
-    margin-bottom: 0;
+@keyframes tagIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
-/* ── 模态框滚动条 ── */
-.starry-modal-body::-webkit-scrollbar {
-    width: 4px;
-}
 
-.starry-modal-body::-webkit-scrollbar-track {
-    background: transparent;
-}
+/* ─────────────────────────────────────────────
+   响应式适配
+   ───────────────────────────────────────────── */
 
-.starry-modal-body::-webkit-scrollbar-thumb {
-    background: rgba(0, 223, 216, 0.3);
-    border-radius: 2px;
-}
-
-/* ── 添加卡片模态框特殊样式 ── */
-.add-card-modal .config-section:first-child {
-    border-bottom: 1px solid rgba(0, 223, 216, 0.1);
-    padding-bottom: 20px;
-}
-
-/* ── 响应式优化 ── */
 @media (max-width: 768px) {
+    .starry-cover-wrapper {
+        width: 95%;
+        height: 90%;
+    }
+    
+    .starry-cover-title {
+        font-size: 20px;
+        letter-spacing: 4px;
+    }
+    
+    .starry-cover-subtitle {
+        font-size: 12px;
+    }
+    
+    .starry-cards-container {
+        max-height: calc(100vh - 200px);
+    }
+    
+    .starry-card {
+        padding: 16px 20px;
+    }
+    
+    .starry-card-contribution,
+    .starry-card-meta,
+    .starry-card-remarks {
+        padding-left: 0;
+    }
+    
+    .starry-card-header {
+        margin-bottom: 8px;
+    }
+    
+    .starry-modal-content {
+        width: 95%;
+        max-height: 90vh;
+    }
+    
     .expert-dropdown {
         max-height: 200px;
     }
@@ -1423,8 +998,13 @@
 }
 
 @media (max-width: 360px) {
-    .expert-dropdown {
-        border-radius: 8px;
+    .starry-card-name {
+        font-size: 16px;
+    }
+    
+    .starry-card-icon {
+        width: 32px;
+        height: 32px;
     }
     
     .dropdown-item-text {
