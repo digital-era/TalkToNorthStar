@@ -11,15 +11,15 @@ const starryColumnCards = [
             "en": "Shining Stars"
         },
         contribution: {
-            "zh-CN": "汇聚各领域顶尖智慧，融合多位北极星人物的洞察，为用户提供深度跨学科视角。",
+            "zh-CN": "北极星在决定历史走向、技术质变、或是思想涌现的非凡成就。",
             "en": "Gathering top wisdom across domains, fusing insights from multiple North Star figures to provide deep interdisciplinary perspectives."
         },
         field: {
-            "zh-CN": "待配置",
-            "en": "To Be Configured"
+            "zh-CN": "星光闪耀",
+            "en": "Shining Stars"
         },
         remarks: {
-            "zh-CN": "让不同流派的思想碰撞出新的火花。",
+            "zh-CN": "展现杰出人物的灵魂抉择与思维模型，为用户提供高维的精神共鸣。",
             "en": "Let different schools of thought spark new ideas."
         },
         
@@ -50,15 +50,15 @@ const starryColumnCards = [
             "en": "Civilization Transmigration"
         },
         contribution: {
-            "zh-CN": "跨越时空的思想对话，探索人类文明演进的关键节点。",
+            "zh-CN": "全球文明发展史，打破时空的线性隔阂",
             "en": "Cross-temporal intellectual dialogue, exploring key nodes of human civilization evolution."
         },
         field: {
-            "zh-CN": "待配置",
+            "zh-CN": "文明穿越",
             "en": "To Be Configured"
         },
         remarks: {
-            "zh-CN": "以古鉴今，以今知来。",
+            "zh-CN": "将璀璨的中西古典文明与现代文明放在同一个“坐标系”中进行交叉互补，让用户触及真正塑造人类文明的深刻思想。",
             "en": "Learn from the past to understand the present; know the present to foresee the future."
         },
         
@@ -89,11 +89,11 @@ const starryColumnCards = [
             "en": "Investment Dialogue"
         },
         contribution: {
-            "zh-CN": "汇聚投资领域顶尖智慧，洞察市场趋势与价值逻辑。",
+            "zh-CN": "金融投资与商业决策（高维决策模型、商业周期、跨越周期的商业智慧）。",
             "en": "Gathering top investment wisdom, insight into market trends and value logic."
         },
         field: {
-            "zh-CN": "待配置",
+            "zh-CN": "投资论道",
             "en": "To Be Configured"
         },
         remarks: {
