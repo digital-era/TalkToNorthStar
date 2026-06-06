@@ -7,8 +7,8 @@ const starryColumnCards = [
     {
         id: "galaxy_shine",
         name: {
-            "zh-CN": "群星闪耀",
-            "en": "Galaxy Shine"
+            "zh-CN": "星光闪耀",
+            "en": "Shining Stars"
         },
         contribution: {
             "zh-CN": "汇聚各领域顶尖智慧，融合多位北极星人物的洞察，为用户提供深度跨学科视角。",
@@ -41,13 +41,13 @@ const starryColumnCards = [
     },
     
     // ═══════════════════════════════════════════════
-    // 【用户配置】文明之旅（初始为空，待管理员配置）
+    // 【用户配置】文明穿越（初始为空，待管理员配置）
     // ═══════════════════════════════════════════════
     {
         id: "civilization_journey",
         name: {
-            "zh-CN": "文明之旅",
-            "en": "Civilization Journey"
+            "zh-CN": "文明穿越",
+            "en": "Civilization Transmigration"
         },
         contribution: {
             "zh-CN": "跨越时空的思想对话，探索人类文明演进的关键节点。",
