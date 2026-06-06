@@ -1,15 +1,65 @@
 /* ═══════════════════════════════════════════════
-   星空专栏入口按钮
+   【新增】星空专栏入口
    ═══════════════════════════════════════════════ */
 
+.starry-column-entry {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+    width: 100%;
+    max-width: 600px;
+    padding: 0 20px 60px;
+    opacity: 1;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    flex-shrink: 0;
+    margin-top: 10px;
+}
+
+.starry-column-entry.fading-out {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+}
+
+.starry-column-hint {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    font-family: "Noto Serif SC", "Poppins", serif;
+    text-shadow: 0 0 10px rgba(0, 223, 216, 0.2);
+}
+
+.starry-column-hint .hint-line {
+    display: block;
+}
+
+/* ═══════════════════════════════════════════════
+   星空专栏按钮
+   【修改点】高度、字体大小与 .manual-star-chip 完全一致
+   【保持】按钮长度更长（padding 左右更大）
+   ═══════════════════════════════════════════════ */
 .starry-column-btn {
     position: relative;
     background: rgba(10, 20, 35, 0.6);
     border: 1.5px solid rgba(0, 223, 216, 0.25);
     color: rgba(255, 255, 255, 0.85);
-    padding: 8px 40px;
-    font-size: 14px;
-    border-radius: 30px;
+    
+    /* ═══ 与 .manual-star-chip 完全一致 ═══ */
+    padding: 8px 0;              /* 上下内边距与 chip 相同 → 高度一致 */
+    font-size: 14px;             /* 字体大小与 chip 相同 */
+    /* ═══════════════════════════════════ */
+    
+    /* ═══ 保持按钮长度更长 ═══ */
+    /* 通过更大的水平 padding 实现，而不是 width */
+    padding-left: 40px;           /* 左侧额外空间 */
+    padding-right: 40px;         /* 右侧额外空间 */
+    /* ═══════════════════════ */
+    
+    border-radius: 30px;           /* 圆角与 chip 相同 */
     font-family: 'Noto Serif SC', serif;
     cursor: pointer;
     overflow: hidden;
@@ -18,29 +68,67 @@
     transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
     text-align: center;
     white-space: nowrap;
-    letter-spacing: 3px;
+    letter-spacing: 3px;         /* 保持更宽松的字母间距 */
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
 }
 
+/* 按钮内部发光层 */
+.starry-column-btn .btn-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, rgba(0, 223, 216, 0.5) 0%, rgba(100, 200, 255, 0.2) 40%, transparent 70%);
+    transform: translate(-50%, -50%);
+    transition: width 0.5s ease, height 0.5s ease;
+    z-index: 1;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.starry-column-btn .btn-icon {
+    position: relative;
+    z-index: 2;
+    font-size: 16px;             /* 图标稍大，保持视觉平衡 */
+    color: rgba(0, 223, 216, 0.9);
+    text-shadow: 0 0 10px rgba(0, 223, 216, 0.5);
+    animation: iconPulse 3s ease-in-out infinite;
+}
+
+.starry-column-btn .btn-text {
+    position: relative;
+    z-index: 2;
+    font-weight: 300;            /* 与 .chip-text 一致 */
+    letter-spacing: 1px;         /* 与 .chip-text 一致 */
+}
+
+/* 悬停效果 */
 .starry-column-btn:hover {
     color: #fff;
     border-color: rgba(0, 223, 216, 0.7);
     box-shadow: 
         0 0 25px rgba(0, 223, 216, 0.4),
         inset 0 0 15px rgba(0, 223, 216, 0.15);
-    transform: translateY(-2px);
+    transform: translateY(-2px);  /* 与 chip 悬停幅度一致 */
 }
 
+.starry-column-btn:hover .btn-glow {
+    width: 150px;                /* 与 chip hover 一致 */
+    height: 150px;
+}
+
+/* 点击反馈 */
 .starry-column-btn:active {
-    transform: scale(0.95);
+    transform: scale(0.95);      /* 与 chip 一致 */
 }
 
 
 /* ═══════════════════════════════════════════════
-   星空专栏页面布局
+   【补充】星空专栏页面 - 完整样式
    ═══════════════════════════════════════════════ */
 
 #starryLeft {
