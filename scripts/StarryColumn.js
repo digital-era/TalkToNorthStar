@@ -42,7 +42,7 @@ function enterStarryColumn() {
 
 /**
  * 渲染星空专栏的左右布局
- * 左侧：固定封面图  右侧：卡片列表
+ * 左侧：固定封面图  右侧：星空专栏卡片列表
  */
 function renderStarryColumnLayout() {
     const layout = document.getElementById('category-layout-container');
@@ -52,24 +52,22 @@ function renderStarryColumnLayout() {
     }
 
     const lang = window.currentLang || 'zh-CN';
-    const isAdmin = checkAdminPermission(); // 需实现权限检查
+    const isAdmin = checkAdminPermission();
 
     layout.style.display = 'flex';
     layout.innerHTML = `
         <div class="layout-left" id="starryLeft">
             <div class="starry-cover-wrapper">
                 <img src="images/ambient-starry-column.jpg" 
-                     alt="Starry Column" 
+                     alt="${getFieldValue(starryColumnTexts.title, lang)}" 
                      class="starry-cover"
                      id="starryCover">
                 <div class="starry-cover-overlay">
                     <h2 class="starry-cover-title">
-                        ${lang === 'en' ? 'Starry Column' : '星空专栏'}
+                        ${getFieldValue(starryColumnTexts.title, lang)}
                     </h2>
                     <p class="starry-cover-subtitle">
-                        ${lang === 'en' 
-                            ? 'Cross-domain wisdom fusion' 
-                            : '跨领域智慧融合'}
+                        ${getFieldValue(starryColumnTexts.subtitle, lang)}
                     </p>
                 </div>
             </div>
@@ -77,13 +75,13 @@ function renderStarryColumnLayout() {
         <div class="layout-right" id="starryRight">
             <div class="starry-header">
                 <button class="back-btn-inline" id="btn-starry-back" 
-                        title="${lang === 'en' ? 'Back to Home' : '返回首页'}">
+                        title="${getFieldValue(starryColumnTexts.backTooltip, lang)}">
                     <svg viewBox="0 0 24 24">
                         <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
                     </svg>
                 </button>
                 <h3 class="starry-list-title">
-                    ${lang === 'en' ? 'Wisdom Cards' : '智慧卡片'}
+                    ${getFieldValue(starryColumnTexts.columnName, lang)}
                 </h3>
             </div>
             <div class="starry-cards-container" id="starryCardsContainer">
@@ -92,7 +90,7 @@ function renderStarryColumnLayout() {
             ${isAdmin ? `
                 <button class="add-card-btn" id="btn-add-card">
                     <span>+</span>
-                    ${lang === 'en' ? 'Add Card' : '添加卡片'}
+                    ${getFieldValue(starryColumnTexts.addCard, lang)}
                 </button>
             ` : ''}
         </div>
@@ -109,6 +107,7 @@ function renderStarryColumnLayout() {
         document.getElementById('btn-add-card')?.addEventListener('click', showAddCardModal);
     }
 }
+
 
 /**
  * 渲染星空专栏卡片列表
