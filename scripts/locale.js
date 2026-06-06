@@ -563,29 +563,28 @@
          * 修复了 contextManager 和 ContextUI 状态同步问题
          */
         function setLanguage(lang) {
-            // 1. 【核心修复】同步到全局 window 对象，确保 contextManager.js 的 _t 函数能获取最新语言
+            // 1. 同步到全局
             window.currentLang = lang; 
-            currentLang = lang; // 更新当前作用域变量
-
-            // 【关键修复：同步 UI 状态】
-            // 无论从哪里调用 setLanguage，都强制让下拉框的显示值与语言值一致
+            currentLang = lang;
+        
+            // 2. 更新下拉框
             const langSelector = document.getElementById('languageSelector');
             if (langSelector) {
                 langSelector.value = lang;
             }
                     
-            // 2. 更新 HTML 属性及持久化配置
+            // 3. 更新 HTML 属性及持久化
             document.documentElement.lang = currentLang;
             if (translations[currentLang].pageTitle) {
                 document.title = translations[currentLang].pageTitle;
             }
-            localStorage.setItem('preferredLang', lang); // 保存用户偏好
+            localStorage.setItem('preferredLang', lang);
         
-            // 3. 翻译静态元素：扫描所有 data-i18n-key
+            // 4. 翻译静态元素
             document.querySelectorAll('[data-i18n-key]').forEach(el => {
                 const key = el.dataset.i18nKey;
-                const target = el.dataset.i18nTarget || 'textContent'; // 默认为 textContent
-                let translation = translations[currentLang][key] || key; // 如果找不到翻译则显示 key
+                const target = el.dataset.i18nTarget || 'textContent';
+                let translation = translations[currentLang][key] || key;
         
                 if (target === 'innerHTML') {
                     el.innerHTML = translation;
@@ -598,7 +597,7 @@
                 }
             });
         
-            // 4. 翻译标题提示元素：扫描所有 data-i18n-title
+            // 5. 翻译标题提示
             document.querySelectorAll('[data-i18n-title]').forEach(el => {
                 const key = el.getAttribute('data-i18n-title');
                 if (translations[currentLang][key]) {
@@ -606,65 +605,57 @@
                 }
             });
                 
-            // 5. 更新业务逻辑中的动态内容
+            // 6. 更新动态内容
             if (typeof populateLeaders === 'function') {
-                populateLeaders(); // 重新填充北极星列表（包含翻译标签）
+                populateLeaders();
             }
         
             const apiEndpointEl = document.getElementById('apiEndpoint');
             if (apiEndpointEl && typeof updateModelSelectByEndpoint === 'function') {
-                // 根据当前接入点重新生成模型下拉列表（包含翻译后的模型名称）
                 updateModelSelectByEndpoint(apiEndpointEl.value); 
             }
         
-            // 6. 更新“当前选择”状态显示
+            // 7. 更新选择状态
             const selectedLeaderNameEl = document.getElementById('selectedLeaderName');
-            // 如果当前没选北极星，更新“无/None”的显示
             if (selectedLeaderNameEl && (typeof currentSelectedLeader === 'undefined' || !currentSelectedLeader)) {
                 selectedLeaderNameEl.textContent = translations[currentLang].noLeaderSelected;
             }
         
-            // 7. 更新宣言模态框内容 (Manifesto Modal)
+            // 8. 更新宣言模态框
             if (typeof updateManifestoModalContent === 'function') {
                 updateManifestoModalContent(lang);
             }
         
-            // 8. 【新增修复】强制刷新星语上下文 UI 面板
-            // 确保面板中的“暂无上下文”、“来源标签”等动态渲染的内容立即跟随语言变化
+            // 9. 刷新星语上下文
             if (window.ContextUI && typeof window.ContextUI._renderList === 'function') {
                 window.ContextUI._renderList();
             }
-        }  
+            
+            // ═══════════════════════════════════════════════
+            // 【关键修复】触发全局语言变更通知
+            // ═══════════════════════════════════════════════
+            if (typeof window.onLanguageChanged === 'function') {
+                window.onLanguageChanged();
+            }
+        } 
 
 
         //=== 修正后的语言初始化逻辑 ===
-        document.addEventListener('DOMContentLoaded', () => {
-            // 1. 计算初始语言
+       document.addEventListener('DOMContentLoaded', () => {
             const savedLang = localStorage.getItem('preferredLang');
             const browserLang = navigator.language.startsWith('en') ? 'en' : 'zh-CN';
             const initialLang = savedLang || browserLang || 'zh-CN';
         
-            // 2. 【关键修正】：立即同步全局变量，不等待 Timeout
-            // 这样当 newUI.js 开始执行渲染函数时，读到的 window.currentLang 就是 'en'
             window.currentLang = initialLang;
             document.documentElement.lang = initialLang;
         
-            // 3. 同步下拉框状态
             const langSelector = document.getElementById('languageSelector');
             if (langSelector) {
                 langSelector.value = initialLang;
             }
         
-            // 4. 执行翻译逻辑
-            // 稍微延迟确保 populateLeaders 等函数已挂载
             setTimeout(() => {
-                setLanguage(initialLang);
-        
-                // 5. 【核心修复】：显式触发一次全局语言变更通知
-                // 这会强制 newUI.js 重新运行渲染函数，修正那 8 个大类和提示文字
-                if (typeof window.onLanguageChanged === 'function') {
-                    window.onLanguageChanged();
-                }
+                setLanguage(initialLang);  // 内部会调用 onLanguageChanged
             }, 60); 
         });
 
