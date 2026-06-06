@@ -1918,12 +1918,19 @@ function updateWheelLanguage() {
         }
         
         const layout = document.getElementById('category-layout-container');
-        // 【修复】使用 window.currentSelectedCategory 而不是局部 currentSelectedCategory
-        if (layout && layout.style.display !== 'none' && window.currentSelectedCategory) {
+        if (layout && layout.style.display !== 'none') {
             
-            if (window.currentSelectedCategory === 'starryColumn') {
+            // ═══════════════════════════════════════════════
+            // 【关键】通过 DOM 判断，不依赖全局变量
+            // ═══════════════════════════════════════════════
+            const isStarryColumn = !!document.getElementById('starryLeft') || 
+                                   !!document.getElementById('starryCardsContainer');
+            
+            const hasStandardCard = !!document.getElementById('single-northstar-card');
+            
+            if (isStarryColumn) {
                 updateStarryColumnLanguage();
-            } else {
+            } else if (hasStandardCard && window.currentSelectedCategory) {
                 renderCategoryLayout(window.currentSelectedCategory);
                 if (window.currentSelectedLeader && window.currentSelectedLeaderCategory === window.currentSelectedCategory) {
                     updateSingleCard(window.currentSelectedLeader);
