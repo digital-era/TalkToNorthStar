@@ -434,7 +434,7 @@ function backToStarryColumnList() {
     if (responseText) responseText.textContent = '';
 
     // 3. 清除全局提示状态
-    currentGeneratedPrompt = '';
+    window.currentGeneratedPrompt = '';
 
     // 4. 重新渲染星空专栏列表
     renderStarryColumnLayout();
