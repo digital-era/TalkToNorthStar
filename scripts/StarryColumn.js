@@ -260,12 +260,17 @@ function getCardTypeIcon(type) {
 }
 
 /**
- * 选择星空卡片进入对话
+ * 选择星空卡片，复用原有北极星对话流程
+ * 不再单独渲染对话界面，而是融入标准 selectLeader 体系
  */
 function selectStarryCard(card) {
     const lang = window.currentLang || 'zh-CN';
-    window.currentSelectedCard = card;
 
+    // 标记当前为星空专栏模式
+    window.currentSelectedCard = card;
+    window.currentSelectedCategory = 'starryColumn';
+
+    // 根据卡片类型准备专家数据
     let resolvedExperts;
     if (card.type === 'navigator') {
         resolvedExperts = buildInterstellarSnapshot(lang);
@@ -273,20 +278,47 @@ function selectStarryCard(card) {
         resolvedExperts = resolveCardExperts(card);
     }
 
+    // 创建虚拟领袖对象，兼容原有数据结构
     const virtualLeader = {
         id: card.id,
-        name: card.name,
-        field: card.field,
-        contribution: card.contribution,
-        remarks: card.remarks,
+        name: card.name,                    // 多语言对象，getFieldValue 兼容
+        field: card.field,                  // 多语言对象
+        contribution: card.contribution,    // 多语言对象
+        remarks: card.remarks,              // 多语言对象
+        
+        // 标记属性，用于后续逻辑判断
         _isStarryCard: true,
-        _cardType: card.type,
+        _cardType: card.type,               // 'navigator' | 'fusion'
         _experts: resolvedExperts,
-        _systemPromptBuilder: card.systemPromptBuilder
+        _systemPromptBuilder: card.systemPromptBuilder,
+        _fusionStrategy: card.fusionStrategy
     };
 
-    renderStarryDialogMode(card, virtualLeader);
+    // ═══════════════════════════════════════════════
+    // 【关键】复用原有流程进入对话界面
+    // ═══════════════════════════════════════════════
+    
+    // 1. 如果当前不在左右布局，先进入
+    const layout = document.getElementById('category-layout-container');
+    if (!layout || layout.style.display === 'none') {
+        // 隐藏其他页面
+        document.getElementById('nebula-crystal')?.style.display = 'none';
+        document.getElementById('wheel-of-destiny')?.style.display = 'none';
+        document.querySelector('.container')?.style.display = 'none';
+        document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
+        
+        // 显示布局
+        layout.style.display = 'flex';
+        document.querySelector('.container').style.display = 'block';
+    }
 
+    // 2. 复用 selectLeader —— 这会触发 populateInteractionArea 等原有逻辑
+    selectLeader(virtualLeader, 'starryColumn', null);
+
+    // 3. 复用 updateSingleCard —— 渲染右侧大卡片
+    updateSingleCard(virtualLeader);
+
+    // 4. 滚动到交互区
     setTimeout(() => {
         document.querySelector('.interaction-area')?.scrollIntoView({ 
             behavior: 'smooth', 
@@ -295,136 +327,6 @@ function selectStarryCard(card) {
     }, 100);
 }
 
-/**
- * 渲染对话模式
- */
-function renderStarryDialogMode(card, virtualLeader) {
-    const layoutRight = document.getElementById('starryRight');
-    if (!layoutRight) return;
-
-    const lang = window.currentLang || 'zh-CN';
-    const header = layoutRight.querySelector('.starry-header');
-    layoutRight.innerHTML = '';
-    if (header) layoutRight.appendChild(header);
-
-    const dialogArea = document.createElement('div');
-    dialogArea.className = 'starry-dialog-area';
-
-    const infoSection = document.createElement('div');
-    infoSection.className = 'starry-dialog-info';
-
-    const participantsLabel = getFieldValue(starryColumnTexts.participantsLabel, lang);
-    const expertTags = card.type === 'fusion' && card.experts.length > 0
-        ? card.experts.map(id => {
-            const expert = findExpertById(id);
-            return expert ? `<span class="expert-tag">${getFieldValue(expert.name, lang)}</span>` : '';
-        }).join('')
-        : '';
-
-    infoSection.innerHTML = `
-        <div class="starry-dialog-card-brief">
-            <div class="brief-icon">${getCardTypeIcon(card.type)}</div>
-            <div class="brief-text">
-                <h4>${getFieldValue(card.name, lang)}</h4>
-                <p>${getFieldValue(card.field, lang)}</p>
-            </div>
-        </div>
-        <p class="brief-desc">${getFieldValue(card.contribution, lang)}</p>
-        ${expertTags ? `
-            <div class="brief-experts">
-                <span class="experts-label">${participantsLabel}</span>
-                ${expertTags}
-            </div>
-        ` : ''}
-    `;
-
-    const inputSection = document.createElement('div');
-    inputSection.className = 'starry-input-section';
-    inputSection.innerHTML = `
-        <textarea id="starryUserQuestion" class="starry-question-input"
-            placeholder="${getFieldValue(starryColumnTexts.questionPlaceholder, lang)}"
-            rows="4"></textarea>
-        <button class="starry-submit-btn" id="btnStarrySubmit">
-            <span>${getFieldValue(starryColumnTexts.askButton, lang)}</span>
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="22" y1="2" x2="11" y2="13"/>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-            </svg>
-        </button>
-    `;
-
-    const responseSection = document.createElement('div');
-    responseSection.className = 'starry-response-section';
-    responseSection.id = 'starryResponseSection';
-    responseSection.style.display = 'none';
-    responseSection.innerHTML = `
-        <div class="starry-response-header">
-            <span class="response-label">${getFieldValue(starryColumnTexts.wisdomResponse, lang)}</span>
-            <button class="copy-btn" id="btnCopyResponse" 
-                title="${getFieldValue(starryColumnTexts.copy, lang)}">📋</button>
-        </div>
-        <div class="starry-response-content" id="starryResponseText"></div>
-    `;
-
-    dialogArea.appendChild(infoSection);
-    dialogArea.appendChild(inputSection);
-    dialogArea.appendChild(responseSection);
-    layoutRight.appendChild(dialogArea);
-
-    document.getElementById('btnStarrySubmit')?.addEventListener('click', () => {
-        submitStarryQuestion(card, virtualLeader);
-    });
-
-    document.getElementById('btnCopyResponse')?.addEventListener('click', copyStarryResponse);
-}
-
-/**
- * 提交问题
- */
-async function submitStarryQuestion(card, virtualLeader) {
-    const questionInput = document.getElementById('starryUserQuestion');
-    const question = questionInput?.value.trim();
-    
-    if (!question) {
-        alert(translations[window.currentLang || 'zh-CN']?.alertNoPrompt || '请输入问题');
-        return;
-    }
-
-    const responseSection = document.getElementById('starryResponseSection');
-    const responseText = document.getElementById('starryResponseText');
-    const submitBtn = document.getElementById('btnStarrySubmit');
-
-    responseSection.style.display = 'block';
-    responseText.innerHTML = `<div class="starry-loading"><span class="loading-dots">...</span></div>`;
-    submitBtn.disabled = true;
-
-    try {
-        let systemPrompt = '';
-        if (card.type === 'navigator') {
-            systemPrompt = buildNavigatorSystemPrompt(window.currentLang || 'zh-CN');
-        } else {
-            systemPrompt = buildFusionSystemPrompt(card, window.currentLang || 'zh-CN');
-        }
-
-        const messages = [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: question }
-        ];
-
-        const response = await callStarryAPI(messages);
-        
-        responseText.dataset.raw = response;
-        responseText.innerHTML = response.replace(/\n/g, '<br>');
-
-        saveStarryConversation(card, question, response);
-
-    } catch (error) {
-        console.error('Starry API Error:', error);
-        responseText.textContent = `Error: ${error.message}`;
-    } finally {
-        submitBtn.disabled = false;
-    }
-}
 
 /**
  * 构建融合系统指令
@@ -541,103 +443,75 @@ function findExpertCategory(id) {
 }
 
 /**
- * API 调用
+ * 从虚拟领袖对象构建融合体系统指令
+ * 与 buildFusionSystemPrompt 逻辑一致，但接收 leader 对象
  */
-async function callStarryAPI(messages) {
-    const apiBaseUrl = apiEndpointSelect.value;
-    const apiKey = apiKeyInput.value;
-    const modelWithSuffix = apiModelSelect.value;
-    const model = modelWithSuffix.split('@')[0];
+function buildFusionSystemPromptFromLeader(leader, lang = 'zh-CN') {
+    const isZh = lang === 'zh-CN';
+    const experts = leader._experts;
 
-    const headers = { 'Content-Type': 'application/json' };
-    const isGeminiModel = model.toLowerCase().includes("gemini");
-    const isQwenModel = apiBaseUrl === "https://qwenapi.aivibeinvest.com";
-
-    let fullApiUrl;
-    if (isGeminiModel) {
-        const baseUrl = apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl;
-        fullApiUrl = `${baseUrl}/v1beta/models/${model}:generateContent?key=${apiKey}`;
-    } else if (isQwenModel) {
-        const baseUrl = "/api/qwenproxy";
-        fullApiUrl = `${baseUrl}/api/v1/services/aigc/text-generation/generation`;
-        headers['X-API-Key'] = apiKey;
-    } else {
-        fullApiUrl = (apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl) + "/v1/chat/completions";
-        headers['Authorization'] = `Bearer ${apiKey}`;
+    if (!experts || experts.length === 0) {
+        return isZh 
+            ? '系统错误：未配置任何专家。'
+            : 'System error: No experts configured.';
     }
 
-    let requestBody;
-    if (isGeminiModel) {
-        const contents = messages.map(m => ({
-            role: m.role === 'system' ? 'user' : m.role,
-            parts: [{ text: m.content }]
-        }));
-        requestBody = { contents, generationConfig: { temperature: 0.7 } };
-    } else if (isQwenModel) {
-        requestBody = {
-            model: model,
-            input: { messages: messages },
-            parameters: { temperature: 0.7, plugins: { web_search: {} } }
-        };
-    } else {
-        requestBody = { model: model, messages: messages, temperature: 0.7 };
-    }
+    // 构建专家目录文本
+    const expertLines = experts.map(e => 
+        `  · ${e.name} [${e.field}]`
+    ).join('\n');
 
-    const response = await fetch(fullApiUrl, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify(requestBody)
-    });
+    // 获取融合策略
+    const strategy = leader._fusionStrategy || { mode: 'synthesis' };
 
-    if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ detail: response.statusText }));
-        throw new Error(`API Error: ${response.status} - ${errorData.error?.message || errorData.detail}`);
-    }
-
-    const data = await response.json();
-
-    if (isGeminiModel) {
-        return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
-    } else if (isQwenModel) {
-        return data.output?.text?.trim() || '';
-    } else {
-        return data.choices?.[0]?.message?.content?.trim() || '';
-    }
-}
-
-/**
- * 保存对话历史
- */
-function saveStarryConversation(card, question, response) {
-    const lang = window.currentLang || 'zh-CN';
-    
-    const cardMeta = {
-        id: card.id,
-        name: getFieldValue(card.name, lang),
-        type: card.type,
-        field: getFieldValue(card.field, lang)
+    const modeDescriptions = {
+        roundtable: {
+            'zh-CN': '以圆桌会议的形式，让各位专家依次发言，最后形成共识。',
+            'en': 'In a roundtable format, let each expert speak in turn, then reach consensus.'
+        },
+        synthesis: {
+            'zh-CN': '综合各位专家的视角，给出一个融合性的深度回答。',
+            'en': 'Synthesize perspectives from all experts into a comprehensive deep answer.'
+        },
+        debate: {
+            'zh-CN': '呈现各位专家的不同观点，展开思想交锋。',
+            'en': 'Present differing viewpoints from experts and let ideas clash.'
+        }
     };
 
-    conversationHistory.push({
-        id: Date.now() + '_starry_user',
-        role: 'user',
-        text: question,
-        leaderInfo: null,
-        cardInfo: cardMeta,
-        timestamp: new Date()
-    });
+    const modeDesc = modeDescriptions[strategy.mode]?.[lang] || modeDescriptions.synthesis[lang];
 
-    conversationHistory.push({
-        id: Date.now() + '_starry_ai',
-        role: 'ai',
-        text: response,
-        leaderInfo: null,
-        cardInfo: cardMeta,
-        timestamp: new Date()
-    });
+    return isZh
+        ? `你是"对话北极星"星空专栏的融合智慧体。你的任务是针对用户的核心问题，融合以下多位"北极星"人物的洞察，给出深度回答。
 
-    saveCanvasSession();
+【参与专家】
+${expertLines}
+
+【融合模式】
+${modeDesc}
+
+【任务要求】
+1. 深入理解每位专家的思想体系和核心方法论
+2. 从各自专业视角分析问题，展现多元思维
+3. 在分歧处呈现张力，在共识处深化洞见
+4. 输出必须标注引用专家的姓名和领域
+5. 追求跨学科的思想化学反应，而非简单并列`
+        : `You are the Fusion Wisdom of "Talk with North Stars" Starry Column. Your task is to synthesize insights from the following "North Star" figures to provide a deep answer.
+
+【Participating Experts】
+${expertLines}
+
+【Fusion Mode】
+${modeDesc}
+
+【Requirements】
+1. Deeply understand each expert's framework and core methodology
+2. Analyze the problem from each professional perspective
+3. Present tension where views diverge, deepen insight where they converge
+4. Cite each expert's name and field in your response
+5. Pursue interdisciplinary chemical reactions, not simple juxtaposition`;
 }
+
 
 // ═══════════════════════════════════════════════
 // 配置模态框 - 完整字段编辑 + 模糊搜索
