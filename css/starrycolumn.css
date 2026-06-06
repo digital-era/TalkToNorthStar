@@ -1,0 +1,418 @@
+/* ═══════════════════════════════════════════════
+   【新增】星空专栏入口
+   位置：在星轨指引下方，与星轨指引风格一致但更突出
+   ═══════════════════════════════════════════════ */
+
+.starry-column-entry {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+    width: 100%;
+    max-width: 600px;
+    padding: 0 20px 60px;
+    opacity: 1;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    flex-shrink: 0;
+    margin-top: 10px;  /* 与上方星轨指引的间距 */
+}
+
+/* 选中后的淡出动画（与星轨指引 .fading-out 一致） */
+.starry-column-entry.fading-out {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+}
+
+.starry-column-hint {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    font-family: "Noto Serif SC", "Poppins", serif;
+    text-shadow: 0 0 10px rgba(0, 223, 216, 0.2);
+}
+
+.starry-column-hint .hint-line {
+    display: block;
+}
+
+/* 星空专栏按钮 - 比星轨 chip 更突出，暗示"重要入口" */
+.starry-column-btn {
+    position: relative;
+    background: rgba(10, 20, 35, 0.6);
+    border: 1.5px solid rgba(0, 223, 216, 0.25);
+    color: rgba(255, 255, 255, 0.85);
+    padding: 12px 40px;
+    border-radius: 50px;  /* 更圆的胶囊 */
+    font-size: 16px;
+    font-family: 'Noto Serif SC', serif;
+    cursor: pointer;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    text-align: center;
+    white-space: nowrap;
+    letter-spacing: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* 按钮内部发光层（与 .chip-glow 同原理） */
+.starry-column-btn .btn-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, rgba(0, 223, 216, 0.5) 0%, rgba(100, 200, 255, 0.2) 40%, transparent 70%);
+    transform: translate(-50%, -50%);
+    transition: width 0.5s ease, height 0.5s ease;
+    z-index: 1;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.starry-column-btn .btn-icon {
+    position: relative;
+    z-index: 2;
+    font-size: 18px;
+    color: rgba(0, 223, 216, 0.9);
+    text-shadow: 0 0 10px rgba(0, 223, 216, 0.5);
+    animation: iconPulse 3s ease-in-out infinite;  /* 复用现有动画 */
+}
+
+.starry-column-btn .btn-text {
+    position: relative;
+    z-index: 2;
+    font-weight: 400;
+}
+
+/* 悬停效果 - 比 chip 更强烈 */
+.starry-column-btn:hover {
+    color: #fff;
+    border-color: rgba(0, 223, 216, 0.7);
+    box-shadow: 
+        0 0 25px rgba(0, 223, 216, 0.4),
+        inset 0 0 15px rgba(0, 223, 216, 0.15);
+    transform: translateY(-3px) scale(1.02);
+}
+
+.starry-column-btn:hover .btn-glow {
+    width: 200px;
+    height: 200px;
+}
+
+/* 点击反馈 */
+.starry-column-btn:active {
+    transform: scale(0.96);
+}
+
+/* ═══════════════════════════════════════════════
+   【新增】星空专栏页面（与左右布局同风格）
+   ═══════════════════════════════════════════════ */
+
+#starry-column-page {
+    display: none;  /* 默认隐藏 */
+    min-height: calc(100vh - 100px);
+    background: linear-gradient(135deg, #0a0e17 0%, #121a2b 50%, #0a0e17 100%);
+}
+
+#starry-column-page.active {
+    display: flex;
+}
+
+.starry-column-layout {
+    display: flex;
+    width: 100%;
+    min-height: calc(100vh - 100px);
+}
+
+/* 左侧：星空专栏封面（复用 .layout-left 风格） */
+.starry-column-left {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    padding-left: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0a0e17 0%, #121a2b 100%);
+    perspective: 1500px;
+    perspective-origin: 50% 50%;
+}
+
+.starry-column-left .cover-wrapper {
+    position: relative;
+    width: 90%;
+    height: 85%;
+    transform-style: preserve-3d;
+}
+
+.starry-column-left img.cover-front {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    filter: brightness(0.85);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    backface-visibility: hidden;
+    transform-origin: left center;
+    animation: pageBreeze 6s ease-in-out infinite;  /* 复用现有翻书动画 */
+}
+
+.starry-column-left img.cover-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    filter: brightness(0.7);
+    border-radius: 12px;
+    backface-visibility: hidden;
+    transform-origin: left center;
+    transform: rotateY(180deg);
+    opacity: 0;
+    animation: pageBreezeBack 6s ease-in-out infinite;  /* 复用现有翻书动画 */
+}
+
+.starry-column-left::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to right, transparent 0%, rgba(10, 14, 23, 0.3) 100%);
+    pointer-events: none;
+}
+
+/* 右侧：专栏内容（复用 .layout-right 风格） */
+.starry-column-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 60px 40px 40px;
+    background: rgba(10, 15, 30, 0.9);
+}
+
+.starry-column-header {
+    text-align: center;
+    margin-bottom: 30px;
+    width: 100%;
+    max-width: 450px;
+}
+
+.starry-column-header h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 28px;
+    color: #00dfd8;
+    margin-bottom: 10px;
+    text-shadow: 0 0 20px rgba(0, 223, 216, 0.3);
+}
+
+.starry-column-header p {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.5);
+    letter-spacing: 2px;
+}
+
+/* 专栏文章列表 */
+.starry-article-list {
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.starry-article-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 24px;
+    color: #eee;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 左侧青色竖线装饰 */
+.starry-article-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(to bottom, #00dfd8, transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.starry-article-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(0, 223, 216, 0.3);
+    transform: translateX(5px);
+    box-shadow: 0 4px 20px rgba(0, 223, 216, 0.1);
+}
+
+.starry-article-card:hover::before {
+    opacity: 1;
+}
+
+.starry-article-card h3 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 18px;
+    color: #00dfd8;
+    margin-bottom: 8px;
+}
+
+.starry-article-card p {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.6;
+    margin-bottom: 12px;
+}
+
+.starry-article-card .article-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.starry-article-card .article-meta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ═══════════════════════════════════════════════
+   响应式：手机端星空专栏
+   ═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+    .starry-column-entry {
+        padding: 0 15px 40px;
+        max-width: 100%;
+    }
+
+    .starry-column-hint {
+        font-size: 11px;
+        margin-bottom: 12px;
+    }
+
+    .starry-column-btn {
+        padding: 10px 30px;
+        font-size: 14px;
+        letter-spacing: 2px;
+    }
+
+    .starry-column-layout {
+        flex-direction: column;
+    }
+
+    .starry-column-left {
+        width: 100%;
+        height: 200px;
+        flex: none;
+        padding-left: 0;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        perspective: 1200px;
+        perspective-origin: 50% 100%;
+    }
+
+    .starry-column-left .cover-wrapper {
+        width: 95%;
+        height: 100%;
+    }
+
+    .starry-column-left img.cover-front,
+    .starry-column-left img.cover-back {
+        border-radius: 8px;
+    }
+
+    /* 手机端翻书轴改为底部（与现有 .layout-left 手机端一致） */
+    .starry-column-left img.cover-front {
+        transform-origin: bottom center;
+        animation: pageBreezeMobile 6s ease-in-out infinite;
+    }
+
+    .starry-column-left img.cover-back {
+        transform-origin: bottom center;
+        transform: rotateX(180deg);
+        animation: pageBreezeBackMobile 6s ease-in-out infinite;
+    }
+
+    .starry-column-right {
+        width: 100%;
+        flex: none;
+        padding: 20px 15px;
+        justify-content: flex-start;
+    }
+
+    .starry-column-header h2 {
+        font-size: 22px;
+    }
+
+    .starry-column-header p {
+        font-size: 13px;
+    }
+
+    .starry-article-list {
+        max-width: 100%;
+    }
+
+    .starry-article-card {
+        padding: 18px;
+    }
+
+    .starry-article-card h3 {
+        font-size: 16px;
+    }
+
+    .starry-article-card p {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 360px) {
+    .starry-column-entry {
+        padding: 0 10px 30px;
+    }
+
+    .starry-column-hint {
+        font-size: 10px;
+    }
+
+    .starry-column-btn {
+        padding: 8px 24px;
+        font-size: 13px;
+    }
+
+    .starry-column-left {
+        height: 160px;
+    }
+
+    .starry-article-card {
+        padding: 15px;
+    }
+
+    .starry-article-card h3 {
+        font-size: 15px;
+    }
+}
