@@ -889,6 +889,8 @@ function t(key) {
 }
 
 // let currentSelectedCategory = null;
+window.currentSelectedCategory = null;
+
 
 // 大类中文 / 英文名称（从 translations 动态获取）
 function getCategoryName(cat) {
