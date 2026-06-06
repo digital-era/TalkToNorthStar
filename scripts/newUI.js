@@ -1656,24 +1656,31 @@ function renderCategoryLayout(category) {
 // 更新大卡片
 // ──────────────────────────────────────────────
 function updateSingleCard(leader) {
-  const card = document.getElementById('single-northstar-card');
-  if (!card) return;
-  
-  const lang = window.currentLang || 'zh-CN';
-  const labelContribution = t('labelContribution');
-  const labelField = t('labelField');
-  const labelRemarks = t('labelRemarks');
-  
-  const contrib = getFieldValue(leader.contribution, lang);
-  const field = getFieldValue(leader.field, lang);
-  const remarks = getFieldValue(leader.remarks, lang);
-  
-  card.innerHTML = `
-    <h2>${getFieldValue(leader.name, lang)}</h2>
-    <p class="contribution"><strong>${labelContribution}</strong> ${contrib}</p>
-    <p class="field"><strong>${labelField}</strong> ${field}</p>
-    ${remarks ? `<p class="remarks"><strong>${labelRemarks}</strong> ${remarks}</p>` : ''}
-  `;
+    const card = document.getElementById('single-northstar-card');
+    if (!card) return;
+    
+    const lang = window.currentLang || 'zh-CN';
+    const labelContribution = t('labelContribution');
+    const labelField = t('labelField');
+    const labelRemarks = t('labelRemarks');
+    
+    // 兼容已解析的字符串和多语言对象
+    const getValue = (field) => {
+        if (typeof field === 'string') return field;
+        return getFieldValue(field, lang);
+    };
+    
+    const name = getValue(leader.name);
+    const contrib = getValue(leader.contribution);
+    const field = getValue(leader.field);
+    const remarks = getValue(leader.remarks);
+    
+    card.innerHTML = `
+        <h2>${name}</h2>
+        <p class="contribution"><strong>${labelContribution}</strong> ${contrib}</p>
+        <p class="field"><strong>${labelField}</strong> ${field}</p>
+        ${remarks ? `<p class="remarks"><strong>${labelRemarks}</strong> ${remarks}</p>` : ''}
+    `;
 }
 
 function getFilteredCandidates(category) {
