@@ -412,7 +412,7 @@ function backToStarryColumnList() {
 
     // 【关键】不要清除 currentSelectedCategory，或者设置为 'starryColumn'
     // currentSelectedCategory = null;  // ← 不要这行！
-    currentSelectedCategory = 'starryColumn';  // ← 改为这样
+    window.currentSelectedCategory = 'starryColumn';  // ← 改为这样
 
     // 2. 清理对话区域内容（避免残留）
     const promptArea = document.getElementById('prompt-display-area');
