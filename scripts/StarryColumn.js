@@ -186,6 +186,9 @@ function renderStarryColumnLayout() {
 /**
  * 渲染星空专栏卡片列表
  */
+/**
+ * 渲染星空专栏卡片列表 - 简化版：只显示专栏名称
+ */
 function renderStarryCardsList(isAdmin = false) {
     const container = document.getElementById('starryCardsContainer');
     if (!container) return;
@@ -201,10 +204,6 @@ function renderStarryCardsList(isAdmin = false) {
         cardEl.className = `starry-card ${card.builtIn ? 'built-in' : ''} ${isEmpty ? 'empty' : ''}`;
         cardEl.dataset.cardId = card.id;
 
-        const statusText = isEmpty 
-            ? getFieldValue(starryColumnTexts.statusNotConfigured, lang)
-            : `${card.experts.length} ${getFieldValue(starryColumnTexts.statusExpertsCount, lang)}`;
-
         cardEl.innerHTML = `
             <div class="starry-card-header">
                 <div class="starry-card-icon">${getCardTypeIcon(card.type)}</div>
@@ -216,12 +215,6 @@ function renderStarryCardsList(isAdmin = false) {
                     </button>
                 ` : ''}
             </div>
-            <p class="starry-card-contribution">${getFieldValue(card.contribution, lang)}</p>
-            <div class="starry-card-meta">
-                <span class="starry-card-field">${getFieldValue(card.field, lang)}</span>
-                <span class="starry-card-status ${isEmpty ? 'empty' : 'active'}">${statusText}</span>
-            </div>
-            <p class="starry-card-remarks">${getFieldValue(card.remarks, lang)}</p>
         `;
 
         if (!isEmpty || card.type === 'navigator') {
@@ -246,9 +239,7 @@ function renderStarryCardsList(isAdmin = false) {
         container.appendChild(cardEl);
     });
 
-    // ═══════════════════════════════════════════════
-    // 【关键】在容器末尾添加"添加卡片"按钮（admin 专用）
-    // ═══════════════════════════════════════════════
+    // 在容器末尾添加"添加卡片"按钮（admin 专用）
     if (isAdmin) {
         const addBtn = document.createElement('button');
         addBtn.className = 'add-card-btn';
