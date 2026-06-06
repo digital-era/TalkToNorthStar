@@ -290,7 +290,7 @@ function selectStarryCard(card) {
     // 设置全局当前选中领袖
     window.currentSelectedLeader = virtualLeader;
 
-    // 切换布局
+    // 切换布局（保持原有逻辑）
     const layout = document.getElementById('category-layout-container');
     if (!layout || layout.style.display === 'none') {
         const nebulaCrystal = document.getElementById('nebula-crystal');
@@ -311,9 +311,13 @@ function selectStarryCard(card) {
     }
 
     // ═══════════════════════════════════════════════
-    // 【最简修复】不调用 selectLeader，直接更新卡片
+    // 恢复 selectLeader 调用，渲染交互区
     // ═══════════════════════════════════════════════
-    updateSingleCard(virtualLeader);
+    if (typeof selectLeader === 'function') {
+        selectLeader(virtualLeader);
+    } else {
+        console.error('selectLeader is not defined');
+    }
 
     // 滚动到交互区
     setTimeout(() => {
