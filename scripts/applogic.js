@@ -546,8 +546,8 @@ async function getAIResponse() {
     if (isNavigatorMode) {
         finalSystemContent += buildNavigatorSystemPrompt(currentLang);
     } else if (isStarryFusionMode) {
-        // 新增：融合体系统指令
-        finalSystemContent += buildFusionSystemPromptFromLeader(currentSelectedLeader, currentLang);
+        // 直接传 virtualLeader，函数内部兼容处理
+        finalSystemContent += buildFusionSystemPrompt(currentSelectedLeader, currentLang);
     }
     
     finalSystemContent = finalSystemContent.trim();
