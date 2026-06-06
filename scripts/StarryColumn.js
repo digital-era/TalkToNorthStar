@@ -200,11 +200,12 @@ function renderStarryCardsList() {
     if (!container) return;
 
     const lang = window.currentLang || 'zh-CN';
+    const isAdmin = checkAdminPermission();  // ← 添加这行
     container.innerHTML = '';
 
     starryColumnCards.forEach(card => {
         const isEmpty = card.type === 'fusion' && (!card.experts || card.experts.length === 0);
-        const isConfigurable = card.configurable;
+        const isConfigurable = card.configurable && isAdmin;  // ← 修改这行
         const cardEl = document.createElement('div');
         cardEl.className = `starry-card ${card.builtIn ? 'built-in' : ''} ${isEmpty ? 'empty' : ''}`;
         cardEl.dataset.cardId = card.id;
@@ -592,6 +593,11 @@ function findExpertCategory(id) {
  * 显示配置模态框
  */
 function showConfigModal(card) {
+    if (!checkAdminPermission()) {
+        console.warn('Unauthorized: admin permission required');
+        alert('Unauthorized: admin permission required');
+        return;
+    }
     const lang = window.currentLang || 'zh-CN';
     const otherLang = lang === 'zh-CN' ? 'en' : 'zh-CN';
 
@@ -833,6 +839,197 @@ function handleExpertSearch(query, lang) {
             toggleExpertSelect(expertId);
         }
     };
+}
+
+/**
+ * 显示添加卡片模态框
+ */
+function showAddCardModal() {
+    if (!checkAdminPermission()) {
+        console.warn('Unauthorized: admin permission required');
+        alert('Unauthorized: admin permission required');
+        return;
+    }
+
+    const lang = window.currentLang || 'zh-CN';
+    const otherLang = lang === 'zh-CN' ? 'en' : 'zh-CN';
+
+    const modal = document.createElement('div');
+    modal.className = 'starry-modal';
+    modal.id = 'starryAddCardModal';
+
+    modal.innerHTML = `
+        <div class="starry-modal-overlay" onclick="if(event.target===this)closeAddCardModal()"></div>
+        <div class="starry-modal-content">
+            <div class="starry-modal-header">
+                <h3>${lang === 'zh-CN' ? '添加新卡片' : 'Add New Card'}</h3>
+                <button class="modal-close" onclick="closeAddCardModal()">×</button>
+            </div>
+            
+            <div class="starry-modal-body">
+                <!-- 卡片名称 -->
+                <div class="config-section">
+                    <label class="config-label">
+                        ${lang === 'zh-CN' ? '卡片名称' : 'Card Name'}
+                        <span class="lang-tag">${lang === 'zh-CN' ? '中文' : 'English'}</span>
+                    </label>
+                    <input type="text" class="config-input" id="newCardNamePrimary" 
+                           placeholder="${lang === 'zh-CN' ? '输入中文名称' : 'Enter name'}">
+                    
+                    <label class="config-label secondary">
+                        ${lang === 'zh-CN' ? '英文名称' : 'Chinese Name'}
+                        <span class="lang-tag secondary">${lang === 'zh-CN' ? 'English' : '中文'}</span>
+                    </label>
+                    <input type="text" class="config-input" id="newCardNameSecondary" 
+                           placeholder="${lang === 'zh-CN' ? 'Enter English name' : '输入中文名称'}">
+                </div>
+
+                <!-- 功能描述 -->
+                <div class="config-section">
+                    <label class="config-label">
+                        ${lang === 'zh-CN' ? '功能描述' : 'Description'}
+                        <span class="lang-tag">${lang === 'zh-CN' ? '中文' : 'English'}</span>
+                    </label>
+                    <textarea class="config-textarea" id="newCardContributionPrimary" rows="3"
+                        placeholder="${lang === 'zh-CN' ? '描述这张卡片的功能...' : 'Describe the function...'}"></textarea>
+                    
+                    <label class="config-label secondary">
+                        ${lang === 'zh-CN' ? '英文描述' : 'Chinese Description'}
+                        <span class="lang-tag secondary">${lang === 'zh-CN' ? 'English' : '中文'}</span>
+                    </label>
+                    <textarea class="config-textarea" id="newCardContributionSecondary" rows="3"
+                        placeholder="${lang === 'zh-CN' ? 'Describe in English...' : '用中文描述...'}"></textarea>
+                </div>
+
+                <!-- 领域标签 -->
+                <div class="config-section">
+                    <label class="config-label">
+                        ${lang === 'zh-CN' ? '领域标签' : 'Field Tag'}
+                        <span class="lang-tag">${lang === 'zh-CN' ? '中文' : 'English'}</span>
+                    </label>
+                    <input type="text" class="config-input" id="newCardFieldPrimary" 
+                           placeholder="${lang === 'zh-CN' ? '如：AI融合、人文跨界' : 'e.g. AI Fusion'}">
+                    
+                    <label class="config-label secondary">
+                        ${lang === 'zh-CN' ? '英文标签' : 'Chinese Tag'}
+                        <span class="lang-tag secondary">${lang === 'zh-CN' ? 'English' : '中文'}</span>
+                    </label>
+                    <input type="text" class="config-input" id="newCardFieldSecondary" 
+                           placeholder="${lang === 'zh-CN' ? 'e.g. AI Fusion' : '如：AI融合'}">
+                </div>
+
+                <!-- 备注格言 -->
+                <div class="config-section">
+                    <label class="config-label">
+                        ${lang === 'zh-CN' ? '备注格言' : 'Remarks'}
+                        <span class="lang-tag">${lang === 'zh-CN' ? '中文' : 'English'}</span>
+                    </label>
+                    <input type="text" class="config-input" id="newCardRemarksPrimary" 
+                           placeholder="${lang === 'zh-CN' ? '一句标志性的格言...' : 'A signature motto...'}">
+                    
+                    <label class="config-label secondary">
+                        ${lang === 'zh-CN' ? '英文格言' : 'Chinese Remarks'}
+                        <span class="lang-tag secondary">${lang === 'zh-CN' ? 'English' : '中文'}</span>
+                    </label>
+                    <input type="text" class="config-input" id="newCardRemarksSecondary" 
+                           placeholder="${lang === 'zh-CN' ? 'English motto...' : '中文格言...'}">
+                </div>
+
+                <!-- 融合模式 -->
+                <div class="config-section">
+                    <label class="config-label">${getFieldValue(starryColumnTexts.fusionMode, lang)}</label>
+                    <select class="config-select" id="newCardFusionMode">
+                        <option value="roundtable">${getFieldValue(starryColumnTexts.modeRoundtable, lang)}</option>
+                        <option value="synthesis" selected>${getFieldValue(starryColumnTexts.modeSynthesis, lang)}</option>
+                        <option value="debate">${getFieldValue(starryColumnTexts.modeDebate, lang)}</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="starry-modal-footer">
+                <button class="btn-secondary" onclick="closeAddCardModal()">
+                    ${getFieldValue(starryColumnTexts.cancel, lang)}
+                </button>
+                <button class="btn-primary" onclick="saveNewCard()">
+                    ${getFieldValue(starryColumnTexts.save, lang)}
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+}
+
+/**
+ * 关闭添加卡片模态框
+ */
+function closeAddCardModal() {
+    document.getElementById('starryAddCardModal')?.remove();
+}
+
+/**
+ * 保存新卡片
+ */
+function saveNewCard() {
+    const lang = window.currentLang || 'zh-CN';
+    const otherLang = lang === 'zh-CN' ? 'en' : 'zh-CN';
+
+    const namePrimary = document.getElementById('newCardNamePrimary')?.value.trim();
+    const nameSecondary = document.getElementById('newCardNameSecondary')?.value.trim();
+    const contribPrimary = document.getElementById('newCardContributionPrimary')?.value.trim();
+    const contribSecondary = document.getElementById('newCardContributionSecondary')?.value.trim();
+    const fieldPrimary = document.getElementById('newCardFieldPrimary')?.value.trim();
+    const fieldSecondary = document.getElementById('newCardFieldSecondary')?.value.trim();
+    const remarksPrimary = document.getElementById('newCardRemarksPrimary')?.value.trim();
+    const remarksSecondary = document.getElementById('newCardRemarksSecondary')?.value.trim();
+    const fusionMode = document.getElementById('newCardFusionMode')?.value || 'synthesis';
+
+    if (!namePrimary || !contribPrimary || !fieldPrimary) {
+        alert(lang === 'zh-CN' ? '请填写主要语言的所有必填字段' : 'Please fill all required fields in primary language');
+        return;
+    }
+
+    // 生成唯一 ID
+    const newId = 'custom_' + Date.now();
+
+    const newCard = {
+        id: newId,
+        name: {
+            [lang]: namePrimary,
+            [otherLang]: nameSecondary || namePrimary
+        },
+        contribution: {
+            [lang]: contribPrimary,
+            [otherLang]: contribSecondary || contribPrimary
+        },
+        field: {
+            [lang]: fieldPrimary,
+            [otherLang]: fieldSecondary || fieldPrimary
+        },
+        remarks: {
+            [lang]: remarksPrimary,
+            [otherLang]: remarksSecondary || remarksPrimary
+        },
+        configurable: true,
+        builtIn: false,
+        type: 'fusion',
+        experts: [],
+        systemPromptBuilder: 'buildFusionSystemPrompt',
+        userInputMode: 'rawQuestion',
+        fusionStrategy: {
+            mode: fusionMode,
+            description: {
+                'zh-CN': '（已配置）',
+                'en': '(Configured)'
+            }
+        }
+    };
+
+    starryColumnCards.push(newCard);
+    
+    closeAddCardModal();
+    renderStarryCardsList();
+    persistStarryColumnCards();
 }
 
 
