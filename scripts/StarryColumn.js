@@ -175,37 +175,28 @@ function renderStarryColumnLayout() {
                 </h3>
             </div>
             <div class="starry-cards-container" id="starryCardsContainer"></div>
-            ${isAdmin ? `
-                <button class="add-card-btn" id="btn-add-card">
-                    <span>+</span>
-                    ${getFieldValue(starryColumnTexts.addCard, lang)}
-                </button>
-            ` : ''}
+            <!-- 添加卡片按钮移到容器内部，由 renderStarryCardsList 统一控制 -->
         </div>
     `;
 
     document.getElementById('btn-starry-back')?.addEventListener('click', backToWheelSelection);
-    renderStarryCardsList();
-
-    if (isAdmin) {
-        document.getElementById('btn-add-card')?.addEventListener('click', showAddCardModal);
-    }
+    renderStarryCardsList(isAdmin);  // 传递 isAdmin 状态
 }
 
 /**
  * 渲染星空专栏卡片列表
  */
-function renderStarryCardsList() {
+function renderStarryCardsList(isAdmin = false) {
     const container = document.getElementById('starryCardsContainer');
     if (!container) return;
 
     const lang = window.currentLang || 'zh-CN';
-    const isAdmin = checkAdminPermission();  // ← 添加这行
     container.innerHTML = '';
 
     starryColumnCards.forEach(card => {
         const isEmpty = card.type === 'fusion' && (!card.experts || card.experts.length === 0);
-        const isConfigurable = card.configurable && isAdmin;  // ← 修改这行
+        const isConfigurable = card.configurable && isAdmin;
+        
         const cardEl = document.createElement('div');
         cardEl.className = `starry-card ${card.builtIn ? 'built-in' : ''} ${isEmpty ? 'empty' : ''}`;
         cardEl.dataset.cardId = card.id;
@@ -254,6 +245,18 @@ function renderStarryCardsList() {
 
         container.appendChild(cardEl);
     });
+
+    // ═══════════════════════════════════════════════
+    // 【关键】在容器末尾添加"添加卡片"按钮（admin 专用）
+    // ═══════════════════════════════════════════════
+    if (isAdmin) {
+        const addBtn = document.createElement('button');
+        addBtn.className = 'add-card-btn';
+        addBtn.id = 'btn-add-card';
+        addBtn.innerHTML = `<span>+</span> ${getFieldValue(starryColumnTexts.addCard, lang)}`;
+        addBtn.addEventListener('click', showAddCardModal);
+        container.appendChild(addBtn);
+    }
 }
 
 /**
@@ -457,7 +460,9 @@ function backToStarryColumnList() {
 
     // 4. 重新渲染星空专栏列表
     renderStarryColumnLayout();
-    renderStarryCardsList();
+
+    const isAdmin = checkAdminPermission();
+    renderStarryCardsList(isAdmin);
 
     // 5. 滚动到顶部
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1028,7 +1033,8 @@ function saveNewCard() {
     starryColumnCards.push(newCard);
     
     closeAddCardModal();
-    renderStarryCardsList();
+    const isAdmin = checkAdminPermission();
+    renderStarryCardsList(isAdmin);
     persistStarryColumnCards();
 }
 
@@ -1177,7 +1183,8 @@ function saveCardConfig(cardId) {
 
     // 刷新
     closeConfigModal();
-    renderStarryCardsList();
+    const isAdmin = checkAdminPermission();
+    renderStarryCardsList(isAdmin);
     persistStarryColumnCards();
 }
 
@@ -1360,7 +1367,8 @@ function updateStarryColumnLanguage() {
         
     } else {
         // 列表模式：重新渲染卡片列表
-        renderStarryCardsList();
+        const isAdmin = checkAdminPermission();
+        renderStarryCardsList(isAdmin);
     }
 }
 
