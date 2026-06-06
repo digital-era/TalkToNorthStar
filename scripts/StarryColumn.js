@@ -284,22 +284,28 @@ function selectStarryCard(card) {
         resolvedExperts = resolveCardExperts(card);
     }
 
-    // 创建适配 selectLeader 的虚拟领袖
+    // ═══════════════════════════════════════════════
+    // 【修复】保留原始多语言对象，同时提供当前语言的解析值
+    // ═══════════════════════════════════════════════
     const virtualLeader = {
         id: card.id,
+        // 当前语言的解析值（用于直接显示）
         name: getFieldValue(card.name, lang),
         field: getFieldValue(card.field, lang),
         contribution: getFieldValue(card.contribution, lang),
         remarks: getFieldValue(card.remarks, lang),
+        
+        // 保留原始多语言对象（用于语言切换时重新解析）
+        _rawName: card.name,
+        _rawField: card.field,
+        _rawContribution: card.contribution,
+        _rawRemarks: card.remarks,
+        
         _isStarryCard: true,
         _cardType: card.type,
         _experts: resolvedExperts,
         _systemPromptBuilder: card.systemPromptBuilder,
-        _fusionStrategy: card.fusionStrategy,
-        _rawName: card.name,
-        _rawField: card.field,
-        _rawContribution: card.contribution,
-        _rawRemarks: card.remarks
+        _fusionStrategy: card.fusionStrategy
     };
 
     window.currentSelectedLeader = virtualLeader;
@@ -1133,16 +1139,27 @@ function updateStarryColumnLanguage() {
     
     // 4. 根据模式更新内容
     if (window.starryColumnViewMode === 'card' && window.currentSelectedLeader) {
+        const leader = window.currentSelectedLeader;
+        
+        // ═══════════════════════════════════════════════
+        // 【关键修复】如果 leader 有原始多语言对象，重新解析
+        // ═══════════════════════════════════════════════
+        if (leader._rawName) {
+            leader.name = getFieldValue(leader._rawName, lang);
+            leader.field = getFieldValue(leader._rawField, lang);
+            leader.contribution = getFieldValue(leader._rawContribution, lang);
+            leader.remarks = getFieldValue(leader._rawRemarks, lang);
+        }
+        
         // 更新卡片显示
-        updateSingleCard(window.currentSelectedLeader);
+        updateSingleCard(leader);
         
         // 更新 selectLeader 渲染的标题
         const selectedLeaderName = document.getElementById('selectedLeaderName');
         if (selectedLeaderName) {
-            selectedLeaderName.textContent = window.currentSelectedLeader.name;
+            selectedLeaderName.textContent = leader.name;
         }
         
-        // 注意：不触碰交互区域，保留对话状态
     } else {
         // 列表模式：重新渲染卡片列表
         renderStarryCardsList();
