@@ -259,16 +259,13 @@ function getCardTypeIcon(type) {
     </svg>`;
 }
 
-/**
- * 选择星空卡片，复用原有北极星对话流程
- * 不再单独渲染对话界面，而是融入标准 selectLeader 体系
- */
 function selectStarryCard(card) {
     const lang = window.currentLang || 'zh-CN';
 
     window.currentSelectedCard = card;
     window.currentSelectedCategory = 'starryColumn';
 
+    // 准备专家数据
     let resolvedExperts;
     if (card.type === 'navigator') {
         resolvedExperts = buildInterstellarSnapshot(lang);
@@ -276,6 +273,7 @@ function selectStarryCard(card) {
         resolvedExperts = resolveCardExperts(card);
     }
 
+    // 创建虚拟领袖
     const virtualLeader = {
         id: card.id,
         name: card.name,
@@ -289,7 +287,10 @@ function selectStarryCard(card) {
         _fusionStrategy: card.fusionStrategy
     };
 
-    // 如果当前不在左右布局，先进入
+    // 设置全局当前选中领袖
+    window.currentSelectedLeader = virtualLeader;
+
+    // 切换布局
     const layout = document.getElementById('category-layout-container');
     if (!layout || layout.style.display === 'none') {
         const nebulaCrystal = document.getElementById('nebula-crystal');
@@ -309,15 +310,17 @@ function selectStarryCard(card) {
         if (container) container.style.display = 'block';
     }
 
-    selectLeader(virtualLeader, 'starryColumn', null);
+    // ═══════════════════════════════════════════════
+    // 【最简修复】不调用 selectLeader，直接更新卡片
+    // ═══════════════════════════════════════════════
     updateSingleCard(virtualLeader);
 
+    // 滚动到交互区
     setTimeout(() => {
         const interactionArea = document.querySelector('.interaction-area');
         if (interactionArea) interactionArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 100);
 }
-
 
 /**
  * 构建融合体系统指令
