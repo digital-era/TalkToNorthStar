@@ -533,11 +533,23 @@ async function getAIResponse() {
     const isNavigatorMode = currentSelectedLeader?.id === 'interstellar_navigator';
 
     // ═══════════════════════════════════════════════
-    // 【系统指令合并】上下文 + 领航员指令（可叠加）
+    // 【星空专栏融合模式】判断 —— 新增
+    // ═══════════════════════════════════════════════
+    const isStarryFusionMode = currentSelectedLeader?._isStarryCard === true &&  currentSelectedLeader?._cardType === 'fusion';
+
+    // ═══════════════════════════════════════════════
+    // 【系统指令合并】上下文 + 领航员指令 + 融合体指令（可叠加）
     // ═══════════════════════════════════════════════
     let finalSystemContent = '';
     if (ctxSystemContent) finalSystemContent += ctxSystemContent + '\n\n';
-    if (isNavigatorMode) finalSystemContent += buildNavigatorSystemPrompt(currentLang);
+    
+    if (isNavigatorMode) {
+        finalSystemContent += buildNavigatorSystemPrompt(currentLang);
+    } else if (isStarryFusionMode) {
+        // 新增：融合体系统指令
+        finalSystemContent += buildFusionSystemPromptFromLeader(currentSelectedLeader, currentLang);
+    }
+    
     finalSystemContent = finalSystemContent.trim();
 
     // 3. 构造 Body
