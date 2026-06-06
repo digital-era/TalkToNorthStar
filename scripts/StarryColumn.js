@@ -273,64 +273,119 @@ function selectStarryCard(card) {
         resolvedExperts = resolveCardExperts(card);
     }
 
-    // ═══════════════════════════════════════════════
-    // 【关键修复】创建适配 selectLeader 的虚拟领袖对象
-    // 所有字段必须提前解析为当前语言的字符串，不能传多语言对象
-    // ═══════════════════════════════════════════════
+    // 创建适配 selectLeader 的虚拟领袖
     const virtualLeader = {
         id: card.id,
-        // 提前解析为字符串，兼容 selectLeader 的读取方式
         name: getFieldValue(card.name, lang),
         field: getFieldValue(card.field, lang),
         contribution: getFieldValue(card.contribution, lang),
         remarks: getFieldValue(card.remarks, lang),
-        
-        // 保留原始多语言对象和扩展数据，供后续融合体逻辑使用
         _isStarryCard: true,
         _cardType: card.type,
         _experts: resolvedExperts,
         _systemPromptBuilder: card.systemPromptBuilder,
         _fusionStrategy: card.fusionStrategy,
-        // 保留原始多语言对象，供 buildFusionSystemPrompt 等函数使用
         _rawName: card.name,
         _rawField: card.field,
         _rawContribution: card.contribution,
         _rawRemarks: card.remarks
     };
 
-    // 设置全局当前选中领袖
     window.currentSelectedLeader = virtualLeader;
 
-    // 切换布局
+    // ═══════════════════════════════════════════════
+    // 【关键】复用 selectCategory 的完整 DOM 流程
+    // 但使用第一个实际分类作为宿主，确保 selectLeader 的 DOM 操作不报错
+    // ═══════════════════════════════════════════════
+    
+    // 找一个实际存在的分类作为宿主
+    const hostCategory = Object.keys(allData).find(cat => allData[cat]?.length > 0) || 'ai';
+    
+    // 1. 隐藏水晶球/转盘
+    const nebulaCrystal = document.getElementById('nebula-crystal');
+    if (nebulaCrystal) nebulaCrystal.style.display = 'none';
+    const wheelSection = document.getElementById('wheel-of-destiny');
+    if (wheelSection) wheelSection.style.display = 'none';
+
+    // 2. 显示布局容器
     const layout = document.getElementById('category-layout-container');
-    if (!layout || layout.style.display === 'none') {
-        const nebulaCrystal = document.getElementById('nebula-crystal');
-        if (nebulaCrystal) nebulaCrystal.style.display = 'none';
+    if (layout) layout.style.display = 'flex';
 
-        const wheelSection = document.getElementById('wheel-of-destiny');
-        if (wheelSection) wheelSection.style.display = 'none';
+    // 3. 隐藏 tabs
+    const tabsBar = document.querySelector('.tabs');
+    if (tabsBar) tabsBar.style.display = 'none';
 
-        const mainContainer = document.querySelector('.container');
-        if (mainContainer) mainContainer.style.display = 'none';
+    // 4. 调用 openTab 创建标准 DOM 结构（使用宿主分类）
+    openTab(null, hostCategory);
+    document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
 
-        document.querySelectorAll('.tab-content').forEach(tc => tc.style.display = 'none');
+    // 5. 渲染星空专栏布局（覆盖 layout 内容，但保留关键结构）
+    renderStarryColumnLayoutForLeader(hostCategory);
 
-        if (layout) layout.style.display = 'flex';
-        
-        const container = document.querySelector('.container');
-        if (container) container.style.display = 'block';
-    }
+    // 6. 显示 .container
+    const container = document.querySelector('.container');
+    if (container) container.style.display = 'block';
 
-    // ═══════════════════════════════════════════════
-    // 恢复调用 selectLeader，复用原有对话区域逻辑
-    // ═══════════════════════════════════════════════
-    selectLeader(virtualLeader, 'starryColumn', null);
+    // 7. 【关键】调用 selectLeader，传入宿主分类（确保 DOM 元素存在）
+    // 但标记当前实际是星空专栏
+    selectLeader(virtualLeader, hostCategory, null);
+
+    // 8. 更新单卡显示
+    updateSingleCard(virtualLeader);
 
     // 滚动到交互区
     setTimeout(() => {
         const interactionArea = document.querySelector('.interaction-area');
         if (interactionArea) interactionArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 100);
+}
+
+/**
+ * 渲染星空专栏布局，但保留 selectLeader 需要的交互结构
+ */
+function renderStarryColumnLayoutForLeader(hostCategory) {
+    const layout = document.getElementById('category-layout-container');
+    if (!layout) return;
+    
+    const lang = window.currentLang || 'zh-CN';
+    
+    layout.innerHTML = `
+        <div class="layout-left" id="starryLeft">
+            <div class="starry-cover-wrapper">
+                <img src="images/ambient-starry-column.jpg" 
+                     alt="${getFieldValue(starryColumnTexts.title, lang)}" 
+                     class="starry-cover"
+                     id="starryCover">
+                <div class="starry-cover-overlay">
+                    <h2 class="starry-cover-title">
+                        ${getFieldValue(starryColumnTexts.title, lang)}
+                    </h2>
+                    <p class="starry-cover-subtitle">
+                        ${getFieldValue(starryColumnTexts.subtitle, lang)}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="layout-right" id="starryRight">
+            <div class="starry-header">
+                <button class="back-btn-inline" id="btn-starry-back" 
+                        title="${getFieldValue(starryColumnTexts.backTooltip, lang)}">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                    </svg>
+                </button>
+                <h3 class="starry-list-title">
+                    ${getFieldValue(starryColumnTexts.columnName, lang)}
+                </h3>
+            </div>
+            <!-- selectLeader 需要的结构 -->
+            <div id="single-northstar-card" class="northstar-single-card"></div>
+            <!-- 交互区：selectLeader 会操作这里的 DOM -->
+            <div class="interaction-area" id="interactionArea"></div>
+        </div>
+    `;
+
+    document.getElementById('btn-starry-back')?.addEventListener('click', backToWheelSelection);
 }
 
 /**
