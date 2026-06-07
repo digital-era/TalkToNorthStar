@@ -22,7 +22,7 @@ export async function onRequestGet(context) {
     const { env } = context;
 
     try {
-        const data = await env.STARRY_KV.get(KV_KEY, 'json');
+        const data = await env.STARRY_KV.get(STARRY_KV_KEY, 'json');
 
         if (!data) {
             // 首次访问，返回空结构
