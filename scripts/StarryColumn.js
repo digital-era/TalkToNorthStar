@@ -1578,30 +1578,65 @@ async function _executePersist(json, hash, payload) {
 /**
  * 强制立即保存（用于页面卸载前）
  */
-function _flushPendingSave() {
-    clearTimeout(_pendingSaveTimer);
-
-    const customCards = starryColumnCards.filter(c => c.configurable);
-    const payload = {
-        _schema: PERSISTENCE.SCHEMA_VERSION,
-        _savedAt: Date.now(),
-        cards: customCards
-    };
-    const json = JSON.stringify(payload);
-
-    // 同步写 localStorage（beforeunload 中不能发异步请求）
-    try {
-        localStorage.setItem(PERSISTENCE.STORAGE_KEY, json);
-    } catch (e) {
-        console.error('[StarryColumn] Flush to localStorage failed:', e);
+async function _mergeServerData(serverData) {
+    if (!serverData || !Array.isArray(serverData.cards)) {
+        console.log('[Merge] No cards in serverData');
+        return;
     }
 
-    // 尝试同步发送 beacon（不保证成功）
-    if (navigator.sendBeacon) {
-        navigator.sendBeacon(
-            PERSISTENCE.API_BASE,
-            new Blob([json], { type: 'application/json' })
-        );
+    console.log('[Merge] Starting merge, server cards:', serverData.cards.length);
+
+    for (const savedCard of serverData.cards) {
+        console.log('[Merge] Processing card:', savedCard.id);
+        console.log('[Merge] Raw experts:', savedCard.experts, 
+                    'type:', typeof savedCard.experts,
+                    'isArray:', Array.isArray(savedCard.experts),
+                    'length:', savedCard.experts?.length);
+
+        if (!_isValidCard(savedCard)) {
+            console.warn('[Merge] Invalid card skipped:', savedCard.id);
+            continue;
+        }
+
+        const existing = starryColumnCards.find(c => c.id === savedCard.id);
+        console.log('[Merge] Found existing:', !!existing, 
+                    'configurable:', existing?.configurable,
+                    'builtIn:', existing?.builtIn);
+
+        if (existing && existing.configurable) {
+            console.log('[Merge] Updating existing card');
+            
+            // 先记录旧值
+            const oldExperts = existing.experts;
+            
+            Object.assign(existing, {
+                name: savedCard.name || existing.name,
+                contribution: savedCard.contribution || existing.contribution,
+                field: savedCard.field || existing.field,
+                remarks: savedCard.remarks || existing.remarks,
+                experts: savedCard.experts || [],
+                fusionStrategy: savedCard.fusionStrategy || { mode: 'synthesis' }
+            });
+            
+            console.log('[Merge] After update, experts:', existing.experts,
+                        'was:', oldExperts);
+
+        } else if (!existing) {
+            console.log('[Merge] Adding new card');
+            starryColumnCards.push(savedCard);
+            
+        } else {
+            console.log('[Merge] Skipped builtIn card:', existing.id);
+        }
+    }
+
+    console.log('[Merge] Complete. Total cards:', starryColumnCards.length);
+
+    // 缓存到 localStorage
+    try {
+        localStorage.setItem(PERSISTENCE.STORAGE_KEY, JSON.stringify(serverData));
+    } catch (e) {
+        console.error('[Merge] Cache failed:', e);
     }
 }
 
@@ -1612,42 +1647,7 @@ function _flushPendingSave() {
 /**
  * 合并后端数据到内存
  */
-async function _mergeServerData(serverData) {
-    if (!serverData || !Array.isArray(serverData.cards)) return;
 
-    for (const savedCard of serverData.cards) {
-        // 校验卡片
-        if (!_isValidCard(savedCard)) {
-            console.warn('[StarryColumn] Invalid card skipped:', savedCard.id);
-            continue;
-        }
-
-        const existing = starryColumnCards.find(c => c.id === savedCard.id);
-
-        if (existing && existing.configurable) {
-            // 更新现有自定义卡片
-            Object.assign(existing, {
-                name: savedCard.name || existing.name,
-                contribution: savedCard.contribution || existing.contribution,
-                field: savedCard.field || existing.field,
-                remarks: savedCard.remarks || existing.remarks,
-                experts: savedCard.experts || [],
-                fusionStrategy: savedCard.fusionStrategy || { mode: 'synthesis' }
-            });
-        } else if (!existing) {
-            // 新增自定义卡片
-            starryColumnCards.push(savedCard);
-        }
-        // builtIn 卡片不覆盖
-    }
-
-    // 同步到 localStorage 作为缓存
-    try {
-        localStorage.setItem(PERSISTENCE.STORAGE_KEY, JSON.stringify(serverData));
-    } catch (e) {
-        console.error('[StarryColumn] Cache to localStorage failed:', e);
-    }
-}
 
 /**
  * 从 localStorage 加载（回退方案）
