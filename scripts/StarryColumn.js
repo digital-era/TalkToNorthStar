@@ -211,7 +211,7 @@ function renderStarryColumnLayout() {
     document.getElementById('btn-starry-back')?.addEventListener('click', backToWheelSelection);
 
     if (isAdmin) {
-        _bindExportImportEvents();
+        _bindExportImportEvents(lang);
     }
 
     renderStarryCardsList(isAdmin);
@@ -223,16 +223,14 @@ function renderStarryColumnLayout() {
  * 绑定导出/导入事件
  */
 function _bindExportImportEvents(lang) {
+    // 导出按钮
     const exportBtn = document.getElementById('btn-starry-export');
     if (exportBtn) {
-        // 先移除旧监听器，避免重复
-        const newExportBtn = exportBtn.cloneNode(true);
-        exportBtn.parentNode.replaceChild(newExportBtn, exportBtn);
-        
-        newExportBtn.addEventListener('click', () => {
+        exportBtn.addEventListener('click', () => {
+            const currentLang = window.currentLang || 'zh-CN';  // ✅ 实时读取
             const result = exportStarryColumnData();
             if (result.success) {
-                const msg = lang === 'zh-CN' 
+                const msg = currentLang === 'zh-CN' 
                     ? `已导出 ${result.count} 张卡片配置` 
                     : `Exported ${result.count} cards`;
                 showToast(msg, 'success');
@@ -240,16 +238,15 @@ function _bindExportImportEvents(lang) {
         });
     }
 
+    // 导入文件选择
     const importInput = document.getElementById('btn-starry-import-input');
     if (importInput) {
-        const newImportInput = importInput.cloneNode(true);
-        importInput.parentNode.replaceChild(newImportInput, importInput);
-        
-        newImportInput.addEventListener('change', async (e) => {
+        importInput.addEventListener('change', async (e) => {
+            const currentLang = window.currentLang || 'zh-CN';  // ✅ 实时读取
             const file = e.target.files[0];
             if (!file) return;
 
-            const confirmMsg = lang === 'zh-CN' 
+            const confirmMsg = currentLang === 'zh-CN' 
                 ? '导入将覆盖现有自定义卡片配置，确定继续？' 
                 : 'Import will overwrite existing custom cards. Continue?';
 
@@ -261,7 +258,7 @@ function _bindExportImportEvents(lang) {
             const result = await importStarryColumnData(file);
 
             if (result.success) {
-                const msg = lang === 'zh-CN' 
+                const msg = currentLang === 'zh-CN' 
                     ? `导入成功：新增 ${result.added} 张，更新 ${result.updated} 张` 
                     : `Import success: ${result.added} added, ${result.updated} updated`;
                 showToast(msg, 'success');
@@ -269,7 +266,7 @@ function _bindExportImportEvents(lang) {
                 const isAdmin = checkAdminPermission();
                 renderStarryCardsList(isAdmin);
             } else {
-                const msg = lang === 'zh-CN' 
+                const msg = currentLang === 'zh-CN' 
                     ? `导入失败：${result.error}` 
                     : `Import failed: ${result.error}`;
                 showToast(msg, 'error');
@@ -279,8 +276,6 @@ function _bindExportImportEvents(lang) {
         });
     }
 }
-
-
 
 /**
  * 渲染星空专栏卡片列表 - 简化版：只显示专栏名称
