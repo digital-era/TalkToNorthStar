@@ -116,36 +116,5 @@ const starryColumnCards = [
                 "en": "(To be configured: select fusion mode and participating experts)"
             }
         }
-    },
-
-    // ═══════════════════════════════════════════════
-    // 【系统内置】星际领航员（不可配置，但专家动态提取）
-    // ═══════════════════════════════════════════════
-    {
-        id: "interstellar_navigator",
-        name: {
-            "zh-CN": "星际领航员",
-            "en": "Interstellar Navigator"
-        },
-        contribution: {
-            "zh-CN": "作为'对话北极星'领航员，针对用户问题，提供三位领域互补的'北极星'人物建议。",
-            "en": "As navigator for Talk with North Stars, provide recommendations for three complementary North Star figures based on user questions."
-        },
-        field: {
-            "zh-CN": "星际领航",
-            "en": "Stellar Navigation Guide"
-        },
-        remarks: {
-            "zh-CN": "追求北极星人物之间的跨学科洞见和化学反应。",
-            "en": "Pursuing interdisciplinary insights and chemical reactions among the North Star figures."
-        },
-        
-        configurable: false,
-        builtIn: true,
-        type: "navigator",
-        
-        experts: [],                    // ← 空数组：运行时从 allData 全库动态提取
-        systemPromptBuilder: "buildNavigatorSystemPrompt",
-        userInputMode: "rawQuestion"
-    }
+    } 
 ];
