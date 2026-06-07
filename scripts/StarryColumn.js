@@ -128,8 +128,9 @@ function enterStarryColumn() {
     }, 300);
 }
 
+
 /**
- * 渲染星空专栏布局
+ * 渲染星空专栏布局（含导出/导入按钮）
  */
 function renderStarryColumnLayout() {
     const layout = document.getElementById('category-layout-container');
@@ -173,14 +174,104 @@ function renderStarryColumnLayout() {
                 <h3 class="starry-list-title">
                     ${getFieldValue(starryColumnTexts.columnName, lang)}
                 </h3>
+                ${isAdmin ? `
+                    <div class="starry-admin-actions" id="starryAdminActions">
+                        <button class="btn-starry-export" id="btn-starry-export" 
+                                title="${lang === 'zh-CN' ? '导出配置' : 'Export Config'}">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            <span>${lang === 'zh-CN' ? '导出' : 'Export'}</span>
+                        </button>
+                        <label class="btn-starry-import" for="btn-starry-import-input" 
+                               title="${lang === 'zh-CN' ? '导入配置' : 'Import Config'}">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            <span>${lang === 'zh-CN' ? '导入' : 'Import'}</span>
+                        </label>
+                        <input type="file" id="btn-starry-import-input" 
+                               accept=".json,application/json" 
+                               style="display:none">
+                    </div>
+                ` : ''}
             </div>
             <div class="starry-cards-container" id="starryCardsContainer"></div>
             <!-- 添加卡片按钮移到容器内部，由 renderStarryCardsList 统一控制 -->
         </div>
     `;
 
+    // 绑定返回按钮
     document.getElementById('btn-starry-back')?.addEventListener('click', backToWheelSelection);
-    renderStarryCardsList(isAdmin);  // 传递 isAdmin 状态
+
+    // 绑定导出/导入事件（仅管理员）
+    if (isAdmin) {
+        _bindExportImportEvents(lang);
+    }
+
+    renderStarryCardsList(isAdmin);
+}
+
+/**
+ * 绑定导出/导入事件
+ */
+function _bindExportImportEvents(lang) {
+    // 导出按钮
+    const exportBtn = document.getElementById('btn-starry-export');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', () => {
+            const result = exportStarryColumnData();
+            if (result.success) {
+                const msg = lang === 'zh-CN' 
+                    ? `已导出 ${result.count} 张卡片配置` 
+                    : `Exported ${result.count} cards`;
+                // 使用临时提示而非 alert
+                showToast(msg, 'success');
+            }
+        });
+    }
+
+    // 导入文件选择
+    const importInput = document.getElementById('btn-starry-import-input');
+    if (importInput) {
+        importInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const confirmMsg = lang === 'zh-CN' 
+                ? '导入将覆盖现有自定义卡片配置，确定继续？' 
+                : 'Import will overwrite existing custom cards. Continue?';
+
+            if (!confirm(confirmMsg)) {
+                e.target.value = '';
+                return;
+            }
+
+            const result = await importStarryColumnData(file);
+
+            if (result.success) {
+                const msg = lang === 'zh-CN' 
+                    ? `导入成功：新增 ${result.added} 张，更新 ${result.updated} 张` 
+                    : `Import success: ${result.added} added, ${result.updated} updated`;
+                showToast(msg, 'success');
+
+                // 刷新列表
+                const isAdmin = checkAdminPermission();
+                renderStarryCardsList(isAdmin);
+            } else {
+                const msg = lang === 'zh-CN' 
+                    ? `导入失败：${result.error}` 
+                    : `Import failed: ${result.error}`;
+                showToast(msg, 'error');
+            }
+
+            e.target.value = ''; // 重置，允许重复导入同一文件
+        });
+    }
 }
 
 /**
