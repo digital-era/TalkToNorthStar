@@ -15,8 +15,8 @@ const starryColumnCards = [
             "en": "The North Star extraordinary achievement that shapes the course of history, drives a qualitative shift in technology, or sparks the emergence of new ideas.."
         },
         field: {
-            "zh-CN": "星光闪耀",
-            "en": "Shining Stars"
+            "zh-CN": "名人传记",
+            "en": "Biographies of distinguished figures"
         },
         remarks: {
             "zh-CN": "展现杰出人物的思维模型与灵魂抉择，提供高维精神共鸣。",
@@ -54,8 +54,8 @@ const starryColumnCards = [
             "en": "Cross-temporal intellectual dialogue, exploring key nodes of human civilization evolution."
         },
         field: {
-            "zh-CN": "全球文明",
-            "en": "Global Civilization"
+            "zh-CN": "全球文明史",
+            "en": "History of Global Civilization"
         },
         remarks: {
             "zh-CN": "鉴往知今，察今预未来。",
