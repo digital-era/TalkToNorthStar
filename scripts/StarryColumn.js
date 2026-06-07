@@ -653,7 +653,7 @@ function showConfigModal(card) {
                         placeholder="${lang === 'zh-CN' ? '描述这张卡片的定位...' : 'Describe the function...'}">${currentContribution}</textarea>
                     
                     <label class="config-label secondary">
-                        ${lang === 'zh-CN' ? '英文描述' : '中文描述'}
+                        ${lang === 'zh-CN' ? '英文定位' : '中文定位'}
                         <span class="lang-tag secondary">${lang === 'zh-CN' ? 'English' : '中文'}</span>
                     </label>
                     <textarea class="config-textarea" id="configContributionSecondary" rows="3"
@@ -724,7 +724,7 @@ function showConfigModal(card) {
                     
                     <div class="selected-experts-area">
                         <label class="config-label sub">
-                            ${lang === 'zh-CN' ? '已选专家' : 'Selected Experts'}
+                            ${lang === 'zh-CN' ? '已选北极星' : 'Selected NorthStars'}
                             <span class="count-badge" id="selectedCount">${card.experts?.length || 0}</span>
                         </label>
                         <div class="selected-experts-list" id="selectedExpertsList"></div>
