@@ -32,7 +32,7 @@ const starryColumnCards = [
         userInputMode: "rawQuestion",
         
         fusionStrategy: {
-            mode: "roundtable",
+            mode: "synthesis", //roundtable
             description: {
                 "zh-CN": "（待配置：选择融合模式与参与专家）",
                 "en": "(To be configured: select fusion mode and participating experts)"
