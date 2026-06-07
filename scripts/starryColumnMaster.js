@@ -83,13 +83,13 @@ const starryColumnCards = [
     // 【用户配置】投资论道（初始为空，待管理员配置）
     // ═══════════════════════════════════════════════
     {
-        id: "investment_dialogue",
+        id: "business_Insights",
         name: {
-            "zh-CN": "投资论道",
+            "zh-CN": "商海论道",
             "en": "Insights on Investment"
         },
         contribution: {
-            "zh-CN": "金融投资与商业决策观点交锋。",
+            "zh-CN": "商业决策与金融投资观点交锋。",
             "en": "A Clash of Perspectives on Financial Investment and Business Decision-Making."
         },
         field: {
@@ -99,6 +99,45 @@ const starryColumnCards = [
         remarks: {
             "zh-CN": "人类的远见绝非商品。",
             "en": "Human foresight is by no means a commodity."
+        },
+        
+        configurable: true,
+        builtIn: false,
+        type: "fusion",
+        
+        experts: [],                    // ← 空数组
+        systemPromptBuilder: "buildFusionSystemPrompt",
+        userInputMode: "rawQuestion",
+        
+        fusionStrategy: {
+            mode: "debate",
+            description: {
+                "zh-CN": "（待配置：选择融合模式与参与专家）",
+                "en": "(To be configured: select fusion mode and participating experts)"
+            }
+        }
+    } ，
+
+    // ═══════════════════════════════════════════════
+    // 【用户配置】投资论道（初始为空，待管理员配置）
+    // ═══════════════════════════════════════════════
+    {
+        id: "technology_wave",
+        name: {
+            "zh-CN": "科技观潮",
+            "en": "Riding the Wave of Technology"
+        },
+        contribution: {
+            "zh-CN": "AI、新能源、先进制造、太空探索和量子计算的发展、演进和渗透。",
+            "en": "The development, evolution, and permeation of AI, new energy, advanced manufacturing, space exploration, and quantum computing."
+        },
+        field: {
+            "zh-CN": "技术发展迭代",
+            "en": "Technological development and iteration"
+        },
+        remarks: {
+            "zh-CN": "技术浪潮变迁和对社会的影响。",
+            "en": "Shifts in the wave of technological change and their impact on society."
         },
         
         configurable: true,
