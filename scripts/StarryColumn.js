@@ -1640,14 +1640,40 @@ async function _mergeServerData(serverData) {
     }
 }
 
+/**
+ * 强制立即保存（用于页面卸载前）
+ */
+function _flushPendingSave() {
+    clearTimeout(_pendingSaveTimer);
+
+    const customCards = starryColumnCards.filter(c => c.configurable);
+    const payload = {
+        _schema: PERSISTENCE.SCHEMA_VERSION,
+        _savedAt: Date.now(),
+        cards: customCards
+    };
+    const json = JSON.stringify(payload);
+
+    // 同步写 localStorage
+    try {
+        localStorage.setItem(PERSISTENCE.STORAGE_KEY, json);
+    } catch (e) {
+        console.error('[StarryColumn] Flush to localStorage failed:', e);
+    }
+
+    // 尝试同步发送 beacon
+    if (navigator.sendBeacon) {
+        navigator.sendBeacon(
+            PERSISTENCE.API_BASE,
+            new Blob([json], { type: 'application/json' })
+        );
+    }
+}
+
+
 // ═══════════════════════════════════════════════════════════════
 // 数据加载与合并
 // ═══════════════════════════════════════════════════════════════
-
-/**
- * 合并后端数据到内存
- */
-
 
 /**
  * 从 localStorage 加载（回退方案）
