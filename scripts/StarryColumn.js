@@ -1587,24 +1587,26 @@ async function _mergeServerData(serverData) {
     console.log('[Merge] Starting merge, server cards:', serverData.cards.length);
 
     for (const savedCard of serverData.cards) {
+        /*
         console.log('[Merge] Processing card:', savedCard.id);
         console.log('[Merge] Raw experts:', savedCard.experts, 
                     'type:', typeof savedCard.experts,
                     'isArray:', Array.isArray(savedCard.experts),
                     'length:', savedCard.experts?.length);
-
+        */
         if (!_isValidCard(savedCard)) {
             console.warn('[Merge] Invalid card skipped:', savedCard.id);
             continue;
         }
 
         const existing = starryColumnCards.find(c => c.id === savedCard.id);
+        /*
         console.log('[Merge] Found existing:', !!existing, 
                     'configurable:', existing?.configurable,
-                    'builtIn:', existing?.builtIn);
+                    'builtIn:', existing?.builtIn);*/
 
         if (existing && existing.configurable) {
-            console.log('[Merge] Updating existing card');
+            /*console.log('[Merge] Updating existing card');*/
             
             // 先记录旧值
             const oldExperts = existing.experts;
@@ -1618,8 +1620,8 @@ async function _mergeServerData(serverData) {
                 fusionStrategy: savedCard.fusionStrategy || { mode: 'synthesis' }
             });
             
-            console.log('[Merge] After update, experts:', existing.experts,
-                        'was:', oldExperts);
+            /*console.log('[Merge] After update, experts:', existing.experts,
+                        'was:', oldExperts);*/
 
         } else if (!existing) {
             console.log('[Merge] Adding new card');
