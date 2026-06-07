@@ -48,8 +48,8 @@ const starryColumnTexts = {
         'en': 'Fusion Mode'
     },
     selectExperts: {
-        'zh-CN': '选择专家',
-        'en': 'Select Experts'
+        'zh-CN': '选择北极星',
+        'en': 'Select NorthStar'
     },
     modeRoundtable: {
         'zh-CN': '圆桌会议',
@@ -643,14 +643,14 @@ function showConfigModal(card) {
                            value="${currentNameOther}" placeholder="${lang === 'zh-CN' ? 'Enter English name' : '输入中文名称'}">
                 </div>
 
-                <!-- 功能描述 -->
+                <!-- 专栏定位 -->
                 <div class="config-section">
                     <label class="config-label">
-                        ${lang === 'zh-CN' ? '功能描述' : 'Description'}
+                        ${lang === 'zh-CN' ? '定位' : 'Position'}
                         <span class="lang-tag">${lang === 'zh-CN' ? '中文' : 'English'}</span>
                     </label>
                     <textarea class="config-textarea" id="configContributionPrimary" rows="3"
-                        placeholder="${lang === 'zh-CN' ? '描述这张卡片的功能...' : 'Describe the function...'}">${currentContribution}</textarea>
+                        placeholder="${lang === 'zh-CN' ? '描述这张卡片的定位...' : 'Describe the function...'}">${currentContribution}</textarea>
                     
                     <label class="config-label secondary">
                         ${lang === 'zh-CN' ? '英文描述' : '中文描述'}
@@ -677,21 +677,21 @@ function showConfigModal(card) {
                            value="${currentFieldOther}" placeholder="${lang === 'zh-CN' ? 'e.g. AI Fusion' : '如：AI融合'}">
                 </div>
 
-                <!-- 备注格言 -->
+                <!-- 评注 -->
                 <div class="config-section">
                     <label class="config-label">
-                        ${lang === 'zh-CN' ? '备注格言' : 'Remarks'}
+                        ${lang === 'zh-CN' ? '评注' : 'Remarks'}
                         <span class="lang-tag">${lang === 'zh-CN' ? '中文' : 'English'}</span>
                     </label>
                     <input type="text" class="config-input" id="configRemarksPrimary" 
-                           value="${currentRemarks}" placeholder="${lang === 'zh-CN' ? '一句标志性的格言...' : 'A signature motto...'}">
+                           value="${currentRemarks}" placeholder="${lang === 'zh-CN' ? '一句标志性的评注...' : 'A signature motto...'}">
                     
                     <label class="config-label secondary">
-                        ${lang === 'zh-CN' ? '英文格言' : '中文格言'}
+                        ${lang === 'zh-CN' ? '英文评注' : '中文评注'}
                         <span class="lang-tag secondary">${lang === 'zh-CN' ? 'English' : '中文'}</span>
                     </label>
                     <input type="text" class="config-input" id="configRemarksSecondary" 
-                           value="${currentRemarksOther}" placeholder="${lang === 'zh-CN' ? 'English motto...' : '中文格言...'}">
+                           value="${currentRemarksOther}" placeholder="${lang === 'zh-CN' ? 'English motto...' : '中文评注...'}">
                 </div>
 
                 <!-- 融合模式 -->
@@ -1094,7 +1094,7 @@ function renderSelectedExperts(expertIds) {
     if (expertIds.length === 0) {
         container.innerHTML = `
             <div class="selected-empty">
-                ${lang === 'en' ? 'No experts selected' : '尚未选择专家'}
+                ${lang === 'en' ? 'No NorthStar selected' : '尚未选择北极星'}
             </div>
         `;
         return;
