@@ -1663,6 +1663,206 @@ document.addEventListener('visibilitychange', () => {
 });
 
 
+// ═══════════════════════════════════════════════════════════════
+// 数据导出 / 导入 JSON 文件
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * 导出星空专栏配置为 JSON 文件下载
+ */
+function exportStarryColumnData() {
+    const customCards = starryColumnCards.filter(c => c.configurable);
+    
+    const exportData = {
+        _schema: PERSISTENCE.SCHEMA_VERSION,
+        _exportedAt: Date.now(),
+        _version: '1.0.0',
+        cards: customCards
+    };
+    
+    const blob = new Blob(
+        [JSON.stringify(exportData, null, 2)], 
+        { type: 'application/json' }
+    );
+    
+    const url = URL.createObjectURL(blob);
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `starry-column-backup-${timestamp}.json`;
+    document.body.appendChild(a);
+    a.click();
+    
+    setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }, 100);
+    
+    console.log('[StarryColumn] Exported', customCards.length, 'cards');
+    return { success: true, count: customCards.length };
+}
+
+/**
+ * 从 JSON 文件导入配置
+ */
+async function importStarryColumnData(file) {
+    if (!file || file.type !== 'application/json') {
+        return { success: false, error: 'Please select a JSON file' };
+    }
+    
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        
+        reader.onload = (e) => {
+            try {
+                const data = JSON.parse(e.target.result);
+                
+                // 校验结构
+                if (!data.cards || !Array.isArray(data.cards)) {
+                    resolve({ success: false, error: 'Invalid file format: missing cards array' });
+                    return;
+                }
+                
+                // 版本检查
+                const fileSchema = data._schema || 1;
+                if (fileSchema > PERSISTENCE.SCHEMA_VERSION) {
+                    resolve({ success: false, error: `File schema v${fileSchema} is newer than supported v${PERSISTENCE.SCHEMA_VERSION}` });
+                    return;
+                }
+                
+                // 校验每张卡片
+                const validCards = [];
+                const errors = [];
+                
+                for (const card of data.cards) {
+                    if (_isValidCard(card)) {
+                        validCards.push(card);
+                    } else {
+                        errors.push(`Invalid card: ${card.id || 'unknown'}`);
+                    }
+                }
+                
+                if (validCards.length === 0) {
+                    resolve({ success: false, error: 'No valid cards found in file' });
+                    return;
+                }
+                
+                // 合并到内存（只替换/新增自定义卡片，不碰内置）
+                let added = 0, updated = 0;
+                
+                for (const card of validCards) {
+                    const existing = starryColumnCards.find(c => c.id === card.id);
+                    
+                    if (existing && existing.configurable) {
+                        Object.assign(existing, card);
+                        updated++;
+                    } else if (!existing) {
+                        starryColumnCards.push(card);
+                        added++;
+                    }
+                    // builtIn 卡片跳过
+                }
+                
+                // 立即持久化到 KV + localStorage
+                persistStarryColumnCards();
+                
+                resolve({
+                    success: true,
+                    imported: validCards.length,
+                    added: added,
+                    updated: updated,
+                    errors: errors.length > 0 ? errors : undefined
+                });
+                
+            } catch (parseError) {
+                resolve({ success: false, error: 'Failed to parse JSON: ' + parseError.message });
+            }
+        };
+        
+        reader.onerror = () => {
+            resolve({ success: false, error: 'Failed to read file' });
+        };
+        
+        reader.readAsText(file);
+    });
+}
+
+/**
+ * 创建导出/导入 UI（管理员专用）
+ */
+function renderImportExportButtons(container) {
+    if (!container) return;
+    
+    const lang = window.currentLang || 'zh-CN';
+    
+    const wrapper = document.createElement('div');
+    wrapper.className = 'import-export-bar';
+    wrapper.innerHTML = `
+        <button class="btn-export" id="btn-export-data">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            ${lang === 'zh-CN' ? '导出配置' : 'Export Config'}
+        </button>
+        <label class="btn-import" for="import-file-input">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            ${lang === 'zh-CN' ? '导入配置' : 'Import Config'}
+        </label>
+        <input type="file" id="import-file-input" accept=".json,application/json" style="display:none">
+    `;
+    
+    container.appendChild(wrapper);
+    
+    // 绑定事件
+    document.getElementById('btn-export-data')?.addEventListener('click', () => {
+        const result = exportStarryColumnData();
+        if (result.success) {
+            alert(lang === 'zh-CN' 
+                ? `已导出 ${result.count} 张卡片配置` 
+                : `Exported ${result.count} cards`);
+        }
+    });
+    
+    document.getElementById('import-file-input')?.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const confirmed = confirm(lang === 'zh-CN' 
+            ? '导入将覆盖现有自定义卡片配置，确定继续？' 
+            : 'Import will overwrite existing custom cards. Continue?');
+        
+        if (!confirmed) {
+            e.target.value = ''; // 重置
+            return;
+        }
+        
+        const result = await importStarryColumnData(file);
+        
+        if (result.success) {
+            alert(lang === 'zh-CN' 
+                ? `导入成功：新增 ${result.added} 张，更新 ${result.updated} 张` 
+                : `Import success: ${result.added} added, ${result.updated} updated`);
+            // 刷新列表
+            const isAdmin = checkAdminPermission();
+            renderStarryCardsList(isAdmin);
+        } else {
+            alert(lang === 'zh-CN' 
+                ? `导入失败：${result.error}` 
+                : `Import failed: ${result.error}`);
+        }
+        
+        e.target.value = ''; // 重置，允许重复导入同一文件
+    });
+}
+
+
 // ═══════════════════════════════════════════════
 // 初始化
 // ═══════════════════════════════════════════════
