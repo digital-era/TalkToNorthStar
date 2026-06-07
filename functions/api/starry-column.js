@@ -1,10 +1,8 @@
 /**
  * Cloudflare Pages Function
  * 路由: /api/starry-column
- * 方法: GET (读取) / POST (保存) / OPTIONS (预检)
  */
 
-// CORS 响应头
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
@@ -12,20 +10,19 @@ const corsHeaders = {
     'Content-Type': 'application/json'
 };
 
-// KV 存储键名
 const KV_KEY = 'starryColumnCards';
 
 /**
- * GET /api/starry-column - 读取持久化数据
+ * GET - 读取
  */
 export async function onRequestGet(context) {
     const { env } = context;
 
     try {
-        const data = await env.STARRY_KV.get(STARRY_KV_KEY, 'json');
+        // 绑定名是 STARRY_KV_KEY
+        const data = await env.STARRY_KV_KEY.get(KV_KEY, 'json');
 
         if (!data) {
-            // 首次访问，返回空结构
             return new Response(JSON.stringify({
                 _schema: 2,
                 _savedAt: Date.now(),
@@ -40,42 +37,33 @@ export async function onRequestGet(context) {
         return new Response(JSON.stringify({
             error: 'Failed to read from KV',
             message: e.message
-        }), {
-            status: 500,
-            headers: corsHeaders
-        });
+        }), { status: 500, headers: corsHeaders });
     }
 }
 
 /**
- * POST /api/starry-column - 保存数据到 KV
+ * POST - 保存
  */
 export async function onRequestPost(context) {
     const { request, env } = context;
 
     try {
-        // 解析请求体
         const body = await request.json();
 
-        // 校验基本结构
         if (!body || typeof body !== 'object') {
             return new Response(JSON.stringify({
                 error: 'Invalid request body'
-            }), {
-                status: 400,
-                headers: corsHeaders
-            });
+            }), { status: 400, headers: corsHeaders });
         }
 
-        // 补充元数据
         const payload = {
             _schema: 2,
             _savedAt: Date.now(),
             cards: body.cards || []
         };
 
-        // 写入 KV
-        await env.STARRY_KV.put(KV_KEY, JSON.stringify(payload));
+        // 绑定名是 STARRY_KV_KEY
+        await env.STARRY_KV_KEY.put(KV_KEY, JSON.stringify(payload));
 
         return new Response(JSON.stringify({
             success: true,
@@ -88,15 +76,12 @@ export async function onRequestPost(context) {
         return new Response(JSON.stringify({
             error: 'Failed to save to KV',
             message: e.message
-        }), {
-            status: 500,
-            headers: corsHeaders
-        });
+        }), { status: 500, headers: corsHeaders });
     }
 }
 
 /**
- * OPTIONS /api/starry-column - CORS 预检
+ * OPTIONS - CORS 预检
  */
 export async function onRequestOptions() {
     return new Response(null, {
