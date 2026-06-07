@@ -12,15 +12,15 @@ const starryColumnCards = [
         },
         contribution: {
             "zh-CN": "北极星在决定历史走向、技术质变、或是思想涌现的非凡成就。",
-            "en": "Gathering top wisdom across domains, fusing insights from multiple North Star figures to provide deep interdisciplinary perspectives."
+            "en": "The North Star extraordinary achievement that shapes the course of history, drives a qualitative shift in technology, or sparks the emergence of new ideas.."
         },
         field: {
             "zh-CN": "星光闪耀",
             "en": "Shining Stars"
         },
         remarks: {
-            "zh-CN": "展现杰出人物的灵魂抉择与思维模型，为用户提供高维的精神共鸣。",
-            "en": "Let different schools of thought spark new ideas."
+            "zh-CN": "展现杰出人物的思维模型与灵魂抉择，提供高维精神共鸣。",
+            "en": "Showcasing the mental models and pivotal soul-defining choices of extraordinary figures, while offering a profound spiritual resonance."
         },
         
         configurable: true,
@@ -46,19 +46,19 @@ const starryColumnCards = [
     {
         id: "civilization_journey",
         name: {
-            "zh-CN": "文明穿越",
-            "en": "Civilization Transmigration"
+            "zh-CN": "穿越文明",
+            "en": "Traversing Civilizations"
         },
         contribution: {
             "zh-CN": "全球文明发展史，打破时空的线性隔阂",
             "en": "Cross-temporal intellectual dialogue, exploring key nodes of human civilization evolution."
         },
         field: {
-            "zh-CN": "文明穿越",
-            "en": "To Be Configured"
+            "zh-CN": "全球文明",
+            "en": "Global Civilization"
         },
         remarks: {
-            "zh-CN": "将璀璨的中西古典文明与现代文明放在同一个“坐标系”中进行交叉互补，让用户触及真正塑造人类文明的深刻思想。",
+            "zh-CN": "鉴往知今，察今预未来。",
             "en": "Learn from the past to understand the present; know the present to foresee the future."
         },
         
@@ -86,19 +86,19 @@ const starryColumnCards = [
         id: "investment_dialogue",
         name: {
             "zh-CN": "投资论道",
-            "en": "Investment Dialogue"
+            "en": "Insights on Investment"
         },
         contribution: {
-            "zh-CN": "金融投资与商业决策（高维决策模型、商业周期、跨越周期的商业智慧）。",
-            "en": "Gathering top investment wisdom, insight into market trends and value logic."
+            "zh-CN": "金融投资与商业决策观点交锋。",
+            "en": "A Clash of Perspectives on Financial Investment and Business Decision-Making."
         },
         field: {
-            "zh-CN": "投资论道",
-            "en": "To Be Configured"
+            "zh-CN": "商业洞见",
+            "en": "Business Insights"
         },
         remarks: {
-            "zh-CN": "价值投资，时间的朋友。",
-            "en": "Value investing, friend of time."
+            "zh-CN": "人类的远见绝非商品。",
+            "en": "Human foresight is by no means a commodity."
         },
         
         configurable: true,
