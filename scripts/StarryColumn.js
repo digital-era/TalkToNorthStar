@@ -23,22 +23,6 @@ const starryColumnTexts = {
         'zh-CN': '未配置',
         'en': 'Not Configured'
     },
-    statusExpertsCount: {
-        'zh-CN': '位专家',
-        'en': 'Experts'
-    },
-    wisdomResponse: {
-        'zh-CN': '智慧回应',
-        'en': 'Wisdom Response'
-    },
-    askButton: {
-        'zh-CN': '提问',
-        'en': 'Ask'
-    },
-    questionPlaceholder: {
-        'zh-CN': '输入你的问题，让智慧指引你...',
-        'en': 'Enter your question, let wisdom guide you...'
-    },
     configureCard: {
         'zh-CN': '配置卡片',
         'en': 'Configure Card'
@@ -75,9 +59,32 @@ const starryColumnTexts = {
         'zh-CN': '复制',
         'en': 'Copy'
     },
-    participantsLabel: {
-        'zh-CN': '参与专家：',
-        'en': 'Participants: '
+    // ═══════════════════════════════════════════════════
+    // 【新增】导入导出全球化
+    // ═══════════════════════════════════════════════════
+    exportConfig: {
+        'zh-CN': '导出配置',
+        'en': 'Export Config'
+    },
+    importConfig: {
+        'zh-CN': '导入配置',
+        'en': 'Import Config'
+    },
+    exportSuccess: {
+        'zh-CN': '已导出 {count} 张卡片配置',
+        'en': 'Exported {count} cards'
+    },
+    importConfirm: {
+        'zh-CN': '导入将覆盖现有自定义卡片配置，确定继续？',
+        'en': 'Import will overwrite existing custom cards. Continue?'
+    },
+    importSuccess: {
+        'zh-CN': '导入成功：新增 {added} 张，更新 {updated} 张',
+        'en': 'Import success: {added} added, {updated} updated'
+    },
+    importFailed: {
+        'zh-CN': '导入失败：{error}',
+        'en': 'Import failed: {error}'
     }
 };
 
@@ -129,7 +136,7 @@ function enterStarryColumn() {
 }
 
 /**
- * 渲染星空专栏布局（图标按钮，无文字）
+ * 渲染星空专栏布局（图标按钮，无文字，支持语言切换）
  */
 function renderStarryColumnLayout() {
     const layout = document.getElementById('category-layout-container');
@@ -176,7 +183,7 @@ function renderStarryColumnLayout() {
                 ${isAdmin ? `
                     <div class="starry-admin-actions" id="starryAdminActions">
                         <button class="btn-starry-icon" id="btn-starry-export" 
-                                title="${lang === 'zh-CN' ? '导出配置' : 'Export Config'}">
+                                title="${getFieldValue(starryColumnTexts.exportConfig, lang)}">
                             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                 <polyline points="7 10 12 15 17 10"/>
@@ -184,7 +191,7 @@ function renderStarryColumnLayout() {
                             </svg>
                         </button>
                         <label class="btn-starry-icon" for="btn-starry-import-input" 
-                               title="${lang === 'zh-CN' ? '导入配置' : 'Import Config'}">
+                               title="${getFieldValue(starryColumnTexts.importConfig, lang)}">
                             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                 <polyline points="17 8 12 3 7 8"/>
@@ -204,36 +211,41 @@ function renderStarryColumnLayout() {
     document.getElementById('btn-starry-back')?.addEventListener('click', backToWheelSelection);
 
     if (isAdmin) {
-        _bindExportImportEvents(lang);
+        _bindExportImportEvents();
     }
 
     renderStarryCardsList(isAdmin);
 }
 
 
+
 /**
  * 绑定导出/导入事件
  */
 function _bindExportImportEvents(lang) {
-    // 导出按钮
     const exportBtn = document.getElementById('btn-starry-export');
     if (exportBtn) {
-        exportBtn.addEventListener('click', () => {
+        // 先移除旧监听器，避免重复
+        const newExportBtn = exportBtn.cloneNode(true);
+        exportBtn.parentNode.replaceChild(newExportBtn, exportBtn);
+        
+        newExportBtn.addEventListener('click', () => {
             const result = exportStarryColumnData();
             if (result.success) {
                 const msg = lang === 'zh-CN' 
                     ? `已导出 ${result.count} 张卡片配置` 
                     : `Exported ${result.count} cards`;
-                // 使用临时提示而非 alert
                 showToast(msg, 'success');
             }
         });
     }
 
-    // 导入文件选择
     const importInput = document.getElementById('btn-starry-import-input');
     if (importInput) {
-        importInput.addEventListener('change', async (e) => {
+        const newImportInput = importInput.cloneNode(true);
+        importInput.parentNode.replaceChild(newImportInput, importInput);
+        
+        newImportInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) return;
 
@@ -254,7 +266,6 @@ function _bindExportImportEvents(lang) {
                     : `Import success: ${result.added} added, ${result.updated} updated`;
                 showToast(msg, 'success');
 
-                // 刷新列表
                 const isAdmin = checkAdminPermission();
                 renderStarryCardsList(isAdmin);
             } else {
@@ -264,14 +275,13 @@ function _bindExportImportEvents(lang) {
                 showToast(msg, 'error');
             }
 
-            e.target.value = ''; // 重置，允许重复导入同一文件
+            e.target.value = '';
         });
     }
 }
 
-/**
- * 渲染星空专栏卡片列表
- */
+
+
 /**
  * 渲染星空专栏卡片列表 - 简化版：只显示专栏名称
  */
@@ -1416,6 +1426,9 @@ function updateStarryColumnLanguage() {
         // 列表模式：重新渲染卡片列表
         const isAdmin = checkAdminPermission();
         renderStarryCardsList(isAdmin);
+        if (isAdmin) {
+            _bindExportImportEvents(lang);
+        }
     }
 }
 
