@@ -116,7 +116,7 @@ const starryColumnCards = [
                 "en": "(To be configured: select fusion mode and participating experts)"
             }
         }
-    } ，
+    } ,
 
     // ═══════════════════════════════════════════════
     // 【用户配置】投资论道（初始为空，待管理员配置）
