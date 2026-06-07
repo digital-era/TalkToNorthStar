@@ -92,7 +92,6 @@ const starryColumnTexts = {
 // ═══════════════════════════════════════════════
 // 星空专栏 - 入口与布局
 // ═══════════════════════════════════════════════
-
 /**
  * 进入星空专栏页面
  */
@@ -105,7 +104,7 @@ function enterStarryColumn() {
     const overlay = document.getElementById('pageTransitionOverlay');
     if (overlay) overlay.classList.add('active');
 
-    setTimeout(() => {
+    setTimeout(async () => {  // ✅ 改为 async
         const nebulaCrystal = document.getElementById('nebula-crystal');
         if (nebulaCrystal) nebulaCrystal.style.display = 'none';
 
@@ -119,13 +118,16 @@ function enterStarryColumn() {
             tc.style.display = 'none';
         });
 
-        // ═══════════════════════════════════════════════
-        // 【关键修复】设置全局状态
-        // ═══════════════════════════════════════════════
+        // 设置全局状态
         window.currentSelectedCategory = 'starryColumn';
         window.starryColumnViewMode = 'list';
         window.currentSelectedLeader = null;
         window.currentSelectedCard = null;
+
+        // ═══════════════════════════════════════════════════
+        // 【关键】先加载持久化数据，再渲染
+        // ═══════════════════════════════════════════════════
+        await initStarryColumn();  // ✅ 加载 KV/localStorage 数据
 
         renderStarryColumnLayout();
 
@@ -1757,10 +1759,14 @@ function _sleep(ms) {
 window.addEventListener('beforeunload', _flushPendingSave);
 
 // 页面可见性变化（切回页面时同步）
-document.addEventListener('visibilitychange', () => {
+document.addEventListener('visibilitychange', async () => {
     if (document.visibilityState === 'visible') {
-        // 切回页面时重新加载最新数据
-        initStarryColumn();
+        await initStarryColumn();
+        // 如果正在显示列表，刷新卡片
+        if (window.currentSelectedCategory === 'starryColumn' && 
+            window.starryColumnViewMode === 'list') {
+            renderStarryCardsList(checkAdminPermission());
+        }
     }
 });
 
