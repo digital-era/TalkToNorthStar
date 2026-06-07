@@ -34,7 +34,7 @@ const starryColumnCards = [
         fusionStrategy: {
             mode: "synthesis", //roundtable
             description: {
-                "zh-CN": "（待配置：选择融合模式与参与专家）",
+                "zh-CN": "（待配置：选择融合模式与参与北极星）",
                 "en": "(To be configured: select fusion mode and participating experts)"
             }
         }
@@ -73,7 +73,7 @@ const starryColumnCards = [
         fusionStrategy: {
             mode: "synthesis",
             description: {
-                "zh-CN": "（待配置：选择融合模式与参与专家）",
+                "zh-CN": "（待配置：选择融合模式与参与北极星）",
                 "en": "(To be configured: select fusion mode and participating experts)"
             }
         }
@@ -112,7 +112,7 @@ const starryColumnCards = [
         fusionStrategy: {
             mode: "debate",
             description: {
-                "zh-CN": "（待配置：选择融合模式与参与专家）",
+                "zh-CN": "（待配置：选择融合模式与参与北极星）",
                 "en": "(To be configured: select fusion mode and participating experts)"
             }
         }
@@ -151,7 +151,7 @@ const starryColumnCards = [
         fusionStrategy: {
             mode: "debate",
             description: {
-                "zh-CN": "（待配置：选择融合模式与参与专家）",
+                "zh-CN": "（待配置：选择融合模式与参与北极星）",
                 "en": "(To be configured: select fusion mode and participating experts)"
             }
         }
