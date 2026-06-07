@@ -128,9 +128,8 @@ function enterStarryColumn() {
     }, 300);
 }
 
-
 /**
- * 渲染星空专栏布局（含导出/导入按钮）
+ * 渲染星空专栏布局（图标按钮，无文字）
  */
 function renderStarryColumnLayout() {
     const layout = document.getElementById('category-layout-container');
@@ -176,21 +175,21 @@ function renderStarryColumnLayout() {
                 </h3>
                 ${isAdmin ? `
                     <div class="starry-admin-actions" id="starryAdminActions">
-                        <button class="btn-starry-export" id="btn-starry-export" 
+                        <button class="btn-starry-icon" id="btn-starry-export" 
                                 title="${lang === 'zh-CN' ? '导出配置' : 'Export Config'}">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                 <polyline points="7 10 12 15 17 10"/>
                                 <line x1="12" y1="15" x2="12" y2="3"/>
                             </svg>
                         </button>
-                        <label class="btn-starry-import" for="btn-starry-import-input" 
+                        <label class="btn-starry-icon" for="btn-starry-import-input" 
                                title="${lang === 'zh-CN' ? '导入配置' : 'Import Config'}">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                 <polyline points="17 8 12 3 7 8"/>
                                 <line x1="12" y1="3" x2="12" y2="15"/>
-                            </svg>                            
+                            </svg>
                         </label>
                         <input type="file" id="btn-starry-import-input" 
                                accept=".json,application/json" 
@@ -199,20 +198,18 @@ function renderStarryColumnLayout() {
                 ` : ''}
             </div>
             <div class="starry-cards-container" id="starryCardsContainer"></div>
-            <!-- 添加卡片按钮移到容器内部，由 renderStarryCardsList 统一控制 -->
         </div>
     `;
 
-    // 绑定返回按钮
     document.getElementById('btn-starry-back')?.addEventListener('click', backToWheelSelection);
 
-    // 绑定导出/导入事件（仅管理员）
     if (isAdmin) {
         _bindExportImportEvents(lang);
     }
 
     renderStarryCardsList(isAdmin);
 }
+
 
 /**
  * 绑定导出/导入事件
