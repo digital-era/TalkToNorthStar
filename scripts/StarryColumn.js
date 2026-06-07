@@ -1759,8 +1759,8 @@ window.addEventListener('beforeunload', _flushPendingSave);
 // 页面可见性变化（切回页面时同步）
 document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
-        // 可选：重新加载最新数据
-        // initStarryColumn();
+        // 切回页面时重新加载最新数据
+        initStarryColumn();
     }
 });
 
