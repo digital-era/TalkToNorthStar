@@ -1963,13 +1963,3 @@ function renderImportExportButtons(container) {
         e.target.value = ''; // 重置，允许重复导入同一文件
     });
 }
-
-
-// ═══════════════════════════════════════════════
-// 初始化
-// ═══════════════════════════════════════════════
-
-function initStarryColumn() {
-    loadStarryColumnCards();
-}
-
