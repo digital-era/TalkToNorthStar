@@ -563,7 +563,7 @@ function buildFusionSystemPrompt(source, lang = 'zh-CN') {
     
     if (!experts || experts.length === 0) {
         return isZh 
-            ? '系统错误：未配置任何专家。' 
+            ? '系统错误：未配置任何北极星。' 
             : 'System error: No experts configured.';
     }
 
@@ -572,15 +572,15 @@ function buildFusionSystemPrompt(source, lang = 'zh-CN') {
 
     const modeDescriptions = {
         roundtable: {
-            'zh-CN': '以圆桌会议的形式，让各位专家依次发言，最后形成共识。',
+            'zh-CN': '以圆桌会议的形式，让各位北极星依次发言，最后形成共识。',
             'en': 'In a roundtable format, let each expert speak in turn, then reach consensus.'
         },
         synthesis: {
-            'zh-CN': '综合各位专家的视角，给出一个融合性的深度回答。',
+            'zh-CN': '综合各位北极星的视角，给出一个融合性的深度回答。',
             'en': 'Synthesize perspectives from all experts into a comprehensive deep answer.'
         },
         debate: {
-            'zh-CN': '呈现各位专家的不同观点，展开思想交锋。',
+            'zh-CN': '呈现各位北极星的不同观点，展开思想交锋。',
             'en': 'Present differing viewpoints from experts and let ideas clash.'
         }
     };
@@ -805,7 +805,7 @@ function showConfigModal(card) {
                     
                     <div class="expert-search-box">
                         <input type="text" class="config-input expert-search-input" id="expertSearchInput"
-                               placeholder="${lang === 'zh-CN' ? '输入专家姓名或领域...' : 'Type expert name or field...'}"
+                               placeholder="${lang === 'zh-CN' ? '输入北极星姓名或领域...' : 'Type NorthStar name or field...'}"
                                autocomplete="off">
                         <div class="expert-search-icon">🔍</div>
                     </div>
@@ -893,7 +893,7 @@ function handleExpertSearch(query, lang) {
     if (results.length === 0) {
         dropdown.innerHTML = `
             <div class="dropdown-empty">
-                ${lang === 'zh-CN' ? '未找到匹配专家' : 'No matching experts found'}
+                ${lang === 'zh-CN' ? '未找到匹配北极星' : 'No matching NortStar found'}
             </div>
         `;
         dropdown.classList.add('active');
@@ -1120,9 +1120,7 @@ function saveNewCard() {
 }
 
 
-/**
- * 切换专家选择
- */
+
 /**
  * 切换专家选择
  */
