@@ -1334,252 +1334,295 @@ function updateStarryColumnLanguage() {
 }
 
 
-// ═══════════════════════════════════════════════
-// 星空专栏 - 双保险持久化（localStorage + 文件）
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// 星空专栏 - 前端持久化模块
+// 双保险: Cloudflare KV (主) + localStorage (备)
+// ═══════════════════════════════════════════════════════════════
 
-const STORAGE_KEY = 'starryColumnCards';
-const SCHEMA_VERSION = 2;
-const FILE_NAME = 'starry-column.json';
-const SAVE_DEBOUNCE_MS = 500;
+const PERSISTENCE = {
+    API_BASE: '/api/starry-column',     // 同域 API
+    STORAGE_KEY: 'starryColumnCards',    // localStorage key
+    SCHEMA_VERSION: 2,
+    SAVE_DEBOUNCE_MS: 800,               // 防抖间隔
+    MAX_RETRIES: 3,                      // 网络失败重试
+    RETRY_DELAY_MS: 1000
+};
 
-let _fileHandle = null;           // 文件句柄（授权后缓存）
-let _pendingTimer = null;
-let _lastHash = null;
+// 内存状态
+let _pendingSaveTimer = null;
+let _lastPersistedHash = null;
+let _isLoading = false;
 
-// ═══════════════════════════════════════════════
-// 1. 初始化：尝试恢复文件句柄 + 加载数据
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// 初始化
+// ═══════════════════════════════════════════════════════════════
 
+/**
+ * 初始化星空专栏持久化
+ * 1. 先加载内置卡片
+ * 2. 尝试从 KV 加载自定义卡片
+ * 3. KV 失败则回退 localStorage
+ */
 async function initStarryColumn() {
-    // 先尝试从 localStorage 加载（快速恢复界面）
-    loadFromLocalStorage();
-    
-    // 再尝试恢复之前的文件授权
-    const storedHandle = await _getStoredFileHandle();
-    if (storedHandle) {
-        const permission = await storedHandle.requestPermission({ mode: 'readwrite' });
-        if (permission === 'granted') {
-            _fileHandle = storedHandle;
-            // 文件存在则同步加载（文件优先于 localStorage）
-            await syncFromFile();
+    if (_isLoading) return;
+    _isLoading = true;
+
+    console.log('[StarryColumn] Initializing...');
+
+    try {
+        // 步骤 1: 从后端 KV 加载
+        const response = await fetchWithRetry(PERSISTENCE.API_BASE, {
+            method: 'GET'
+        });
+
+        if (response.ok) {
+            const serverData = await response.json();
+            await _mergeServerData(serverData);
+            console.log('[StarryColumn] Loaded from KV:', serverData.cards?.length || 0, 'cards');
+        } else {
+            throw new Error(`HTTP ${response.status}`);
         }
+
+    } catch (e) {
+        console.warn('[StarryColumn] KV load failed, fallback to localStorage:', e.message);
+        _loadFromLocalStorage();
+    }
+
+    // 更新哈希缓存
+    _updateHashCache();
+    _isLoading = false;
+
+    console.log('[StarryColumn] Initialized. Total cards:', starryColumnCards.length);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 持久化入口
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * 触发持久化（防抖）
+ * 自动检测数据变更，无变化则跳过
+ */
+function persistStarryColumnCards() {
+    // 只持久化自定义卡片（可配置的内置卡片也算）
+    const customCards = starryColumnCards.filter(c => c.configurable);
+    const payload = {
+        _schema: PERSISTENCE.SCHEMA_VERSION,
+        cards: customCards
+    };
+
+    const json = JSON.stringify(payload);
+    const currentHash = _simpleHash(json);
+
+    // 数据未变更，跳过
+    if (currentHash === _lastPersistedHash) {
+        console.log('[StarryColumn] No changes, skip persist');
+        return { skipped: true };
+    }
+
+    // 清除之前的待写入
+    clearTimeout(_pendingSaveTimer);
+
+    // 防抖写入
+    _pendingSaveTimer = setTimeout(() => {
+        _executePersist(json, currentHash, payload);
+    }, PERSISTENCE.SAVE_DEBOUNCE_MS);
+
+    return { queued: true };
+}
+
+/**
+ * 立即执行持久化（内部）
+ */
+async function _executePersist(json, hash, payload) {
+    console.log('[StarryColumn] Persisting', payload.cards.length, 'cards...');
+
+    // 1. 始终写 localStorage（保底，同步）
+    try {
+        localStorage.setItem(PERSISTENCE.STORAGE_KEY, json);
+    } catch (e) {
+        console.error('[StarryColumn] localStorage write failed:', e);
+    }
+
+    // 2. 异步写后端 KV
+    try {
+        const response = await fetchWithRetry(PERSISTENCE.API_BASE, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: json
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            _lastPersistedHash = hash;
+            console.log('[StarryColumn] KV saved:', result);
+            return { success: true, target: 'kv', result };
+        }
+
+        throw new Error(`HTTP ${response.status}`);
+
+    } catch (e) {
+        console.warn('[StarryColumn] KV save failed, localStorage only:', e.message);
+        return {
+            success: true,
+            target: 'localStorage',
+            warning: 'KV unavailable, data saved to localStorage only'
+        };
     }
 }
 
-// ═══════════════════════════════════════════════
-// 2. 持久化入口：双写
-// ═══════════════════════════════════════════════
-
 /**
- * 持久化：localStorage + 文件 双写
+ * 强制立即保存（用于页面卸载前）
  */
-function persistStarryColumnCards() {
+function _flushPendingSave() {
+    clearTimeout(_pendingSaveTimer);
+
     const customCards = starryColumnCards.filter(c => c.configurable);
     const payload = {
-        _schema: SCHEMA_VERSION,
+        _schema: PERSISTENCE.SCHEMA_VERSION,
         _savedAt: Date.now(),
         cards: customCards
     };
     const json = JSON.stringify(payload);
-    const hash = simpleHash(json);
-    
-    // 数据未变更，跳过
-    if (hash === _lastHash) return { skipped: true };
-    
-    clearTimeout(_pendingTimer);
-    _pendingTimer = setTimeout(() => {
-        _doPersist(json, hash, payload);
-    }, SAVE_DEBOUNCE_MS);
-    
-    return { queued: true };
-}
 
-async function _doPersist(json, hash, payload) {
-    // 1. 始终写入 localStorage（保底）
+    // 同步写 localStorage（beforeunload 中不能发异步请求）
     try {
-        localStorage.setItem(STORAGE_KEY, json);
+        localStorage.setItem(PERSISTENCE.STORAGE_KEY, json);
     } catch (e) {
-        console.error('localStorage write failed:', e);
+        console.error('[StarryColumn] Flush to localStorage failed:', e);
     }
-    
-    // 2. 尝试写入文件（优先）
-    if (_fileHandle) {
-        try {
-            await _writeFile(json);
-            _lastHash = hash;
-            return { success: true, target: 'file' };
-        } catch (e) {
-            console.warn('File write failed, fallback to localStorage only:', e);
-            return { success: true, target: 'localStorage', warning: e.message };
-        }
+
+    // 尝试同步发送 beacon（不保证成功）
+    if (navigator.sendBeacon) {
+        navigator.sendBeacon(
+            PERSISTENCE.API_BASE,
+            new Blob([json], { type: 'application/json' })
+        );
     }
-    
-    _lastHash = hash;
-    return { success: true, target: 'localStorage', fileReady: false };
 }
 
-// ═══════════════════════════════════════════════
-// 3. 文件操作
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// 数据加载与合并
+// ═══════════════════════════════════════════════════════════════
 
 /**
- * 用户主动选择/创建保存文件
+ * 合并后端数据到内存
  */
-async function chooseSaveFile() {
+async function _mergeServerData(serverData) {
+    if (!serverData || !Array.isArray(serverData.cards)) return;
+
+    for (const savedCard of serverData.cards) {
+        // 校验卡片
+        if (!_isValidCard(savedCard)) {
+            console.warn('[StarryColumn] Invalid card skipped:', savedCard.id);
+            continue;
+        }
+
+        const existing = starryColumnCards.find(c => c.id === savedCard.id);
+
+        if (existing && existing.configurable) {
+            // 更新现有自定义卡片
+            Object.assign(existing, {
+                name: savedCard.name || existing.name,
+                contribution: savedCard.contribution || existing.contribution,
+                field: savedCard.field || existing.field,
+                remarks: savedCard.remarks || existing.remarks,
+                experts: savedCard.experts || [],
+                fusionStrategy: savedCard.fusionStrategy || { mode: 'synthesis' }
+            });
+        } else if (!existing) {
+            // 新增自定义卡片
+            starryColumnCards.push(savedCard);
+        }
+        // builtIn 卡片不覆盖
+    }
+
+    // 同步到 localStorage 作为缓存
     try {
-        _fileHandle = await window.showSaveFilePicker({
-            suggestedName: FILE_NAME,
-            types: [{
-                description: 'JSON Files',
-                accept: { 'application/json': ['.json'] }
-            }]
-        });
-        
-        // 保存句柄到 IndexedDB（供下次自动恢复）
-        await _storeFileHandle(_fileHandle);
-        
-        // 立即写入当前数据
-        persistStarryColumnCards();
-        
-        return { success: true };
+        localStorage.setItem(PERSISTENCE.STORAGE_KEY, JSON.stringify(serverData));
     } catch (e) {
-        if (e.name === 'AbortError') {
-            return { success: false, reason: 'user_cancelled' };
-        }
-        console.error('File picker failed:', e);
-        return { success: false, error: e.message };
+        console.error('[StarryColumn] Cache to localStorage failed:', e);
     }
 }
 
 /**
- * 写入文件
+ * 从 localStorage 加载（回退方案）
  */
-async function _writeFile(jsonString) {
-    const writable = await _fileHandle.createWritable();
-    await writable.write(jsonString);
-    await writable.close();
-}
-
-/**
- * 从文件读取
- */
-async function readFromFile() {
-    if (!_fileHandle) return null;
-    
-    const file = await _fileHandle.getFile();
-    const text = await file.text();
-    return JSON.parse(text);
-}
-
-/**
- * 文件优先同步：文件存在且新于 localStorage 则覆盖
- */
-async function syncFromFile() {
-    try {
-        const fileData = await readFromFile();
-        if (!fileData || !fileData.cards) return;
-        
-        const localRaw = localStorage.getItem(STORAGE_KEY);
-        const localData = localRaw ? JSON.parse(localRaw) : null;
-        
-        // 文件更新则采用文件数据
-        if (!localData || (fileData._savedAt > localData._savedAt)) {
-            _mergeCards(fileData.cards);
-            console.log('Synced from file (newer than localStorage)');
-        }
-    } catch (e) {
-        console.error('File sync failed:', e);
+function _loadFromLocalStorage() {
+    const raw = localStorage.getItem(PERSISTENCE.STORAGE_KEY);
+    if (!raw) {
+        console.log('[StarryColumn] No localStorage data');
+        return;
     }
-}
 
-// ═══════════════════════════════════════════════
-// 4. localStorage 操作
-// ═══════════════════════════════════════════════
-
-function loadFromLocalStorage() {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return;
-    
     try {
         const data = JSON.parse(raw);
-        const version = data._schema || 1;
-        const migrated = version === SCHEMA_VERSION ? data : _migrateData(data, version);
-        if (migrated) _mergeCards(migrated.cards || []);
-    } catch (e) {
-        console.error('localStorage parse failed:', e);
-    }
-}
+        const cards = data.cards || [];
 
-// ═══════════════════════════════════════════════
-// 5. IndexedDB：持久化文件句柄（跨会话保留授权）
-// ═══════════════════════════════════════════════
+        for (const savedCard of cards) {
+            if (!_isValidCard(savedCard)) continue;
 
-const DB_NAME = 'starry_column_db';
-const DB_VERSION = 1;
-const STORE_NAME = 'file_handles';
-
-async function _getStoredFileHandle() {
-    return new Promise((resolve) => {
-        const req = indexedDB.open(DB_NAME, DB_VERSION);
-        req.onupgradeneeded = (e) => {
-            e.target.result.createObjectStore(STORE_NAME);
-        };
-        req.onsuccess = (e) => {
-            const db = e.target.result;
-            const tx = db.transaction(STORE_NAME, 'readonly');
-            const store = tx.objectStore(STORE_NAME);
-            const getReq = store.get('save_handle');
-            getReq.onsuccess = () => resolve(getReq.result || null);
-            getReq.onerror = () => resolve(null);
-        };
-        req.onerror = () => resolve(null);
-    });
-}
-
-async function _storeFileHandle(handle) {
-    return new Promise((resolve, reject) => {
-        const req = indexedDB.open(DB_NAME, DB_VERSION);
-        req.onsuccess = (e) => {
-            const db = e.target.result;
-            const tx = db.transaction(STORE_NAME, 'readwrite');
-            const store = tx.objectStore(STORE_NAME);
-            store.put(handle, 'save_handle');
-            tx.oncomplete = () => resolve();
-            tx.onerror = () => reject(tx.error);
-        };
-    });
-}
-
-// ═══════════════════════════════════════════════
-// 6. 数据合并与校验
-// ═══════════════════════════════════════════════
-
-function _mergeCards(cards) {
-    for (const saved of cards) {
-        const existing = starryColumnCards.find(c => c.id === saved.id);
-        if (existing && existing.configurable) {
-            Object.assign(existing, {
-                name: saved.name || existing.name,
-                contribution: saved.contribution || existing.contribution,
-                field: saved.field || existing.field,
-                remarks: saved.remarks || existing.remarks,
-                experts: saved.experts || [],
-                fusionStrategy: saved.fusionStrategy || { mode: 'synthesis' }
-            });
+            const existing = starryColumnCards.find(c => c.id === savedCard.id);
+            if (existing && existing.configurable) {
+                Object.assign(existing, {
+                    name: savedCard.name || existing.name,
+                    contribution: savedCard.contribution || existing.contribution,
+                    field: savedCard.field || existing.field,
+                    remarks: savedCard.remarks || existing.remarks,
+                    experts: savedCard.experts || [],
+                    fusionStrategy: savedCard.fusionStrategy || { mode: 'synthesis' }
+                });
+            } else if (!existing) {
+                starryColumnCards.push(savedCard);
+            }
         }
+
+        console.log('[StarryColumn] Loaded from localStorage:', cards.length, 'cards');
+
+    } catch (e) {
+        console.error('[StarryColumn] localStorage parse failed:', e);
     }
 }
 
-function _migrateData(data, fromVersion) {
-    if (fromVersion === 1) {
-        const cards = Array.isArray(data) ? data : (data.cards || []);
-        return { _schema: SCHEMA_VERSION, _savedAt: Date.now(), cards };
+// ═══════════════════════════════════════════════════════════════
+// 工具函数
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * 带重试的 fetch
+ */
+async function fetchWithRetry(url, options, retries = PERSISTENCE.MAX_RETRIES) {
+    try {
+        const response = await fetch(url, options);
+        if (!response.ok && retries > 0) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        return response;
+    } catch (e) {
+        if (retries > 0) {
+            console.log(`[StarryColumn] Retry ${PERSISTENCE.MAX_RETRIES - retries + 1}/${PERSISTENCE.MAX_RETRIES}`);
+            await _sleep(PERSISTENCE.RETRY_DELAY_MS);
+            return fetchWithRetry(url, options, retries - 1);
+        }
+        throw e;
     }
-    return null;
 }
 
-function simpleHash(str) {
+/**
+ * 卡片基础校验
+ */
+function _isValidCard(card) {
+    if (!card || typeof card !== 'object') return false;
+    if (!card.id || typeof card.id !== 'string') return false;
+    if (!card.name || typeof card.name !== 'object') return false;
+    if (!card.type || typeof card.type !== 'string') return false;
+    return true;
+}
+
+/**
+ * 简单哈希
+ */
+function _simpleHash(str) {
     let h = 0;
     for (let i = 0; i < str.length; i++) {
         h = ((h << 5) - h) + str.charCodeAt(i);
@@ -1588,21 +1631,35 @@ function simpleHash(str) {
     return h.toString(16);
 }
 
-// ═══════════════════════════════════════════════
-// 7. 页面生命周期
-// ═══════════════════════════════════════════════
-
-window.addEventListener('beforeunload', () => {
-    clearTimeout(_pendingTimer);
+/**
+ * 更新哈希缓存
+ */
+function _updateHashCache() {
     const customCards = starryColumnCards.filter(c => c.configurable);
-    const json = JSON.stringify({
-        _schema: SCHEMA_VERSION,
-        _savedAt: Date.now(),
-        cards: customCards
-    });
-    localStorage.setItem(STORAGE_KEY, json);
-    // 文件写入是异步的，beforeunload 中无法等待
-    // 依赖防抖机制在常规操作中已完成写入
+    const payload = { _schema: PERSISTENCE.SCHEMA_VERSION, cards: customCards };
+    _lastPersistedHash = _simpleHash(JSON.stringify(payload));
+}
+
+/**
+ * 延迟
+ */
+function _sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 页面生命周期
+// ═══════════════════════════════════════════════════════════════
+
+// 页面卸载前强制保存
+window.addEventListener('beforeunload', _flushPendingSave);
+
+// 页面可见性变化（切回页面时同步）
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        // 可选：重新加载最新数据
+        // initStarryColumn();
+    }
 });
 
 
