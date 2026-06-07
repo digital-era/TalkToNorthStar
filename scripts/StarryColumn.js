@@ -211,26 +211,25 @@ function renderStarryColumnLayout() {
     document.getElementById('btn-starry-back')?.addEventListener('click', backToWheelSelection);
 
     if (isAdmin) {
-        _bindExportImportEvents(lang);
+        _bindExportImportEvents();
     }
 
     renderStarryCardsList(isAdmin);
 }
 
 
-
 /**
- * 绑定导出/导入事件
+ * 绑定导出/导入事件（只调用一次，语言无关）
  */
-function _bindExportImportEvents(lang) {
+function _bindExportImportEvents() {
     // 导出按钮
     const exportBtn = document.getElementById('btn-starry-export');
     if (exportBtn) {
         exportBtn.addEventListener('click', () => {
-            const currentLang = window.currentLang || 'zh-CN';  // ✅ 实时读取
+            const lang = window.currentLang || 'zh-CN';  // ✅ 实时读取
             const result = exportStarryColumnData();
             if (result.success) {
-                const msg = currentLang === 'zh-CN' 
+                const msg = lang === 'zh-CN' 
                     ? `已导出 ${result.count} 张卡片配置` 
                     : `Exported ${result.count} cards`;
                 showToast(msg, 'success');
@@ -242,11 +241,11 @@ function _bindExportImportEvents(lang) {
     const importInput = document.getElementById('btn-starry-import-input');
     if (importInput) {
         importInput.addEventListener('change', async (e) => {
-            const currentLang = window.currentLang || 'zh-CN';  // ✅ 实时读取
+            const lang = window.currentLang || 'zh-CN';  // ✅ 实时读取
             const file = e.target.files[0];
             if (!file) return;
 
-            const confirmMsg = currentLang === 'zh-CN' 
+            const confirmMsg = lang === 'zh-CN' 
                 ? '导入将覆盖现有自定义卡片配置，确定继续？' 
                 : 'Import will overwrite existing custom cards. Continue?';
 
@@ -258,7 +257,7 @@ function _bindExportImportEvents(lang) {
             const result = await importStarryColumnData(file);
 
             if (result.success) {
-                const msg = currentLang === 'zh-CN' 
+                const msg = lang === 'zh-CN' 
                     ? `导入成功：新增 ${result.added} 张，更新 ${result.updated} 张` 
                     : `Import success: ${result.added} added, ${result.updated} updated`;
                 showToast(msg, 'success');
@@ -266,7 +265,7 @@ function _bindExportImportEvents(lang) {
                 const isAdmin = checkAdminPermission();
                 renderStarryCardsList(isAdmin);
             } else {
-                const msg = currentLang === 'zh-CN' 
+                const msg = lang === 'zh-CN' 
                     ? `导入失败：${result.error}` 
                     : `Import failed: ${result.error}`;
                 showToast(msg, 'error');
@@ -1394,13 +1393,23 @@ function updateStarryColumnLanguage() {
         backToListBtn.title = lang === 'zh-CN' ? '返回专栏列表' : 'Back to Column List';
     }
     
+    // ═══════════════════════════════════════════════════
+    // 【新增】更新导出/导入按钮 tooltip（关键修复）
+    // ═══════════════════════════════════════════════════
+    const exportBtn = document.getElementById('btn-starry-export');
+    if (exportBtn) {
+        exportBtn.title = getFieldValue(starryColumnTexts.exportConfig, lang);
+    }
+    
+    const importLabel = document.querySelector('label[for="btn-starry-import-input"]');
+    if (importLabel) {
+        importLabel.title = getFieldValue(starryColumnTexts.importConfig, lang);
+    }
+    
     // 4. 根据模式更新内容
     if (window.starryColumnViewMode === 'card' && window.currentSelectedLeader) {
         const leader = window.currentSelectedLeader;
         
-        // ═══════════════════════════════════════════════
-        // 【关键修复】如果 leader 有原始多语言对象，重新解析
-        // ═══════════════════════════════════════════════
         if (leader._rawName) {
             leader.name = getFieldValue(leader._rawName, lang);
             leader.field = getFieldValue(leader._rawField, lang);
@@ -1408,10 +1417,8 @@ function updateStarryColumnLanguage() {
             leader.remarks = getFieldValue(leader._rawRemarks, lang);
         }
         
-        // 更新卡片显示
         updateSingleCard(leader);
         
-        // 更新 selectLeader 渲染的标题
         const selectedLeaderName = document.getElementById('selectedLeaderName');
         if (selectedLeaderName) {
             selectedLeaderName.textContent = leader.name;
@@ -1421,9 +1428,12 @@ function updateStarryColumnLanguage() {
         // 列表模式：重新渲染卡片列表
         const isAdmin = checkAdminPermission();
         renderStarryCardsList(isAdmin);
-        if (isAdmin) {
-            _bindExportImportEvents(lang);
-        }
+        
+        // ═══════════════════════════════════════════════════
+        // 【修复】只在首次渲染时绑定事件，避免重复
+        // 事件监听器内部实时读取 window.currentLang
+        // ═══════════════════════════════════════════════════
+        // 不需要在这里重新绑定，事件已用实时语言
     }
 }
 
