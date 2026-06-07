@@ -1782,9 +1782,10 @@ function _sleep(ms) {
 // ═══════════════════════════════════════════════════════════════
 
 // 页面卸载前强制保存
-window.addEventListener('beforeunload', _flushPendingSave);
+// window.addEventListener('beforeunload', _flushPendingSave);
 
 // 页面可见性变化（切回页面时同步）
+/*
 document.addEventListener('visibilitychange', async () => {
     if (document.visibilityState === 'visible') {
         await initStarryColumn();
@@ -1794,7 +1795,7 @@ document.addEventListener('visibilitychange', async () => {
             renderStarryCardsList(checkAdminPermission());
         }
     }
-});
+});*/
 
 
 // ═══════════════════════════════════════════════════════════════
