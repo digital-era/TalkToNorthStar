@@ -183,7 +183,6 @@ function renderStarryColumnLayout() {
                                 <polyline points="7 10 12 15 17 10"/>
                                 <line x1="12" y1="15" x2="12" y2="3"/>
                             </svg>
-                            <span>${lang === 'zh-CN' ? '导出' : 'Export'}</span>
                         </button>
                         <label class="btn-starry-import" for="btn-starry-import-input" 
                                title="${lang === 'zh-CN' ? '导入配置' : 'Import Config'}">
@@ -191,8 +190,7 @@ function renderStarryColumnLayout() {
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                 <polyline points="17 8 12 3 7 8"/>
                                 <line x1="12" y1="3" x2="12" y2="15"/>
-                            </svg>
-                            <span>${lang === 'zh-CN' ? '导入' : 'Import'}</span>
+                            </svg>                            
                         </label>
                         <input type="file" id="btn-starry-import-input" 
                                accept=".json,application/json" 
