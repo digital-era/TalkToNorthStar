@@ -372,18 +372,19 @@ function selectStarryCard(card) {
         resolvedExperts = resolveCardExperts(card);
     }
 
-    // ═══════════════════════════════════════════════
-    // 【修复】保留原始多语言对象，同时提供当前语言的解析值
-    // ═══════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════
+    // 【方案1变体】保留多语言对象 + 当前语言解析值
+    // ═══════════════════════════════════════════════════
     const virtualLeader = {
         id: card.id,
-        // 当前语言的解析值（用于直接显示）
+        
+        // 显示用：当前语言解析值（字符串，兼容现有显示逻辑）
         name: getFieldValue(card.name, lang),
         field: getFieldValue(card.field, lang),
         contribution: getFieldValue(card.contribution, lang),
         remarks: getFieldValue(card.remarks, lang),
         
-        // 保留原始多语言对象（用于语言切换时重新解析）
+        // 【新增】prompt 用：原始多语言对象
         _rawName: card.name,
         _rawField: card.field,
         _rawContribution: card.contribution,
