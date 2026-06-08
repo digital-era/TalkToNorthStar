@@ -126,6 +126,33 @@
     transform: scale(0.95);      /* 与 chip 一致 */
 }
 
+/*系统专栏图标按钮*/
+.starry-card-system {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    margin-left: auto;
+    margin-right: 4px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: rgba(197, 160, 89, 0.7);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.starry-card-system:hover {
+    background: rgba(197, 160, 89, 0.15);
+    color: #c5a059;
+}
+
+.starry-card-system svg {
+    display: block;
+}
+
 
 /* ═══════════════════════════════════════════════
    【补充】星空专栏页面 - 完整样式
