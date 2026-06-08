@@ -376,9 +376,31 @@ function generateBasePrompt() {
         return "";
     }
 
-    const leaderContribution = window.currentSelectedLeader.contribution[lang] || window.currentSelectedLeader.contribution['zh-CN'];
-    const leaderField = window.currentSelectedLeader.field[lang] || window.currentSelectedLeader.field['zh-CN'];
-    const leaderRemarks = window.currentSelectedLeader.remarks ? (window.currentSelectedLeader.remarks[lang] || window.currentSelectedLeader.remarks['zh-CN']) : '';
+    const leader = window.currentSelectedLeader;
+
+    // ═══════════════════════════════════════════════════
+    // 【修复】兼容普通领袖（多语言对象）和星空专栏虚拟领袖（_raw对象）
+    // 逻辑：
+    // 1. 优先使用 _raw 对象（星空专栏有，普通领袖无）
+    // 2. 回退到 leader.xxx（普通领袖是多语言对象，星空专栏是字符串）
+    // 3. getFieldValue 统一处理：字符串直接返回，对象按语言解析
+    // ═══════════════════════════════════════════════════
+
+    const contributionObj = leader._rawContribution || leader.contribution;
+    const fieldObj = leader._rawField || leader.field;
+    const remarksObj = leader._rawRemarks || leader.remarks;
+
+    const leaderContribution = getFieldValue(contributionObj, lang) 
+        || getFieldValue(contributionObj, 'zh-CN') 
+        || '';
+
+    const leaderField = getFieldValue(fieldObj, lang) 
+        || getFieldValue(fieldObj, 'zh-CN') 
+        || '';
+
+    const leaderRemarks = remarksObj 
+        ? (getFieldValue(remarksObj, lang) || getFieldValue(remarksObj, 'zh-CN') || '')
+        : '';
 
     const remarksText = leaderRemarks || translations[lang].promptBaseRemarksNone;
     const remarksSection = leaderRemarks
@@ -389,25 +411,25 @@ function generateBasePrompt() {
 
     return `
 ${translations[lang].promptBackgroundSetting}
-${translations[lang].promptYouAre} ${window.currentSelectedLeader.name}. ${translations[lang].promptBasedOnPublicContributions}
+${translations[lang].promptYouAre} ${leader.name}. ${translations[lang].promptBasedOnPublicContributions}
 
-${window.currentSelectedLeader.name}${translations[lang].promptCoreInfoFor}
+${leader.name}${translations[lang].promptCoreInfoFor}
 - ${translations[lang].promptMainContributions} ${leaderContribution}
 - ${translations[lang].promptExpertise} ${leaderField}
 - ${translations[lang].promptKeyRemarksFeatures} ${remarksText}
 
-${translations[lang].promptThinkingFrameworkGuidance.replace('${name}', window.currentSelectedLeader.name)}
+${translations[lang].promptThinkingFrameworkGuidance.replace('${name}', leader.name)}
 1.  **${translations[lang].promptFirstPrinciplesThinking}**: ${translations[lang].promptFirstPrinciplesDetail}
 2.  **${translations[lang].promptDomainExpertise}**: ${translations[lang].promptDomainExpertiseDetail1.replace('${field}', leaderField)} ${translations[lang].promptDomainExpertiseDetail2}
-3.  **${translations[lang].promptCorePhilosophyDrivingForce}**: ${translations[lang].promptCorePhilosophyDetail1.replace('${name}', window.currentSelectedLeader.name).replace('${remarksSection}', remarksSection)}
+3.  **${translations[lang].promptCorePhilosophyDrivingForce}**: ${translations[lang].promptCorePhilosophyDetail1.replace('${name}', leader.name).replace('${remarksSection}', remarksSection)}
 4.  **${translations[lang].promptProblemAnalysis}**: ${translations[lang].promptProblemAnalysisDetail}
-5.  **${translations[lang].promptSolutionInsight}**: ${translations[lang].promptSolutionInsightDetail1.replace('${name}', window.currentSelectedLeader.name)} ${translations[lang].promptSolutionInsightDetail2}
-6.  **${translations[lang].promptLanguageStyle}**: ${translations[lang].promptLanguageStyleDetail1.replace('${name}', window.currentSelectedLeader.name)} ${translations[lang].promptLanguageStyleDetail2}
+5.  **${translations[lang].promptSolutionInsight}**: ${translations[lang].promptSolutionInsightDetail1.replace('${name}', leader.name)} ${translations[lang].promptSolutionInsightDetail2}
+6.  **${translations[lang].promptLanguageStyle}**: ${translations[lang].promptLanguageStyleDetail1.replace('${name}', leader.name)} ${translations[lang].promptLanguageStyleDetail2}
 
 ${translations[lang].promptUserQuestion}
 "${question}"
 
-${translations[lang].promptAs} ${window.currentSelectedLeader.name}, ${translations[lang][replyInstructionKey]}
+${translations[lang].promptAs} ${leader.name}, ${translations[lang][replyInstructionKey]}
 `;
 }
 
