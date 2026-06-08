@@ -8,11 +8,11 @@ const starryColumnCards = [
         id: "galaxy_shine",
         name: {
             "zh-CN": "星光回眸",
-            "en": "Starry Glance"
+            "en": "Starlight Glance"
         },
         contribution: {
             "zh-CN": "撰写星光回眸专栏，书写在决定历史走向、技术质变、或思想涌现取得非凡成就的北极星人物传记。",
-            "en": "Authoring the Starry Glance column, a collection of biographies on NorthStar figures who achieved greatness by shaping history, revolutionizing technology, or inspiring intellectual flowerings."
+            "en": "Authoring the Starlight Glance column, a collection of biographies on NorthStar figures who achieved greatness by shaping history, revolutionizing technology, or inspiring intellectual flowerings."
         },
         field: {
             "zh-CN": "传记文学、心理传记、历史传记、历史瞬间写作。",
