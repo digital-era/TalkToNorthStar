@@ -1907,47 +1907,65 @@ async function loadSystemColumn(card) {
         return;
     }
 
-    // 1. 画布非空检查（保持不变）
-    const canvasHistory = getMergedHistory(importedHistory, conversationHistory);
-    if (canvasHistory.length > 0) {
-        const title = getFieldValue(starryColumnTexts.canvasNotEmptyTitle, lang);
-        const message = getFieldValue(starryColumnTexts.canvasNotEmptyMessage, lang);
-        alert(`${title}\n\n${message}`);
-        return;
-    }
-
-    // 2. 拼接文件路径（同域固定目录）
     const fileName = getFieldValue(card.name, 'zh-CN') + '.md';
     const filePath = `/StarryColumn/${fileName}`;
 
+    // ═══════════════════════════════════════════════════
+    // 画布非空检查 + 智能覆盖判断
+    // ═══════════════════════════════════════════════════
+    const canvasHistory = getMergedHistory(importedHistory, conversationHistory);
+
+    if (canvasHistory.length > 0) {
+        // 判断当前画布是否"仅为系统专栏内容且未被用户修改"
+        const isOnlySystemColumn = (
+            importedHistory.length > 0 &&
+            importedHistory._source === 'systemColumn' &&
+            conversationHistory.length === 0
+        );
+
+        if (isOnlySystemColumn) {
+            // 用户未新增对话，直接静默清空，继续加载新的
+            importedHistory = [];
+            conversationHistory = [];
+            if (typeof saveCanvasSession === 'function') {
+                saveCanvasSession();
+            }
+            // 不 return，继续执行下方加载逻辑
+        } else {
+            // 用户有自定义对话或手动导入内容，必须确认
+            const title = getFieldValue(starryColumnTexts.canvasNotEmptyTitle, lang);
+            const message = getFieldValue(starryColumnTexts.canvasNotEmptyMessage, lang);
+            alert(`${title}\n\n${message}`);
+            return;
+        }
+    }
+
     try {
-        // ═══════════════════════════════════════════════════
-        // 为什么用 fetch？
-        // 虽然是同域固定目录，但系统专栏是"自动加载"，不可能让用户每次手动选文件。
-        // fetch 是获取同域静态文本资源最标准、最简洁的方式。
-        // 替代方案如 XMLHttpRequest 更冗长；FileReader 需要用户交互，不适合此场景。
-        // ═══════════════════════════════════════════════════
         const response = await fetch(filePath);
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
         }
 
         const mdContent = await response.text();
-
-        // 3. 【关键】复用已有的 MD 导入解析器，确保与手动导入 100% 一致
         const parsed = parseMDToHistory(mdContent);
 
         if (parsed.length === 0) {
             throw new Error(lang === 'zh-CN' ? '文件内容解析后为空' : 'Parsed content is empty');
         }
 
-        // 4. 与 importFromMD 保持一致：写入 importedHistory + 立即持久化
+        // ═══════════════════════════════════════════════════
+        // 写入 importedHistory 并标记来源
+        // ═══════════════════════════════════════════════════
         importedHistory = parsed;
+        importedHistory._source = 'systemColumn';      // 来源标记
+        importedHistory._sourceCardId = card.id;       // 可选：记录当前专栏ID
+        importedHistory._loadedAt = Date.now();        // 可选：记录加载时间
+
         if (typeof saveCanvasSession === 'function') {
             saveCanvasSession();
         }
 
-        // 5. 渲染画布（已打开则刷新，未打开则打开）
+        // 渲染画布
         const canvasModal = document.getElementById('dialogueCanvasModal');
         if (canvasModal && canvasModal.style.display === 'flex') {
             renderDialogueCanvas();
