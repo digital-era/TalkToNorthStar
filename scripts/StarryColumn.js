@@ -1844,7 +1844,6 @@ document.addEventListener('visibilitychange', async () => {
     }
 });*/
 
-
 async function loadSystemColumn(card) {
     const lang = window.currentLang || 'zh-CN';
 
@@ -1853,11 +1852,7 @@ async function loadSystemColumn(card) {
         return;
     }
 
-    // 获取卡片中文名称作为文件名
-    const fileName = getFieldValue(card.name, 'zh-CN') + '.md';
-    const filePath = `/StarryColumn/${fileName}`;
-
-    // 检查画布是否为空
+    // 1. 画布非空检查（保持不变）
     const canvasHistory = getMergedHistory(importedHistory, conversationHistory);
     if (canvasHistory.length > 0) {
         const title = getFieldValue(starryColumnTexts.canvasNotEmptyTitle, lang);
@@ -1866,7 +1861,17 @@ async function loadSystemColumn(card) {
         return;
     }
 
+    // 2. 拼接文件路径（同域固定目录）
+    const fileName = getFieldValue(card.name, 'zh-CN') + '.md';
+    const filePath = `/StarryColumn/${fileName}`;
+
     try {
+        // ═══════════════════════════════════════════════════
+        // 为什么用 fetch？
+        // 虽然是同域固定目录，但系统专栏是"自动加载"，不可能让用户每次手动选文件。
+        // fetch 是获取同域静态文本资源最标准、最简洁的方式。
+        // 替代方案如 XMLHttpRequest 更冗长；FileReader 需要用户交互，不适合此场景。
+        // ═══════════════════════════════════════════════════
         const response = await fetch(filePath);
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
@@ -1874,20 +1879,20 @@ async function loadSystemColumn(card) {
 
         const mdContent = await response.text();
 
-        // 创建 AI 回复节点
-        const articleItem = {
-            role: 'ai',
-            text: mdContent,
-            leaderInfo: {
-                name: getFieldValue(card.name, lang),
-                field: getFieldValue(card.field, lang),
-                contribution: getFieldValue(card.contribution, lang)
-            }
-        };
+        // 3. 【关键】复用已有的 MD 导入解析器，确保与手动导入 100% 一致
+        const parsed = parseMDToHistory(mdContent);
 
-        conversationHistory.push(articleItem);
+        if (parsed.length === 0) {
+            throw new Error(lang === 'zh-CN' ? '文件内容解析后为空' : 'Parsed content is empty');
+        }
 
-        // 自动打开或刷新画布
+        // 4. 与 importFromMD 保持一致：写入 importedHistory + 立即持久化
+        importedHistory = parsed;
+        if (typeof saveCanvasSession === 'function') {
+            saveCanvasSession();
+        }
+
+        // 5. 渲染画布（已打开则刷新，未打开则打开）
         const canvasModal = document.getElementById('dialogueCanvasModal');
         if (canvasModal && canvasModal.style.display === 'flex') {
             renderDialogueCanvas();
@@ -1896,19 +1901,18 @@ async function loadSystemColumn(card) {
         }
 
         showToast(
-            lang === 'zh-CN' ? '系统专栏已加载' : 'System column loaded',
+            getFieldValue(starryColumnTexts.systemColumnLoaded, lang),
             'success'
         );
 
     } catch (e) {
         console.error('[StarryColumn] Failed to load system column:', e);
         showToast(
-            lang === 'zh-CN' ? '加载失败：' + e.message : 'Load failed: ' + e.message,
+            getFieldValue(starryColumnTexts.systemColumnLoadFailed, lang) + e.message,
             'error'
         );
     }
 }
-
 
 // ═══════════════════════════════════════════════════════════════
 // 数据导出 / 导入 JSON 文件
