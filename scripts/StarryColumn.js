@@ -85,6 +85,26 @@ const starryColumnTexts = {
     importFailed: {
         'zh-CN': '导入失败：{error}',
         'en': 'Import failed: {error}'
+    },
+    systemColumn: {
+        'zh-CN': '系统专栏',
+        'en': 'System Column'
+    },
+    canvasNotEmptyTitle: {
+        'zh-CN': '画布非空',
+        'en': 'Canvas Not Empty'
+    },
+    canvasNotEmptyMessage: {
+        'zh-CN': '当前画布内容非空，请先导出然后清空，才能加载系统专栏。',
+        'en': 'Current canvas is not empty. Please export and clear it before loading system column.'
+    },
+    systemColumnLoaded: {
+        'zh-CN': '系统专栏已加载',
+        'en': 'System column loaded'
+    },
+    systemColumnLoadFailed: {
+        'zh-CN': '加载失败：',
+        'en': 'Load failed: '
     }
 };
 
@@ -300,6 +320,19 @@ function renderStarryCardsList(isAdmin = false) {
             <div class="starry-card-header">
                 <div class="starry-card-icon">${getCardTypeIcon(card.type)}</div>
                 <h4 class="starry-card-name">${getFieldValue(card.name, lang)}</h4>
+                
+                <!-- 【新增】系统专栏按钮 - 所有用户可见 -->
+                <button class="starry-card-system" data-card-id="${card.id}" 
+                        title="${getFieldValue(starryColumnTexts.systemColumn, lang)}">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                </button>
+                
                 ${isConfigurable ? `
                     <button class="starry-card-config" data-card-id="${card.id}" 
                             title="${getFieldValue(starryColumnTexts.configureCard, lang)}">
@@ -311,13 +344,22 @@ function renderStarryCardsList(isAdmin = false) {
 
         if (!isEmpty || card.type === 'navigator') {
             cardEl.addEventListener('click', (e) => {
-                if (e.target.closest('.starry-card-config')) return;
+                if (e.target.closest('.starry-card-config') || e.target.closest('.starry-card-system')) return;
                 selectStarryCard(card);
             });
             cardEl.style.cursor = 'pointer';
         } else {
             cardEl.style.cursor = 'not-allowed';
             cardEl.style.opacity = '0.5';
+        }
+
+        // 【新增】系统专栏按钮事件
+        const systemBtn = cardEl.querySelector('.starry-card-system');
+        if (systemBtn) {
+            systemBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                loadSystemColumn(card);
+            });
         }
 
         const configBtn = cardEl.querySelector('.starry-card-config');
@@ -1801,6 +1843,71 @@ document.addEventListener('visibilitychange', async () => {
         }
     }
 });*/
+
+
+async function loadSystemColumn(card) {
+    const lang = window.currentLang || 'zh-CN';
+
+    if (!card) {
+        console.error('[StarryColumn] No card provided');
+        return;
+    }
+
+    // 获取卡片中文名称作为文件名
+    const fileName = getFieldValue(card.name, 'zh-CN') + '.md';
+    const filePath = `/StarryColumn/${fileName}`;
+
+    // 检查画布是否为空
+    const canvasHistory = getMergedHistory(importedHistory, conversationHistory);
+    if (canvasHistory.length > 0) {
+        const title = getFieldValue(starryColumnTexts.canvasNotEmptyTitle, lang);
+        const message = getFieldValue(starryColumnTexts.canvasNotEmptyMessage, lang);
+        alert(`${title}\n\n${message}`);
+        return;
+    }
+
+    try {
+        const response = await fetch(filePath);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const mdContent = await response.text();
+
+        // 创建 AI 回复节点
+        const articleItem = {
+            role: 'ai',
+            text: mdContent,
+            leaderInfo: {
+                name: getFieldValue(card.name, lang),
+                field: getFieldValue(card.field, lang),
+                contribution: getFieldValue(card.contribution, lang)
+            }
+        };
+
+        conversationHistory.push(articleItem);
+
+        // 自动打开或刷新画布
+        const canvasModal = document.getElementById('dialogueCanvasModal');
+        if (canvasModal && canvasModal.style.display === 'flex') {
+            renderDialogueCanvas();
+        } else {
+            openDialogueCanvas();
+        }
+
+        showToast(
+            lang === 'zh-CN' ? '系统专栏已加载' : 'System column loaded',
+            'success'
+        );
+
+    } catch (e) {
+        console.error('[StarryColumn] Failed to load system column:', e);
+        showToast(
+            lang === 'zh-CN' ? '加载失败：' + e.message : 'Load failed: ' + e.message,
+            'error'
+        );
+    }
+}
 
 
 // ═══════════════════════════════════════════════════════════════
