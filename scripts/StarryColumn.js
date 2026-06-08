@@ -1588,28 +1588,30 @@ async function initStarryColumn() {
     if (_isLoading) return;
     _isLoading = true;
 
-    console.log('[StarryColumn] Initializing...');
+    console.log('[StarryColumn] Initializing... (localStorage only)');
 
-    try {
-        // 步骤 1: 从后端 KV 加载
-        const response = await fetchWithRetry(PERSISTENCE.API_BASE, {
-            method: 'GET'
-        });
+    // ═══════════════════════════════════════════════════
+    // 【已注释】Cloudflare KV 加载过慢，暂时禁用
+    // ═══════════════════════════════════════════════════
+    // try {
+    //     const response = await fetchWithRetry(PERSISTENCE.API_BASE, {
+    //         method: 'GET'
+    //     });
+    //     if (response.ok) {
+    //         const serverData = await response.json();
+    //         await _mergeServerData(serverData);
+    //         console.log('[StarryColumn] Loaded from KV:', serverData.cards?.length || 0, 'cards');
+    //     } else {
+    //         throw new Error(`HTTP ${response.status}`);
+    //     }
+    // } catch (e) {
+    //     console.warn('[StarryColumn] KV load failed, fallback to localStorage:', e.message);
+    //     _loadFromLocalStorage();
+    // }
 
-        if (response.ok) {
-            const serverData = await response.json();
-            await _mergeServerData(serverData);
-            console.log('[StarryColumn] Loaded from KV:', serverData.cards?.length || 0, 'cards');
-        } else {
-            throw new Error(`HTTP ${response.status}`);
-        }
+    // 直接从 localStorage 加载
+    _loadFromLocalStorage();
 
-    } catch (e) {
-        console.warn('[StarryColumn] KV load failed, fallback to localStorage:', e.message);
-        _loadFromLocalStorage();
-    }
-
-    // 更新哈希缓存
     _updateHashCache();
     _isLoading = false;
 
