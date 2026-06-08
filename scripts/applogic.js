@@ -705,9 +705,9 @@ async function getAIResponse() {
     
         // 2. 准备北极星的元数据 (防止当前没选人报错)
         const leaderMeta = window.currentSelectedLeader ? {
-            name: window.currentSelectedLeader.name,
-            field: window.currentSelectedLeader.field[currentLang] || window.currentSelectedLeader.field['zh-CN'],
-            contribution: window.currentSelectedLeader.contribution[currentLang] || window.currentSelectedLeader.contribution['zh-CN']
+            name: getFieldValue(window.currentSelectedLeader.name, currentLang),
+            field: getFieldValue(window.currentSelectedLeader.field, currentLang),
+            contribution: getFieldValue(window.currentSelectedLeader.contribution, currentLang)
         } : { name: 'North Star', field: 'General AI', contribution: '' };
     
         // 3. 存入历史 - 用户提问
