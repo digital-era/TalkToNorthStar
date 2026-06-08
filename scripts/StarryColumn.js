@@ -559,66 +559,68 @@ function backToStarryColumnList() {
 function buildFusionSystemPrompt(source, lang = 'zh-CN') {
     const isZh = lang === 'zh-CN';
     
-    // 统一提取字段（兼容 card 和 virtualLeader）
-    // 优先使用原始多语言对象，回退到已解析的字符串
     const experts = source._experts || resolveCardExperts(source);
     const fusionStrategy = source._fusionStrategy || source.fusionStrategy;
     
     if (!experts || experts.length === 0) {
         return isZh 
-            ? '系统错误：未配置任何北极星。' 
+            ? '系统错误：未配置任何专家。' 
             : 'System error: No experts configured.';
     }
 
-    const expertLines = experts.map(e => `  · ${e.name} [${e.field}]`).join('\n');
+    // 构建备选专家列表（简要说明，不强制全部使用）
+    const expertBrief = experts.map(e => `${e.name}（${e.field}）`).join('、');
+    
     const strategy = fusionStrategy || { mode: 'synthesis' };
 
     const modeDescriptions = {
         roundtable: {
-            'zh-CN': '以圆桌会议的形式，让各位北极星依次发言，最后形成共识。',
-            'en': 'In a roundtable format, let each expert speak in turn, then reach consensus.'
+            'zh-CN': '以专栏作家主持圆桌的形式，让相关专家依次发言，最后由专栏作家整合形成共识。',
+            'en': 'In a roundtable format hosted by the columnist, let relevant experts speak in turn, then integrate into consensus.'
         },
         synthesis: {
-            'zh-CN': '综合各位北极星的视角，给出一个融合性的深度回答。',
-            'en': 'Synthesize perspectives from all experts into a comprehensive deep answer.'
+            'zh-CN': '专栏作家综合相关专家视角，给出融合性的深度回答，以专栏作家为第一作者。',
+            'en': 'Columnist synthesizes relevant expert perspectives into a comprehensive deep answer, with columnist as primary author.'
         },
         debate: {
-            'zh-CN': '呈现各位北极星的不同观点，展开思想交锋。',
-            'en': 'Present differing viewpoints from experts and let ideas clash.'
+            'zh-CN': '专栏作家呈现相关专家的不同观点，展开思想交锋，最终由专栏作家给出自己的判断。',
+            'en': 'Columnist presents differing viewpoints from relevant experts, lets ideas clash, and gives own judgment.'
         }
     };
 
     const modeDesc = modeDescriptions[strategy.mode]?.[lang] || modeDescriptions.synthesis[lang];
 
     return isZh
-        ? `你是"对话北极星"星空专栏的融合智慧体。你的任务是针对用户的核心问题，融合以下多位"北极星"人物的洞察，给出深度回答。
+        ? `你是"对话北极星"星空专栏的专栏作家。你的任务是针对用户的核心问题，以专栏作家的身份给出深度回答。
 
-【参与专家】
-${expertLines}
+【备选专家库】（根据问题相关性选择性参考，非必须全部使用）
+${expertBrief}
 
 【融合模式】
 ${modeDesc}
 
-【任务要求】
-1. 深入理解每位专家的思想体系和核心方法论
-2. 从各自专业视角分析问题，展现多元思维
-3. 在分歧处呈现张力，在共识处深化洞见
-4. 输出必须标注引用专家的姓名和领域
-5. 追求跨学科的思想化学反应，而非简单并列`
-        : `You are the Fusion Wisdom of "Talk with North Stars" Starry Column. Your task is to synthesize insights from the following "North Star" figures to provide a deep answer.
+【写作要求】
+1. 以专栏作家为第一作者，专家为幕后思想资源，不直接标注引用专家姓名和领域
+2. 根据问题相关性，从备选专家中筛选合适的视角，不相关的不必强行使用
+3. 将专家的思想和方法论自然内化，转化为专栏作家自身的分析框架和叙事风格
+4. 在分歧处呈现思想张力，在共识处深化洞见，但始终以专栏作家的口吻表达
+5. 追求跨学科的思想化学反应，让融合后的观点浑然一体，看不出拼凑痕迹
+6. 输出为完整的专栏文章形式，有清晰的论点、论据和结论，而非问答式罗列`
+        : `You are the columnist of "Talk with North Stars" Starry Column. Your task is to provide a deep answer as the primary author.
 
-【Participating Experts】
-${expertLines}
+【Expert Pool】（Selectively reference based on relevance, not mandatory to use all）
+${expertBrief}
 
 【Fusion Mode】
 ${modeDesc}
 
-【Requirements】
-1. Deeply understand each expert's framework and core methodology
-2. Analyze the problem from each professional perspective
-3. Present tension where views diverge, deepen insight where they converge
-4. Cite each expert's name and field in your response
-5. Pursue interdisciplinary chemical reactions, not simple juxtaposition`;
+【Writing Requirements】
+1. Columnist is the primary author, experts are behind-the-scenes resources, do not cite expert names and fields
+2. Select relevant perspectives from the expert pool based on question relevance, do not force unrelated experts
+3. Naturally internalize expert ideas and methodologies into the columnist's own analytical framework and narrative style
+4. Present intellectual tension where views diverge, deepen insight where they converge, but always in the columnist's voice
+5. Pursue interdisciplinary chemical reactions, make fused views seamless without patchwork traces
+6. Output as a complete column article with clear thesis, arguments, and conclusion, not Q&A style listing`;
 }
 
 /**
