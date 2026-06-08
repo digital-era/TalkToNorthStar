@@ -226,6 +226,28 @@
     margin: 0;
 }
 
+@media (min-width: 769px) {
+    #starryLeft {
+        flex: 1 1 55% !important;
+        max-width: none !important;
+        min-width: 450px !important;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* 如果右侧也需要同步调整 */
+    #starryLeft + .layout-right {
+        flex: 1 1 45% !important;
+        max-width: 600px !important;
+    }
+
+    #starryLeft .starry-cover-wrapper {
+        width: 95%;
+        height: 85%;
+    }
+}
+
 
 /* ─────────────────────────────────────────────
    右侧头部（含双返回按钮）
@@ -1175,3 +1197,4 @@
 .btn-starry-icon svg {
     display: block;
 }
+
