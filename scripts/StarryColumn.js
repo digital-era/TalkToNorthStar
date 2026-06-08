@@ -108,6 +108,61 @@ const starryColumnTexts = {
     }
 };
 
+/**
+ * Toast 适配器
+ * 优先复用 contextUI._showToast，否则使用内置兜底
+ */
+function showToast(message, type = 'info') {
+    // 方案1：复用 contextUI 的 toast（保持项目 UI 风格统一）
+    if (typeof window.contextUI !== 'undefined' && 
+        typeof window.contextUI._showToast === 'function') {
+        window.contextUI._showToast(message);
+        return;
+    }
+
+    // 方案2：兜底实现（与之前提供的版本一致，确保任何场景都不报错）
+    const existing = document.getElementById('starry-toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.id = 'starry-toast';
+    
+    const colors = {
+        success: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+        error: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+        info: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)'
+    };
+
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 99999;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #fff;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        background: ${colors[type] || colors.info};
+        max-width: 80vw;
+        word-break: break-word;
+        text-align: center;
+    `;
+    toast.textContent = message;
+
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => { toast.style.opacity = '1'; });
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
 
 // ═══════════════════════════════════════════════
 // 星空专栏 - 入口与布局
