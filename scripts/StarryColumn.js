@@ -7,9 +7,15 @@ const starryColumnTexts = {
         'zh-CN': '跨领域智慧融合',
         'en': 'Cross-domain Wisdom Fusion'
     },
-    columnName: {
-        'zh-CN': '星空专栏',
-        'en': 'Starry Column'
+    columnNameList: {
+        'zh-CN': '专栏列表',
+        'en': 'Column List'
+    },
+    
+    // 卡片/创作视图标题
+    columnNameCard: {
+        'zh-CN': '专栏创作',
+        'en': 'Writing'
     },
     backTooltip: {
         'zh-CN': '返回首页',
@@ -164,6 +170,17 @@ function showToast(message, type = 'info') {
     }, 3000);
 }
 
+/**
+ * 根据当前视图模式返回对应的标题文案
+ */
+function getColumnTitle(lang) {
+    const mode = window.starryColumnViewMode || 'list';
+    if (mode === 'card') {
+        return getFieldValue(starryColumnTexts.columnNameCard, lang);
+    }
+    return getFieldValue(starryColumnTexts.columnNameList, lang);
+}
+
 // ═══════════════════════════════════════════════
 // 星空专栏 - 入口与布局
 // ═══════════════════════════════════════════════
@@ -255,7 +272,7 @@ function renderStarryColumnLayout() {
                     </svg>
                 </button>
                 <h3 class="starry-list-title">
-                    ${getFieldValue(starryColumnTexts.columnName, lang)}
+                    ${getColumnTitle(lang)}
                 </h3>
                 ${isAdmin ? `
                     <div class="starry-admin-actions" id="starryAdminActions">
@@ -579,7 +596,7 @@ function renderStarryColumnLayoutForLeader(hostCategory) {
                     </svg>
                 </button>
                 <h3 class="starry-list-title">
-                    ${getFieldValue(starryColumnTexts.columnName, lang)}
+                    ${getColumnTitle(lang)}
                 </h3>
                 <!-- 右上角：返回专栏列表 -->
                 <button class="back-to-list-btn" id="btn-back-to-list" 
@@ -1482,7 +1499,7 @@ function updateStarryColumnLanguage() {
     
     // 2. 更新右侧头部
     const listTitle = layout.querySelector('.starry-list-title');
-    if (listTitle) listTitle.textContent = getFieldValue(starryColumnTexts.columnName, lang);
+    if (listTitle) listTitle.textContent = getColumnTitle(lang);
     
     // 3. 更新按钮 title
     const backBtn = document.getElementById('btn-starry-back');
