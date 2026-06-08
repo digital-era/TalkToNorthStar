@@ -1916,15 +1916,37 @@
 }
 
 /* 层级标题 */
-#elegantAnswerText h1, #elegantAnswerText h2, #elegantAnswerText h3 {
+#elegantAnswerText h1, 
+#elegantAnswerText h2, 
+#elegantAnswerText h3 {
     font-family: 'Cinzel', 'Noto Serif SC', serif;
     color: #fff;
     font-weight: normal;
     margin-top: 2.5em;
     margin-bottom: 1em;
 }
-#elegantAnswerText h2 { font-size: 1.5rem; text-align: center; }
-#elegantAnswerText h3 { font-size: 1.25rem; color: rgba(0, 223, 216, 0.9); }
+
+#elegantAnswerText h1 { 
+    font-size: 1.8rem;      /* 新增，比 h2 大但不过大 */
+    text-align: center; 
+    letter-spacing: 2px;
+}
+
+#elegantAnswerText h2 { 
+    font-size: 1.5rem; 
+    text-align: center; 
+}
+
+#elegantAnswerText h3 { 
+    font-size: 1.25rem; 
+    color: rgba(0, 223, 216, 0.9); 
+}
+
+@media (max-width: 768px) {
+    #elegantAnswerText h1 { font-size: 1.5rem; }
+    #elegantAnswerText h2 { font-size: 1.3rem; }
+    #elegantAnswerText h3 { font-size: 1.15rem; }
+}
 
 /* 列表美化 */
 #elegantAnswerText ul, #elegantAnswerText ol {
