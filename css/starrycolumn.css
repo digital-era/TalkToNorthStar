@@ -248,6 +248,52 @@
     }
 }
 
+/* ═══════════════════════════════════════════════
+   【星空专栏专属】电脑端左侧图片强制撑满
+   ═══════════════════════════════════════════════ */
+@media (min-width: 769px) {
+    /* 1. 左侧区域：占 60%，取消一切宽度上限 */
+    #starryLeft {
+        flex: 1 1 60% !important;
+        max-width: none !important;
+        min-width: 500px !important;
+        padding: 0 !important;          /* 清除可能存在的内边距 */
+    }
+
+    /* 2. 右侧区域：剩余 40%，避免过度拉伸 */
+    #starryLeft + .layout-right {
+        flex: 1 1 40% !important;
+        max-width: 540px !important;
+    }
+
+    /* 3. 图片容器：彻底撑满左侧，不留 wrapper 边距 */
+    #starryLeft .starry-cover-wrapper {
+        width: 100% !important;       /* 从 95% 改为 100% */
+        height: 100% !important;       /* 从 85% 改为 100% */
+        border-radius: 0;             /* 如果希望四角撑满，取消圆角；保留则改为 12px */
+        margin: 0;
+    }
+
+    /* 4. 图片本身：确保覆盖模式正确 */
+    #starryLeft .starry-cover {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center 30%;    /* 稍微上移，避免星系中心被裁掉 */
+    }
+
+    /* 5. 文字叠加层：增加底部渐变高度，防止大图裁字 */
+    #starryLeft .starry-cover-overlay {
+        padding: 60px 40px;
+        background: linear-gradient(
+            to top, 
+            rgba(8, 12, 20, 0.98) 0%, 
+            rgba(8, 12, 20, 0.7) 40%, 
+            transparent 100%
+        );
+    }
+}
+
 
 /* ─────────────────────────────────────────────
    右侧头部（含双返回按钮）
