@@ -162,12 +162,17 @@
     background: linear-gradient(135deg, #0a0e17 0%, #121a2b 100%);
     position: relative;
     overflow: hidden;
+    /* 新增：确保电脑端 flex 分栏时正确居中并撑开 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
 }
 
 .starry-cover-wrapper {
     position: relative;
-    width: 85%;
-    height: 80%;
+    width: 95%;        /* 从 85% 改为 95%，电脑端更饱满 */
+    height: 85%;       /* 从 80% 改为 85%，增加高度利用率 */
     display: flex;
     align-items: center;
     justify-content: center;
