@@ -243,8 +243,8 @@
     }
 
     #starryLeft .starry-cover-wrapper {
-        width: 110%;
-        height: 90%;
+        width: 100%;
+        height: 85%;
     }
 }
 
