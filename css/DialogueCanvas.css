@@ -933,6 +933,34 @@
         line-height: 1.65;      /* 从1.8收紧，每行显示更多字 */
         text-align: left;       /* 手机端左对齐更易读 */
     }
+
+    /* 标题相应缩小 */
+    .star-content h1 {
+        font-size: 1.15em;
+        margin: 14px 0 8px;
+        padding-left: 8px;
+        border-left-width: 2px;
+    }
+
+    .star-content h2 {
+        font-size: 1.12em;
+        margin: 12px 0 6px;
+        padding-left: 6px;
+    }
+
+    .star-content h3 {
+        font-size: 1.08em;
+        margin: 10px 0 5px;
+        padding-left: 5px;
+        border-left-width: 2px;
+    }
+
+    .star-content h4,
+    .star-content h5,
+    .star-content h6 {
+        font-size: 1em;
+        margin: 6px 0 3px;
+    }
     
     .node-divider {
         margin: 10px 0 15px 0;
@@ -991,6 +1019,35 @@
     .star-content {
         font-size: 0.9rem;
         line-height: 1.55;   /* 更紧凑的行高 */
+    }
+
+    /* 标题进一步缩小，减少边距 */
+    .star-content h1 {
+        font-size: 1.1em;
+        margin: 12px 0 6px;
+        padding-left: 6px;
+    }
+
+    .star-content h2 {
+        font-size: 1.08em;
+        margin: 10px 0 5px;
+        padding-left: 5px;
+        border-left-width: 2px;
+    }
+
+    .star-content h3 {
+        font-size: 1.05em;
+        margin: 8px 0 4px;
+        padding-left: 4px;
+        border-left: 1px solid rgba(197, 160, 89, 0.5);
+    }
+
+    .star-content h4,
+    .star-content h5,
+    .star-content h6 {
+        font-size: 0.95em;
+        margin: 6px 0 2px;
+        color: #5d4037;
     }
     
     .leader-name {
