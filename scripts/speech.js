@@ -54,8 +54,13 @@ class CanvasTTS {
             };
 
             utterance.onerror = (e) => {
-                console.error('[TTS] Error:', e);
-                this.isPlaying = false;
+                // 用户主动停止，不报错
+                if (e.error === 'interrupted' || e.error === 'canceled') {
+                    // 完全静默，连 log 都不打
+                    return;
+                }
+                // 真正的错误才打日志
+                console.error('[TTS] error:', e.error);
             };
 
             this.currentUtterance = utterance;
