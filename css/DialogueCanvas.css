@@ -459,6 +459,19 @@
     color: #02060a;
 }
 
+/* 音乐按钮播放中状态（覆盖 .canvas-action-bar button 的默认金色） */
+.canvas-action-bar .music-wrapper-canvas.playing {
+    color: #00dfd8;
+    border-color: rgba(0, 223, 216, 0.4);
+    background: rgba(0, 223, 216, 0.08);
+    animation: musicPulse 2s ease-in-out infinite;
+}
+
+@keyframes musicPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
 /* ============================================================
    电脑端优化 (屏幕宽度 > 1024px)
    ============================================================ */
