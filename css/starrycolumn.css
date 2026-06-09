@@ -153,6 +153,33 @@
     display: block;
 }
 
+/* 删除按钮 */
+.starry-card-delete {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: rgba(255, 100, 100, 0.1);
+    border: 1px solid rgba(255, 100, 100, 0.2);
+    color: rgba(255, 100, 100, 0.6);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 4px;
+    padding: 0;
+    transition: all 0.2s ease;
+}
+
+.starry-card-delete:hover {
+    background: rgba(255, 100, 100, 0.25);
+    border-color: rgba(255, 100, 100, 0.5);
+    color: #ff4d4f;
+}
+
+.starry-card-delete svg {
+    display: block;
+}
+
 
 /* ═══════════════════════════════════════════════
    【补充】星空专栏页面 - 完整样式
