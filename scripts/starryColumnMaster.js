@@ -249,39 +249,5 @@ const starryColumnCards = [
           "en": "(Configured)"
         }
       }
-    },
-    {
-      "id": "test",
-      "name": {
-        "zh-CN": "测试",
-        "en": "Test"
-      },
-      "contribution": {
-        "zh-CN": "测试",
-        "en": "Test"
-      },
-      "field": {
-        "zh-CN": "测试",
-        "en": "Test"
-      },
-      "remarks": {
-        "zh-CN": "测试",
-        "en": "Test"
-      },
-      "configurable": true,
-      "builtIn": false,
-      "type": "fusion",
-      "experts": [
-        "li_bai"
-      ],
-      "systemPromptBuilder": "buildFusionSystemPrompt",
-      "userInputMode": "rawQuestion",
-      "fusionStrategy": {
-        "mode": "synthesis",
-        "description": {
-          "zh-CN": "（已配置）",
-          "en": "(Configured)"
-        }
-      }
     }
   ];
