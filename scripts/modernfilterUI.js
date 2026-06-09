@@ -137,6 +137,9 @@ function refreshChipsForActiveTab() {
 // ──────────────────────────────────────────────
 function switchUIStyle(style) {
     style = (style === 'modern') ? 'modern' : 'traditional';
+    // ═══ 关键：同步设置全局变量 ═══
+    window.currentUIStyle = style;
+    
     localStorage.setItem('northstarUIStyle', style);
 
     if (style === 'traditional') {
