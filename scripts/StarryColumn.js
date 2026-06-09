@@ -2037,11 +2037,8 @@ async function loadSystemColumn(card) {
     const fileName = getFieldValue(card.name, 'zh-CN') + '.md';
     const filePath = `/StarryColumn/${fileName}`;
 
-    // ═══════════════════════════════════════════════════
-    // 画布非空检查 + 智能覆盖判断
-    // ═══════════════════════════════════════════════════
+    // 画布非空检查
     const canvasHistory = getMergedHistory(importedHistory, conversationHistory);
-
     if (canvasHistory.length > 0) {
         const isOnlySystemColumn = (
             importedHistory.length > 0 &&
@@ -2052,9 +2049,7 @@ async function loadSystemColumn(card) {
         if (isOnlySystemColumn) {
             importedHistory = [];
             conversationHistory = [];
-            if (typeof saveCanvasSession === 'function') {
-                saveCanvasSession();
-            }
+            if (typeof saveCanvasSession === 'function') saveCanvasSession();
         } else {
             const title = getFieldValue(starryColumnTexts.canvasNotEmptyTitle, lang);
             const message = getFieldValue(starryColumnTexts.canvasNotEmptyMessage, lang);
@@ -2063,15 +2058,21 @@ async function loadSystemColumn(card) {
         }
     }
 
-    try {
-        // ═══ 关键：先预检文件是否存在 ═══
-        const headResponse = await fetch(filePath, { method: 'HEAD' });
-        if (!headResponse.ok) {
-            throw new Error('FILE_NOT_FOUND');
-        }
+    // ═══ 关键：先关闭画布，确保错误时不显示乱七八糟内容 ═══
+    const canvasModal = document.getElementById('dialogueCanvasModal');
+    if (canvasModal) {
+        canvasModal.style.display = 'none';
+        canvasModal.style.opacity = '0';
+    }
 
+    try {
         const response = await fetch(filePath);
+        
+        // ═══ 关键：检查 HTTP 状态 ═══
         if (!response.ok) {
+            if (response.status === 404) {
+                throw new Error('FILE_NOT_FOUND');
+            }
             throw new Error(`HTTP ${response.status}`);
         }
 
@@ -2082,13 +2083,13 @@ async function loadSystemColumn(card) {
             throw new Error('EMPTY_FILE');
         }
 
+        // 解析检查
         const parsed = parseMDToHistory(mdContent);
-
         if (parsed.length === 0) {
             throw new Error('PARSE_EMPTY');
         }
 
-        // 写入 importedHistory 并标记来源
+        // ═══ 成功后才写入并打开画布 ═══
         importedHistory = parsed;
         importedHistory._source = 'systemColumn';
         importedHistory._sourceCardId = card.id;
@@ -2098,13 +2099,9 @@ async function loadSystemColumn(card) {
             saveCanvasSession();
         }
 
-        // 渲染画布
-        const canvasModal = document.getElementById('dialogueCanvasModal');
-        if (canvasModal && canvasModal.style.display === 'flex') {
-            renderDialogueCanvas();
-        } else {
-            openDialogueCanvas();
-        }
+        // 打开画布
+        openDialogueCanvas();
+        renderDialogueCanvas();
 
         showToast(
             getFieldValue(starryColumnTexts.systemColumnLoaded, lang),
@@ -2114,7 +2111,15 @@ async function loadSystemColumn(card) {
     } catch (e) {
         console.error('[StarryColumn] Failed to load system column:', e);
 
-        // ═══ 区分错误类型，阻止画布打开 ═══
+        // ═══ 确保画布已关闭 ═══
+        if (canvasModal) {
+            canvasModal.style.display = 'none';
+            canvasModal.style.opacity = '0';
+        }
+
+        // 清理可能残留的 importedHistory
+        importedHistory = [];
+
         let errorMsg;
         if (e.message === 'FILE_NOT_FOUND') {
             errorMsg = lang === 'zh-CN' 
@@ -2132,14 +2137,7 @@ async function loadSystemColumn(card) {
             errorMsg = getFieldValue(starryColumnTexts.systemColumnLoadFailed, lang) + e.message;
         }
 
-        // 关键：阻止画布打开
         showToast(errorMsg, 'error');
-        
-        const canvasModal = document.getElementById('dialogueCanvasModal');
-        if (canvasModal) {
-            canvasModal.style.display = 'none';
-            canvasModal.style.opacity = '0';
-        }
     }
 }
 
