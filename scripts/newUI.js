@@ -814,7 +814,8 @@ function updateCrystalLanguage() {
 
    renderNebulaManualSelector(); // <--- 新增这行，切换语言时重绘星轨
    // 【新增】星空专栏入口（紧跟星轨指引之后）
-   renderStarryColumnEntry();
+   // 星空专栏入口入口统一为页面顶部按钮
+   // renderStarryColumnEntry(); 
   
 }
 
@@ -1352,7 +1353,8 @@ function initNebulaCrystal() {
   renderNebulaManualSelector(); // <--- 新增这行，初始化时渲染星轨
   
   // 【新增】星空专栏入口（紧跟星轨指引之后）
-  renderStarryColumnEntry();
+  // 星空专栏入口入口统一为页面顶部按钮
+  // renderStarryColumnEntry(); 
   
   const nebulaCrystal = document.getElementById('nebula-crystal');
   if (nebulaCrystal) nebulaCrystal.style.display = 'flex';
@@ -1975,9 +1977,10 @@ function updateWheelLanguage() {
         }
         
         // 刷新水晶球页面的星空专栏入口
+        /* 星空专栏入口入口统一为页面顶部按钮
         const nebulaCrystal = document.getElementById('nebula-crystal');
         if (nebulaCrystal && nebulaCrystal.style.display !== 'none') {
             renderStarryColumnEntry();
-        }
+        }*/
     };
 })();
