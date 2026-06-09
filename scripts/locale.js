@@ -258,6 +258,10 @@
                 "coverMainTitle": "对话北极星",
                 "coverSubTitle": "无限 · 思想",
 
+                 // ═══ 新增 ═══
+                "tooltipStarryColumn": "星空专栏",
+                "tooltipBgMusic": "背景音乐",
+
                 "starryColumnHint": "— 或，走进星空专栏 —",
                 "starryColumnBtn": "星空专栏",
                 "starryColumnTitle": "星空专栏",
@@ -524,6 +528,10 @@
                  "coverMainTitle": "Talk with North Star",
                  "coverSubTitle": "Infinite · Thought",
 
+                 // ═══ 新增 ═══
+                "tooltipStarryColumn": "Starry Column",
+                "tooltipBgMusic": "Background Music",
+                    
                  "starryColumnHint": "— Or, Enter the Starry Column —",
                  "starryColumnBtn": "Starry Column",
                  "starryColumnTitle": "Starry Column",
