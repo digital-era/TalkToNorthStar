@@ -5,74 +5,87 @@
 class CanvasTTS {
     constructor() {
         this.synth = window.speechSynthesis;
+        this.currentUtterance = null;
         this.isPlaying = false;
-        this.isPaused = false;
-        this._utterance = null;
-        this._text = '';           // 记录完整文本
-        this._charIndex = 0;       // 记录暂停位置
+        this.isPaused = false;      // 新增：暂停状态
+        this._chunks = [];          // 新增：记录分段
+        this._chunkIndex = 0;       // 新增：记录当前段
     }
 
     speak(text) {
-        if (!this.synth) return;
-        
-        // 如果正在暂停，继续播放
+        if (!this.synth) {
+            console.warn('[TTS] 浏览器不支持语音合成');
+            return;
+        }
+
+        // 如果已暂停，继续播放
         if (this.isPaused) {
             this.resume();
             return;
         }
 
+        // 停止当前播放
         this.stop();
-        this._text = text;
-        this._charIndex = 0;
 
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = /[\u4e00-\u9fa5]/.test(text) ? 'zh-CN' : 'en-US';
-        utterance.rate = 0.95;
+        // 清理 Markdown 标记（原有逻辑）
+        const cleanText = this._stripMarkdown(text);
 
-        // 选语音
-        const voices = this.synth.getVoices();
-        const voice = utterance.lang === 'zh-CN' 
-            ? voices.find(v => v.name.includes('Xiaoxiao') || v.lang === 'zh-CN')
-            : voices.find(v => v.lang === 'en-US');
-        if (voice) utterance.voice = voice;
+        // 按段落拆分，避免单条 utterance 过长被截断（原有逻辑）
+        this._chunks = this._splitText(cleanText, 200);
+        this._chunkIndex = 0;
 
-        // 记录当前读到哪
-        utterance.onboundary = (e) => {
-            if (e.name === 'word' || e.name === 'sentence') {
-                this._charIndex = e.charIndex;
+        const playNext = () => {
+            if (this._chunkIndex >= this._chunks.length) {
+                this.isPlaying = false;
+                this.isPaused = false;
+                return;
             }
-        };
 
-        utterance.onstart = () => {
+            const utterance = new SpeechSynthesisUtterance(this._chunks[this._chunkIndex]);
+            
+            // 自动语言检测（原有逻辑）
+            utterance.lang = this._detectLang(this._chunks[this._chunkIndex]);
+            
+            // 选择最佳语音（原有逻辑）
+            utterance.voice = this._selectBestVoice(utterance.lang);
+
+            // 语速语调优化（原有逻辑）
+            utterance.rate = 0.95;
+            utterance.pitch = 1.0;
+            utterance.volume = 1.0;
+
+            utterance.onend = () => {
+                this._chunkIndex++;
+                playNext();
+            };
+
+            utterance.onerror = (e) => {
+                // 用户主动停止，不报错（原有逻辑）
+                if (e.error === 'interrupted' || e.error === 'canceled') {
+                    return;
+                }
+                console.error('[TTS] error:', e.error);
+            };
+
+            this.currentUtterance = utterance;
+            this.synth.speak(utterance);
             this.isPlaying = true;
             this.isPaused = false;
         };
 
-        utterance.onend = () => {
-            this.isPlaying = false;
-            this.isPaused = false;
-            this._charIndex = 0;
-        };
-
-        utterance.onerror = (e) => {
-            if (e.error !== 'interrupted' && e.error !== 'canceled') {
-                console.error('[TTS] error:', e.error);
-            }
-            this.isPlaying = false;
-        };
-
-        this._utterance = utterance;
-        this.synth.speak(utterance);
+        playNext();
     }
 
+    // 新增：暂停
     pause() {
-        if (this.synth && this.isPlaying) {
+        if (this.synth && this.isPlaying && !this.isPaused) {
             this.synth.pause();
             this.isPaused = true;
             this.isPlaying = false;
         }
     }
 
+    // 新增：继续
     resume() {
         if (this.synth && this.isPaused) {
             this.synth.resume();
@@ -87,7 +100,8 @@ class CanvasTTS {
         }
         this.isPlaying = false;
         this.isPaused = false;
-        this._charIndex = 0;
+        this._chunks = [];
+        this._chunkIndex = 0;
     }
 
     // ─── 私有方法 ───
@@ -161,7 +175,7 @@ function toggleCanvasTTS() {
     // 如果正在播放，暂停
     if (window.canvasTTS?.isPlaying && !window.canvasTTS?.isPaused) {
         window.canvasTTS.pause();
-        icon.className = 'fas fa-play';  // 变为继续图标
+        icon.className = 'fas fa-play';
         btn.classList.remove('tts-active');
         btn.classList.add('tts-paused');
         btn.title = lang === 'zh-CN' ? '继续朗读' : 'Resume';
@@ -178,21 +192,21 @@ function toggleCanvasTTS() {
         return;
     }
 
-    // 全新播放
+    // 全新播放（原有逻辑，不改动文本处理）
     const allHistory = getMergedHistory(importedHistory, conversationHistory);
     const lastAI = [...allHistory].reverse().find(item => 
         item.role === 'assistant' || item.role === 'ai'
     );
 
     if (!lastAI) {
-        showToast(lang === 'zh-CN' ? '没有可朗读内容' : 'No content', 'info');
+        showToast(lang === 'zh-CN' ? '没有可朗读的内容' : 'No content to read', 'info');
         return;
     }
 
-    const prefix = lang === 'zh-CN' ? '北极星说：' : 'North Star: ';
-    window.canvasTTS.speak(prefix + lastAI.text);
+    // 直接传入原文，由 CanvasTTS 内部清理 Markdown
+    window.canvasTTS.speak(lastAI.text);
     
     icon.className = 'fas fa-stop';
     btn.classList.add('tts-active');
-    btn.title = lang === 'zh-CN' ? '停止朗读' : 'Stop';
+    btn.title = lang === 'zh-CN' ? '停止朗读' : 'Stop Reading';
 }
