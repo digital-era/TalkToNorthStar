@@ -1411,6 +1411,31 @@ function closeDialogueCanvas() {
     isCanvasModeOpen = false;
     const modal = document.getElementById('dialogueCanvasModal');
     modal.style.opacity = '0';
+    
+    // ═══ 停止朗读 ═══
+    if (window.canvasTTS?.isPlaying) {
+        window.canvasTTS.stop();
+    }
+    // 恢复朗读按钮状态（无论是否在播放）
+    const ttsBtn = document.getElementById('btn-canvas-tts');
+    const ttsIcon = document.getElementById('tts-icon');
+    if (ttsBtn) {
+        ttsBtn.classList.remove('tts-active');
+        ttsBtn.title = window.currentLang === 'zh-CN' ? '朗读' : 'Read Aloud';
+    }
+    if (ttsIcon) ttsIcon.className = 'fas fa-volume-high';
+    
+    // ═══ 停止背景音乐 ═══
+    const bgMusic = document.getElementById('bgMusic');
+    if (bgMusic) {
+        bgMusic.pause();
+        bgMusic.currentTime = 0;  // 可选：重置到开头
+    }
+    // 恢复所有音乐按钮状态
+    document.querySelectorAll('.music-wrapper, .music-wrapper-canvas').forEach(btn => {
+        btn.classList.remove('music-playing', 'music-active');
+    });
+
     setTimeout(() => {
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
