@@ -1380,7 +1380,7 @@ function renderStarryColumnEntry() {
     if (existing) existing.remove();
     
     const lang = window.currentLang || 'zh-CN';
-    const hintText = lang === 'en' ? '— Or, Enter the Starry Column —' : '— 或，走进星空专栏 —';
+    const hintText = lang === 'en' ? '— Enter the Starry Column —' : '— 走进星空专栏 —';
     const btnText = lang === 'en' ? 'Starry Column' : '星空专栏';
     
     const entry = document.createElement('div');
