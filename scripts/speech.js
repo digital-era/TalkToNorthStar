@@ -145,34 +145,43 @@ window.canvasTTS = new CanvasTTS();
  * 自动读取画布中最后一条 AI 回复
  */
 function toggleCanvasTTS() {
+    const btn = document.getElementById('btn-canvas-tts');
     const icon = document.getElementById('tts-icon');
+    const lang = window.currentLang || 'zh-CN';
     
     if (window.canvasTTS?.isPlaying) {
         window.canvasTTS.stop();
         icon.className = 'fas fa-volume-high';
+        btn.classList.remove('tts-active');
+        btn.title = getFieldValue({ 'zh-CN': '朗读', 'en': 'Read Aloud' }, lang);
+        btn.setAttribute('data-i18n-title', 'tooltipTTS');
         return;
     }
 
-    // 获取画布中最后一条 assistant/ai 回复
     const lastAI = getMergedHistory(importedHistory, conversationHistory)
         .filter(item => item.role === 'assistant' || item.role === 'ai')
         .pop();
 
     if (!lastAI?.text) {
-        showToast('没有可朗读的内容', 'info');
+        showToast(lang === 'zh-CN' ? '没有可朗读的内容' : 'No content to read', 'info');
         return;
     }
 
-    // 播放并监听结束
     window.canvasTTS.speak(lastAI.text);
     icon.className = 'fas fa-stop';
-    
-    // 轮询检测播放结束，恢复图标
+    btn.classList.add('tts-active');  // ← 触发青绿色呼吸动画
+    btn.title = getFieldValue({ 'zh-CN': '停止朗读', 'en': 'Stop Reading' }, lang);
+    btn.setAttribute('data-i18n-title', 'tooltipTTSStop');
+
     const checkEnd = setInterval(() => {
         if (!window.canvasTTS.isPlaying) {
             icon.className = 'fas fa-volume-high';
+            btn.classList.remove('tts-active');
+            btn.title = getFieldValue({ 'zh-CN': '朗读', 'en': 'Read Aloud' }, lang);
+            btn.setAttribute('data-i18n-title', 'tooltipTTS');
             clearInterval(checkEnd);
         }
     }, 500);
+}
 }
 
