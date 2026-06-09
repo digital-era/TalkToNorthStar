@@ -134,6 +134,20 @@ const starryColumnTexts = {
     deleteCardBuiltIn: {
         'zh-CN': '内置卡片不能删除',
         'en': 'Built-in cards cannot be deleted'
+    },
+    
+    // ═══ 新增：系统专栏文件错误提示 ═══
+    systemColumnFileNotFound: {
+        'zh-CN': '系统专栏文件不存在',
+        'en': 'System column file not found'
+    },
+    systemColumnFileEmpty: {
+        'zh-CN': '系统专栏文件内容为空',
+        'en': 'System column file is empty'
+    },
+    systemColumnParseFailed: {
+        'zh-CN': '无法解析专栏内容',
+        'en': 'Unable to parse column content'
     }
 };
 
@@ -2029,7 +2043,6 @@ async function loadSystemColumn(card) {
     const canvasHistory = getMergedHistory(importedHistory, conversationHistory);
 
     if (canvasHistory.length > 0) {
-        // 判断当前画布是否"仅为系统专栏内容且未被用户修改"
         const isOnlySystemColumn = (
             importedHistory.length > 0 &&
             importedHistory._source === 'systemColumn' &&
@@ -2037,15 +2050,12 @@ async function loadSystemColumn(card) {
         );
 
         if (isOnlySystemColumn) {
-            // 用户未新增对话，直接静默清空，继续加载新的
             importedHistory = [];
             conversationHistory = [];
             if (typeof saveCanvasSession === 'function') {
                 saveCanvasSession();
             }
-            // 不 return，继续执行下方加载逻辑
         } else {
-            // 用户有自定义对话或手动导入内容，必须确认
             const title = getFieldValue(starryColumnTexts.canvasNotEmptyTitle, lang);
             const message = getFieldValue(starryColumnTexts.canvasNotEmptyMessage, lang);
             alert(`${title}\n\n${message}`);
@@ -2054,25 +2064,35 @@ async function loadSystemColumn(card) {
     }
 
     try {
+        // ═══ 关键：先预检文件是否存在 ═══
+        const headResponse = await fetch(filePath, { method: 'HEAD' });
+        if (!headResponse.ok) {
+            throw new Error('FILE_NOT_FOUND');
+        }
+
         const response = await fetch(filePath);
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
         }
 
         const mdContent = await response.text();
+
+        // 空内容检查
+        if (!mdContent || mdContent.trim().length === 0) {
+            throw new Error('EMPTY_FILE');
+        }
+
         const parsed = parseMDToHistory(mdContent);
 
         if (parsed.length === 0) {
-            throw new Error(lang === 'zh-CN' ? '文件内容解析后为空' : 'Parsed content is empty');
+            throw new Error('PARSE_EMPTY');
         }
 
-        // ═══════════════════════════════════════════════════
         // 写入 importedHistory 并标记来源
-        // ═══════════════════════════════════════════════════
         importedHistory = parsed;
-        importedHistory._source = 'systemColumn';      // 来源标记
-        importedHistory._sourceCardId = card.id;       // 可选：记录当前专栏ID
-        importedHistory._loadedAt = Date.now();        // 可选：记录加载时间
+        importedHistory._source = 'systemColumn';
+        importedHistory._sourceCardId = card.id;
+        importedHistory._loadedAt = Date.now();
 
         if (typeof saveCanvasSession === 'function') {
             saveCanvasSession();
@@ -2093,10 +2113,33 @@ async function loadSystemColumn(card) {
 
     } catch (e) {
         console.error('[StarryColumn] Failed to load system column:', e);
-        showToast(
-            getFieldValue(starryColumnTexts.systemColumnLoadFailed, lang) + e.message,
-            'error'
-        );
+
+        // ═══ 区分错误类型，阻止画布打开 ═══
+        let errorMsg;
+        if (e.message === 'FILE_NOT_FOUND') {
+            errorMsg = lang === 'zh-CN' 
+                ? `系统专栏文件不存在：${fileName}` 
+                : `System column file not found: ${fileName}`;
+        } else if (e.message === 'EMPTY_FILE') {
+            errorMsg = lang === 'zh-CN' 
+                ? '系统专栏文件内容为空' 
+                : 'System column file is empty';
+        } else if (e.message === 'PARSE_EMPTY') {
+            errorMsg = lang === 'zh-CN' 
+                ? '无法解析专栏内容' 
+                : 'Unable to parse column content';
+        } else {
+            errorMsg = getFieldValue(starryColumnTexts.systemColumnLoadFailed, lang) + e.message;
+        }
+
+        // 关键：阻止画布打开
+        showToast(errorMsg, 'error');
+        
+        const canvasModal = document.getElementById('dialogueCanvasModal');
+        if (canvasModal) {
+            canvasModal.style.display = 'none';
+            canvasModal.style.opacity = '0';
+        }
     }
 }
 
