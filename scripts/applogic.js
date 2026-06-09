@@ -1476,7 +1476,7 @@ function toggleSidebar() {
     sidebar.classList.toggle('open');
 }
 
-/* --- 核心渲染函数 (renderDialogueCanvas) - 全球化增强版 + 朗读复选框 --- */
+/* --- 核心渲染函数 (renderDialogueCanvas) - 全球化增强版 --- */
 function renderDialogueCanvas() {
     // 内部翻译辅助方法
     const _t = (key) => {
@@ -1493,7 +1493,7 @@ function renderDialogueCanvas() {
     const history = getMergedHistory(importedHistory, conversationHistory);
     if (history.length === 0) {
         container.innerHTML = `<div style="text-align:center; color:#888; margin-top:100px; font-family:'Noto Serif SC', serif">
-            ${_t('canvasEmptyHint')}<<br>${_t('canvasEmptyDesc')}
+            ${_t('canvasEmptyHint')}<br>${_t('canvasEmptyDesc')}
         </div>`;
         svgEl.innerHTML = '';
         return;
@@ -1507,7 +1507,6 @@ function renderDialogueCanvas() {
         
         node.className = `thought-node ${isUser ? 'question-node' : 'answer-node'}`;
         node.id = `node-${index}`;
-        node.dataset.index = index;  // 用于朗读复选框关联
 
         let contentHTML = '';
 
@@ -1547,33 +1546,6 @@ function renderDialogueCanvas() {
         
         node.innerHTML = contentHTML;
         node.onclick = (e) => addToInspiration(e, item.text);
-
-        /* ═══════════════════════════════════════════════
-           【朗读复选框】所有节点显示，用户勾选后加入朗读队列
-           放在最前面，确保按钮层级正确
-           ═══════════════════════════════════════════════ */
-        const ttsLabel = document.createElement('label');
-        ttsLabel.className = 'node-tts-check';
-        ttsLabel.title = _t('tooltipTTSInclude') || '加入朗读';
-        ttsLabel.innerHTML = `
-            <input type="checkbox" class="tts-include" data-index="${index}" 
-                   ${item._ttsIncluded ? 'checked' : ''}>
-            <i class="fas fa-volume-high"></i>
-        `;
-        
-        // 恢复勾选状态
-        if (item._ttsIncluded) {
-            ttsLabel.classList.add('tts-checked');
-        }
-        
-        // 监听勾选变化
-        const ttsCheckbox = ttsLabel.querySelector('input');
-        ttsCheckbox.addEventListener('change', (e) => {
-            item._ttsIncluded = e.target.checked;
-            ttsLabel.classList.toggle('tts-checked', e.target.checked);
-        });
-
-        node.insertBefore(ttsLabel, node.firstChild);
 
         /* ═══════════════════════════════════════════════
            【星语上下文按钮】仅 AI 回答节点显示
@@ -1659,6 +1631,7 @@ function renderDialogueCanvas() {
         setTimeout(drawConnections, 200);
     }
 }
+
 
 /* --- 优化版 drawConnections (防抖 + 缓存) --- */
 let drawConnectionsTimeout = null;
