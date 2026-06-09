@@ -1476,8 +1476,7 @@ function toggleSidebar() {
     sidebar.classList.toggle('open');
 }
 
-
-/* --- 核心渲染函数 (renderDialogueCanvas) - 全球化增强版 --- */
+/* --- 核心渲染函数 (renderDialogueCanvas) - 全球化增强版 + 朗读复选框 --- */
 function renderDialogueCanvas() {
     // 内部翻译辅助方法
     const _t = (key) => {
@@ -1494,7 +1493,7 @@ function renderDialogueCanvas() {
     const history = getMergedHistory(importedHistory, conversationHistory);
     if (history.length === 0) {
         container.innerHTML = `<div style="text-align:center; color:#888; margin-top:100px; font-family:'Noto Serif SC', serif">
-            ${_t('canvasEmptyHint')}<br>${_t('canvasEmptyDesc')}
+            ${_t('canvasEmptyHint')}<<br>${_t('canvasEmptyDesc')}
         </div>`;
         svgEl.innerHTML = '';
         return;
@@ -1508,6 +1507,7 @@ function renderDialogueCanvas() {
         
         node.className = `thought-node ${isUser ? 'question-node' : 'answer-node'}`;
         node.id = `node-${index}`;
+        node.dataset.index = index;  // 用于朗读复选框关联
 
         let contentHTML = '';
 
@@ -1547,6 +1547,33 @@ function renderDialogueCanvas() {
         
         node.innerHTML = contentHTML;
         node.onclick = (e) => addToInspiration(e, item.text);
+
+        /* ═══════════════════════════════════════════════
+           【朗读复选框】所有节点显示，用户勾选后加入朗读队列
+           放在最前面，确保按钮层级正确
+           ═══════════════════════════════════════════════ */
+        const ttsLabel = document.createElement('label');
+        ttsLabel.className = 'node-tts-check';
+        ttsLabel.title = _t('tooltipTTSInclude') || '加入朗读';
+        ttsLabel.innerHTML = `
+            <input type="checkbox" class="tts-include" data-index="${index}" 
+                   ${item._ttsIncluded ? 'checked' : ''}>
+            <i class="fas fa-volume-high"></i>
+        `;
+        
+        // 恢复勾选状态
+        if (item._ttsIncluded) {
+            ttsLabel.classList.add('tts-checked');
+        }
+        
+        // 监听勾选变化
+        const ttsCheckbox = ttsLabel.querySelector('input');
+        ttsCheckbox.addEventListener('change', (e) => {
+            item._ttsIncluded = e.target.checked;
+            ttsLabel.classList.toggle('tts-checked', e.target.checked);
+        });
+
+        node.insertBefore(ttsLabel, node.firstChild);
 
         /* ═══════════════════════════════════════════════
            【星语上下文按钮】仅 AI 回答节点显示
@@ -1775,79 +1802,6 @@ function deleteNode(event, index) {
         // 4. 重新渲染画布 (这时候数据源已经真的变少了)
         renderDialogueCanvas();
     }
-}
-
-/* --- 辅助函数：生成文件名时间戳 --- */
-function getExportFileName() {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hour = String(now.getHours()).padStart(2, '0');
-    const minute = String(now.getMinutes()).padStart(2, '0');
-    const second = String(now.getSeconds()).padStart(2, '0');
-    
-    // 格式：TalkwithNorthStars20231027103000
-    return `TalkwithNorthStars${year}${month}${day}${hour}${minute}${second}`;
-}
-
-// 2. 导出为 Markdown
-function exportToMD() {
-    // ★ 新增：使用当前显示的历史
-    const history = getMergedHistory(importedHistory, conversationHistory);
-    
-    if (!history || history.length === 0) {
-        //alert("画布为空，无法导出。");
-        alert(translations[currentLang].alertCanvasEmpty);
-        return;
-    }
-
-    let mdContent = "# 对话北极星 (Talk with North Stars)\n\n";
-    const timestamp = new Date().toLocaleString();
-    mdContent += `> Exported on: ${timestamp}\n\n---\n\n`;
-
-    history.forEach((item, index) => {
-        // 以下保持原逻辑，只需把 conversationHistory 换成 history
-        const isUser = item.role === 'user';
-        const roleName = isUser ? "User" : (item.leaderInfo?.name || "North Star");
-        
-        // 引用格式化
-        let text = item.text.replace(/\n/g, '\n> '); 
-        
-        // --- 修改点：在 User 问题后增加北极星人物信息 ---
-        if (isUser) {
-            // 向后看一条
-            const nextItem = history[index + 1];
-            if (nextItem && nextItem.role !== 'user' && nextItem.leaderInfo) {
-                const info = nextItem.leaderInfo;
-                // 自动适配中英文标签 (如果有 translations 对象的话更好，这里提供兼容写法)
-                const leaderLabel = currentLang === 'en' ? 'Related North Star' : '关联北极星人物';
-                const fieldLabel = currentLang === 'en' ? 'Field' : '领域';
-                const contributionLabel = currentLang === 'en' ? 'Contribution' : '贡献';
-                
-                // 追加信息到 User 的文本块中 (统一使用半角冒号 + 空格，防止全角半角冲突)
-                text += `\n\n> **🧩 ${leaderLabel}**: ${info.name}`;
-                text += `\n> - ${fieldLabel}: ${info.field}`;
-                text += `\n> - ${contributionLabel}: ${info.contribution}`;
-            }
-        }
-
-        mdContent += `### ${roleName}:\n${text}\n\n`;
-    });
-
-    // 创建 Blob 并下载
-    const blob = new Blob([mdContent], { type: 'text/markdown;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    
-    // --- 修改点：统一文件名 ---
-    a.download = `${getExportFileName()}.md`;
-    
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
 }
 
 /* --- 辅助函数：创建全屏封面页 (配合 Named Pages) --- */
