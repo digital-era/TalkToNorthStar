@@ -269,6 +269,7 @@
                  // ═══ 新增 ═══
                 "tooltipTTS": "朗读",
                 "tooltipTTSStop": "停止朗读",
+                "tooltipTTSResume": "继续朗读",      // 暂停状态
                 "tooltipTTSInclude": "加入朗读",
                     
                  "footerRight": "© AI范式进化. 保留所有权利。",
@@ -544,6 +545,7 @@
                  // ═══ 新增 ═══
                 "tooltipTTS": "Read Aloud",
                 "tooltipTTSStop": "Stop Reading",
+                "tooltipTTSResume": "Resume",         // 暂停状态
                  "tooltipTTSInclude": "Include in Reading",
                     
                  "footerRight": "© AI Paradigm Evolution. All rights reserved.",       
