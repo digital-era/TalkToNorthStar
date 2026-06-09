@@ -227,24 +227,28 @@
 }
 
 @media (min-width: 769px) {
+
     #starryLeft {
         flex: 1 1 55% !important;
-        max-width: none !important;
         min-width: 450px !important;
-        display: flex !important;
+
+        display: flex;
         align-items: center;
         justify-content: center;
     }
 
-    /* 如果右侧也需要同步调整 */
-    #starryLeft + .layout-right {
-        flex: 1 1 45% !important;
-        max-width: 600px !important;
-    }
-
     #starryLeft .starry-cover-wrapper {
         width: 100%;
-        height: 85%;
+        height: auto;          /* 关键 */
+        aspect-ratio: 16 / 9;  /* 或图片实际比例 */
+        max-height: 90vh;
+    }
+
+    #starryLeft .starry-cover {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;   /* 显示完整画面 */
+        background: #0a0e17;
     }
 }
 
