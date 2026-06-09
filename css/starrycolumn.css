@@ -255,7 +255,9 @@
         object-fit: scale-down;
        
         /* 修改这里：将 center 换成 top (贴着最顶部)，或者用百分比控制 */
-        object-position: center top; 
+        /* 核心修改：X轴居中，Y轴设置为 20% (你可以自由调整这个数字) */
+        object-position: center 20%;
+       
         //object-position: center center;
 
         background: transparent;
