@@ -374,22 +374,47 @@
     stroke: currentColor;
 }
 
-
 /* ─────────────────────────────────────────────
    卡片列表容器
    ───────────────────────────────────────────── */
-
+/* 默认：自然流式，不限制 */
 .starry-cards-container {
     width: 100%;
     max-width: 500px;
     display: flex;
     flex-direction: column;
     gap: 16px;
-    max-height: calc(100vh - 250px);
-    overflow-y: auto;
     padding-right: 8px;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0, 223, 216, 0.3) transparent;
+}
+
+/* ═══════════════════════════════════════════════
+   电脑端限定：限制高度 + 滚动条
+   ═══════════════════════════════════════════════ */
+@media (min-width: 769px) {
+    .starry-cards-container {
+        max-height: calc(5 * 72px + 4 * 16px);  /* 5卡片 + 4间距 */
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(0, 223, 216, 0.3) transparent;
+    }
+
+    .starry-cards-container::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .starry-cards-container::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .starry-cards-container::-webkit-scrollbar-thumb {
+        background: rgba(0, 223, 216, 0.3);
+        border-radius: 2px;
+    }
+
+    /* 防止卡片被压缩 */
+    .starry-card {
+        flex-shrink: 0;
+    }
 }
 
 .starry-cards-container::-webkit-scrollbar {
