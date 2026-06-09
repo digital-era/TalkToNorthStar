@@ -183,5 +183,3 @@ function toggleCanvasTTS() {
         }
     }, 500);
 }
-}
-
