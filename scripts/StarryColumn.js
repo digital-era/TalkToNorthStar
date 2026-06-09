@@ -15,7 +15,7 @@ const starryColumnTexts = {
     // 卡片/创作视图标题
     columnNameCard: {
         'zh-CN': '专栏创作',
-        'en': 'Writing'
+        'en': 'Column Writing'
     },
     backTooltip: {
         'zh-CN': '返回首页',
