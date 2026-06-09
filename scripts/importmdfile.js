@@ -374,6 +374,18 @@ function extractLeaderInfoFromPrompt(block) {
  * 支持两种主要导出格式
  */
 function parseMDToHistory(mdContent) {
+    // ═══════════════════════════════════════════════════════
+    // 【关键修复】检查是否是 HTML 错误页面（Cloudflare 404 返回 HTML）
+    // ═══════════════════════════════════════════════════════
+    const trimmed = mdContent.trim();
+    if (trimmed.startsWith('<!DOCTYPE') || 
+        trimmed.startsWith('<html') ||
+        trimmed.includes('<head>') ||
+        trimmed.includes('<body>')) {
+        console.error('[MD Parse] Received HTML instead of Markdown, likely 404 or server error');
+        return [];
+    }
+    // ═══════════════════════════════════════════════════════
     let history = []; // 使用 let，允许重新赋值
 
     const normalized = mdContent
