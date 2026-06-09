@@ -111,6 +111,29 @@ const starryColumnTexts = {
     systemColumnLoadFailed: {
         'zh-CN': '加载失败：',
         'en': 'Load failed: '
+    },
+    // ═══════════════════════════════════════════════════
+    // 【新增】删除卡片全球化
+    // ═══════════════════════════════════════════════════
+    deleteCard: {
+        'zh-CN': '删除卡片',
+        'en': 'Delete Card'
+    },
+    deleteCardConfirm: {
+        'zh-CN': '确定要删除这张卡片吗？此操作不可恢复。',
+        'en': 'Are you sure you want to delete this card? This cannot be undone.'
+    },
+    deleteCardSuccess: {
+        'zh-CN': '卡片已删除',
+        'en': 'Card deleted'
+    },
+    deleteCardNotFound: {
+        'zh-CN': '卡片不存在',
+        'en': 'Card not found'
+    },
+    deleteCardBuiltIn: {
+        'zh-CN': '内置卡片不能删除',
+        'en': 'Built-in cards cannot be deleted'
     }
 };
 
@@ -411,7 +434,7 @@ function renderStarryCardsList(isAdmin = false) {
                         ⚙️
                     </button>
                     <button class="starry-card-delete" data-card-id="${card.id}" 
-                        title="${lang === 'zh-CN' ? '删除卡片' : 'Delete Card'}">
+                        title="${getFieldValue(starryColumnTexts.deleteCard, lang)}">
                         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="3 6 5 6 21 6"/>
                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
@@ -1212,8 +1235,25 @@ function saveNewCard() {
         return;
     }
 
-    // 生成唯一 ID
-    const newId = 'custom_' + Date.now();
+    // ═══ 修改：基于英文名称生成 ID（去掉 custom_ 前缀）═══
+    const englishName = lang === 'en' ? namePrimary : (nameSecondary || namePrimary);
+    const newId = englishName
+        .toLowerCase()                    // 转小写
+        .replace(/[^\w\s]/g, '')          // 移除特殊字符（保留字母数字空格）
+        .trim()
+        .replace(/\s+/g, '_');            // 空格替换为下划线
+
+    // 校验 ID 唯一性
+    if (starryColumnCards.some(c => c.id === newId)) {
+        alert(lang === 'zh-CN' ? '卡片标识已存在，请修改英文名称' : 'Card ID already exists, please change the English name');
+        return;
+    }
+
+    // 校验 ID 不为空（纯中文且无英文时可能为空）
+    if (!newId || newId === '_') {
+        alert(lang === 'zh-CN' ? '请填写有效的英文名称作为卡片标识' : 'Please enter a valid English name as card ID');
+        return;
+    }
 
     const newCard = {
         id: newId,
@@ -1476,48 +1516,34 @@ function fuzzySearchExperts(query, lang = 'zh-CN', limit = 10) {
 function deleteStarryCard(cardId) {
     const lang = window.currentLang || 'zh-CN';
     
-    // 确认删除
-    const confirmMsg = lang === 'zh-CN' 
-        ? '确定要删除这张卡片吗？此操作不可恢复。' 
-        : 'Are you sure you want to delete this card? This cannot be undone.';
-    
-    if (!confirm(confirmMsg)) return;
+    if (!confirm(getFieldValue(starryColumnTexts.deleteCardConfirm, lang))) return;
 
-    // 查找卡片
     const cardIndex = starryColumnCards.findIndex(c => c.id === cardId);
     if (cardIndex === -1) {
-        showToast(lang === 'zh-CN' ? '卡片不存在' : 'Card not found', 'error');
+        showToast(getFieldValue(starryColumnTexts.deleteCardNotFound, lang), 'error');
         return;
     }
 
     const card = starryColumnCards[cardIndex];
 
-    // 禁止删除内置卡片
     if (card.builtIn) {
-        showToast(lang === 'zh-CN' ? '内置卡片不能删除' : 'Built-in cards cannot be deleted', 'error');
+        showToast(getFieldValue(starryColumnTexts.deleteCardBuiltIn, lang), 'error');
         return;
     }
 
-    // 从数组移除
     starryColumnCards.splice(cardIndex, 1);
 
-    // 如果当前正在查看这张卡片，清理状态
     if (window.currentSelectedCard?.id === cardId) {
         window.currentSelectedCard = null;
         window.currentSelectedLeader = null;
     }
 
-    // 持久化到 localStorage
     persistStarryColumnCards();
 
-    // 刷新列表
     const isAdmin = checkAdminPermission();
     renderStarryCardsList(isAdmin);
 
-    showToast(
-        lang === 'zh-CN' ? '卡片已删除' : 'Card deleted', 
-        'success'
-    );
+    showToast(getFieldValue(starryColumnTexts.deleteCardSuccess, lang), 'success');
 }
 
 // ═══════════════════════════════════════════════
