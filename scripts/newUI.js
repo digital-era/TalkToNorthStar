@@ -1754,9 +1754,13 @@ function backToWheelSelection() {
     const wheelSection = document.getElementById('wheel-of-destiny');
     const mainContainer = document.querySelector('.container');
     
+    // ═══ 读取当前 UI 风格（新增，不影响原有）═══
+    const currentStyle = window.currentUIStyle || localStorage.getItem('northstarUIStyle') || 'modern';
+    
     if (overlay) overlay.classList.add('active');
     
     setTimeout(() => {
+        // ─── 原有逻辑：清理专栏布局 ───
         if (layout) {
             layout.style.display = 'none';
             layout.innerHTML = '';
@@ -1770,22 +1774,47 @@ function backToWheelSelection() {
             tc.style.display = 'none';
         });
         
-        // 显示水晶球（现代模式）
+        // ─── 原有逻辑：显示水晶球 ───
         const nebulaCrystal = document.getElementById('nebula-crystal');
         if (nebulaCrystal) {
             nebulaCrystal.style.display = 'flex';
         }
         
-        // 兼容旧转盘
+        // ─── 原有逻辑：兼容旧转盘 ───
         if (wheelSection) {
             wheelSection.style.display = 'flex';
             wheelSection.classList.add('wheel-fade-enter');
             setTimeout(() => wheelSection.classList.remove('wheel-fade-enter'), 500);
         }
         
-        const tabsBar = document.querySelector('.tabs');
-        if (tabsBar) tabsBar.style.display = 'flex';
+        // ═══ 新增：传统模式分支（仅在传统模式生效）═══
+        if (currentStyle === 'traditional') {
+            // 传统模式：显示 tabs 和容器
+            const tabsBar = document.querySelector('.tabs');
+            if (tabsBar) tabsBar.style.display = 'flex';
+            
+            if (mainContainer) mainContainer.style.display = 'block';
+            
+            // 隐藏水晶球（传统模式不需要）
+            if (nebulaCrystal) nebulaCrystal.style.display = 'none';
+            if (wheelSection) wheelSection.style.display = 'none';
+            
+            // 恢复当前 tab
+            const activeBtn = document.querySelector('.tab-button.active') || document.querySelector('.tab-button');
+            if (activeBtn) {
+                const match = activeBtn.getAttribute('onclick')?.match(/'([^']+)'/);
+                if (match) openTab(null, match[1]);
+            }
+        }
+        // 现代模式走原有逻辑，无需 else
         
+        // ─── 原有逻辑：tabs 显示（现代模式需要）───
+        const tabsBar = document.querySelector('.tabs');
+        if (tabsBar && currentStyle !== 'traditional') {
+            tabsBar.style.display = 'flex';
+        }
+        
+        // ─── 原有逻辑：重置状态 ───
         window.currentSelectedCategory = null;
         if (wheelInstance) {
             wheelInstance.clearPending();
@@ -1797,7 +1826,7 @@ function backToWheelSelection() {
             crystalInstance._pauseDemo(1500);
         }
 
-        // 【修复 4】：返回首页时，恢复星轨标签的显示
+        // ─── 原有逻辑：恢复星轨标签 ───
         const manualSelector = document.getElementById('nebula-manual-selector');
         if (manualSelector) {
             manualSelector.classList.remove('fading-out');
