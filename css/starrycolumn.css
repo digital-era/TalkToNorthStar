@@ -229,26 +229,33 @@
 @media (min-width: 769px) {
 
     #starryLeft {
-        flex: 1 1 55% !important;
-        min-width: 450px !important;
+        flex: 1 1 50% !important;
+        min-width: 0 !important;
 
         display: flex;
         align-items: center;
         justify-content: center;
     }
 
+    #starryLeft + .layout-right {
+        flex: 1 1 50% !important;
+        max-width: none !important;
+    }
+
     #starryLeft .starry-cover-wrapper {
-        width: 100%;
-        height: auto;          /* 关键 */
-        aspect-ratio: 16 / 9;  /* 或图片实际比例 */
-        max-height: 90vh;
+        width: 95%;
+        height: 85%;
     }
 
     #starryLeft .starry-cover {
         width: 100%;
         height: 100%;
-        object-fit: contain;   /* 显示完整画面 */
-        background: #0a0e17;
+
+        /* 核心修改 */
+        object-fit: scale-down;
+        object-position: center center;
+
+        background: transparent;
     }
 }
 
