@@ -459,17 +459,18 @@
     color: #02060a;
 }
 
-/* 音乐按钮播放中状态（覆盖 .canvas-action-bar button 的默认金色） */
-.canvas-action-bar .music-wrapper-canvas.playing {
+/* 画布内音乐按钮播放状态（与顶部原按钮共用同一套类名逻辑） */
+.canvas-action-bar .music-wrapper-canvas.music-playing {
     color: #00dfd8;
     border-color: rgba(0, 223, 216, 0.4);
     background: rgba(0, 223, 216, 0.08);
-    animation: musicPulse 2s ease-in-out infinite;
+    animation: musicSpin 3s linear infinite;
 }
 
-@keyframes musicPulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+/* 旋转动画（如果已有则无需重复定义） */
+@keyframes musicSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 /* ============================================================
