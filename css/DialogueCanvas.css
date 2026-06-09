@@ -473,6 +473,48 @@
     to { transform: rotate(360deg); }
 }
 
+/* ==========================================
+   画布工具栏 - 朗读按钮（与音乐按钮风格统一）
+   ========================================== */
+/* 默认状态：继承工具栏金色基调 */
+.canvas-action-bar .tts-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(197, 160, 89, 0.2);
+    color: #c5a059;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+/* 悬停：金色反色，与工具栏其他按钮一致 */
+.canvas-action-bar .tts-btn:hover {
+    background: #c5a059;
+    color: #02060a;
+    border-color: #c5a059;
+}
+
+/* 播放中状态：青绿色呼吸效果（与音乐按钮 playing 区分） */
+.canvas-action-bar .tts-btn.tts-active {
+    color: #00dfd8;
+    border-color: rgba(0, 223, 216, 0.4);
+    background: rgba(0, 223, 216, 0.08);
+    animation: ttsPulse 2s ease-in-out infinite;
+}
+
+@keyframes ttsPulse {
+    0%, 100% { 
+        opacity: 1; 
+        box-shadow: 0 0 0 rgba(0, 223, 216, 0);
+    }
+    50% { 
+        opacity: 0.85;
+        box-shadow: 0 0 8px rgba(0, 223, 216, 0.2);
+    }
+}
+
 /* ============================================================
    电脑端优化 (屏幕宽度 > 1024px)
    ============================================================ */
