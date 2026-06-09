@@ -141,20 +141,34 @@ class CanvasTTS {
     _selectBestVoice(lang) {
         const voices = this.synth.getVoices();
         if (!voices.length) return null;
-
-        // 优先级排序
+    
+        // 严格优先级列表
         const preferred = {
-            'zh-CN': ['Xiaoxiao', 'Xiaoyi', 'Yunyang', 'Google 普通话', 'Ting-Ting'],
-            'en-US': ['Samantha', 'Google US English', 'Alex']
+            'zh-CN': [
+                'Microsoft Xiaoxiao Online',  // Edge/Win11 最佳
+                'Microsoft Xiaoxiao',          // Win10
+                'Ting-Ting',                   // macOS
+                'Google 普通话',                // Chrome
+                'zh-CN'                        // 任意中文
+            ],
+            'en-US': [
+                'Microsoft Zira',              // Win
+                'Samantha',                     // macOS
+                'Google US English',            // Chrome
+                'en-US'                         // 任意英文
+            ]
         };
-
+    
         const candidates = preferred[lang] || [];
+        
         for (const name of candidates) {
-            const found = voices.find(v => v.name.includes(name));
+            const found = voices.find(v => 
+                v.name.includes(name) || v.lang === name
+            );
             if (found) return found;
         }
-
-        // 兜底：返回该语言第一个可用语音
+    
+        // 最终兜底：该语言第一个可用语音
         return voices.find(v => v.lang.startsWith(lang.split('-')[0])) || voices[0];
     }
 }
