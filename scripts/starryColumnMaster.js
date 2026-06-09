@@ -213,5 +213,41 @@ const starryColumnCards = [
           "en": "(Configured)"
         }
       }
+    },
+    {
+      "id": "world_cup",
+      "name": {
+        "zh-CN": "世界杯2026",
+        "en": "World Cup 2026"
+      },
+      "contribution": {
+        "zh-CN": "撰写世界杯专栏，书写足球竞技和经典场次带给人们的激情和印记，记录足坛传奇C罗、梅西的最后一次世界杯。",
+        "en": "Penning a World Cup column to capture the fierce competition and the indelible passion of classic matches, while chronicling the final World Cup bow of football legends Cristiano Ronaldo and Lionel Messi."
+      },
+      "field": {
+        "zh-CN": "足球、竞技。",
+        "en": "Football, Sport."
+      },
+      "remarks": {
+        "zh-CN": "四年一届的世界杯赛事首次在美加墨三国举行，全球拭目以待大力神杯花落谁家。",
+        "en": "As the quadrennial World Cup is co-hosted by three nations—the US, Canada, and Mexico—for the very first time, the entire globe watches with bated breath to see which team will lift the iconic trophy."
+      },
+      "configurable": true,
+      "builtIn": false,
+      "type": "fusion",
+      "experts": [
+        "pele",
+        "cristiano_ronaldo",
+        "lionel_messi"
+      ],
+      "systemPromptBuilder": "buildFusionSystemPrompt",
+      "userInputMode": "rawQuestion",
+      "fusionStrategy": {
+        "mode": "synthesis",
+        "description": {
+          "zh-CN": "（已配置）",
+          "en": "(Configured)"
+        }
+      }
     }
   ];
