@@ -230,7 +230,7 @@
 
     #starryLeft {
         flex: 1 1 50% !important;
-        min-width: 0 !important;
+        min-width: 0 !important;       
 
         display: flex;
         align-items: center;
@@ -253,7 +253,10 @@
 
         /* 核心修改 */
         object-fit: scale-down;
-        object-position: center center;
+       
+        /* 修改这里：将 center 换成 top (贴着最顶部)，或者用百分比控制 */
+        object-position: center top; 
+        //object-position: center center;
 
         background: transparent;
     }
