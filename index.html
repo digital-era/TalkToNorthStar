@@ -113,21 +113,10 @@
             <img src="images/TalktoNorthStarIcon.png" alt="Talk to NorthStar Logo">
         </div>
         <div class="top-right-controls">
-            <!-- 1. [新增] 音乐播放器 (移到第一位，即最左侧) -->
-            <!-- 注意：请确保 music/HansZimmer-Interstellar-ImperialOrchestra.mp3 文件存在，或修改为有效路径 -->
-            <div class="icon-btn music-wrapper"  onclick="toggleMusic(this)" title="背景音乐" data-i18n-title="tooltipBgMusic">
-                <i class="fas fa-music main-music-icon"></i>
-                
-                <!-- 随机播放小标记 -->
-                <div class="random-badge" title="随机播放 (未来功能)" onclick="playRandomMusic(event)">
-                    <i class="fas fa-shuffle"></i>
-                </div>
-                
-                <!-- 音频控件 -->
-                <audio id="bgMusic" loop>
-                    <source src="music/HansZimmer-Interstellar-ImperialOrchestra.mp3" type="audio/mpeg">
-                </audio>
-            </div>
+			<!-- 1. 星空专栏入口（原音乐按钮位置） -->
+			<button class="icon-btn" onclick="enterStarryColumn()" title="星空专栏" data-i18n-title="tooltipStarryColumn">
+			    <i class="fas fa-star"></i>
+			</button>
 
             <!-- 2. 开启星语阅读：只留图标，增加 title 提示 -->
             <button class="icon-btn" onclick="openElegantMode()" title="星语阅读" data-i18n-title="tooltipReadingMode">
@@ -785,6 +774,14 @@
 	            <button onclick="exportToMD()" data-i18n-title="tooltipExportMD"><i class="fas fa-file-alt"></i></button>
 	            <button onclick="exportToHTML()" data-i18n-title="tooltipExportHTML"><i class="fas fa-file-code"></i></button>
 	            <button onclick="importFromMD()" data-i18n-title="tooltipImportMD"><i class="fas fa-file-import"></i></button>
+			    <!-- 音乐按钮从顶部移到这里 -->
+				<button class="music-wrapper-canvas" onclick="toggleMusic(this)" title="背景音乐" data-i18n-title="tooltipBgMusic">
+					<i class="fas fa-music"></i>
+				</button>
+				<audio id="bgMusic" loop>
+					<source src="music/HansZimmer-Interstellar-ImperialOrchestra.mp3" type="audio/mpeg">
+				</audio>
+				
 	        </div>
 	    </div>
 	
