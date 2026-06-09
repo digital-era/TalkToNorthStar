@@ -5,70 +5,80 @@
 class CanvasTTS {
     constructor() {
         this.synth = window.speechSynthesis;
-        this.currentUtterance = null;
         this.isPlaying = false;
+        this.isPaused = false;
+        this._utterance = null;
+        this._text = '';           // 记录完整文本
+        this._charIndex = 0;       // 记录暂停位置
     }
 
-    /**
-     * 播放文本
-     * @param {string} text - 要朗读的文本（支持 Markdown，会自动清理）
-     */
     speak(text) {
-        if (!this.synth) {
-            console.warn('[TTS] 浏览器不支持语音合成');
+        if (!this.synth) return;
+        
+        // 如果正在暂停，继续播放
+        if (this.isPaused) {
+            this.resume();
             return;
         }
 
-        // 停止当前播放
         this.stop();
+        this._text = text;
+        this._charIndex = 0;
 
-        // 清理 Markdown 标记
-        const cleanText = this._stripMarkdown(text);
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = /[\u4e00-\u9fa5]/.test(text) ? 'zh-CN' : 'en-US';
+        utterance.rate = 0.95;
 
-        // 按段落拆分，避免单条 utterance 过长被截断
-        const chunks = this._splitText(cleanText, 200);
+        // 选语音
+        const voices = this.synth.getVoices();
+        const voice = utterance.lang === 'zh-CN' 
+            ? voices.find(v => v.name.includes('Xiaoxiao') || v.lang === 'zh-CN')
+            : voices.find(v => v.lang === 'en-US');
+        if (voice) utterance.voice = voice;
 
-        let index = 0;
-        const playNext = () => {
-            if (index >= chunks.length) {
-                this.isPlaying = false;
-                return;
+        // 记录当前读到哪
+        utterance.onboundary = (e) => {
+            if (e.name === 'word' || e.name === 'sentence') {
+                this._charIndex = e.charIndex;
             }
-
-            const utterance = new SpeechSynthesisUtterance(chunks[index]);
-            
-            // 自动语言检测
-            utterance.lang = this._detectLang(chunks[index]);
-            
-            // 选择最佳语音（优先微软 Xiaoxiao、Google 中文）
-            utterance.voice = this._selectBestVoice(utterance.lang);
-
-            // 语速语调优化
-            utterance.rate = 0.95;   // 稍慢，适合阅读
-            utterance.pitch = 1.0;   // 自然音高
-            utterance.volume = 1.0;
-
-            utterance.onend = () => {
-                index++;
-                playNext();
-            };
-
-            utterance.onerror = (e) => {
-                // 用户主动停止，不报错
-                if (e.error === 'interrupted' || e.error === 'canceled') {
-                    // 完全静默，连 log 都不打
-                    return;
-                }
-                // 真正的错误才打日志
-                console.error('[TTS] error:', e.error);
-            };
-
-            this.currentUtterance = utterance;
-            this.synth.speak(utterance);
-            this.isPlaying = true;
         };
 
-        playNext();
+        utterance.onstart = () => {
+            this.isPlaying = true;
+            this.isPaused = false;
+        };
+
+        utterance.onend = () => {
+            this.isPlaying = false;
+            this.isPaused = false;
+            this._charIndex = 0;
+        };
+
+        utterance.onerror = (e) => {
+            if (e.error !== 'interrupted' && e.error !== 'canceled') {
+                console.error('[TTS] error:', e.error);
+            }
+            this.isPlaying = false;
+        };
+
+        this._utterance = utterance;
+        this.synth.speak(utterance);
+    }
+
+    pause() {
+        if (this.synth && this.isPlaying) {
+            this.synth.pause();
+            this.isPaused = true;
+            this.isPlaying = false;
+        }
+    }
+
+    resume() {
+        if (this.synth && this.isPaused) {
+            this.synth.resume();
+            this.isPaused = false;
+            this.isPlaying = true;
+        }
     }
 
     stop() {
@@ -76,14 +86,8 @@ class CanvasTTS {
             this.synth.cancel();
         }
         this.isPlaying = false;
-    }
-
-    pause() {
-        if (this.synth) this.synth.pause();
-    }
-
-    resume() {
-        if (this.synth) this.synth.resume();
+        this.isPaused = false;
+        this._charIndex = 0;
     }
 
     // ─── 私有方法 ───
@@ -153,38 +157,42 @@ function toggleCanvasTTS() {
     const btn = document.getElementById('btn-canvas-tts');
     const icon = document.getElementById('tts-icon');
     const lang = window.currentLang || 'zh-CN';
-    
-    if (window.canvasTTS?.isPlaying) {
-        window.canvasTTS.stop();
-        icon.className = 'fas fa-volume-high';
+
+    // 如果正在播放，暂停
+    if (window.canvasTTS?.isPlaying && !window.canvasTTS?.isPaused) {
+        window.canvasTTS.pause();
+        icon.className = 'fas fa-play';  // 变为继续图标
         btn.classList.remove('tts-active');
-        btn.title = getFieldValue({ 'zh-CN': '朗读', 'en': 'Read Aloud' }, lang);
-        btn.setAttribute('data-i18n-title', 'tooltipTTS');
+        btn.classList.add('tts-paused');
+        btn.title = lang === 'zh-CN' ? '继续朗读' : 'Resume';
         return;
     }
 
-    const lastAI = getMergedHistory(importedHistory, conversationHistory)
-        .filter(item => item.role === 'assistant' || item.role === 'ai')
-        .pop();
-
-    if (!lastAI?.text) {
-        showToast(lang === 'zh-CN' ? '没有可朗读的内容' : 'No content to read', 'info');
+    // 如果已暂停，继续
+    if (window.canvasTTS?.isPaused) {
+        window.canvasTTS.resume();
+        icon.className = 'fas fa-stop';
+        btn.classList.add('tts-active');
+        btn.classList.remove('tts-paused');
+        btn.title = lang === 'zh-CN' ? '停止朗读' : 'Stop';
         return;
     }
 
-    window.canvasTTS.speak(lastAI.text);
+    // 全新播放
+    const allHistory = getMergedHistory(importedHistory, conversationHistory);
+    const lastAI = [...allHistory].reverse().find(item => 
+        item.role === 'assistant' || item.role === 'ai'
+    );
+
+    if (!lastAI) {
+        showToast(lang === 'zh-CN' ? '没有可朗读内容' : 'No content', 'info');
+        return;
+    }
+
+    const prefix = lang === 'zh-CN' ? '北极星说：' : 'North Star: ';
+    window.canvasTTS.speak(prefix + lastAI.text);
+    
     icon.className = 'fas fa-stop';
-    btn.classList.add('tts-active');  // ← 触发青绿色呼吸动画
-    btn.title = getFieldValue({ 'zh-CN': '停止朗读', 'en': 'Stop Reading' }, lang);
-    btn.setAttribute('data-i18n-title', 'tooltipTTSStop');
-
-    const checkEnd = setInterval(() => {
-        if (!window.canvasTTS.isPlaying) {
-            icon.className = 'fas fa-volume-high';
-            btn.classList.remove('tts-active');
-            btn.title = getFieldValue({ 'zh-CN': '朗读', 'en': 'Read Aloud' }, lang);
-            btn.setAttribute('data-i18n-title', 'tooltipTTS');
-            clearInterval(checkEnd);
-        }
-    }, 500);
+    btn.classList.add('tts-active');
+    btn.title = lang === 'zh-CN' ? '停止朗读' : 'Stop';
 }
