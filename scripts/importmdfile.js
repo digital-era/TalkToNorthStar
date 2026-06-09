@@ -476,3 +476,77 @@ function parseMDToHistory(mdContent) {
 
     return history.filter(item => item && item.text?.trim());
 }
+
+
+/* --- 辅助函数：生成文件名时间戳 --- */
+function getExportFileName() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hour = String(now.getHours()).padStart(2, '0');
+    const minute = String(now.getMinutes()).padStart(2, '0');
+    const second = String(now.getSeconds()).padStart(2, '0');
+    
+    // 格式：TalkwithNorthStars20231027103000
+    return `TalkwithNorthStars${year}${month}${day}${hour}${minute}${second}`;
+}
+
+// 2. 导出为 Markdown
+function exportToMD() {
+    // ★ 新增：使用当前显示的历史
+    const history = getMergedHistory(importedHistory, conversationHistory);
+    
+    if (!history || history.length === 0) {
+        //alert("画布为空，无法导出。");
+        alert(translations[currentLang].alertCanvasEmpty);
+        return;
+    }
+
+    let mdContent = "# 对话北极星 (Talk with North Stars)\n\n";
+    const timestamp = new Date().toLocaleString();
+    mdContent += `> Exported on: ${timestamp}\n\n---\n\n`;
+
+    history.forEach((item, index) => {
+        // 以下保持原逻辑，只需把 conversationHistory 换成 history
+        const isUser = item.role === 'user';
+        const roleName = isUser ? "User" : (item.leaderInfo?.name || "North Star");
+        
+        // 引用格式化
+        let text = item.text.replace(/\n/g, '\n> '); 
+        
+        // --- 修改点：在 User 问题后增加北极星人物信息 ---
+        if (isUser) {
+            // 向后看一条
+            const nextItem = history[index + 1];
+            if (nextItem && nextItem.role !== 'user' && nextItem.leaderInfo) {
+                const info = nextItem.leaderInfo;
+                // 自动适配中英文标签 (如果有 translations 对象的话更好，这里提供兼容写法)
+                const leaderLabel = currentLang === 'en' ? 'Related North Star' : '关联北极星人物';
+                const fieldLabel = currentLang === 'en' ? 'Field' : '领域';
+                const contributionLabel = currentLang === 'en' ? 'Contribution' : '贡献';
+                
+                // 追加信息到 User 的文本块中 (统一使用半角冒号 + 空格，防止全角半角冲突)
+                text += `\n\n> **🧩 ${leaderLabel}**: ${info.name}`;
+                text += `\n> - ${fieldLabel}: ${info.field}`;
+                text += `\n> - ${contributionLabel}: ${info.contribution}`;
+            }
+        }
+
+        mdContent += `### ${roleName}:\n${text}\n\n`;
+    });
+
+    // 创建 Blob 并下载
+    const blob = new Blob([mdContent], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    
+    // --- 修改点：统一文件名 ---
+    a.download = `${getExportFileName()}.md`;
+    
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
