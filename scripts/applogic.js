@@ -1420,7 +1420,7 @@ function closeDialogueCanvas() {
     const ttsBtn = document.getElementById('btn-canvas-tts');
     const ttsIcon = document.getElementById('tts-icon');
     if (ttsBtn) {
-        ttsBtn.classList.remove('tts-active');
+        ttsBtn.classList.remove('tts-active', 'tts-paused');
         ttsBtn.title = window.currentLang === 'zh-CN' ? '朗读' : 'Read Aloud';
     }
     if (ttsIcon) ttsIcon.className = 'fas fa-volume-high';
