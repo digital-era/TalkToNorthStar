@@ -410,13 +410,22 @@ function renderStarryCardsList(isAdmin = false) {
                             title="${getFieldValue(starryColumnTexts.configureCard, lang)}">
                         ⚙️
                     </button>
+                    <button class="starry-card-delete" data-card-id="${card.id}" 
+                        title="${lang === 'zh-CN' ? '删除卡片' : 'Delete Card'}">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                    </button>
                 ` : ''}
             </div>
         `;
 
         if (!isEmpty || card.type === 'navigator') {
             cardEl.addEventListener('click', (e) => {
-                if (e.target.closest('.starry-card-config') || e.target.closest('.starry-card-system')) return;
+                if (e.target.closest('.starry-card-config') || 
+                    e.target.closest('.starry-card-system') ||
+                    e.target.closest('.starry-card-delete')) return;
                 selectStarryCard(card);
             });
             cardEl.style.cursor = 'pointer';
@@ -439,6 +448,15 @@ function renderStarryCardsList(isAdmin = false) {
             configBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 showConfigModal(card);
+            });
+        }
+
+        // ═══ 新增：删除按钮事件 ═══
+        const deleteBtn = cardEl.querySelector('.starry-card-delete');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                deleteStarryCard(card.id);
             });
         }
 
@@ -1450,6 +1468,56 @@ function fuzzySearchExperts(query, lang = 'zh-CN', limit = 10) {
         .filter(s => s.score > 0)
         .sort((a, b) => b.score - a.score)
         .slice(0, limit);
+}
+
+/**
+ * 删除卡片（仅自定义卡片）
+ */
+function deleteStarryCard(cardId) {
+    const lang = window.currentLang || 'zh-CN';
+    
+    // 确认删除
+    const confirmMsg = lang === 'zh-CN' 
+        ? '确定要删除这张卡片吗？此操作不可恢复。' 
+        : 'Are you sure you want to delete this card? This cannot be undone.';
+    
+    if (!confirm(confirmMsg)) return;
+
+    // 查找卡片
+    const cardIndex = starryColumnCards.findIndex(c => c.id === cardId);
+    if (cardIndex === -1) {
+        showToast(lang === 'zh-CN' ? '卡片不存在' : 'Card not found', 'error');
+        return;
+    }
+
+    const card = starryColumnCards[cardIndex];
+
+    // 禁止删除内置卡片
+    if (card.builtIn) {
+        showToast(lang === 'zh-CN' ? '内置卡片不能删除' : 'Built-in cards cannot be deleted', 'error');
+        return;
+    }
+
+    // 从数组移除
+    starryColumnCards.splice(cardIndex, 1);
+
+    // 如果当前正在查看这张卡片，清理状态
+    if (window.currentSelectedCard?.id === cardId) {
+        window.currentSelectedCard = null;
+        window.currentSelectedLeader = null;
+    }
+
+    // 持久化到 localStorage
+    persistStarryColumnCards();
+
+    // 刷新列表
+    const isAdmin = checkAdminPermission();
+    renderStarryCardsList(isAdmin);
+
+    showToast(
+        lang === 'zh-CN' ? '卡片已删除' : 'Card deleted', 
+        'success'
+    );
 }
 
 // ═══════════════════════════════════════════════
