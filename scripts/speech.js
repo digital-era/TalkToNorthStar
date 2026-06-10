@@ -10,6 +10,7 @@ class CanvasTTS {
         this.isPaused = false;      // 新增：暂停状态
         this._chunks = [];          // 新增：记录分段
         this._chunkIndex = 0;       // 新增：记录当前段
+        this._wakeLock = null;  // 新增：Wake Lock 引用
     }
 
     speak(text) {
@@ -27,6 +28,9 @@ class CanvasTTS {
         // 停止当前播放
         this.stop();
 
+        // 请求屏幕保持唤醒
+        await this._requestWakeLock();
+
         // 清理 Markdown 标记（原有逻辑）
         const cleanText = this._stripMarkdown(text);
 
@@ -38,6 +42,7 @@ class CanvasTTS {
             if (this._chunkIndex >= this._chunks.length) {
                 this.isPlaying = false;
                 this.isPaused = false;
+                this._releaseWakeLock();  // 播放完释放
                 return;
             }
 
@@ -65,6 +70,8 @@ class CanvasTTS {
                     return;
                 }
                 console.error('[TTS] error:', e.error);
+                // 出错也释放锁
+                this._releaseWakeLock();
             };
 
             this.currentUtterance = utterance;
@@ -76,18 +83,46 @@ class CanvasTTS {
         playNext();
     }
 
+    // 新增：请求 Wake Lock
+    async _requestWakeLock() {
+        if ('wakeLock' in navigator) {
+            try {
+                this._wakeLock = await navigator.wakeLock.request('screen');
+                console.log('[TTS] Wake Lock 已激活');
+                
+                // 监听页面可见性变化，重新获取锁
+                this._wakeLock.addEventListener('release', () => {
+                    console.log('[TTS] Wake Lock 已释放');
+                });
+            } catch (err) {
+                console.warn('[TTS] Wake Lock 请求失败:', err);
+            }
+        }
+    }
+
+    // 新增：释放 Wake Lock
+    _releaseWakeLock() {
+        if (this._wakeLock) {
+            this._wakeLock.release().catch(() => {});
+            this._wakeLock = null;
+        }
+    }
+
     // 新增：暂停
     pause() {
         if (this.synth && this.isPlaying && !this.isPaused) {
             this.synth.pause();
             this.isPaused = true;
             this.isPlaying = false;
+            this._releaseWakeLock();  // 暂停时释放
         }
     }
 
     // 新增：继续
     resume() {
         if (this.synth && this.isPaused) {
+            // 重新请求锁
+            this._requestWakeLock();
             this.synth.resume();
             this.isPaused = false;
             this.isPlaying = true;
@@ -102,6 +137,7 @@ class CanvasTTS {
         this.isPaused = false;
         this._chunks = [];
         this._chunkIndex = 0;
+        this._releaseWakeLock();  // 停止时释放
     }
 
     // ─── 私有方法 ───
@@ -175,6 +211,13 @@ class CanvasTTS {
 
 // 全局实例
 window.canvasTTS = new CanvasTTS();
+
+// 页面重新可见时，如果正在播放则重新获取锁
+document.addEventListener('visibilitychange', async () => {
+    if (document.visibilityState === 'visible' && window.canvasTTS?.isPlaying) {
+        await window.canvasTTS._requestWakeLock();
+    }
+});
 
 
 /**
