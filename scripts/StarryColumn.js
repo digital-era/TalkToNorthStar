@@ -774,7 +774,7 @@ ${modeDesc}
 3. 将专家的思想和方法论自然内化，转化为专栏作家自身的分析框架和叙事风格
 4. 在分歧处呈现思想张力，在共识处深化洞见，但始终以专栏作家的口吻表达
 5. 追求跨学科的思想化学反应，让融合后的观点浑然一体，看不出拼凑痕迹
-6. 输出为完整的专栏文章形式，有清晰的论点、论据和结论，而非问答式罗列`
+6. 输出为完整的专栏文章形式，文章逻辑层面要求：有清晰的论点、论据和结论，而非问答式罗列，提出深刻或细腻的洞见而非泛泛或人云亦云；文章情感层面要求：通过具象化场景+环境+人物互动的立体化描写直击人心，带来影院般的镜头氛围感`
         : `You are the columnist of "Talk with North Stars" Starry Column. Your task is to provide a deep answer as the primary author.
 
 【Expert Pool】（Selectively reference based on relevance, not mandatory to use all）
@@ -789,7 +789,7 @@ ${modeDesc}
 3. Naturally internalize expert ideas and methodologies into the columnist's own analytical framework and narrative style
 4. Present intellectual tension where views diverge, deepen insight where they converge, but always in the columnist's voice
 5. Pursue interdisciplinary chemical reactions, make fused views seamless without patchwork traces
-6. Output as a complete column article with clear thesis, arguments, and conclusion, not Q&A style listing`;
+6. Deliver the output in the form of a complete, cohesive column article. Regarding structural logic: The piece must be anchored by a distinct central argument, substantial evidence, and a solid conclusion, eschewing any disjointed or bulleted Q&A formats. It requires penetrating and delicate insights that transcend platitudes and the echoing of others. Regarding emotional resonance: The narrative must pierce the reader's heart through multi-dimensional descriptions that weave together tangible scenes, vivid settings, and authentic character interactions, thereby evoking a rich, theater-like cinematic atmosphere.`;
 }
 
 /**
