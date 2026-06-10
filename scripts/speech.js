@@ -13,7 +13,7 @@ class CanvasTTS {
         this._wakeLock = null;  // 新增：Wake Lock 引用
     }
 
-    speak(text) {
+    async speak(text) {
         if (!this.synth) {
             console.warn('[TTS] 浏览器不支持语音合成');
             return;
@@ -119,10 +119,10 @@ class CanvasTTS {
     }
 
     // 新增：继续
-    resume() {
+    async resume() {
         if (this.synth && this.isPaused) {
             // 重新请求锁
-            this._requestWakeLock();
+            await this._requestWakeLock();
             this.synth.resume();
             this.isPaused = false;
             this.isPlaying = true;
