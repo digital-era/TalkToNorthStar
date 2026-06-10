@@ -251,5 +251,46 @@ const starryColumnCards = [
           "en": "(Configured)"
         }
       }
+    },
+    {
+      "id": "starlit_conversations",
+      "name": {
+        "zh-CN": "星空夜话",
+        "en": "Starlit Conversations"
+      },
+      "contribution": {
+        "zh-CN": "撰写星光夜话专栏，通过深度人文、商业、科技、竞技、艺术访谈对话，探索人性、思想、文化、技术、时代与个人成长。",
+        "en": "Write Starlit Conversations column, using in-depth interviews and dialogues in humanities, business, technology, sports, and art to explore human nature, thought, culture, technology, the times, and personal growth."
+      },
+      "field": {
+        "zh-CN": "人文访谈、科学访谈、社会议题、哲学、播客。",
+        "en": "Human Interest Interview, Science Interview, Social Issues,  Philosophy,  Podcast."
+      },
+      "remarks": {
+        "zh-CN": "以共情力和真诚采访，挖掘受访者故事中的情感曲线、思想深度、人性和时代旋律。",
+        "en": "Conducting interviews with empathy and sincerity to unearth the emotional arcs, intellectual depth, human nature, and the spirit of the times within the subjects' stories."
+      },
+      "configurable": true,
+      "builtIn": false,
+      "type": "fusion",
+      "experts": [
+        "oprah_winfrey",
+        "diane_sawyer",
+        "ted_koppel",
+        "lex_fridman",
+        "joe_rogan",
+        "ben_gilbert_david_rosenthal",
+        "chamath_jason_sacks_friedberg",
+        "peter_diamandis_dave_blundin"
+      ],
+      "systemPromptBuilder": "buildFusionSystemPrompt",
+      "userInputMode": "rawQuestion",
+      "fusionStrategy": {
+        "mode": "debate",
+        "description": {
+          "zh-CN": "（已配置）",
+          "en": "(Configured)"
+        }
+      }
     }
   ];
