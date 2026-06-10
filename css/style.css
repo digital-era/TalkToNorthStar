@@ -1930,11 +1930,13 @@
     font-size: 1.65rem;      /* 新增，比 h2 大但不过大 */
     text-align: center; 
     letter-spacing: 2px;
+    color: rgba(0, 223, 216, 0.9); 
 }
 
 #elegantAnswerText h2 { 
     font-size: 1.45rem; 
     text-align: center; 
+    color: rgba(0, 223, 216, 0.9); 
 }
 
 #elegantAnswerText h3 { 
