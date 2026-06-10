@@ -97,33 +97,65 @@ const sportMasters = [
         "en": "Synonym for goal-scoring machine, his cross-league titles and enduring stamina reshaped football standards, inspiring billions worldwide."
       }
     },
-    { id: "simone_biles", name: "Simone Biles (西蒙·拜尔斯)",
+    {
+      id: "jose_mourinho",
+      name: "José Mourinho (若泽·穆里尼奥)",
       contribution: {
-        "zh-CN": "11枚世锦赛金牌+8枚奥运金牌，创造多项体操最高难度动作。",
-        "en": "11 World Championship golds + 8 Olympic golds, created multiple highest-difficulty gymnastics elements."
+        "zh-CN": "2次欧冠冠军，4国顶级联赛冠军，史上首位赢得欧洲三大杯赛（欧冠、欧联杯、欧协联）的主教练。",
+        "en": "2 UEFA Champions League titles, league titles in 4 countries, the first manager to win all three major European trophies (Champions League, Europa League, Conference League)."
       },
       field: {
-        "zh-CN": "体操。",
-        "en": "Gymnastics."
+        "zh-CN": "足球。",
+        "en": "Football."
       },
       remarks: {
-        "zh-CN": "体操史上最伟大女运动员，其难度与艺术性重新定义女子体操天花板，推动心理健康议题。",
-        "en": "Greatest female gymnast ever; redefined the ceiling of women's gymnastics with difficulty and artistry, advanced mental health advocacy."
+        "zh-CN": "现代足球实用主义战术大师，以心理战、纪律性和冠军收割能力著称，其跨国执教经历深刻影响了当代足球管理与竞争格局。",
+        "en": "Master of pragmatic football tactics, renowned for psychological warfare, discipline, and trophy-winning prowess; his multi-country coaching career has profoundly shaped modern football management and competitive standards."
       }
     },
-    { id: "carl_lewis", name: "Carl Lewis (卡尔·刘易斯)",
+    {
+      id: "pep_guardiola",
+      name: "Pep Guardiola (佩普·瓜迪奥拉)",
       contribution: {
-        "zh-CN": "9枚奥运金牌（跨100m、跳远、4×100m），保持多项田径世界纪录长达30年。",
-        "en": "9 Olympic golds (100m, long jump, 4×100m), held multiple world records for over 30 years."
+        "zh-CN": "3次欧冠冠军，多个联赛多连冠（含英超四连冠），完成两次大陆三冠王，执教生涯奖杯总数超40座。",
+        "en": "3 UEFA Champions League titles, multiple domestic league titles with long unbeaten runs (including four consecutive Premier League titles), two continental trebles, over 40 major trophies in coaching career."
       },
       field: {
-        "zh-CN": "田径（短跑与跳远）。",
-        "en": "Athletics (Sprinting & Long Jump)."
+        "zh-CN": "足球。",
+        "en": "Football."
       },
       remarks: {
-        "zh-CN": "田径全能王，其优雅与统治力使跳远成为艺术，跨时代影响力仅次于博尔特。",
-        "en": "King of track and field versatility; made long jump an art form, cross-era influence second only to Bolt."
+        "zh-CN": "控球足球与位置战术的革新者，其体系深刻改变了现代足球进攻与防守理念，被视为当代最伟大的主教练之一。",
+        "en": "Innovator of possession-based football and positional play, whose tactical systems have profoundly transformed modern attacking and defensive concepts; widely regarded as one of the greatest managers of the contemporary era."
       }
+    },
+        { id: "simone_biles", name: "Simone Biles (西蒙·拜尔斯)",
+          contribution: {
+            "zh-CN": "11枚世锦赛金牌+8枚奥运金牌，创造多项体操最高难度动作。",
+            "en": "11 World Championship golds + 8 Olympic golds, created multiple highest-difficulty gymnastics elements."
+          },
+          field: {
+            "zh-CN": "体操。",
+            "en": "Gymnastics."
+          },
+          remarks: {
+            "zh-CN": "体操史上最伟大女运动员，其难度与艺术性重新定义女子体操天花板，推动心理健康议题。",
+            "en": "Greatest female gymnast ever; redefined the ceiling of women's gymnastics with difficulty and artistry, advanced mental health advocacy."
+          }
+        },
+        { id: "carl_lewis", name: "Carl Lewis (卡尔·刘易斯)",
+          contribution: {
+            "zh-CN": "9枚奥运金牌（跨100m、跳远、4×100m），保持多项田径世界纪录长达30年。",
+            "en": "9 Olympic golds (100m, long jump, 4×100m), held multiple world records for over 30 years."
+          },
+          field: {
+            "zh-CN": "田径（短跑与跳远）。",
+            "en": "Athletics (Sprinting & Long Jump)."
+          },
+          remarks: {
+            "zh-CN": "田径全能王，其优雅与统治力使跳远成为艺术，跨时代影响力仅次于博尔特。",
+            "en": "King of track and field versatility; made long jump an art form, cross-era influence second only to Bolt."
+          }
     },
     { id: "pele", name: "Pelé (贝利)",
       contribution: {
