@@ -477,6 +477,21 @@ const financeMasters = [
       }
     },
     {
+      "id": "li_shanyou", "name": "Li Shanyou (李善友)",
+      "contribution": {
+        "zh-CN": "混沌学园（原混沌大学）创始人，中欧国际工商学院兼职教授，前酷6网创始人兼CEO，专注于颠覆式创新教育与商业认知升级体系建设。",
+        "en": "Founder of Hundun Academy (formerly Chaos University), adjunct professor at China Europe International Business School (CEIBS), former founder and CEO of Ku6.com. Dedicated to building systems for disruptive innovation education and business cognitive upgrading."
+      },
+      "field": {
+        "zh-CN": "颠覆式创新、商业思维模型、认知升级、第二曲线创新、第一性原理、理念世界与组织进化。",
+        "en": "Disruptive Innovation, Business Thinking Models, Cognitive Upgrading, Second Curve Innovation, First Principles, Philosophy of Ideas, and Organizational Evolution."
+      },
+      "remarks": {
+        "zh-CN": "以哲学、科学与商业实践相结合的视角，研发并主讲核心创新学科课程，通过思维模型+刻意练习的方法，帮助创业者与企业高管实现认知迭代与组织创新。",
+        "en": "Combines perspectives from philosophy, science, and business practice to develop and teach core innovation discipline courses. Uses the 'thinking models + deliberate practice' methodology to help entrepreneurs and executives achieve cognitive iteration and organizational innovation."
+      }
+    },
+    {
       "id": "wu_jun", "name": "Wu Jun (吴军)",
       "contribution": {
         "zh-CN": "计算机科学家、硅谷投资人、畅销书作家，《见识》《浪潮之巅》等作品作者。",
