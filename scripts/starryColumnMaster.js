@@ -221,7 +221,7 @@ const starryColumnCards = [
         "en": "World Cup 2026"
       },
       "contribution": {
-        "zh-CN": "撰写世界杯专栏，书写足球竞技和经典场次带给人们的激情和印记，记录足坛传奇C罗、梅西的最后一次世界杯。",
+        "zh-CN": "撰写世界杯专栏，书写足球竞技和经典场次带给人们的荣耀、失落、激情、喜悦和伤痛，记录足坛传奇C罗、梅西的最后一次世界杯。",
         "en": "Penning a World Cup column to capture the fierce competition and the indelible passion of classic matches, while chronicling the final World Cup bow of football legends Cristiano Ronaldo and Lionel Messi."
       },
       "field": {
@@ -238,7 +238,9 @@ const starryColumnCards = [
       "experts": [
         "pele",
         "cristiano_ronaldo",
-        "lionel_messi"
+        "lionel_messi",
+        "jose_mourinho",
+        "pep_guardiola"
       ],
       "systemPromptBuilder": "buildFusionSystemPrompt",
       "userInputMode": "rawQuestion",
