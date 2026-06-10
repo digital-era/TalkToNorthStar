@@ -2034,11 +2034,24 @@ async function loadSystemColumn(card) {
         return;
     }
 
+    // ═══ 防御：确保全局变量是数组 ═══
+    if (!Array.isArray(importedHistory)) importedHistory = [];
+    if (!Array.isArray(conversationHistory)) conversationHistory = [];
+
     const fileName = getFieldValue(card.name, 'zh-CN') + '.md';
     const filePath = `/StarryColumn/${fileName}`;
+    
+    // ═══ 画布非空检查 ═══
+    let canvasHistory;
+    try {
+        canvasHistory = getMergedHistory(importedHistory, conversationHistory);
+    } catch (e) {
+        console.error('[StarryColumn] getMergedHistory failed:', e);
+        canvasHistory = [];
+    }
+    // 最终防御
+    if (!Array.isArray(canvasHistory)) canvasHistory = [];    
 
-    // 画布非空检查
-    const canvasHistory = getMergedHistory(importedHistory, conversationHistory);
     if (canvasHistory.length > 0) {
         const isOnlySystemColumn = (
             importedHistory.length > 0 &&
