@@ -21,7 +21,7 @@ class CanvasTTS {
 
         // 如果已暂停，继续播放
         if (this.isPaused) {
-            this.resume();
+            await this.resume();
             return;
         }
 
@@ -63,17 +63,16 @@ class CanvasTTS {
                 this._chunkIndex++;
                 playNext();
             };
-
+            
             utterance.onerror = (e) => {
-                // 用户主动停止，不报错（原有逻辑）
                 if (e.error === 'interrupted' || e.error === 'canceled') {
+                    this._releaseWakeLock();
                     return;
                 }
                 console.error('[TTS] error:', e.error);
-                // 出错也释放锁
                 this._releaseWakeLock();
             };
-
+    
             this.currentUtterance = utterance;
             this.synth.speak(utterance);
             this.isPlaying = true;
@@ -100,10 +99,14 @@ class CanvasTTS {
         }
     }
 
-    // 新增：释放 Wake Lock
+    // 建议增强（虽然 .catch 已经处理了，但加个状态检查更安全）
     _releaseWakeLock() {
         if (this._wakeLock) {
-            this._wakeLock.release().catch(() => {});
+            try {
+                this._wakeLock.release().catch(() => {});
+            } catch (e) {
+                // 忽略
+            }
             this._wakeLock = null;
         }
     }
