@@ -1927,13 +1927,13 @@
 }
 
 #elegantAnswerText h1 { 
-    font-size: 1.8rem;      /* 新增，比 h2 大但不过大 */
+    font-size: 1.65rem;      /* 新增，比 h2 大但不过大 */
     text-align: center; 
     letter-spacing: 2px;
 }
 
 #elegantAnswerText h2 { 
-    font-size: 1.5rem; 
+    font-size: 1.45rem; 
     text-align: center; 
 }
 
@@ -1943,7 +1943,7 @@
 }
 
 @media (max-width: 768px) {
-    #elegantAnswerText h1 { font-size: 1.5rem; }
+    #elegantAnswerText h1 { font-size: 1.45rem; }
     #elegantAnswerText h2 { font-size: 1.3rem; }
     #elegantAnswerText h3 { font-size: 1.15rem; }
 }
