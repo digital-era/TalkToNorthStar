@@ -277,17 +277,26 @@ async function generateNodePage(msg) {
     const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     
-    // 自动下载
-    const fileName = `${title.replace(/[\\/:*?"<>|]/g, '_')}.html`;
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    // 保留引用，防止被清理
+    window._lastBlobUrl = url;
     
-    // 同时预览
-    window.open(url, '_blank');
+    // 先打开窗口（避免被拦截）
+    const newWin = window.open(url, '_blank');
+    
+    if (!newWin) {
+        showToast('请允许弹窗，或点击下载保存', 'warning');
+        // fallback：自动下载
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${title.replace(/[\\/:*?"<>|]/g, '_')}.html`;
+        a.click();
+    }
+    
+    // 延迟释放（1分钟后）
+    setTimeout(() => {
+        URL.revokeObjectURL(url);
+        window._lastBlobUrl = null;
+    }, 60000);
     
     showToast(_t('pageGenerated'), 'success');
 }
