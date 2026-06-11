@@ -1577,7 +1577,7 @@ function renderDialogueCanvas() {
            用户提问节点不显示上下文按钮
            ═══════════════════════════════════════════════ */
         if (!isUser) {
-            // 创建左侧按钮容器（水平排列）
+            // ── 左侧按钮容器 ──
             const leftActions = document.createElement('div');
             leftActions.className = 'left-actions-bar';
         
@@ -1585,10 +1585,10 @@ function renderDialogueCanvas() {
             const pageBtn = document.createElement('button');
             pageBtn.className = 'left-action-btn';
             pageBtn.innerHTML = '<i class="fas fa-file-alt"></i>';
-            pageBtn.title = _t('generatePageTitle');  // 多语言tooltip
+            pageBtn.title = _t('generatePageTitle');
             pageBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                generateNodePage(item.id);
+                generateNodePage(item);  // ← 直接传 item，不用 id
             });
             leftActions.appendChild(pageBtn);
         
@@ -1604,10 +1604,10 @@ function renderDialogueCanvas() {
             coverBtn.innerHTML = '<i class="fas fa-image"></i>';
             coverBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                importNodeCover(item.id, coverBtn);
+                importNodeCover(item, coverBtn);  // ← 也直接传 item
             });
-            leftActions.appendChild(coverBtn);        
-            // 插入到节点最前面
+            leftActions.appendChild(coverBtn);
+        
             node.insertBefore(leftActions, node.firstChild);
             
             const ctxBtn = document.createElement('button');
