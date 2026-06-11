@@ -10,45 +10,27 @@ const shareTexts = {
 /**
  * 生成节点独立浏览页面（支持多语言）
  */
-function generateNodePage(messageId) {
+function generateNodePage(msg) {
     const lang = window.currentLang || 'zh-CN';
     const _t = (key) => getFieldValue(shareTexts[key], lang) || key;
 
-    const history = getMergedHistory(importedHistory, conversationHistory);
-    
-    // ═══ 调试：打印所有消息ID和角色 ═══
-    console.log('[Page] Looking for messageId:', messageId);
-    history.forEach((h, i) => {
-        console.log(`  [${i}] id=${h.id}, role=${h.role}, text=${h.text.substring(0, 30)}...`);
-    });
-    
-    const msg = history.find(h => h.id === messageId);
-    
-    console.log('[Page] Found msg:', msg ? { id: msg.id, role: msg.role, text: msg.text.substring(0, 50) } : 'NOT FOUND');
-    
+    // ═══ 直接判断传入的消息 ═══
     if (!msg) {
         showToast(_t('msgNotFound'), 'error');
         return;
     }
-    
-    // 保险：即使传入的是用户节点，也找到对应的AI回答
-    let targetMsg = msg;
+
+    // 保险：如果不是 AI 回答，找下一条 AI
     if (msg.role === 'user') {
-        const userIndex = history.findIndex(h => h.id === messageId);
-        targetMsg = history.slice(userIndex + 1).find(h => h.role === 'ai' || h.role === 'assistant');
-        console.log('[Page] User node detected, found AI response:', targetMsg ? targetMsg.id : 'NONE');
-    }
-    
-    if (!targetMsg) {
         showToast(_t('noAIContent'), 'warning');
         return;
     }
 
-    const coverUrl = targetMsg._cover || '/images/ambient-starry-column.jpg';
-    const title = targetMsg.leaderInfo?.name || _t('defaultTitle');
-    const field = targetMsg.leaderInfo?.field || '';
+    const coverUrl = msg._cover || '/images/ambient-starry-column.jpg';
+    const title = msg.leaderInfo?.name || _t('defaultTitle');
+    const field = msg.leaderInfo?.field || '';
 
-    // Markdown → HTML（保留格式）
+    // Markdown → HTML
     let htmlContent = msg._processedText;
     if (!htmlContent) {
         htmlContent = typeof parseMarkdownWithMath === 'function'
@@ -239,7 +221,12 @@ function generateNodePage(messageId) {
 /**
  * 导入节点封面（支持多语言）
  */
-function importNodeCover(messageId, btnElement) {
+/**
+ * 导入节点封面
+ * @param {Object} msg - 消息对象（直接传入）
+ * @param {HTMLElement} btnElement - 按钮元素
+ */
+function importNodeCover(msg, btnElement) {
     const lang = window.currentLang || 'zh-CN';
     const _t = (key) => getFieldValue(shareTexts[key], lang) || key;
 
@@ -260,10 +247,13 @@ function importNodeCover(messageId, btnElement) {
         reader.onload = (event) => {
             const dataUrl = event.target.result;
             
-            // 更新所有引用此消息的地方
+            // 直接写入消息对象
+            msg._cover = dataUrl;
+            
+            // 同步到历史数组中的同一条消息
             [importedHistory, conversationHistory].forEach(arr => {
-                const msg = arr.find(h => h.id === messageId);
-                if (msg) msg._cover = dataUrl;
+                const found = arr.find(h => h === msg);  // 同一引用
+                if (found) found._cover = dataUrl;
             });
             
             // 视觉反馈
