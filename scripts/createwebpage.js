@@ -136,19 +136,16 @@ async function renderPageContent(msg, newWin, _t, lang) {
         min-height: 100vh;
     }
     .hero {
-        position: relative;
-        width: 100%;
-        height: 55vh;
-        min-height: 320px;
-        max-height: 600px;
-        overflow: hidden;
-        margin-top: 24px;
-    }
+        height: auto;        /* 高度由图片决定 */
+        min-height: 300px;
+        max-height: 70vh;
+        margin-top: 24px;        /* ← 顶部留出呼吸感 */
+    }    
     .hero img {
         width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
+        height: auto;        /* 保持图片原始比例 */
+        max-height: 70vh;
+        object-fit: contain; /* 完整显示图片，不裁剪 */
     }
     .hero::after {
         content: '';
@@ -253,7 +250,7 @@ async function renderPageContent(msg, newWin, _t, lang) {
     }
     .footer-text {
         font-size: 12px;
-        color: rgba(255,255,255,0.3);
+        color: #fff;
     }
     .stars {
         position: fixed;
