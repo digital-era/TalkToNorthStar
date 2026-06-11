@@ -1586,9 +1586,9 @@ function renderDialogueCanvas() {
             pageBtn.className = 'left-action-btn';
             pageBtn.innerHTML = '<i class="fas fa-file-alt"></i>';
             pageBtn.title = _t('generatePageTitle');
-            pageBtn.addEventListener('click', (e) => {
+            pageBtn.addEventListener('click',  async (e) => {  // ← 加 async
                 e.stopPropagation();
-                generateNodePage(item);  // ← 直接传 item，不用 id
+                await generateNodePage(item);  // ← 直接传 item，不用 id
             });
             leftActions.appendChild(pageBtn);
         
