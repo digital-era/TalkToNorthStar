@@ -65,7 +65,6 @@ const CoverCache = {
     }
 };
 
-// ═══ 生成页面 ═══
 function generateNodePage(msg) {
     const lang = window.currentLang || 'zh-CN';
     const _t = (key) => getFieldValue(shareTextKeys[key], lang) || key;
@@ -120,6 +119,9 @@ async function renderPageContent(msg, newWin, _t, lang) {
     }
     htmlContent = htmlContent.replace(/<img[^>]*>/g, '');
 
+    // 下载按钮文本
+    const saveText = lang === 'zh-CN' ? '保存页面' : 'Save Page';
+
     const html = `<!DOCTYPE html>
 <html lang="${lang === 'zh-CN' ? 'zh-CN' : 'en'}">
 <head>
@@ -134,6 +136,7 @@ async function renderPageContent(msg, newWin, _t, lang) {
         color: #e0e0e0;
         line-height: 1.9;
         min-height: 100vh;
+        padding-bottom: 100px;  /* ← 给底部下载按钮留空间 */
     }
     .hero {
         position: relative;
@@ -143,7 +146,7 @@ async function renderPageContent(msg, newWin, _t, lang) {
         max-height: 600px;
         overflow: hidden;
         margin-top: 24px;
-        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); /* 图片外的背景 */
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -151,8 +154,9 @@ async function renderPageContent(msg, newWin, _t, lang) {
     
     .hero img {
         max-width: 100%;
-        max-height: 100%;    /* 不超出容器 */
-        object-fit: contain; /* 完整显示，留白用背景色填充 */
+        max-height: 100%;
+        object-fit: contain;
+        display: block;
     }
     .hero::after {
         content: '';
@@ -246,7 +250,7 @@ async function renderPageContent(msg, newWin, _t, lang) {
     .body-text a:hover { border-bottom-color: #667eea; }
     .footer {
         text-align: center;
-        padding: 40px 24px;
+        padding: 40px 24px 80px;  /* ← 底部增加padding，避免与下载按钮重叠 */
         border-top: 1px solid rgba(255,255,255,0.08);
     }
     .footer-logo {
@@ -271,6 +275,43 @@ async function renderPageContent(msg, newWin, _t, lang) {
             radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.4), transparent);
         background-size: 220px 220px;
     }
+    /* ═══ 下载按钮样式 ═══ */
+    .download-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 16px 24px;
+        background: rgba(10, 14, 39, 0.95);
+        border-top: 1px solid rgba(102, 126, 234, 0.2);
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        z-index: 100;
+        backdrop-filter: blur(10px);
+    }
+    .download-btn {
+        background: #667eea;
+        color: white;
+        border: none;
+        padding: 12px 32px;
+        border-radius: 24px;
+        font-size: 15px;
+        cursor: pointer;
+        letter-spacing: 1px;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .download-btn:hover {
+        background: #5a6fd6;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+    .download-btn:active {
+        transform: translateY(0);
+    }
 </style>
 </head>
 <body>
@@ -292,6 +333,29 @@ async function renderPageContent(msg, newWin, _t, lang) {
     <div class="footer-logo">✦ ${_t('pageTitleSuffix')}</div>
     <div class="footer-text">${_t('exploreBoundary')}</div>
 </div>
+
+<!-- ═══ 下载按钮 ═══ -->
+<div class="download-bar">
+    <button class="download-btn" onclick="downloadPage()">
+        <span>💾</span>
+        <span>${saveText}</span>
+    </button>
+</div>
+
+<script>
+function downloadPage() {
+    const html = '<!DOCTYPE html>\\n' + document.documentElement.outerHTML;
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = document.title.replace(/[\\\\/:*?"<>|]/g, '_') + '.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+}
+</script>
 </body>
 </html>`;
 
