@@ -171,6 +171,13 @@
                  "ctxErrorFullCleanup": "星语上下文已满（最多 3 个）。\n\n是否打开管理面板手动清理？",
                  "contextCanvasAddTitle": "加入星语上下文",
                  "contextToastAdded": "已加入星语上下文",
+
+                'generatePageTitle': '生成页面',
+                'importCoverTitle': '导入封面',
+                'coverImportedTitle': '已导入封面，点击更换',
+                'pageGenerated': '页面已生成',
+                'coverImported': '封面已导入',
+                'coverTooLarge': '图片过大，请选择5MB以内',                    
                 
                  "loginUsernameLabel": '用户名:',
                  "loginUsernamePlaceholder": '输入用户名',
@@ -441,6 +448,13 @@
                  "ctxErrorFullCleanup": "Star Context is full (Max 3).\n\nOpen the manager for manual cleanup?",
                  "contextCanvasAddTitle": "Add to Star Context",
                  "contextToastAdded": "Added to Star Context",
+
+                'generatePageTitle': 'Generate Page',
+                'importCoverTitle': 'Import Cover',
+                'coverImportedTitle': 'Cover imported, click to change',
+                'pageGenerated': 'Page generated',
+                'coverImported': 'Cover imported',
+                'coverTooLarge': 'Image too large, please choose under 5MB',
                     
                  "loginUsernameLabel": 'Username:',
                  "loginUsernamePlaceholder": 'Enter username',
