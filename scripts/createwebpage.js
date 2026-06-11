@@ -138,16 +138,10 @@ async function renderPageContent(msg, newWin, _t, lang) {
         min-height: 100vh;
         padding-bottom: 100px;  /* ← 给底部下载按钮留空间 */
     }
-    .hero {
+     .hero {
         width: 100%;
         margin-top: 24px;
-        padding: 20px 0;
-    
-        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-    
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        text-align: center;
     }
     
     .hero img {
@@ -155,13 +149,10 @@ async function renderPageContent(msg, newWin, _t, lang) {
         max-width: 1000px;
         height: auto;
         display: block;
+        margin: 0 auto;
     }
     
     @media (max-width: 768px) {
-        .hero {
-            padding: 10px 0;
-        }
-    
         .hero img {
             width: 100%;
             max-width: none;
