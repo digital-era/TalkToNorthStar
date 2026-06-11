@@ -577,6 +577,55 @@
     .thought-stream { padding: 80px 15px 40px 15px !important; }
 }
 
+/* ═══════════════════════════════════════════════
+   【左侧操作按钮组】与右侧按钮水平对齐
+   位置：节点左侧，与右侧删除按钮同一高度
+   ═══════════════════════════════════════════════ */
+
+.left-actions-bar {
+    position: absolute;
+    left: -80px;           /* 节点左侧，与右侧-40px对称 */
+    top: 5px;              /* 与 node-delete-btn 的 top:5px 对齐 */
+    display: flex;
+    flex-direction: row;   /* 水平排列 */
+    gap: 8px;              /* 两个按钮间距 */
+    z-index: 10;
+}
+
+.left-action-btn {
+    width: 24px;           /* 与 node-delete-btn 同尺寸 */
+    height: 24px;
+    border: none;
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    border-radius: 50%;     /* 圆形，与删除按钮一致 */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;        /* 图标大小 */
+    opacity: 0;             /* 默认隐藏，悬停显示 */
+    transition: all 0.3s ease;
+}
+
+.left-action-btn:hover {
+    background: #667eea;
+    color: white;
+    transform: scale(1.1);
+}
+
+/* 已导入封面高亮 */
+.left-action-btn.has-cover {
+    background: rgba(102, 126, 234, 0.9);
+    color: white;
+    opacity: 1;             /* 有封面时始终显示 */
+}
+
+/* 鼠标悬停节点时，左侧按钮显示 */
+.thought-node:hover .left-action-btn {
+    opacity: 1;
+}
+
 /* 删除按钮样式 */
 .node-delete-btn {
     position: absolute;
