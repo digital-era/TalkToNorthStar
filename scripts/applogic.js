@@ -1577,6 +1577,39 @@ function renderDialogueCanvas() {
            用户提问节点不显示上下文按钮
            ═══════════════════════════════════════════════ */
         if (!isUser) {
+            // 创建左侧按钮容器（水平排列）
+            const leftActions = document.createElement('div');
+            leftActions.className = 'left-actions-bar';
+        
+            // ── 生成页面按钮 ──
+            const pageBtn = document.createElement('button');
+            pageBtn.className = 'left-action-btn';
+            pageBtn.innerHTML = '<i class="fas fa-file-alt"></i>';
+            pageBtn.title = _t('generatePageTitle');  // 多语言tooltip
+            pageBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                generateNodePage(item.id);
+            });
+            leftActions.appendChild(pageBtn);
+        
+            // ── 导入封面按钮 ──
+            const coverBtn = document.createElement('button');
+            coverBtn.className = 'left-action-btn';
+            if (item._cover) {
+                coverBtn.classList.add('has-cover');
+                coverBtn.title = _t('coverImportedTitle');
+            } else {
+                coverBtn.title = _t('importCoverTitle');
+            }
+            coverBtn.innerHTML = '<i class="fas fa-image"></i>';
+            coverBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                importNodeCover(item.id, coverBtn);
+            });
+            leftActions.appendChild(coverBtn);        
+            // 插入到节点最前面
+            node.insertBefore(leftActions, node.firstChild);
+            
             const ctxBtn = document.createElement('button');
             ctxBtn.className = 'ctx-canvas-btn';
             ctxBtn.innerHTML = '<i class="fas fa-star"></i>';  
