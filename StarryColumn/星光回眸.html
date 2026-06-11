@@ -189,10 +189,10 @@
         padding: 100px 24px;
         color: #ff6b6b;
     }
-</style>
+<style>
 </head>
 <body>
-<div class="loading" id="loading">✦ 加载中...</div>
+<div class="loading" id="loading">✦ <span id="loadingText">加载中...</span></div>
 <div id="app" style="display:none;">
     <div class="stars"></div>
     <div class="hero" id="hero"></div>
@@ -204,8 +204,8 @@
         <div class="body-text" id="content"></div>
     </div>
     <div class="footer">
-        <div class="footer-logo">✦ 对话北极星</div>
-        <div class="footer-text">书写思想旋律，点燃潜能火花</div>
+        <div class="footer-logo">✦ <span id="footerLogoText">对话北极星</span></div>
+        <div class="footer-text" id="footerText">书写思想旋律，点燃潜能火花</div>
     </div>
     <div class="download-bar">
         <button class="download-btn" onclick="downloadPage()">
@@ -215,115 +215,31 @@
     </div>
 </div>
 
+<!-- 【按指定顺序引用主应用 JS】 -->
+<script src="../scripts/applogic.js"></script>
+<script src="../scripts/StarryColumn.js"></script>
+<script src="../scripts/importmdfile.js"></script>
+<script src="../scripts/speech.js"></script>
+<script src="../scripts/createwebpage.js"></script>
+
 <script>
 // ═══════════════════════════════════════════════════
-// 【复用】与主应用完全一致的解析/渲染函数
+// 初始化语言（复用主应用逻辑）
 // ═══════════════════════════════════════════════════
+const lang = window.currentLang || 'zh-CN';
 
-// ── 1. escapeHtml（与主应用一致）──
-function escapeHtml(text) {
-    if (!text) return '';
-    return text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-// ── 2. parseMarkdownWithMath（与主应用一致）──
-function parseMarkdownWithMath(rawText) {
-    if (!rawText) return "";
-
-    const mathSegments = [];
-    const protectedText = rawText.replace(
-        /(\$\$[\s\S]*?\$\$|\\\[[\s\S]*?\\\]|\\\(.*?\\\)|(?<!\\)\$.*?(?<!\\)\$)/gm,
-        (match) => {
-            mathSegments.push(match);
-            return `@@MATH_PLACEHOLDER_${mathSegments.length - 1}@@`;
-        }
-    );
-
-    const safeText = protectedText
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-
-    let htmlContent = "";
-    if (typeof marked !== 'undefined') {
-        htmlContent = marked.parse(safeText);
-    } else {
-        htmlContent = safeText.replace(/\n/g, "<br>");
+const _t = (key) => {
+    if (window.translations && window.translations[lang] && window.translations[lang][key]) {
+        return window.translations[lang][key];
     }
-
-    return htmlContent.replace(/@@MATH_PLACEHOLDER_(\d+)@@/g, (match, index) => {
-        return escapeHtml(mathSegments[index]);
-    });
-}
-
-// ── 3. parseMDToHistory（【复用】主应用的 MD 解析核心）──
-/**
- * 将 Markdown 文本解析为对话历史节点数组
- * 与主应用 importFromMD 中调用的 parseMDToHistory 完全一致
- * 
- * @param {string} mdContent - Markdown 文件内容
- * @returns {Array} 节点数组 [{role, text, leaderInfo}]
- */
-function parseMDToHistory(mdContent) {
-    const lines = mdContent.split('\n');
-    const history = [];
-    let currentNode = null;
-
-    for (let line of lines) {
-        const trimmed = line.trim();
-
-        // 匹配用户节点：## 用户 / ## User
-        if (/^##\s*用户/i.test(trimmed) || /^##\s*User/i.test(trimmed)) {
-            if (currentNode) history.push(currentNode);
-            currentNode = {
-                role: 'user',
-                text: '',
-                leaderInfo: null
-            };
-        }
-        // 匹配 AI 节点：## AI (姓名 | 领域)
-        else if (/^##\s*AI\s*\(/i.test(trimmed)) {
-            if (currentNode) history.push(currentNode);
-
-            const metaMatch = trimmed.match(/^##\s*AI\s*\(\s*([^|]+)\s*\|\s*([^)]+)\s*\)/i);
-            currentNode = {
-                role: 'ai',
-                text: '',
-                leaderInfo: {
-                    name: metaMatch ? metaMatch[1].trim() : 'North Star',
-                    field: metaMatch ? metaMatch[2].trim() : '',
-                    contribution: ''
-                }
-            };
-        }
-        // 累积内容（非节点标记行）
-        else if (currentNode && !trimmed.match(/^##\s*(用户|User|AI\s*\()/i)) {
-            currentNode.text += line + '\n';
-        }
+    if (window.shareTextKeys && window.shareTextKeys[key]) {
+        return getFieldValue(window.shareTextKeys[key], lang) || key;
     }
-
-    if (currentNode) history.push(currentNode);
-    history.forEach(node => node.text = node.text.trim());
-
-    return history;
-}
-
-// ── 4. getMergedHistory（与主应用一致）──
-function getMergedHistory(imported, current) {
-    const result = [];
-    if (imported && Array.isArray(imported) && imported.length > 0) {
-        result.push(...imported);
+    if (window.starryColumnTexts && window.starryColumnTexts[key]) {
+        return getFieldValue(window.starryColumnTexts[key], lang) || key;
     }
-    if (current && Array.isArray(current) && current.length > 0) {
-        result.push(...current);
-    }
-    return result;
-}
+    return key;
+};
 
 // ═══════════════════════════════════════════════════
 // 页面配置
@@ -339,21 +255,18 @@ const CONFIG = {
 // ═══════════════════════════════════════════════════
 // 加载专栏内容
 // ═══════════════════════════════════════════════════
-// ═══════════════════════════════════════════════════
-// 加载专栏内容
-// ═══════════════════════════════════════════════════
 async function loadColumn() {
     const columnName = CONFIG.getColumnName();
-    // 【修复】相对路径，去掉开头的 /
-    const mdPath = `./StarryColumn/${columnName}.md`;
+    // 【修复】相对路径，与 scripts 引用保持一致
+    const mdPath = `../StarryColumn/${columnName}.md`;
 
-    // ── 加载封面图（相对路径）──
+    // ── 加载封面图 ──
     const imgExtensions = ['jpg', 'png', 'jpeg', 'webp'];
     let coverUrl = '';
 
     for (const ext of imgExtensions) {
         // 【修复】相对路径
-        const imgPath = `./images/${columnName}.${ext}`;
+        const imgPath = `../images/${columnName}.${ext}`;
         try {
             const response = await fetch(imgPath, { method: 'HEAD' });
             if (response.ok) {
@@ -364,14 +277,13 @@ async function loadColumn() {
     }
     if (!coverUrl) {
         // 【修复】相对路径
-        coverUrl = './images/ambient-starry-column.jpg';
+        coverUrl = '../images/ambient-starry-column.jpg';
     }
 
-    // ── 加载并解析 MD（参照 loadSystemColumn 的异常处理）──
+    // ── 加载并解析 MD ──
     try {
         const response = await fetch(mdPath);
         
-        // 【参照 loadSystemColumn】HTTP 状态检查
         if (!response.ok) {
             if (response.status === 404) {
                 throw new Error('FILE_NOT_FOUND');
@@ -381,38 +293,30 @@ async function loadColumn() {
 
         const mdContent = await response.text();
 
-        // 【参照 loadSystemColumn】空内容检查
         if (!mdContent || mdContent.trim().length === 0) {
             throw new Error('EMPTY_FILE');
         }
 
-        // 【复用】parseMDToHistory → 解析为节点数组
         const importedHistory = parseMDToHistory(mdContent);
 
-        // 【参照 loadSystemColumn】解析检查
-        if (importedHistory.length === 0) {
+        if (!importedHistory || importedHistory.length === 0) {
             throw new Error('PARSE_EMPTY');
         }
 
-        // 【复用】getMergedHistory → 合并（当前无会话历史）
         const history = getMergedHistory(importedHistory, []);
 
-        // 提取最后一个 AI 节点
-        const aiNodes = history.filter(n => n.role === 'ai');
+        const aiNodes = history.filter(n => n.role === 'ai' || n.role === 'assistant');
         if (aiNodes.length === 0) {
             throw new Error('NO_AI_NODE');
         }
         const lastAiNode = aiNodes[aiNodes.length - 1];
 
-        // ── 渲染页面（与 renderPageContent 输出一致）──
         const title = lastAiNode.leaderInfo?.name || columnName;
-        const field = lastAiNode.leaderInfo?.field || '专栏文章';
+        const field = lastAiNode.leaderInfo?.field || _t('columnArticle') || '专栏文章';
 
-        // 【复用】parseMarkdownWithMath → 渲染内容
         const htmlContent = parseMarkdownWithMath(lastAiNode.text)
             .replace(/<img[^>]*>/g, '');
 
-        // 填充 DOM
         document.getElementById('title').textContent = title;
         document.getElementById('field').textContent = field;
 
@@ -421,14 +325,16 @@ async function loadColumn() {
 
         document.getElementById('content').innerHTML = htmlContent;
 
-        // 更新标题
-        document.title = `${title} · 对话北极星`;
+        document.getElementById('loadingText').textContent = _t('loading') || '加载中...';
+        document.getElementById('footerLogoText').textContent = _t('appName') || '对话北极星';
+        document.getElementById('footerText').textContent = _t('appSlogan') || '书写思想旋律，点燃潜能火花';
+        document.getElementById('saveText').textContent = _t('savePage') || '保存页面';
 
-        // 显示页面
+        document.title = `${title} · ${_t('appName') || '对话北极星'}`;
+
         document.getElementById('loading').style.display = 'none';
         document.getElementById('app').style.display = 'block';
 
-        // 【复用】MathJax 渲染
         if (window.MathJax && window.MathJax.typesetPromise) {
             MathJax.typesetPromise([document.getElementById('content')])
                 .catch(err => console.warn('MathJax error:', err));
@@ -439,15 +345,15 @@ async function loadColumn() {
 
         let errorMsg;
         if (e.message === 'FILE_NOT_FOUND') {
-            errorMsg = `专栏文件不存在：${mdPath}`;
+            errorMsg = _t('columnFileNotFound') || `专栏文件不存在：${mdPath}`;
         } else if (e.message === 'EMPTY_FILE') {
-            errorMsg = '专栏文件内容为空';
+            errorMsg = _t('columnFileEmpty') || '专栏文件内容为空';
         } else if (e.message === 'PARSE_EMPTY') {
-            errorMsg = '无法解析专栏内容';
+            errorMsg = _t('columnParseFailed') || '无法解析专栏内容';
         } else if (e.message === 'NO_AI_NODE') {
-            errorMsg = '专栏中没有找到 AI 回答节点';
+            errorMsg = _t('columnNoAINode') || '专栏中没有找到 AI 回答节点';
         } else {
-            errorMsg = `加载失败：${e.message}`;
+            errorMsg = (_t('columnLoadFailed') || '加载失败') + e.message;
         }
 
         document.getElementById('loading').innerHTML = `
@@ -458,9 +364,6 @@ async function loadColumn() {
     }
 }
 
-// ═══════════════════════════════════════════════════
-// 下载页面（与 generateNodePage 一致）
-// ═══════════════════════════════════════════════════
 function downloadPage() {
     const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
     const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
@@ -474,9 +377,6 @@ function downloadPage() {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-// ═══════════════════════════════════════════════════
-// 启动
-// ═══════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', loadColumn);
 </script>
 </body>
