@@ -267,7 +267,7 @@ async function generateNodePage(msg) {
 </div>
 
 <div class="footer">
-    <div class="footer-logo">✦ ${_t('defaultTitle')}</div>
+    <div class="footer-logo">✦ ${_t('pageTitleSuffix')}</div>
     <div class="footer-text">${_t('exploreBoundary')}</div>
 </div>
 </body>
