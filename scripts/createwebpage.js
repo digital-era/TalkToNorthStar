@@ -158,13 +158,7 @@ async function renderPageContent(msg, newWin, _t, lang) {
             max-width: none;
         }
     }
-    .hero::after {
-        content: '';
-        position: absolute;
-        bottom: 0; left: 0; right: 0;
-        height: 120px;
-        background: linear-gradient(transparent, #0a0e27);
-    }
+    
     .content {
         max-width: 720px;
         margin: 0 auto;
