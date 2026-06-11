@@ -423,7 +423,7 @@ ${translations[lang].promptThinkingFrameworkGuidance.replace('${name}', leader.n
 2.  **${translations[lang].promptDomainExpertise}**: ${translations[lang].promptDomainExpertiseDetail1.replace('${field}', leaderField)} ${translations[lang].promptDomainExpertiseDetail2}
 3.  **${translations[lang].promptCorePhilosophyDrivingForce}**: ${translations[lang].promptCorePhilosophyDetail1.replace('${name}', leader.name).replace('${remarksSection}', remarksSection)}
 4.  **${translations[lang].promptProblemAnalysis}**: ${translations[lang].promptProblemAnalysisDetail}
-5.  **${translations[lang].promptSolutionInsight}**: ${translations[lang].promptSolutionInsightDetail1.replace('${name}', leader.name)} ${translations[lang].promptSolutionInsightDetail2}
+5.  **${translations[lang].promptSolutionInsight}**: ${translations[lang].promptSolutionInsightDetail1.replace('${name}', leader.name)} ${translations[lang].promptSolutionInsightDetail2 ${translations[lang].promptSolutionInsightDetail3}
 6.  **${translations[lang].promptLanguageStyle}**: ${translations[lang].promptLanguageStyleDetail1.replace('${name}', leader.name)} ${translations[lang].promptLanguageStyleDetail2}
 
 ${translations[lang].promptUserQuestion}
