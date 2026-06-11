@@ -152,11 +152,29 @@ async function renderPageContent(msg, newWin, _t, lang) {
         justify-content: center;
     }
     
+    /* 电脑端：显示完整图片 */
     .hero img {
         max-width: 100%;
         max-height: 100%;
         object-fit: contain;
         display: block;
+    }
+    
+    /* 手机端：裁剪自适应 */
+    @media (max-width: 768px) {
+        .hero {
+            height: 40vh;
+            min-height: 250px;
+            max-height: 400px;
+        }
+        
+        .hero img {
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            max-height: none;
+            object-fit: cover;
+        }
     }
     .hero::after {
         content: '';
