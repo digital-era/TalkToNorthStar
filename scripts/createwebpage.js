@@ -124,6 +124,7 @@ async function generateNodePage(msg) {
         height: auto;        /* 高度由图片决定 */
         min-height: 300px;
         max-height: 70vh;
+        margin-top: 24px;        /* ← 顶部留出呼吸感 */
     }
     
     .hero img {
@@ -181,7 +182,7 @@ async function generateNodePage(msg) {
         border-left: 3px solid rgba(197, 160, 89, 0.6);
         padding-left: 10px;
     }
-    .body-text h3 { font-size: 1.15em; color: #d4c4a8; }
+    .body-text h3 { font-size: 1.15em; color: #b0b8d0; }
     .body-text strong, .body-text b { color: #fff; font-weight: 600; }
     .body-text blockquote {
         margin: 1.2em 0;
