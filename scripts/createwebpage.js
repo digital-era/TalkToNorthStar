@@ -158,7 +158,7 @@ async function generateNodePage(msg) {
     }
     .meta-field {
         font-size: 13px;
-        color: #d4c4a8;
+        color: #fff;
         letter-spacing: 1px;
     }
     .body-text {
@@ -168,7 +168,7 @@ async function generateNodePage(msg) {
     }
     .body-text p { margin-bottom: 1.2em; text-align: justify; }
     .body-text h1, .body-text h2, .body-text h3, .body-text h4, .body-text h5, .body-text h6 {
-        color: #b0b8d0;
+        color: #d4c4a8;
         margin: 1.5em 0 0.8em;
         line-height: 1.4;
     }
@@ -189,7 +189,7 @@ async function generateNodePage(msg) {
         padding: 12px 20px;
         border-left: 3px solid #00DFD8;
         background: rgba(102, 126, 234, 0.08);
-        color: #b0b8d0;
+        color: #d4c4a8;
         font-style: italic;
     }
     .body-text blockquote p:last-child { margin-bottom: 0; }
