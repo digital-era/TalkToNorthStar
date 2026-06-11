@@ -14,7 +14,6 @@
         min-height: 100vh;
         padding-bottom: 100px;
     }
-    /* 加载动画 */
     .loading {
         display: flex;
         align-items: center;
@@ -23,7 +22,6 @@
         color: #667eea;
         font-size: 16px;
     }
-    /* 封面 */
     .hero {
         width: 100%;
         margin-top: 24px;
@@ -42,7 +40,6 @@
             max-width: none;
         }
     }
-    /* 内容区 */
     .content {
         max-width: 720px;
         margin: 0 auto;
@@ -126,7 +123,6 @@
         border-bottom: 1px solid rgba(102,126,234,0.3);
     }
     .body-text a:hover { border-bottom-color: #667eea; }
-    /* 底部 */
     .footer {
         text-align: center;
         padding: 40px 24px 80px;
@@ -142,7 +138,6 @@
         font-size: 12px;
         color: #fff;
     }
-    /* 星空背景 */
     .stars {
         position: fixed;
         top: 0; left: 0; right: 0; bottom: 0;
@@ -155,7 +150,6 @@
             radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.4), transparent);
         background-size: 220px 220px;
     }
-    /* 下载按钮 */
     .download-bar {
         position: fixed;
         bottom: 0;
@@ -190,7 +184,6 @@
         box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
     }
     .download-btn:active { transform: translateY(0); }
-    /* 错误提示 */
     .error-msg {
         text-align: center;
         padding: 100px 24px;
@@ -223,48 +216,137 @@
 </div>
 
 <script>
-// ═══ 配置 ═══
+// ═══════════════════════════════════════════════════
+// 【复用】与主应用完全一致的解析/渲染函数
+// ═══════════════════════════════════════════════════
+
+// ── 1. escapeHtml（与主应用一致）──
+function escapeHtml(text) {
+    if (!text) return '';
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+// ── 2. parseMarkdownWithMath（与主应用一致）──
+function parseMarkdownWithMath(rawText) {
+    if (!rawText) return "";
+
+    const mathSegments = [];
+    const protectedText = rawText.replace(
+        /(\$\$[\s\S]*?\$\$|\\\[[\s\S]*?\\\]|\\\(.*?\\\)|(?<!\\)\$.*?(?<!\\)\$)/gm,
+        (match) => {
+            mathSegments.push(match);
+            return `@@MATH_PLACEHOLDER_${mathSegments.length - 1}@@`;
+        }
+    );
+
+    const safeText = protectedText
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+    let htmlContent = "";
+    if (typeof marked !== 'undefined') {
+        htmlContent = marked.parse(safeText);
+    } else {
+        htmlContent = safeText.replace(/\n/g, "<br>");
+    }
+
+    return htmlContent.replace(/@@MATH_PLACEHOLDER_(\d+)@@/g, (match, index) => {
+        return escapeHtml(mathSegments[index]);
+    });
+}
+
+// ── 3. parseMDToHistory（【复用】主应用的 MD 解析核心）──
+/**
+ * 将 Markdown 文本解析为对话历史节点数组
+ * 与主应用 importFromMD 中调用的 parseMDToHistory 完全一致
+ * 
+ * @param {string} mdContent - Markdown 文件内容
+ * @returns {Array} 节点数组 [{role, text, leaderInfo}]
+ */
+function parseMDToHistory(mdContent) {
+    const lines = mdContent.split('\n');
+    const history = [];
+    let currentNode = null;
+
+    for (let line of lines) {
+        const trimmed = line.trim();
+
+        // 匹配用户节点：## 用户 / ## User
+        if (/^##\s*用户/i.test(trimmed) || /^##\s*User/i.test(trimmed)) {
+            if (currentNode) history.push(currentNode);
+            currentNode = {
+                role: 'user',
+                text: '',
+                leaderInfo: null
+            };
+        }
+        // 匹配 AI 节点：## AI (姓名 | 领域)
+        else if (/^##\s*AI\s*\(/i.test(trimmed)) {
+            if (currentNode) history.push(currentNode);
+
+            const metaMatch = trimmed.match(/^##\s*AI\s*\(\s*([^|]+)\s*\|\s*([^)]+)\s*\)/i);
+            currentNode = {
+                role: 'ai',
+                text: '',
+                leaderInfo: {
+                    name: metaMatch ? metaMatch[1].trim() : 'North Star',
+                    field: metaMatch ? metaMatch[2].trim() : '',
+                    contribution: ''
+                }
+            };
+        }
+        // 累积内容（非节点标记行）
+        else if (currentNode && !trimmed.match(/^##\s*(用户|User|AI\s*\()/i)) {
+            currentNode.text += line + '\n';
+        }
+    }
+
+    if (currentNode) history.push(currentNode);
+    history.forEach(node => node.text = node.text.trim());
+
+    return history;
+}
+
+// ── 4. getMergedHistory（与主应用一致）──
+function getMergedHistory(imported, current) {
+    const result = [];
+    if (imported && Array.isArray(imported) && imported.length > 0) {
+        result.push(...imported);
+    }
+    if (current && Array.isArray(current) && current.length > 0) {
+        result.push(...current);
+    }
+    return result;
+}
+
+// ═══════════════════════════════════════════════════
+// 页面配置
+// ═══════════════════════════════════════════════════
 const CONFIG = {
-    // 从当前 HTML 文件名提取专栏名
-    // 例如：/StarryColumn/金庸传.html → 金庸传
     getColumnName() {
         const path = window.location.pathname;
-        const fileName = path.split('/').pop();  // 金庸传.html
-        return fileName.replace('.html', '');     // 金庸传
+        const fileName = path.split('/').pop();
+        return fileName.replace('.html', '');
     }
 };
 
-// ═══ 简单 Markdown 转 HTML ═══
-function mdToHtml(md) {
-    return md
-        .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-        .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-        .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/!\[.*?\]\(.*?\)/g, '')
-        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
-        .replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>')
-        .replace(/^[\*\-] (.*$)/gm, '<li>$1</li>')
-        .replace(/(<li>.*<\/li>\n?)+/gs, '<ul>$&</ul>')
-        .replace(/```[\s\S]*?```/g, '<pre><code>$&</code></pre>')
-        .replace(/`([^`]+)`/g, '<code>$1</code>')
-        .replace(/^---+/gm, '<hr>')
-        .replace(/\n\n/g, '</p><p>')
-        .replace(/^(.+)$/gm, '<p>$1</p>')
-        .replace(/<p><(h[1-6]|blockquote|ul|pre|hr)/g, '<$1')
-        .replace(/<\/(h[1-6]|blockquote|ul|pre|hr)><\/p>/g, '</$1>');
-}
-
-// ═══ 加载专栏内容 ═══
+// ═══════════════════════════════════════════════════
+// 加载专栏内容
+// ═══════════════════════════════════════════════════
 async function loadColumn() {
     const columnName = CONFIG.getColumnName();
     const mdPath = `/StarryColumn/${columnName}.md`;
-    
-    // 尝试加载封面图
+
+    // ── 加载封面图 ──
     const imgExtensions = ['jpg', 'png', 'jpeg', 'webp'];
     let coverUrl = '';
-    
+
     for (const ext of imgExtensions) {
         const imgPath = `/images/${columnName}.${ext}`;
         try {
@@ -275,53 +357,79 @@ async function loadColumn() {
             }
         } catch (e) {}
     }
-    
-    // 如果没有封面，用默认图
     if (!coverUrl) {
         coverUrl = '/images/ambient-starry-column.jpg';
     }
-    
-    // 加载 MD 内容
+
+    // ── 加载并解析 MD ──
     try {
         const response = await fetch(mdPath);
         if (!response.ok) throw new Error('MD not found');
-        
+
         const mdContent = await response.text();
         if (!mdContent.trim()) throw new Error('Empty MD');
-        
-        // 解析内容
-        const htmlContent = mdToHtml(mdContent);
-        
-        // 渲染页面
-        document.getElementById('title').textContent = columnName;
-        document.getElementById('field').textContent = '专栏文章';
-        
-        // 渲染封面
+
+        // 【复用】parseMDToHistory → 解析为节点数组（与主应用完全一致）
+        const importedHistory = parseMDToHistory(mdContent);
+
+        if (importedHistory.length === 0) {
+            throw new Error('No dialogue nodes found');
+        }
+
+        // 【复用】getMergedHistory → 合并（当前无会话历史，只有导入的）
+        const history = getMergedHistory(importedHistory, []);
+
+        // 提取最后一个 AI 节点（与 generateNodePage 逻辑一致）
+        const aiNodes = history.filter(n => n.role === 'ai');
+        if (aiNodes.length === 0) {
+            throw new Error('No AI response found in dialogue');
+        }
+        const lastAiNode = aiNodes[aiNodes.length - 1];
+
+        // ── 渲染页面（与 renderPageContent 输出一致）──
+        const title = lastAiNode.leaderInfo?.name || columnName;
+        const field = lastAiNode.leaderInfo?.field || '专栏文章';
+
+        // 【复用】parseMarkdownWithMath → 渲染内容（支持公式）
+        const htmlContent = parseMarkdownWithMath(lastAiNode.text)
+            .replace(/<img[^>]*>/g, ''); // 移除图片标签（与 renderPageContent 一致）
+
+        // 填充 DOM
+        document.getElementById('title').textContent = title;
+        document.getElementById('field').textContent = field;
+
         const heroEl = document.getElementById('hero');
-        heroEl.innerHTML = `<img src="${coverUrl}" alt="${columnName}" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #0f0c29, #302b63, #24243e)';">`;
-        
-        // 渲染内容
+        heroEl.innerHTML = `<img src="${coverUrl}" alt="${escapeHtml(title)}" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #0f0c29, #302b63, #24243e)';">`;
+
         document.getElementById('content').innerHTML = htmlContent;
-        
+
         // 更新标题
-        document.title = `${columnName} · 对话北极星`;
-        
+        document.title = `${title} · 对话北极星`;
+
         // 显示页面
         document.getElementById('loading').style.display = 'none';
         document.getElementById('app').style.display = 'block';
-        
+
+        // 【复用】MathJax 渲染（如果页面引入了 MathJax）
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            MathJax.typesetPromise([document.getElementById('content')])
+                .catch(err => console.warn('MathJax error:', err));
+        }
+
     } catch (e) {
         console.error('Failed to load column:', e);
         document.getElementById('loading').innerHTML = `
             <div class="error-msg">
                 <div>加载失败</div>
-                <div style="font-size:14px;color:#888;margin-top:10px;">${e.message}</div>
+                <div style="font-size:14px;color:#888;margin-top:10px;">${escapeHtml(e.message)}</div>
             </div>
         `;
     }
 }
 
-// ═══ 下载页面 ═══
+// ═══════════════════════════════════════════════════
+// 下载页面（与 generateNodePage 一致）
+// ═══════════════════════════════════════════════════
 function downloadPage() {
     const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
     const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
@@ -335,7 +443,9 @@ function downloadPage() {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-// ═══ 启动 ═══
+// ═══════════════════════════════════════════════════
+// 启动
+// ═══════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', loadColumn);
 </script>
 </body>
