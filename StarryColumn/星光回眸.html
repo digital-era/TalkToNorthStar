@@ -341,14 +341,14 @@ const CONFIG = {
 // ═══════════════════════════════════════════════════
 async function loadColumn() {
     const columnName = CONFIG.getColumnName();
-    const mdPath = `/StarryColumn/${columnName}.md`;
+    const mdPath = `StarryColumn/${columnName}.md`;
 
     // ── 加载封面图 ──
     const imgExtensions = ['jpg', 'png', 'jpeg', 'webp'];
     let coverUrl = '';
 
     for (const ext of imgExtensions) {
-        const imgPath = `/images/${columnName}.${ext}`;
+        const imgPath = `images/${columnName}.${ext}`;
         try {
             const response = await fetch(imgPath, { method: 'HEAD' });
             if (response.ok) {
@@ -358,7 +358,7 @@ async function loadColumn() {
         } catch (e) {}
     }
     if (!coverUrl) {
-        coverUrl = '/images/ambient-starry-column.jpg';
+        coverUrl = 'images/ambient-starry-column.jpg';
     }
 
     // ── 加载并解析 MD ──
