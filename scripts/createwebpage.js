@@ -15,12 +15,38 @@ function generateNodePage(messageId) {
     const _t = (key) => getFieldValue(shareTexts[key], lang) || key;
 
     const history = getMergedHistory(importedHistory, conversationHistory);
+    
+    // ═══ 调试：打印所有消息ID和角色 ═══
+    console.log('[Page] Looking for messageId:', messageId);
+    history.forEach((h, i) => {
+        console.log(`  [${i}] id=${h.id}, role=${h.role}, text=${h.text.substring(0, 30)}...`);
+    });
+    
     const msg = history.find(h => h.id === messageId);
-    if (!msg) return;
+    
+    console.log('[Page] Found msg:', msg ? { id: msg.id, role: msg.role, text: msg.text.substring(0, 50) } : 'NOT FOUND');
+    
+    if (!msg) {
+        showToast(_t('msgNotFound'), 'error');
+        return;
+    }
+    
+    // 保险：即使传入的是用户节点，也找到对应的AI回答
+    let targetMsg = msg;
+    if (msg.role === 'user') {
+        const userIndex = history.findIndex(h => h.id === messageId);
+        targetMsg = history.slice(userIndex + 1).find(h => h.role === 'ai' || h.role === 'assistant');
+        console.log('[Page] User node detected, found AI response:', targetMsg ? targetMsg.id : 'NONE');
+    }
+    
+    if (!targetMsg) {
+        showToast(_t('noAIContent'), 'warning');
+        return;
+    }
 
-    const coverUrl = msg._cover || '/images/ambient-starry-column.jpg';
-    const title = msg.leaderInfo?.name || _t('defaultTitle');
-    const field = msg.leaderInfo?.field || '';
+    const coverUrl = targetMsg._cover || '/images/ambient-starry-column.jpg';
+    const title = targetMsg.leaderInfo?.name || _t('defaultTitle');
+    const field = targetMsg.leaderInfo?.field || '';
 
     // Markdown → HTML（保留格式）
     let htmlContent = msg._processedText;
