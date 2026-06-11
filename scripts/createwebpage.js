@@ -65,6 +65,7 @@ const CoverCache = {
 };
 
 // ═══ 生成页面 ═══
+// ═══ 生成页面 ═══
 async function generateNodePage(msg) {
     const lang = window.currentLang || 'zh-CN';
     const _t = (key) => getFieldValue(shareTextKeys[key], lang) || key;
@@ -74,6 +75,7 @@ async function generateNodePage(msg) {
         return;
     }
 
+    // 获取封面
     let coverUrl = msg._cover;
     if (!coverUrl) {
         coverUrl = await CoverCache.get();
@@ -83,6 +85,25 @@ async function generateNodePage(msg) {
     const heroStyle = hasCover ? '' : 'background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);';
     const heroHtml = hasCover
         ? `<img src="${coverUrl}" alt="${escapeHtml(msg.leaderInfo?.name || '')}" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #0f0c29, #302b63, #24243e)';">`
+        : '';
+
+    const title = msg.leaderInfo?.name || _t('defaultTitle');
+    const field = msg.leaderInfo?.field || '';
+
+    // Markdown → HTML
+    let htmlContent = msg._processedText;
+    if (!htmlContent) {
+        if (typeof parseMarkdownWithMath === 'function') {
+            htmlContent = parseMarkdownWithMath(msg.text);
+        } else if (typeof parseMarkdown === 'function') {
+            htmlContent = parseMarkdown(msg.text);
+        } else if (typeof simpleMarkdownToHtml === 'function') {
+            htmlContent = simpleMarkdownToHtml(msg.text);
+        } else {
+            htmlContent = escapeHtml(msg.text).replace(/\n/g, '<br>');
+        }
+    }
+    htmlContent = htmlContent.replace(/<img[^>]*>/g, '');
 
     const html = `<!DOCTYPE html>
 <html lang="${lang === 'zh-CN' ? 'zh-CN' : 'en'}">
