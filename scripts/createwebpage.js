@@ -324,7 +324,7 @@ async function renderPageContent(msg, newWin, _t, lang) {
 </div>
 
 <div class="footer">
-    <div class="footer-logo">✦ ${_t('pageTitleSuffix')}</div>
+    <div class="footer-logo">✦ <a href="https://talktonorthstar.aivibeinvestment.com" style="color: inherit; text-decoration: none;">${_t('pageTitleSuffix')}</a></div>
     <div class="footer-text">${_t('exploreBoundary')}</div>
 </div>
 
