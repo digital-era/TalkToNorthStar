@@ -136,16 +136,23 @@ async function renderPageContent(msg, newWin, _t, lang) {
         min-height: 100vh;
     }
     .hero {
-        height: auto;        /* 高度由图片决定 */
-        min-height: 300px;
-        max-height: 70vh;
-        margin-top: 24px;        /* ← 顶部留出呼吸感 */
-    }    
-    .hero img {
+        position: relative;
         width: 100%;
-        height: auto;        /* 保持图片原始比例 */
-        max-height: 70vh;
-        object-fit: contain; /* 完整显示图片，不裁剪 */
+        height: 55vh;
+        min-height: 320px;
+        max-height: 600px;
+        overflow: hidden;
+        margin-top: 24px;
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); /* 图片外的背景 */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .hero img {
+        max-width: 100%;
+        max-height: 100%;    /* 不超出容器 */
+        object-fit: contain; /* 完整显示，留白用背景色填充 */
     }
     .hero::after {
         content: '';
