@@ -202,7 +202,7 @@ async function renderPageContent(msg, newWin, _t, lang) {
         padding-left: 10px;
     }
     .body-text h3 { font-size: 1.15em; color: #d4c4a8; }
-    .body-text strong, .body-text b { color: #fff; font-weight: 600; }
+    .body-text strong, .body-text b { color: #d4c4a8; font-weight: 600; }
     .body-text blockquote {
         margin: 1.2em 0;
         padding: 12px 20px;
