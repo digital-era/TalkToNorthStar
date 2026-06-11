@@ -11,6 +11,7 @@ const shareTextKeys = {
     'coverImportedTitle': { 'zh-CN': '已导入封面，点击更换', 'en-US': 'Cover imported, click to change' },
     'importCoverTitle': { 'zh-CN': '导入封面', 'en-US': 'Import Cover' },
     'generatePageTitle': { 'zh-CN': '生成页面', 'en-US': 'Generate Page' },
+    'popupBlocked': { 'zh-CN': '请允许浏览器打开新标签页', 'en-US': 'Please allow the browser to open a new tab' },
 };
 
 // 合并到全局 translations
@@ -65,8 +66,7 @@ const CoverCache = {
 };
 
 // ═══ 生成页面 ═══
-// ═══ 生成页面 ═══
-async function generateNodePage(msg) {
+function generateNodePage(msg) {
     const lang = window.currentLang || 'zh-CN';
     const _t = (key) => getFieldValue(shareTextKeys[key], lang) || key;
 
@@ -75,6 +75,21 @@ async function generateNodePage(msg) {
         return;
     }
 
+    // ═══ 关键：同步打开空窗口（必须在用户点击事件内执行）═══
+    const newWin = window.open('', '_blank');
+    if (!newWin) {
+        showToast(_t('popupBlocked'), 'warning');
+        return;
+    }
+
+    // 异步获取封面并渲染
+    renderPageContent(msg, newWin, _t, lang);
+}
+
+/**
+ * 异步获取封面并写入页面内容
+ */
+async function renderPageContent(msg, newWin, _t, lang) {
     // 获取封面
     let coverUrl = msg._cover;
     if (!coverUrl) {
@@ -84,7 +99,7 @@ async function generateNodePage(msg) {
     const hasCover = coverUrl && coverUrl.startsWith('data:');
     const heroStyle = hasCover ? '' : 'background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);';
     const heroHtml = hasCover
-        ? `<img src="${coverUrl}" alt="${escapeHtml(msg.leaderInfo?.name || '')}" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #0f0c29, #302b63, #24243e)';">`
+        ? `<img src="${coverUrl}" alt="${escapeHtml(msg.leaderInfo?.name || '')}" style="width:100%;height:100%;object-fit:cover;display:block;">`
         : '';
 
     const title = msg.leaderInfo?.name || _t('defaultTitle');
@@ -121,17 +136,19 @@ async function generateNodePage(msg) {
         min-height: 100vh;
     }
     .hero {
-        height: auto;        /* 高度由图片决定 */
-        min-height: 300px;
-        max-height: 70vh;
-        margin-top: 24px;        /* ← 顶部留出呼吸感 */
+        position: relative;
+        width: 100%;
+        height: 55vh;
+        min-height: 320px;
+        max-height: 600px;
+        overflow: hidden;
+        margin-top: 24px;
     }
-    
     .hero img {
         width: 100%;
-        height: auto;        /* 保持图片原始比例 */
-        max-height: 70vh;
-        object-fit: contain; /* 完整显示图片，不裁剪 */
+        height: 100%;
+        object-fit: cover;
+        display: block;
     }
     .hero::after {
         content: '';
@@ -158,7 +175,7 @@ async function generateNodePage(msg) {
     }
     .meta-field {
         font-size: 13px;
-        color: #fff;
+        color: #667eea;
         letter-spacing: 1px;
     }
     .body-text {
@@ -187,9 +204,9 @@ async function generateNodePage(msg) {
     .body-text blockquote {
         margin: 1.2em 0;
         padding: 12px 20px;
-        border-left: 3px solid #00DFD8;
+        border-left: 3px solid #667eea;
         background: rgba(102, 126, 234, 0.08);
-        color: #d4c4a8;
+        color: #b0b8d0;
         font-style: italic;
     }
     .body-text blockquote p:last-child { margin-bottom: 0; }
@@ -218,11 +235,11 @@ async function generateNodePage(msg) {
         margin: 2em 0;
     }
     .body-text a {
-        color: #00DFD8;
+        color: #667eea;
         text-decoration: none;
         border-bottom: 1px solid rgba(102,126,234,0.3);
     }
-    .body-text a:hover { border-bottom-color: #00DFD8; }
+    .body-text a:hover { border-bottom-color: #667eea; }
     .footer {
         text-align: center;
         padding: 40px 24px;
@@ -230,13 +247,13 @@ async function generateNodePage(msg) {
     }
     .footer-logo {
         font-size: 18px;
-        color: #00DFD8;
+        color: #667eea;
         margin-bottom: 8px;
         letter-spacing: 2px;
     }
     .footer-text {
         font-size: 12px;
-        color: #00DFD8;
+        color: rgba(255,255,255,0.3);
     }
     .stars {
         position: fixed;
@@ -274,32 +291,14 @@ async function generateNodePage(msg) {
 </body>
 </html>`;
 
-    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    
-    // 保留引用，防止被清理
-    window._lastBlobUrl = url;
-    
-    // 先打开窗口（避免被拦截）
-    const newWin = window.open(url, '_blank');
-    
-    if (!newWin) {
-        showToast('请允许弹窗，或点击下载保存', 'warning');
-        // fallback：自动下载
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${title.replace(/[\\/:*?"<>|]/g, '_')}.html`;
-        a.click();
-    }
-    
-    // 延迟释放（1分钟后）
-    setTimeout(() => {
-        URL.revokeObjectURL(url);
-        window._lastBlobUrl = null;
-    }, 60000);
-    
+    // ═══ 关键：用 document.write 写入，避免 Blob URL 被清理 ═══
+    newWin.document.open();
+    newWin.document.write(html);
+    newWin.document.close();
+
     showToast(_t('pageGenerated'), 'success');
 }
+
 
 /**
  * 导入节点封面（支持多语言）
