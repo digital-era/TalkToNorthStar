@@ -204,13 +204,13 @@
         <div class="body-text" id="content"></div>
     </div>
     <div class="footer">
-        <div class="footer-logo">✦ <span id="footerLogoText">对话北极星</span></div>
-        <div class="footer-text" id="footerText">书写思想旋律，点燃潜能火花</div>
+        <div class="footer-logo" id="footerLogo">✦ <span id="footerLogoText"></span></div>
+        <div class="footer-text" id="footerText"></div>
     </div>
     <div class="download-bar">
         <button class="download-btn" onclick="downloadPage()">
             <span>💾</span>
-            <span id="saveText">保存页面</span>
+            <span id="saveText"></span>
         </button>
     </div>
 </div>
@@ -224,22 +224,27 @@
 
 <script>
 // ═══════════════════════════════════════════════════
-// 初始化语言（复用主应用逻辑）
+// 初始化（复用 createwebpage.js 的全球化体系）
 // ═══════════════════════════════════════════════════
+
+// 1. 初始化 shareTextKeys 到 translations（createwebpage.js 中的 initShareTexts）
+if (typeof initShareTexts === 'function') {
+    initShareTexts();
+}
+
+// 2. 确定语言
 const lang = window.currentLang || 'zh-CN';
 
-const _t = (key) => {
-    if (window.translations && window.translations[lang] && window.translations[lang][key]) {
-        return window.translations[lang][key];
-    }
-    if (window.shareTextKeys && window.shareTextKeys[key]) {
-        return getFieldValue(window.shareTextKeys[key], lang) || key;
-    }
-    if (window.starryColumnTexts && window.starryColumnTexts[key]) {
-        return getFieldValue(window.starryColumnTexts[key], lang) || key;
-    }
-    return key;
-};
+// 3. 设置 html lang
+document.documentElement.lang = lang === 'zh-CN' ? 'zh-CN' : 'en';
+
+// 4. 设置字体（与 renderPageContent 一致）
+document.body.style.fontFamily = lang === 'zh-CN'
+    ? "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif"
+    : "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif";
+
+// 5. 翻译辅助（与 renderPageContent 完全一致）
+const _t = (key) => getFieldValue(shareTextKeys[key], lang) || key;
 
 // ═══════════════════════════════════════════════════
 // 页面配置
@@ -257,7 +262,6 @@ const CONFIG = {
 // ═══════════════════════════════════════════════════
 async function loadColumn() {
     const columnName = CONFIG.getColumnName();
-    // 【修复】相对路径，与 scripts 引用保持一致
     const mdPath = `../StarryColumn/${columnName}.md`;
 
     // ── 加载封面图 ──
@@ -265,7 +269,6 @@ async function loadColumn() {
     let coverUrl = '';
 
     for (const ext of imgExtensions) {
-        // 【修复】相对路径
         const imgPath = `../images/${columnName}.${ext}`;
         try {
             const response = await fetch(imgPath, { method: 'HEAD' });
@@ -274,10 +277,6 @@ async function loadColumn() {
                 break;
             }
         } catch (e) {}
-    }
-    if (!coverUrl) {
-        // 【修复】相对路径
-        coverUrl = '../images/ambient-starry-column.jpg';
     }
 
     // ── 加载并解析 MD ──
@@ -297,44 +296,65 @@ async function loadColumn() {
             throw new Error('EMPTY_FILE');
         }
 
+        // 【复用】importmdfile.js 中的 parseMDToHistory
         const importedHistory = parseMDToHistory(mdContent);
 
         if (!importedHistory || importedHistory.length === 0) {
             throw new Error('PARSE_EMPTY');
         }
 
+        // 【复用】applogic.js 中的 getMergedHistory
         const history = getMergedHistory(importedHistory, []);
 
+        // 提取最后一个 AI 节点
         const aiNodes = history.filter(n => n.role === 'ai' || n.role === 'assistant');
         if (aiNodes.length === 0) {
             throw new Error('NO_AI_NODE');
         }
         const lastAiNode = aiNodes[aiNodes.length - 1];
 
-        const title = lastAiNode.leaderInfo?.name || columnName;
-        const field = lastAiNode.leaderInfo?.field || _t('columnArticle') || '专栏文章';
+        // ── 准备渲染数据（与 renderPageContent 一致）──
+        const title = lastAiNode.leaderInfo?.name || _t('defaultTitle');
+        const field = lastAiNode.leaderInfo?.field || '';
 
-        const htmlContent = parseMarkdownWithMath(lastAiNode.text)
-            .replace(/<img[^>]*>/g, '');
+        // 【复用】applogic.js 中的 parseMarkdownWithMath
+        let htmlContent = lastAiNode._processedText;
+        if (!htmlContent) {
+            htmlContent = parseMarkdownWithMath(lastAiNode.text);
+        }
+        htmlContent = htmlContent.replace(/<img[^>]*>/g, '');
 
+        // 封面处理（与 renderPageContent 一致）
+        const hasCover = coverUrl && coverUrl.length > 0;
+        const heroStyle = hasCover ? '' : 'background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);';
+        const heroHtml = hasCover
+            ? `<img src="${coverUrl}" alt="${escapeHtml(title)}" style="width:100%;height:100%;object-fit:cover;display:block;">`
+            : '';
+
+        // ── 填充 DOM ──
         document.getElementById('title').textContent = title;
         document.getElementById('field').textContent = field;
 
         const heroEl = document.getElementById('hero');
-        heroEl.innerHTML = `<img src="${coverUrl}" alt="${escapeHtml(title)}" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #0f0c29, #302b63, #24243e)';">`;
+        heroEl.style.cssText = heroStyle;
+        heroEl.innerHTML = heroHtml;
 
         document.getElementById('content').innerHTML = htmlContent;
 
-        document.getElementById('loadingText').textContent = _t('loading') || '加载中...';
-        document.getElementById('footerLogoText').textContent = _t('appName') || '对话北极星';
-        document.getElementById('footerText').textContent = _t('appSlogan') || '书写思想旋律，点燃潜能火花';
-        document.getElementById('saveText').textContent = _t('savePage') || '保存页面';
+        // 【全球化】与 renderPageContent 完全一致
+        document.getElementById('loadingText').textContent = lang === 'zh-CN' ? '加载中...' : 'Loading...';
+        document.getElementById('footerLogoText').textContent = _t('pageTitleSuffix');
+        document.getElementById('footerText').textContent = _t('exploreBoundary');
+        document.getElementById('saveText').textContent = lang === 'zh-CN' ? '保存页面' : 'Save Page';
 
-        document.title = `${title} · ${_t('appName') || '对话北极星'}`;
+        // 标题：与 renderPageContent 一致
+        document.title = `${escapeHtml(title)} ${_t('pageTitleSuffix')}`;
 
+        // 显示页面
         document.getElementById('loading').style.display = 'none';
         document.getElementById('app').style.display = 'block';
 
+        // 【复用】MathJax
         if (window.MathJax && window.MathJax.typesetPromise) {
             MathJax.typesetPromise([document.getElementById('content')])
                 .catch(err => console.warn('MathJax error:', err));
@@ -345,15 +365,15 @@ async function loadColumn() {
 
         let errorMsg;
         if (e.message === 'FILE_NOT_FOUND') {
-            errorMsg = _t('columnFileNotFound') || `专栏文件不存在：${mdPath}`;
+            errorMsg = lang === 'zh-CN' ? `专栏文件不存在：${mdPath}` : `Column file not found: ${mdPath}`;
         } else if (e.message === 'EMPTY_FILE') {
-            errorMsg = _t('columnFileEmpty') || '专栏文件内容为空';
+            errorMsg = lang === 'zh-CN' ? '专栏文件内容为空' : 'Column file is empty';
         } else if (e.message === 'PARSE_EMPTY') {
-            errorMsg = _t('columnParseFailed') || '无法解析专栏内容';
+            errorMsg = lang === 'zh-CN' ? '无法解析专栏内容' : 'Unable to parse column content';
         } else if (e.message === 'NO_AI_NODE') {
-            errorMsg = _t('columnNoAINode') || '专栏中没有找到 AI 回答节点';
+            errorMsg = lang === 'zh-CN' ? '专栏中没有找到 AI 回答节点' : 'No AI response found in column';
         } else {
-            errorMsg = (_t('columnLoadFailed') || '加载失败') + e.message;
+            errorMsg = (lang === 'zh-CN' ? '加载失败：' : 'Load failed: ') + e.message;
         }
 
         document.getElementById('loading').innerHTML = `
@@ -364,6 +384,9 @@ async function loadColumn() {
     }
 }
 
+// ═══════════════════════════════════════════════════
+// 下载页面（与 createwebpage.js 中的 downloadPage 一致）
+// ═══════════════════════════════════════════════════
 function downloadPage() {
     const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
     const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
@@ -377,6 +400,9 @@ function downloadPage() {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+// ═══════════════════════════════════════════════════
+// 启动
+// ═══════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', loadColumn);
 </script>
 </body>
