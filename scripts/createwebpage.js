@@ -153,12 +153,12 @@ async function generateNodePage(msg) {
     .meta-name {
         font-size: 26px;
         font-weight: bold;
-        color: #fff;
+        color: #d4c4a8;
         margin-bottom: 6px;
     }
     .meta-field {
         font-size: 13px;
-        color: #00DFD8;
+        color: #d4c4a8;
         letter-spacing: 1px;
     }
     .body-text {
@@ -182,7 +182,7 @@ async function generateNodePage(msg) {
         border-left: 3px solid rgba(197, 160, 89, 0.6);
         padding-left: 10px;
     }
-    .body-text h3 { font-size: 1.15em; color: #b0b8d0; }
+    .body-text h3 { font-size: 1.15em; color: #d4c4a8; }
     .body-text strong, .body-text b { color: #fff; font-weight: 600; }
     .body-text blockquote {
         margin: 1.2em 0;
