@@ -141,39 +141,41 @@ async function renderPageContent(msg, newWin, _t, lang) {
     .hero {
         position: relative;
         width: 100%;
-        height: 55vh;
-        min-height: 320px;
-        max-height: 600px;
         overflow: hidden;
         margin-top: 24px;
         background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    
         display: flex;
         align-items: center;
         justify-content: center;
+    
+        /* 关键修改 */
+        height: auto;
+        min-height: auto;
+        max-height: none;
     }
     
-    /* 电脑端：显示完整图片 */
     .hero img {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
         display: block;
+    
+        /* 始终完整显示 */
+        width: 100%;
+        height: auto;
+        object-fit: contain;
     }
     
-    /* 手机端：裁剪自适应 */
+    /* 手机端 */
     @media (max-width: 768px) {
         .hero {
-            height: 40vh;
-            min-height: 250px;
-            max-height: 400px;
+            height: auto;
+            min-height: auto;
+            max-height: none;
         }
-        
+    
         .hero img {
             width: 100%;
-            height: 100%;
-            max-width: none;
-            max-height: none;
-            object-fit: cover;
+            height: auto;
+            object-fit: contain;
         }
     }
     .hero::after {
