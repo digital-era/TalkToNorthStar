@@ -139,43 +139,32 @@ async function renderPageContent(msg, newWin, _t, lang) {
         padding-bottom: 100px;  /* ← 给底部下载按钮留空间 */
     }
     .hero {
-        position: relative;
         width: 100%;
-        overflow: hidden;
         margin-top: 24px;
+        padding: 20px 0;
+    
         background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
     
         display: flex;
-        align-items: center;
         justify-content: center;
-    
-        /* 关键修改 */
-        height: auto;
-        min-height: auto;
-        max-height: none;
+        align-items: center;
     }
     
     .hero img {
-        display: block;
-    
-        /* 始终完整显示 */
-        width: 100%;
+        width: 90%;
+        max-width: 1000px;
         height: auto;
-        object-fit: contain;
+        display: block;
     }
     
-    /* 手机端 */
     @media (max-width: 768px) {
         .hero {
-            height: auto;
-            min-height: auto;
-            max-height: none;
+            padding: 10px 0;
         }
     
         .hero img {
             width: 100%;
-            height: auto;
-            object-fit: contain;
+            max-width: none;
         }
     }
     .hero::after {
