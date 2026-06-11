@@ -1,45 +1,88 @@
-// ═══ 多语言文本（加到项目现有的 translations 中）═══
-const shareTexts = {
-    pageTitleSuffix: { 'zh-CN': '· 星空夜话', 'en-US': '· Starry Night' },
-    defaultTitle: { 'zh-CN': '星空夜话', 'en-US': 'Starry Night' },
-    viewFullDialogue: { 'zh-CN': '查看完整对话', 'en-US': 'View Full Dialogue' },
-    exploreBoundary: { 'zh-CN': '探索思想的边界', 'en-US': 'Explore the Boundary of Thought' },
-    pageGenerated: { 'zh-CN': '页面已生成', 'en-US': 'Page generated' },
+// ═══ 多语言文本（合并到全局）═══
+const shareTextKeys = {
+    'noAIContent': { 'zh-CN': '只能生成AI回答节点的页面', 'en-US': 'Can only generate pages for AI response nodes' },
+    'msgNotFound': { 'zh-CN': '消息不存在', 'en-US': 'Message not found' },
+    'pageTitleSuffix': { 'zh-CN': '· 对话北极星', 'en-US': '· Talk with North Stars' },
+    'defaultTitle': { 'zh-CN': '星空夜话', 'en-US': 'Starry Night' },
+    'exploreBoundary': { 'zh-CN': '书写思想旋律，点燃潜能火花', 'en-US': 'Compose the melody of thought, ignite the spark of potentiality.' },
+    'pageGenerated': { 'zh-CN': '页面已生成', 'en-US': 'Page generated' },
+    'coverTooLarge': { 'zh-CN': '图片过大，请选择5MB以内', 'en-US': 'Image too large, please choose under 5MB' },
+    'coverImported': { 'zh-CN': '封面已导入', 'en-US': 'Cover imported' },
+    'coverImportedTitle': { 'zh-CN': '已导入封面，点击更换', 'en-US': 'Cover imported, click to change' },
+    'importCoverTitle': { 'zh-CN': '导入封面', 'en-US': 'Import Cover' },
+    'generatePageTitle': { 'zh-CN': '生成页面', 'en-US': 'Generate Page' },
 };
 
-/**
- * 生成节点独立浏览页面（支持多语言）
- */
-function generateNodePage(msg) {
-    const lang = window.currentLang || 'zh-CN';
-    const _t = (key) => getFieldValue(shareTexts[key], lang) || key;
+// 合并到全局 translations
+function initShareTexts() {
+    const langs = ['zh-CN', 'en-US'];
+    langs.forEach(lang => {
+        if (!window.translations[lang]) window.translations[lang] = {};
+        Object.entries(shareTextKeys).forEach(([key, values]) => {
+            window.translations[lang][key] = values[lang];
+        });
+    });
+}
 
-    // ═══ 直接判断传入的消息 ═══
-    if (!msg) {
-        showToast(_t('msgNotFound'), 'error');
-        return;
+// ═══ 默认封面缓存 ═══
+const CoverCache = {
+    _dataUrl: null,
+    _loading: null,
+
+    async get() {
+        if (this._dataUrl) return this._dataUrl;
+        if (this._loading) return this._loading;
+        
+        this._loading = this._load();
+        const result = await this._loading;
+        this._dataUrl = result;
+        this._loading = null;
+        return result;
+    },
+
+    async _load() {
+        try {
+            const response = await fetch(window.location.origin + '/images/ambient-starry-column.jpg');
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+            
+            const blob = await response.blob();
+            
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        } catch (e) {
+            console.warn('[CoverCache] Failed to load default cover:', e);
+            return null;  // 用 CSS 渐变兜底
+        }
+    },
+
+    clear() {
+        this._dataUrl = null;
     }
+};
 
-    // 保险：如果不是 AI 回答，找下一条 AI
-    if (msg.role === 'user') {
+// ═══ 生成页面 ═══
+async function generateNodePage(msg) {
+    const lang = window.currentLang || 'zh-CN';
+    const _t = (key) => getFieldValue(shareTextKeys[key], lang) || key;
+
+    if (!msg || msg.role === 'user') {
         showToast(_t('noAIContent'), 'warning');
         return;
     }
 
-    const coverUrl = msg._cover || '/images/ambient-starry-column.jpg';
-    const title = msg.leaderInfo?.name || _t('defaultTitle');
-    const field = msg.leaderInfo?.field || '';
-
-    // Markdown → HTML
-    let htmlContent = msg._processedText;
-    if (!htmlContent) {
-        htmlContent = typeof parseMarkdownWithMath === 'function'
-            ? parseMarkdownWithMath(msg.text)
-            : (typeof parseMarkdown === 'function'
-                ? parseMarkdown(msg.text)
-                : simpleMarkdownToHtml(msg.text));
+    let coverUrl = msg._cover;
+    if (!coverUrl) {
+        coverUrl = await CoverCache.get();
     }
-    htmlContent = htmlContent.replace(/<img[^>]*>/g, '');
+
+    const hasCover = coverUrl && coverUrl.startsWith('data:');
+    const heroStyle = hasCover ? '' : 'background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);';
+    const heroHtml = hasCover
+        ? `<img src="${coverUrl}" alt="${escapeHtml(msg.leaderInfo?.name || '')}" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #0f0c29, #302b63, #24243e)';">`
 
     const html = `<!DOCTYPE html>
 <html lang="${lang === 'zh-CN' ? 'zh-CN' : 'en'}">
@@ -192,9 +235,8 @@ function generateNodePage(msg) {
 <body>
 <div class="stars"></div>
 
-<div class="hero">
-    <img src="${coverUrl}" alt="${escapeHtml(title)}" 
-         onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(135deg,#1a1a2e,#16213e)'">
+<div class="hero" style="${heroStyle}">
+    ${heroHtml}
 </div>
 
 <div class="content">
@@ -221,14 +263,10 @@ function generateNodePage(msg) {
 /**
  * 导入节点封面（支持多语言）
  */
-/**
- * 导入节点封面
- * @param {Object} msg - 消息对象（直接传入）
- * @param {HTMLElement} btnElement - 按钮元素
- */
+// ═══ 导入封面 ═══
 function importNodeCover(msg, btnElement) {
     const lang = window.currentLang || 'zh-CN';
-    const _t = (key) => getFieldValue(shareTexts[key], lang) || key;
+    const _t = (key) => getFieldValue(shareTextKeys[key], lang) || key;
 
     const input = document.createElement('input');
     input.type = 'file';
@@ -246,17 +284,15 @@ function importNodeCover(msg, btnElement) {
         const reader = new FileReader();
         reader.onload = (event) => {
             const dataUrl = event.target.result;
-            
-            // 直接写入消息对象
             msg._cover = dataUrl;
             
-            // 同步到历史数组中的同一条消息
+            // 同步到历史数组（通过引用或 id）
             [importedHistory, conversationHistory].forEach(arr => {
-                const found = arr.find(h => h === msg);  // 同一引用
-                if (found) found._cover = dataUrl;
+                if (!Array.isArray(arr)) return;
+                const found = arr.find(h => h === msg || h.id === msg.id);
+                if (found && found !== msg) found._cover = dataUrl;
             });
             
-            // 视觉反馈
             if (btnElement) {
                 btnElement.classList.add('has-cover');
                 btnElement.title = _t('coverImportedTitle');
