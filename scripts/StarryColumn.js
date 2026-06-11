@@ -476,7 +476,12 @@ function renderStarryCardsList(isAdmin = false) {
         if (systemBtn) {
             systemBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                loadSystemColumn(card);
+                //loadSystemColumn(card);
+                // 获取卡片中文名，拼接成 HTML 链接
+                const fileName = getFieldValue(card.name, 'zh-CN');
+                const htmlPath = `/StarryColumn/${fileName}.html`;
+                window.open(htmlPath, '_blank');
+    });
             });
         }
 
