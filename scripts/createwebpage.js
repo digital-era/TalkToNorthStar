@@ -159,7 +159,7 @@ async function generateNodePage(msg) {
     }
     .meta-field {
         font-size: 13px;
-        color: #667eea;
+        color: #00DFD8;
         letter-spacing: 1px;
     }
     .body-text {
@@ -169,7 +169,7 @@ async function generateNodePage(msg) {
     }
     .body-text p { margin-bottom: 1.2em; text-align: justify; }
     .body-text h1, .body-text h2, .body-text h3, .body-text h4, .body-text h5, .body-text h6 {
-        color: #fff;
+        color: #b0b8d0;
         margin: 1.5em 0 0.8em;
         line-height: 1.4;
     }
@@ -188,7 +188,7 @@ async function generateNodePage(msg) {
     .body-text blockquote {
         margin: 1.2em 0;
         padding: 12px 20px;
-        border-left: 3px solid #667eea;
+        border-left: 3px solid #00DFD8;
         background: rgba(102, 126, 234, 0.08);
         color: #b0b8d0;
         font-style: italic;
@@ -219,11 +219,11 @@ async function generateNodePage(msg) {
         margin: 2em 0;
     }
     .body-text a {
-        color: #667eea;
+        color: #00DFD8;
         text-decoration: none;
         border-bottom: 1px solid rgba(102,126,234,0.3);
     }
-    .body-text a:hover { border-bottom-color: #667eea; }
+    .body-text a:hover { border-bottom-color: #00DFD8; }
     .footer {
         text-align: center;
         padding: 40px 24px;
@@ -231,13 +231,13 @@ async function generateNodePage(msg) {
     }
     .footer-logo {
         font-size: 18px;
-        color: #667eea;
+        color: #00DFD8;
         margin-bottom: 8px;
         letter-spacing: 2px;
     }
     .footer-text {
         font-size: 12px;
-        color: rgba(255,255,255,0.3);
+        color: #00DFD8;
     }
     .stars {
         position: fixed;
