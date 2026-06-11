@@ -275,7 +275,19 @@ async function generateNodePage(msg) {
 </html>`;
 
     const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-    window.open(URL.createObjectURL(blob), '_blank');
+    const url = URL.createObjectURL(blob);
+    
+    // 自动下载
+    const fileName = `${title.replace(/[\\/:*?"<>|]/g, '_')}.html`;
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    
+    // 同时预览
+    window.open(url, '_blank');
     
     showToast(_t('pageGenerated'), 'success');
 }
