@@ -481,7 +481,6 @@ function renderStarryCardsList(isAdmin = false) {
                 const fileName = getFieldValue(card.name, 'zh-CN');
                 const htmlPath = `/StarryColumn/${fileName}.html`;
                 window.open(htmlPath, '_blank');
-    });
             });
         }
 
