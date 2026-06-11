@@ -121,18 +121,16 @@ async function generateNodePage(msg) {
         min-height: 100vh;
     }
     .hero {
-        position: relative;
-        width: 100%;
-        height: 45vh;
-        min-height: 280px;
-        max-height: 480px;
-        overflow: hidden;
+        height: auto;        /* 高度由图片决定 */
+        min-height: 300px;
+        max-height: 70vh;
     }
+    
     .hero img {
         width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
+        height: auto;        /* 保持图片原始比例 */
+        max-height: 70vh;
+        object-fit: contain; /* 完整显示图片，不裁剪 */
     }
     .hero::after {
         content: '';
