@@ -1673,12 +1673,12 @@ function renderDialogueCanvas() {
             rightActions.appendChild(ctxBtn);
             rightActions.appendChild(deleteBtn);
             
-            //node.insertBefore(rightActions, node.firstChild);
+            //node.insertBefore(rightActions, node.firstChild);            
+            node.appendChild(rightActions);
             
         }
 
         //node.insertBefore(deleteBtn, node.firstChild); 
-        node.appendChild(rightActions);
         fragment.appendChild(node);
     });
 
