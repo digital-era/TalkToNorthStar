@@ -286,7 +286,7 @@ function renderStarryColumnLayout() {
     layout.innerHTML = `
         <div class="layout-left" id="starryLeft">
             <div class="starry-cover-wrapper">
-                <img src="images/ambient-starry-column.jpg" 
+                <img src="images/starry.jpg" 
                      alt="${getFieldValue(starryColumnTexts.title, lang)}" 
                      class="starry-cover"
                      id="starryCover">
