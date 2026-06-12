@@ -680,6 +680,16 @@
     transform: scale(1.15);
 }
 
+.thought-node:hover .right-action-btn {
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .right-action-btn {
+        opacity: 0.75 !important;
+    }
+}
+
 /* 确保节点定位基准 */
 .thought-node {
     position: relative; /* 确保绝对定位相对于节点 */
