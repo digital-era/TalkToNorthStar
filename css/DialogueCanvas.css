@@ -626,6 +626,14 @@
     opacity: 1;
 }
 
+@media (max-width: 768px) {
+
+    .left-action-btn {
+        opacity: 0.75 !important;
+    }
+
+}
+
 /* 删除按钮样式 */
 .node-delete-btn {
     position: absolute;
