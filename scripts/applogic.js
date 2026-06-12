@@ -1609,10 +1609,11 @@ function renderDialogueCanvas() {
             });
             leftActions.appendChild(coverBtn);
         
-            node.insertBefore(leftActions, node.firstChild);
+            //node.insertBefore(leftActions, node.firstChild);
+            node.appendChild(leftActions);
             
             const ctxBtn = document.createElement('button');
-            ctxBtn.className = 'ctx-canvas-btn';
+            ctxBtn.className = 'right-action-btn ctx-btn';
             ctxBtn.innerHTML = '<i class="fas fa-star"></i>';  
             ctxBtn.title = _t('contextCanvasAddTitle');
             
@@ -1651,24 +1652,33 @@ function renderDialogueCanvas() {
                 }
             });
 
-            node.insertBefore(ctxBtn, node.firstChild);
+            /* ═══════════════════════════════════════════════
+               【删除按钮】所有节点保留
+            ═══════════════════════════════════════════════ */
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'right-action-btn delete-btn';
+            deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
+            deleteBtn.title = _t('contextRemoveTitleAttr');
+            
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                deleteNode(e, index);
+            });
+
+            // node.insertBefore(ctxBtn, node.firstChild);
+            // ── 右侧按钮容器 ──
+            const rightActions = document.createElement('div');
+            rightActions.className = 'right-actions-bar';
+            
+            rightActions.appendChild(ctxBtn);
+            rightActions.appendChild(deleteBtn);
+            
+            //node.insertBefore(rightActions, node.firstChild);
+            
         }
 
-        /* ═══════════════════════════════════════════════
-           【删除按钮】所有节点保留
-           ═══════════════════════════════════════════════ */
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'node-delete-btn';
-        deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
-        deleteBtn.title = _t('contextRemoveTitleAttr');
-        
-        deleteBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            deleteNode(e, index);
-        });
-
-        node.insertBefore(deleteBtn, node.firstChild);
-
+        //node.insertBefore(deleteBtn, node.firstChild);
+        node.insertBefore(rightActions, node.firstChild);
         fragment.appendChild(node);
     });
 
