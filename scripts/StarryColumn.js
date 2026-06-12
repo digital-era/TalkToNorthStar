@@ -636,8 +636,12 @@ function renderStarryColumnLayoutForLeader(hostCategory) {
     layout.innerHTML = `
         <div class="layout-left" id="starryLeft">
             <div class="starry-cover-wrapper">
-                <img src="images/ambient-starry-column.jpg" 
-                     alt="${getFieldValue(starryColumnTexts.title, lang)}" 
+				<img src="images/starry.jpg"
+                     alt="${getFieldValue(starryColumnTexts.title, lang)}"
+                     class="starry-cover"
+                     id="starryCover">	
+                <img src="images/starry.jpg"
+                     alt="${getFieldValue(starryColumnTexts.title, lang)}"
                      class="starry-cover"
                      id="starryCover">
                 <div class="starry-cover-overlay">
