@@ -290,6 +290,10 @@ function renderStarryColumnLayout() {
                      alt="${getFieldValue(starryColumnTexts.title, lang)}" 
                      class="starry-cover"
                      id="starryCover">
+                <img src="images/starry.jpg" 
+                     alt="${getFieldValue(starryColumnTexts.title, lang)}" 
+                     class="starry-cover"
+                     id="starryCover">
                 <div class="starry-cover-overlay">
                     <h2 class="starry-cover-title">
                         ${getFieldValue(starryColumnTexts.title, lang)}
