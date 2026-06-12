@@ -214,7 +214,8 @@
 
 .starry-cover {
     width: 100%;
-    height: 100%;
+    flex: 1;          /* 每张图平均分配高度 */
+    min-height: 0;    /* 防止 flex 溢出 */
     object-fit: cover;
     object-position: center;
     filter: brightness(0.7) saturate(1.1);
@@ -278,11 +279,12 @@
 
     #starryLeft .starry-cover {
         width: 100%;
-        height: 100%;
+        flex: 1;
+        min-height: 0;
 
-        /* 核心修改 */
-        object-fit: scale-down;
-       
+        object-fit: cover;       /* 推荐 */
+        object-position: center;
+
         /* 修改这里：将 center 换成 top (贴着最顶部)，或者用百分比控制 */
         /* 核心修改：X轴居中，Y轴设置为 40% (你可以自由调整这个数字) */
         object-position: center 40%;
