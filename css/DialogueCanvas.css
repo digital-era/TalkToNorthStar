@@ -633,35 +633,51 @@
     }
 
 }
-
-/* 删除按钮样式 */
-.node-delete-btn {
+.right-actions-bar {
     position: absolute;
-    top: 5px;
-    right: 5px;
-    width: 24px;
-    height: 24px;
+    right: 8px;
+    top: 8px;
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    z-index: 10;
+}
+
+.right-action-btn {
+    width: 22px;
+    height: 22px;
     border: none;
-    background: rgba(255, 0, 0, 0.1);
-    color: #ff4d4f;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0; /* 默认隐藏 */
+    font-size: 10px;
+    opacity: 0;
     transition: all 0.3s ease;
-    z-index: 10;
+    flex-shrink: 0;
 }
 
-.node-delete-btn:hover {
+.ctx-btn {
+    background: rgba(255, 193, 7, 0.15);
+    color: #ffc107;
+}
+
+.ctx-btn:hover {
+    background: #ffc107;
+    color: white;
+    transform: scale(1.15);
+}
+
+.delete-btn {
+    background: rgba(255, 0, 0, 0.1);
+    color: #ff4d4f;
+}
+
+.delete-btn:hover {
     background: #ff4d4f;
     color: white;
-}
-
-/* 鼠标悬停在节点上时显示删除按钮 */
-.thought-node:hover .node-delete-btn {
-    opacity: 1;
+    transform: scale(1.15);
 }
 
 /* 确保节点定位基准 */
