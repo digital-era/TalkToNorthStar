@@ -1679,6 +1679,15 @@ function renderDialogueCanvas() {
         }
 
         if (isUser) {
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'right-action-btn delete-btn';
+            deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
+            deleteBtn.title = _t('contextRemoveTitleAttr');
+            
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                deleteNode(e, index);
+            });
             //node.insertBefore(deleteBtn, node.firstChild);       
             node.appendChild(deleteBtn);
         }
