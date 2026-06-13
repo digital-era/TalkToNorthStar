@@ -1678,7 +1678,11 @@ function renderDialogueCanvas() {
             
         }
 
-        //node.insertBefore(deleteBtn, node.firstChild); 
+        if (isUser) {
+            //node.insertBefore(deleteBtn, node.firstChild);       
+            node.appendChild(deleteBtn);
+        }
+        
         fragment.appendChild(node);
     });
 
